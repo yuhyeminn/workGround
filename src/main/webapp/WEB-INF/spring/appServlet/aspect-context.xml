@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<!-- #11.2. aop 관련태그작성-->            
+    <!--==================== XML 선언적 AOP의 활용 시작 ====================-->
+    <!-- LoggerAspect 빈등록 -->
+    <!-- <bean id="loggerAspect" class="com.kh.workground.common.aop.LoggerAspect"/>
+    
+    <aop:config>
+        <aop:aspect id="loggerAspect" ref="loggerAspect">
+            <aop:pointcut expression="execution(* com.kh.workground.memo..*(..))" id="pcForAll"/>
+            <aop:around method="loggerAdvice" pointcut-ref="pcForAll"/>
+        </aop:aspect>
+    </aop:config> -->
+    
+    <!--==================== XML 선언적 AOP의 활용 끝 ====================-->
+
+    <!--==================== 어노테이션 방식 AOP의 활용 시작 ====================-->
+    <!-- root-context scope에 설정된 트랜잭션 관리자 빈 설정을 그대로 가져와 적용시켜 줌. -->
+    <aop:aspectj-autoproxy />
+    <!--==================== 어노테이션 방식 AOP의 활용 끝 ====================-->
+</beans>

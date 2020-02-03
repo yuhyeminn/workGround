@@ -1,0 +1,14 @@
+@media (max-width: 992px){
+    .sidebar-mini.sidebar-collapse .media-nav{display: block;}
+}
+
+@media(min-width: 992px){
+    .sidebar-mini.sidebar-collapse.layout-fixed .main-sidebar:hover .brand-link,
+    .sidebar-mini.sidebar-collapse .main-sidebar.sidebar-focused, 
+    .sidebar-mini.sidebar-collapse .main-sidebar:hover{width: 220px;}
+}
+
+@media(max-width: 574px){
+    /* Right navbar links: Company Name */
+    .nav-co{padding: .85rem .5rem; font-size: .5rem;}
+}

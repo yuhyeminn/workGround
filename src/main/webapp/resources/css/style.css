@@ -1,0 +1,270 @@
+/* Common */
+:root{
+    --font-family-sans-serif: "Noto Sans KR", "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+html, body{font-family: "Noto Sans KR", "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";}
+/* table, tbody, tfoot, tr{display: block;} */
+p{margin: 0;}
+button{border: 0; background: transparent; outline: none;}
+button:active, button:focus{outline: none;}
+.clear{clear: both;}
+#logo{
+
+    font-family: 'Nunito', sans-serif;
+    font-size: .9rem;
+    margin-left: .1rem;
+    letter-spacing: .1rem;
+}
+
+/* Main Sidebar */
+.main-sidebar{font-size: .9rem;}
+.nav-sidebar>.nav-item .nav-icon{margin-right: .5rem;}
+/* Brand Logo */
+.brand-link .brand-image{margin-top: 3px; font-size: 1.8rem;}
+.nav-sidebar>.nav-item .nav-icon.far{font-size: 1rem;}
+
+/* Navbar */
+.navbar{padding: 0;}
+.main-header{height: 46px;}
+.main-header.navbar-workspace{border-bottom: 0;}
+.layout-navbar-fixed .wrapper .main-header.navbar-project{top: 46px; z-index: 10;}
+.layout-navbar-fixed .wrapper .main-header.navbar-workspace{background-color: #343a40;}
+/* Navbar Workspace */
+/* Left navbar links */
+.media-nav{display: none;}
+/* Right navbar links */
+.main-header.navbar-workspace ul.ml-auto{height: 100%;} 
+.main-header.navbar-workspace .nav-link{height: 100%; padding: .6rem 1rem;}
+.navbar-light.navbar-workspace .navbar-nav .nav-link{color: rgb(175, 175, 175);}
+.navbar-light.navbar-workspace .navbar-nav .nav-link:hover, .navbar-light.navbar-workspace .navbar-nav .nav-link:active, .navbar-light.navbar-workspace .navbar-nav .nav-link:focus{color: rgb(233, 233, 233);}
+/* 알림 */
+.navbar-workspace #notice-panel .dropdown-menu{width: 20rem;}
+/* 회사명 */
+.nav-co{padding: .8rem 1.5rem; margin-left: .3rem; border: 1px solid #4b545c; border-width: 0 1px; color: rgb(175, 175, 175); font-size: .75rem;}
+/* 프로필 */
+.navbar-workspace #user-panel .dropdown-menu{padding: 0;}
+#user-panel .image{width: 46px; height: 46px; padding-left: 0;}
+#user-panel img{width: 100%; height: 100%;}
+#user-profile img{width: 50px; height: 50px; margin-top: -20px; border-radius: 3px;}
+#user-info{display: inline-block; margin-left: .3rem;}
+#user-info>p:last-of-type{margin-top: 8px; color: #696f7a; font-size: .6rem;}
+#user-settings{color: #696f7a; font-size: .7rem;} 
+#user-settings span{display: block; color: #323742; font-size: .85rem;}
+#logout{color: rgb(175, 175, 175); font-size: .85rem; }
+#logout:hover{color: #dc3545;}
+
+/* Main Footer */
+.main-footer{padding: .5rem .5rem .5rem .8rem; background: #fff; }
+
+
+#user-panel .dropdown-menu{min-width: auto;}
+
+/* projectList.jsp */
+/* Navbar Project */
+/* Left navbar links: 프로젝트 상태 분류 */
+.navbar-project .nav-link{border: 1px solid #d4d6db; border-radius: .25rem; font-size: .85rem;}
+.navbar-expand.navbar-project .navbar-nav .nav-link{height: 2rem; padding: .3rem .7rem; margin-left: 1rem;}
+.navbar-workspace .dropdown-menu, .navbar-project .dropdown-menu{min-width: 9rem; padding: .5rem; margin: .125rem 0 0 .8rem; font-size: .85rem;}
+.status-dot{float:right; width: 8px; height: 8px; margin-top: 7px; border-radius: 50%;}
+/* Right navbar links: 프로젝트 정렬, 새 프로젝트 */
+.navbar-expand.navbar-project .navbar-nav.navbar-nav-sort .nav-link{display: inline-block; margin: 0 1rem 0 .3rem;}
+.navbar-expand.navbar-project .navbar-nav-sort li{color: #696f7a; font-size: .85rem;}
+
+/* Content */
+.layout-navbar-fixed .wrapper .content-wrapper{margin-top: 92px;}
+.content-wrapper>.content{padding: 15px 5rem 2.5rem;}
+/* Card Header */
+.card-header{padding: 1rem .5rem .8rem; margin: 1rem 0 .5rem; border-bottom: 0; border-top-left-radius: 0; border-top-right-radius: 0; cursor: pointer;}
+.card-header:hover{background: #d4d6db;}
+.card-header:active, .card-header:focus{outline: none;}
+.card-header h3{color: rgba(0,0,0,.5); font-size: 1rem; font-weight: bold;}
+.card-header .header-count{color: rgba(50,55,66,.5);}
+/* Card Content */
+#project-important .card, #project-in .card{height: 250px;}
+.card{transition-timing-function: ease-in-out; transition-duration: .2s; transition-property: all; cursor: pointer;}
+.card.card-hover:active, .card.card-hover:hover{box-shadow: 0 5px 6px 0 rgba(0,0,0,.15); transform: translateY(-2px);} 
+.card-body{padding: 1.25rem; color: #464c59; font-size: 0.85rem;}
+#project-recent .card-body{height: 60px;}
+.card-title h5{margin-bottom: 0; font-size: 0.9rem; font-weight: bold;}
+#project-recent .card-title, #project-in .card-title{float: none; display: inline-block;}
+#project-in .card-title{display: block;}
+#project-recent .card-star, #project-in .card-star{float: right;}
+.fas.fa-star{color: #f9a50f;} 
+.far.fa-star{color: rgba(50,55,66,.5);} 
+.card-header .fa-star{margin: 0 5px;}
+/* 프로젝트 상태 / 마감일 */
+.card-status{margin-top: 7.5rem;}
+.card-status .btn-block, .card-status .end-date{display: inline-block; width: 4rem;}
+.card-status .btn-group-sm>.btn, .btn-sm {padding: .1rem .1rem;}
+.card-status .bg-success.btn:hover{border-color:#28a745;}
+.card-status .end-date{float:right; padding: .1rem 0 .1rem .1rem; font-size: .75rem; color: #17a2b8;}
+.card-progress .progress-title {color: #8d919a; font-size: 0.75rem;}
+.card-progress{margin-top: .5rem;}
+/* 내 업무 */
+.img-profile{display: block; width: 70px; margin: 0 auto;}
+.mywork .card-title{float: none; margin: .8rem 0 5rem;}
+
+
+
+
+/* projectView.jsp */
+/* Navbar Project */
+/* Left navbar links */
+#go-back .nav-link{display: inline-block; width: 46px; height: 46px; padding: .6rem 0; margin-left: 0; border: 0; border-radius: 0; font-size: inherit;}
+#go-back .nav-link:hover, #go-back .nav-link:active{background: #f3f4f5;}
+#project-name{color: #464c59; font-weight: bold;}
+#btn-star{padding: .55rem .5rem .8rem;}
+#project-name .fa-star{font-size: 0.9rem; cursor: pointer;}
+
+/* Middle navbar links */
+#navbar-tab button{display: inline-block; height: 46px; padding: 0 .8rem; border: 0; color: #696f7a; font-size: .85rem; background: transparent;}
+#navbar-tab button:hover{color: #007bff;}
+/* .navbar-tab button:active, .navbar-tab button:focus{outline: none; border-bottom: 2px solid #007bff; color: #007bff;} */
+#navbar-tab li.active button{outline: none; border-bottom: 2px solid #007bff; color: #007bff;}
+
+/* Right navbar links */
+#viewRightNavbar-wrapper{margin-right: 1.1rem;}
+.navbar-light #viewRightNavbar-wrapper.navbar-nav .nav-link{color: #464c59;}
+#viewRightNavbar-wrapper .nav-item:first-of-type .nav-link, #viewRightNavbar-wrapper .nav-item:last-of-type .nav-link{padding: 0rem .3rem; background: transparent;}
+#viewRightNavbar-wrapper .nav-item:nth-of-type(2), #viewRightNavbar-wrapper .nav-item:last-of-type .nav-link{margin-left: .3rem;}
+/* 멤버 */
+.navbar-project #nav-member .dropdown-menu{min-width: 11rem;}
+#nav-member .dropdown-menu{max-height: 175px; overflow-y: auto;}
+#nav-member .img-profile{width: 25px;}
+#nav-member .memberName{margin-left: .3rem; font-size: .75rem;}
+
+/* Content */
+#pjv-content-wrapper{width: max-content;}
+.content-wrapper>.content.view{padding: 10px 1rem 2.5rem;}
+.content-wrapper.projectView-wrapper{width: 100%; overflow-x: auto;}
+/* Search Bar */
+#workSearchFrm{margin: 5px 0 15px;}
+#workSearchFrm .form-control-navbar{border: 1px solid #d4d6db; border-right-width: 0;}
+#workSearchFrm .input-group>.input-group-append>.btn{border: 1px solid #d4d6db; border-left-width: 0;}
+
+
+/* 업무리스트 */
+.worklist{float: left; width: 19rem; margin-right: .5rem;}
+/* 업무리스트 타이틀 */
+.worklist-title{background: rgb(31, 92, 135);}
+.worklist-title h5{float: left; margin: 0; padding: .8rem .6rem; color: #fff; font-size: .88rem;}
+.worklist-title .worklist-title-btn{float: right; padding: .5rem .6rem;}
+.worklist-title-btn button{width: 26px; border: 0; background: transparent; color: #fff; font-size: .88rem;}
+.worklist-title-btn button:hover, .worklist-title-btn button:active{background: rgb(24, 76, 113);}
+.worklist-title-btn button:last-of-type{margin-left: .3rem;}
+/* 진행 중인 업무 */
+.worklist-titleInfo{padding: 0 .6rem; background: #2c6a95; color: #d4d6db; font-size: .75rem; line-height: 2; clear: both;}
+/* 새 업무 만들기 */
+.addWork-wrapper{display:none; margin: 0 .6rem .6rem; clear: both;}
+.addWork-wrapper.show{display: block;}
+.addWorkFrm{border: 2px solid #27b6ba; border-radius: 3px; background: #fff;}
+.addWork-textarea{min-height: 65px; max-height: 35vh; width: 100%; padding: .3rem .5rem; border: 0; color: #464c59; font-size: .85rem; resize: none; outline: none;}
+.addWork-btnWrapper>div, .addWork-btnWrapper>div>div, .addWork-btnWrapper>div>button{display: inline-block;}
+.addWork-btnWrapper{font-size: .8rem;}
+.addWork-btnLeft .nav-link, .addWork-btnLeft button{padding: .3rem .4rem .5rem; color: #696f7a;}
+.addWork-btnLeft .nav-link:hover, .addWork-btnLeft button:hover{color: #17a2b8;}
+.addWork-btnLeft>div:first-of-type .nav-link{padding-left: .7rem;}
+.addWork-btnLeft>div:not(:first-of-type), .addWork-btnLeft button{margin-left: -3px;}
+.addWork-btnRight{float: right;}
+.addWork-btnRight button{padding: .2rem .5rem; margin-right: .3rem; border-radius: 2px; background: #e6e8ec; color: #696f7a; font-weight: bold;}
+.btn-addWork-cancel:hover{background: #d4d6db;}
+.addWork-btnRight button.btn-addWork-submit{background: #27b6ba; color: #fff;}
+.addWork-btnRight button.btn-addWork-submit:hover{background: #31a7aa;}
+.addWork-btnRight button.btn-addWork-cancel{margin-right: .2rem;}
+/* 업무리스트 컨텐츠 */
+.wl-contents-wrapper{height: 700px;}
+.worklist-contents{max-height: 700px; overflow-y: auto; background: #efefef;}
+
+/* 업무리스트 추가 */
+#add-wklt-wrapper{display: block; cursor: pointer;}
+/* #add-wklt-wrapper.hide */
+#add-wklt-wrapper .worklist-title{background: #d4d6db;}
+#add-wklt-wrapper .worklist-title h5{padding: .8rem 0; color: #464c59;}
+#add-wklt-wrapper .worklist-title .fa-plus{padding: 0 .2rem 0 .6rem;}
+#add-wklt-wrapper .worklist-title:hover{background: #27b6ba;}
+#add-wklt-wrapper .worklist-title:hover h5{color: #fff;}
+/* 업무리스트 추가 폼 */
+#add-wkltfrm-wrapper{display: none;}
+#add-wkltfrm-wrapper .worklist-title{padding: .5rem .6rem; background: rgb(31, 92, 135);}
+#add-wkltfrm-wrapper .addWorkFrm{background: inherit;}
+input[name=worklistTitle]{width: 75%; height: 25px; border: 2px solid #27b6ba; border-radius: 3px; color: #464c59; font-size: .85rem;}
+input[name=worklistTitle]::placeholder{font-size: .85rem;}
+#addWorklistFrm .worklist-title-btn{padding: 0;}
+
+/* 업무 */
+.work-item{padding: .8rem .6rem; margin: .2rem 0; background: #fff; cursor: pointer;}
+.work-item:hover, .tbl-checklist tr:hover{background: rgb(239, 239, 239);}
+.work-item>div{margin: .5rem .6rem;}
+/* 태그 */
+.work-item>div.work-tag{margin: 0 .6rem;}
+.work-tag .btn{margin-right: .1rem; border-radius: 1rem; color: #fff !important; font-size: .6rem; font-weight: bold; line-height: 1.3;}
+/* 타이틀 */
+.work-item>div.work-title{margin: .3rem .6rem .8rem;}
+.work-title h6{display: inline-block; margin-bottom: 0; color: #323742; font-size: .88rem; font-weight: normal;}
+.title-icon{margin:0 .5rem; color: #d4d6db; font-size: .8rem;}
+.work-importances{float: right; margin-top: -3px;}
+.importance-dot{display: inline-block; width: 7px; height: 7px; margin-right: 2px; border: 1px solid #b0b4bb; border-radius: 50%;}
+.importance-dot:not(:first-of-type){margin-left: -3px;}
+.importance-dot.checked{border-color: #17a2b8; background: #17a2b8;}
+/* 체크리스트 */
+.tbl-checklist{border: 1px solid #d4d6db; border-radius: 4px; background: #fff; font-size: .8rem;}
+.tbl-checklist, .tbl-checklist tbody, .tbl-checklist tr{display: block;}
+.tbl-checklist tr:not(:last-of-type){border-bottom: 1px solid #d4d6db;}
+.tbl-checklist th{border-right: 3px double #f8bcb6;}
+.btn-check{display: inline-block; padding: .3rem .5rem; border: 0; background: transparent; color: #d4d6db;}
+.tbl-checklist td{padding: .3rem .5rem; color: #464c59; font-size: .75rem;}
+.work-checklist .ico-profile{float: left; width: 20px; margin-right: .3rem;}
+/* .tbl-checklist tfoot tr{border-bottom: 0;}
+.tbl-checklist tfoot td{display: block; color: #8d919a;} */
+/* 날짜 설정 */
+.work-deadline{color: #17a2b8; font-size: .7rem; font-weight: bold;}
+.work-deadline p{margin-bottom: 0;}
+.work-deadline .over{color: #dc3545;}
+.work-deadline .complete{color: #8d919a;}
+/* 기타 아이콘 모음 */
+.work-etc{color: #8d919a; font-size: .7rem;}
+.work-etc .ico{margin: 0 .3rem;}
+.chared-member .ico-profile{display:inline-block; width: 28px; margin: -4px 0 0 0; border: 2px solid #fff; border-radius: 50%;}
+.chared-member .ico-profile:not(:last-of-type){margin-right: -.5rem;}
+/* 커버 이미지 */
+.work-item>div.work-coverImage{margin: 1rem .6rem .5rem;}
+.work-coverImage{border:1px solid #e6e8ec; border-radius: 3px; background: #f3f4f5; text-align: center; overflow: hidden;}
+.img-cover{max-height: 270px;}
+
+
+
+
+/* projectAttachment.jsp */
+#attachment-wrapper{padding: 5px 3rem;}
+#card-projectAttach{margin-top: 1.5rem;}
+.table-responsive{overflow-x: unset;}
+#tbl-projectAttach thead{background: #f3f4f5;}
+#tbl-projectAttach.table td{padding: 0; vertical-align: inherit; font-size: .8rem;}
+#tbl-projectAttach.table th:not(:first-of-type){padding: .75rem 0;}
+#tbl-projectAttach td:first-of-type{padding: .3rem 0 .3rem 1.5rem;}
+/* 이름 */
+#tbl-projectAttach .img-wrapper{display: inline-block; float: left; width: 40px; height: 40px; margin: .5rem .5rem .5rem 0;}
+#tbl-projectAttach img{width: 100%; height: 100%; vertical-align: inherit; object-fit: contain;}
+#tbl-projectAttach .imgInfo-wrapper{display: inline-block;}
+.filename{display: inline-block; margin-top: .3rem; color: #17a2b8; font-size: .8rem;}
+.filedir{margin-top: .3rem; color: #8d919a;}
+/* 버튼 */
+.btn-file{margin-right: 2rem; padding: 0 .5rem; color: #464c59; font-size: .75rem;}
+#tbl-projectAttach .dropdown{float: right;}
+#tbl-projectAttach .dropdown-menu{min-width: 5rem; padding: 0; color: #464c59; font-size: .85rem;}
+#tbl-projectAttach .dropdown-divider{margin: 0;}
+#tbl-projectAttach .dropdown-item{padding: .4rem 1rem;}
+#tbl-projectAttach .dropdown-menu a:first-of-type:hover{background: rgba(0,0,0,.075);}
+.dropdown-file-remove{color: #dc3545;}
+.dropdown-file-remove:hover{background: #dc3545; color: #fff;}
+
+/* Modal */
+.modal-dialog{font-size: .85rem;}
+.modal-header{padding: 1.3rem 1.3rem 0; border-bottom: 0;}
+.modal-title{color: #464c59; font-size: 1.3rem; font-weight: bold;}
+.modal-body{padding: .8rem 1.3rem 0;}
+.modal-footer{padding: 1.5rem 1.3rem 1.3rem; border-top: 0;}
+.modal-footer button{font-size: .8rem;}
+/* 업무 이동 모달 */
+
+
