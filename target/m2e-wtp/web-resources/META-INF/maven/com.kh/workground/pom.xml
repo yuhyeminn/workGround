@@ -235,6 +235,15 @@
 	        <artifactId>jackson-databind</artifactId>
 	        <version>2.9.5</version>
 	    </dependency>
+	    
+	    <!-- #16. lombok사용을 위한 의존 -->
+	    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.8</version>
+		    <scope>provided</scope>
+		</dependency>
 	</dependencies>
     <build>
         <plugins>
