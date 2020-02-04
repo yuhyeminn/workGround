@@ -10,6 +10,11 @@ import com.kh.workground.member.model.vo.Member;
 public class ProjectDAOImpl implements ProjectDAO {
 
 	@Autowired
-	SqlSessionTemplate sqlSessionTemplate;
+	SqlSessionTemplate sqlSession;
+	
+	@Override
+	public Member selectMemberOne(String string) {
+		return sqlSession.selectOne("project.selectMemberOne", string);
+	}
 
 }
