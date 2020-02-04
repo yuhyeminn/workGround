@@ -5,13 +5,13 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <!-- insertPhoto Modal -->
-<form method="POST">
+<form name="clubPhotoFrm" action="${pageContext.request.contextPath }/club/clubPhotoForm.do" method="POST" enctype="multipart/form-data" onsubmit="return validate();">
 	<div class="modal fade cd-example-modal-lg" id="insertPhoto" tabindex="-1" role="dialog"
 	    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
 	    <div class="modal-dialog modal-dialog-centered modal-lg">
 	    <div class="modal-content card card-outline card-info">
 	        <div class="modal-header col-12">
-		        <input type="text" class="form-control" placeholder="제목을 입력하세요.">
+		        <input type="text" name="clubPhotoTitle" class="form-control" placeholder="제목을 입력하세요." required="required">
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		            <span aria-hidden="true">&times;</span>
 		        </button>
@@ -20,8 +20,8 @@
               <label for="exampleInputFile">사진파일</label>
               <div class="input-group">
                 <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="exampleInputFile">
-                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                  <input type="file" class="custom-file-input" name=upFile id="exampleInputFile" required="required">
+                  <label class="custom-file-label" for="exampleInputFile">파일을 선택하세요.</label>
                 </div>
                 <!-- <div class="input-group-append">
                   <span class="input-group-text" id="">Upload</span>
@@ -30,7 +30,7 @@
             </div>
 	        <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-		        <button type="button" class="btn btn-primary"
+		        <button type="submit" class="btn btn-primary"
 		            style="background-color: #17a2b8; border-color: #17a2b8;">추가</button>
 	        </div>
 	    </div>

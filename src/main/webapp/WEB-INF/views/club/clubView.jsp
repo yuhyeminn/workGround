@@ -88,6 +88,35 @@ function tabActive(){
 
     $("#tab-club").addClass("active");
 }
+
+$(function() {
+	//파일 선택/취소시에 파일명 노출하기
+	$("[name=upFile]").on("change", function() {
+		//파일입력 취소
+		if($(this).prop("files")[0] === undefined) {
+			$(this).next(".custom-file-label").html("파일을 선택하세요.");
+			return;
+		}
+		
+		var fileName = $(this).prop('files')[0].name;
+		$(this).next(".custom-file-label").html(fileName);
+	});
+	
+});
+
+function validate() {
+	var title = $("[name=clubPhotoTitle]").val();
+	var fileName = $(this).prop('files')[0].name;
+	if(title.trim().length==0) {
+		alert('제목을 입력하세요.');
+		return false;
+	}
+	else if(fileName.length==0) {
+		alert('파일을 선택하세요.');
+		return false;
+	}
+	return true;
+}
 </script>
 
 <!-- Navbar ClubView -->
