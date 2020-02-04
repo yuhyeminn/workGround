@@ -46,19 +46,19 @@
 	</beans:bean>
 	
 	<!-- #9. 인터셉터 등록 -->
-	<interceptors>
+	<!-- <interceptors>
 		<interceptor>
-			<mapping path="/**" />
-			<!-- 3.2부터 추가된 기능 exclude-mapping -->
-			<!-- <exclude-mapping path="/admin/**" /> -->
+			<mapping path="/**/*View.do" />
+			3.2부터 추가된 기능 exclude-mapping
+			<exclude-mapping path="/admin/**" />
 			<beans:bean id="loggerInterceptor" class="com.kh.workground.common.interceptor.LoggerInterceptor"/>
 		</interceptor>
-		<!-- <interceptor>
+		<interceptor>
 			<mapping path="/member/memberView.do"/>
 			<mapping path="/member/memberUpdate.do"/>
 			<beans:bean id="loginInterceptor" class="com.kh.workground.common.interceptor.LoginInterceptor"/>
-		</interceptor> -->
-	</interceptors>
+		</interceptor>
+	</interceptors> -->
 	
 	<!-- #12.1 파일업로드를 처리할 Resolver클래스 빈등록(빈이름 주의) -->
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">   
