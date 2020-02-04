@@ -342,10 +342,6 @@ insert into member values('kh2020'||seq_member.nextval, null, '이소현', 'sooh
 insert into member values('kh2020'||seq_member.nextval, null, '김효정', 'hyojeong@gmail.com', '01054226921', '19971102', 'D3', 'J3', default, 'kh2020122', null, null);
 insert into member values('kh2020'||seq_member.nextval, null, '이주현', 'joohyeon@gmail.com', '01098445110', '19970906', 'D3', 'J3', default, 'kh2020122', null, null);
 
-commit;
---rollback;
-
-
 --------------------------------------------------
 --project테이블 관련 insert문
 --------------------------------------------------
@@ -373,6 +369,9 @@ insert into project_members values(seq_project_members.nextval, 2, 'kh2020127', 
 --중요표시 프로젝트
 insert into project_important values (seq_project_important.nextval, 'kh2020122', 2);
 insert into project_important values (seq_project_important.nextval, 'kh2020123', 2);
+--내 private 프로젝트
+insert into project values(seq_project.nextval, 'kh2020112', '나의 워크패드', 'Y', null, null, null, null, null);
+insert into project values(seq_project.nextval, 'kh2020113', '나의 워크패드', 'Y', null, null, null, null, null);
 
 --------------------------------------------------
 --worklist/work 테이블 관련 insert문
