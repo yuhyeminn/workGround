@@ -12,4 +12,9 @@ public class ProjectServiceImpl implements ProjectService {
 	@Autowired
 	ProjectDAO projectDAO;
 
+	@Override
+	public Member selectMemberOne(String string) {
+		return projectDAO.selectMemberOne(string);
+	}
+
 }
