@@ -12,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.workground.notice.model.service.NoticeService;
 import com.kh.workground.notice.model.vo.Notice;
 
+//Exception 던지기!!!!!
+
 @Controller
 public class NoticeController {
 	

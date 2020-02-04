@@ -128,75 +128,29 @@ function sidebarActive(){
           <div class="carousel-inner">
             <!-- row1 -->
             <div class="row card-content carousel-item active">
-              <div class="col-12 col-sm-6 col-md-3">
-                <div class="card">
-                  <!-- Default droprleft button -->
-                  <div class="dropleft">
-                    <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                    <div class="dropdown-menu">
-                      <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                      <a href="#" class="dropdown-item">공지 삭제</a>
-                    </div>
-                  </div>
-                  <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                    <img src="${pageContext.request.contextPath}/resources/img/전체공지02.png" class="card-img-top">
-                    <h5 class="card-title">모든 부서 전체 공지</h5>
-                    <p class="card-text">모든 부서 팀원들은 배부된 서류를 오늘 자정까지 제출해주세요!</p>
-                  </div>
-                </div><!-- /.card -->
-              </div>
-              <div class="col-12 col-sm-6 col-md-3">
-                <div class="card">
-                  <!-- Default droprleft button -->
-                  <div class="dropleft">
-                    <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                    <div class="dropdown-menu">
-                      <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                      <a href="#" class="dropdown-item">공지 삭제</a>
-                    </div>
-                  </div>
-                  <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                    <img src="/dist/img/city1.PNG" class="card-img-top">
-                    <h5 class="card-title">홈페이지 리뉴얼 관련 공지</h5>
-                    <p class="card-text">홈페이지 리뉴얼에 따른 공지를 모두 확인해주세요 ^^</p>
-                  </div>
-                </div><!-- /.card -->
-              </div>
-              <div class="col-12 col-sm-6 col-md-3">
-                <div class="card">
-                  <!-- Default droprleft button -->
-                  <div class="dropleft">
-                    <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                    <div class="dropdown-menu">
-                      <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                      <a href="#" class="dropdown-item">공지 삭제</a>
-                    </div>
-                  </div>
-                  <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                    <img src="${pageContext.request.contextPath}/resources/img/개발01.png" class="card-img-top">
-                    <h5 class="card-title">개발부서 프로젝트 관련 추가 공지</h5>
-                    <p class="card-text">개발부서 팀원들은 오늘 자정까지 배부된 서류를 제출해주세요!</p>
-                </div>
-              </div><!-- /.card -->
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card">
-                <!-- Default droprleft button -->
-                <div class="dropleft">
-                  <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                  <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                    <a href="#" class="dropdown-item">공지 삭제</a>
-                  </div>
-                </div>
-                <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                  <!-- <img src="images/city1.PNG" class="card-img-top"> -->
-                  <h5 class="card-title">웹사이트 기획 공지</h5>
-                  <p class="card-text">신규 웹사이트 기획 관련 공지 확인 후 문의사항은 오늘 내로 알려주시기 바랍니다! </p>
-                </div>
-              </div><!-- /.card -->
-            </div>
+            	<c:forEach items="${list }" var="n">
+            		<c:if test="${n.deptCode == null }">
+		              <div class="col-12 col-sm-6 col-md-3">
+		                <div class="card">
+		                  <!-- Default droprleft button -->
+		                  <div class="dropleft">
+		                    <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+		                    <div class="dropdown-menu">
+		                      <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
+		                      <a href="#" class="dropdown-item">공지 삭제</a>
+		                    </div>
+		                  </div>
+		                  <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
+		                    <img src="${pageContext.request.contextPath}/resources/img/전체공지02.png" class="card-img-top">
+		                    <h5 class="card-title">${n.noticeTitle }</h5>
+		                    <p class="card-text">${n.noticeContent }</p>
+		                  </div>
+		                </div><!-- /.card -->
+		              </div>
+            		</c:if>
+            	</c:forEach>
           </div> <!--row1-->
+          
             <!-- row2 -->
             <div class="row card-content carousel-item">
               <div class="col-12 col-sm-6 col-md-3">
