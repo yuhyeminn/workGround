@@ -23,6 +23,22 @@
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&display=swap" rel="stylesheet">
 </head>
 <body class="hold-transition login-page"  style="background: white;">
+<%
+//쿠키관련
+	boolean saveId = false;
+	String memberId = "";
+	Cookie[] cookies = request.getCookies();
+	if(cookies != null){
+		for(Cookie c : cookies){
+			String k = c.getName();
+			String v = c.getValue();
+			if("saveId".equals(k)){
+				saveId = true;
+				memberId = v;
+			}
+		}
+	}
+%>
 <div class="col-md-8">
   <div class="login-logo">
     <b>COMPANY NAME</b>
@@ -31,10 +47,9 @@
   <!-- <div class="card">  -->
     <div class="col-sm-6" style="display:inline-block; padding: 60px; box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2); height: 23rem;">
       <p class="login-box-msg" style="font-weight: 700; font-size: 22px;">로그인</p>
-
-      <form action="" method="post">
+      <form action="${pageContext.request.contextPath}/member/memberLogin.do" method="post">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="아이디">
+          <input type="text" class="form-control" name="memberId" placeholder="아이디" value="<%=saveId?memberId:""%>" required>
           <div class="input-group-append">
             <div class="input-group-text" style="background: white;">
               <span class="fas fa-user"></span>
@@ -42,7 +57,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="비밀번호">
+          <input type="password" class="form-control" name="password" placeholder="비밀번호" required>
           <div class="input-group-append">
             <div class="input-group-text" style="background: white;">
               <span class="fas fa-lock"></span>
@@ -52,7 +67,7 @@
         <div class="row">
           <div class="col-8">
             <div class="icheck-primary">
-              <input type="checkbox" id="remember">
+              <input type="checkbox" name="saveId" id="remember" <%=saveId?"checked":""%>>
               <label for="remember">
                 아이디 저장
               </label>
@@ -88,5 +103,8 @@
 <!-- AdminLTE App -->
 <script src="${pageContext.request.contextPath}/resources/js/adminlte.min.js"></script>
 
+<script>
+
+</script>
 </body>
 </html>
