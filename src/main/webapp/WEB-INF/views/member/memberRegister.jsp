@@ -34,11 +34,12 @@
 
       <form action="../../index.html" method="post">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="아이디">
+          <input type="text" class="form-control" id="memberId" placeholder="아이디">
           <div class="input-group-append">
             <div class="input-group-text">
             </div>
-            <button type="button" class="btn btn-block btn-outline-primary">확인</button>
+            <button type="button" class="btn btn-block btn-outline-primary" 
+            		onclick="checkIdExistence();">확인</button>
           </div>
         </div>
         <div class="input-group mb-3">
@@ -111,5 +112,16 @@
 <!-- AdminLTE App -->
 <script src="${pageContext.request.contextPath}/resources/js/adminlte.min.js"></script>
 
+<script>
+function checkIdExistence() {
+	var memberId = $("#memberId").val();
+	if(memberId == '' || memberId == null){
+		alert("아이디를 입력해주세요");
+	}
+	else{
+		location.href='${pageContext.request.contextPath}/member/checkIdExistence.do?memberId='+memberId;
+	}
+}
+</script>
 </body>
 </html>
