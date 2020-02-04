@@ -12,7 +12,7 @@
 	<!-- #7.1. myBatis(JDBC)설정 연결 설정하기 -->
 	<bean id="realDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
-		<property name="url" value="jdbc:oracle:thin:@localhost:1521:ORCL"/>
+		<property name="url" value="jdbc:oracle:thin:@wgdbinstance.cmjadcjfullo.ap-northeast-2.rds.amazonaws.com:1521:ORCL"/>
 		<property name="username" value="workground"/>
 		<property name="password" value="workground"/>
 	</bean>
