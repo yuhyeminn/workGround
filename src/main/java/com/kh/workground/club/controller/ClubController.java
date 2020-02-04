@@ -1,6 +1,7 @@
 package com.kh.workground.club.controller;
 
-import javax.servlet.ServletRequest;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.club.model.service.ClubService;
 import com.kh.workground.club.model.vo.Club;
-import com.kh.workground.club.model.vo.ClubPhoto;
 
 @Controller
 public class ClubController {
@@ -27,13 +27,20 @@ public class ClubController {
 	@RequestMapping("/club/clubList.do")
 	public ModelAndView clubList(ModelAndView mav) {
 		
+		List<Club> clubList = clubService.selectAllClubList();
+		logger.info("clubList{}",clubList);
+		
+		mav.addObject("clubList",clubList);
 		mav.setViewName("/club/clubList");
 		
 		return mav;
 	}
 	
 	@RequestMapping("/club/clubView.do")
-	public ModelAndView clubView(ModelAndView mav) {
+	public ModelAndView clubView(ModelAndView mav,
+								 @RequestParam("clubNo") int clubNo) {
+		
+		logger.info("clubNo{}",clubNo);
 		
 		mav.setViewName("/club/clubView");
 		
