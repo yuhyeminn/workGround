@@ -142,7 +142,6 @@ insert into member values('kh2020'||seq_member.nextval, null, '이소현', 'sooh
 insert into member values('kh2020'||seq_member.nextval, null, '김효정', 'hyojeong@gmail.com', '01054226921', '19971102', 'D3', 'J3', default, 'kh2020122', null, null);
 insert into member values('kh2020'||seq_member.nextval, null, '이주현', 'joohyeon@gmail.com', '01098445110', '19970906', 'D3', 'J3', default, 'kh2020122', null, null);
 
-
 --트랜잭션 처리
 commit;
 rollback;
@@ -166,7 +165,15 @@ select * from member;
 
 
 
-
+--================================================
+--뷰: member+department+job 
+--================================================
+create or replace view view_member as
+select M.*, D.dept_title, J.job_title 
+from member M left join department D on M.dept_code = D.dept_code
+                          left join job J on M.job_code = J.job_code;
+--drop view view_member;
+--select * from view_member;
 
 
 
