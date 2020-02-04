@@ -12,10 +12,4 @@ public class ProjectDAOImpl implements ProjectDAO {
 	@Autowired
 	SqlSessionTemplate sqlSessionTemplate;
 
-	@Override
-	public Member selectMemberOne(String string) {
-		return sqlSessionTemplate.selectOne("project.selectMemberOne", string);
-	}
-	
-	
 }

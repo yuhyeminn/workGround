@@ -22,9 +22,6 @@ public class ProjectController {
 	@RequestMapping("/project/projectList.do")
 	public ModelAndView projectList(ModelAndView mav) {
 		
-		Member m = projectService.selectMemberOne("kh2020122");
-		
-		logger.debug("m={}", m);
 		mav.setViewName("/project/projectList");
 		
 		return mav;
