@@ -59,9 +59,9 @@ create table member(
     original_filename varchar2(100),
     renamed_filename varchar2(100),
     constraint pk_member primary key(member_id),
-    constraint fk_member_jobcode foreign key(job_code) references job(job_code),
-    constraint fk_member_deptcode foreign key(dept_code) references department(dept_code),
-    constraint fk_member_managerid foreign key(manager_id) references member(member_id),
+    constraint fk_member_jobcode foreign key(job_code) references job(job_code) on delete set null,
+    constraint fk_member_deptcode foreign key(dept_code) references department(dept_code) on delete set null,
+    constraint fk_member_managerid foreign key(manager_id) references member(member_id) on delete set null,
     constraint ck_member_quityn check(quit_yn in ('Y', 'N'))
 );
 
