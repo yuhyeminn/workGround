@@ -6,4 +6,51 @@
 	<select id="selectMemberOne" resultType="member">
 		select * from member where member_id = #{string}
 	</select>
+	
+	
+	<!-- ###############단비################# -->
+	<!-- projectList.do : 부서 전체 프로젝트(최근 프로젝트) 조회 -->
+	<select id="selectListByDept" resultMap="listByDeptCollectionMap">
+		<!-- select * 
+		from (select P.*, PM.member_id
+		      from view_project P left join project_members PM on P.project_no = PM.project_no) V 
+		      join view_member M on V.member_id = M.member_id
+		where dept_code = #{deptCode}
+		order by project_no desc -->
+		select * from view_projectMember where dept_code = #{deptCode}
+	</select>
+	<resultMap type="project" id="listByDeptCollectionMap">
+		<id column="project_no" property="projectNo"></id>
+		<result column="project_writer" property="projectWriter"></result>
+		<result column="project_title" property="projectTitle"></result>
+		<result column="private_yn" property="projectYn"></result>
+		<result column="project_desc" property="projectDesc"></result>
+		<result column="project_startdate" property="projectStartDate"></result>
+		<result column="project_enddate" property="projectEndDate"></result>
+		<result column="project_realenddate" property="projectRealEndDate"></result>
+		<result column="project_status_code" property="projectStatusCode"></result>
+		<result column="project_status_title" property="projectStatusTitle"></result>
+		<collection property="projectMemberList" ofType="member">
+			<id column="member_id" property="memberId"></id>
+			<result column="password" property="password"></result>
+			<result column="member_name" property="memberName"></result>
+			<result column="email" property="email"></result>
+			<result column="phone" property="phone"></result>
+			<result column="date_of_birth" property="dateOfBirth"></result>
+			<result column="dept_code" property="deptCode"></result>
+			<result column="dept_title" property="deptTitle"></result>
+			<result column="job_code" property="jobCode"></result>
+			<result column="job_title" property="jobTitle"></result>
+			<result column="quit_yn" property="quitYn"></result>
+			<result column="manager_id" property="managerId"></result>
+			<result column="original_filename" property="originalFileName"></result>
+			<result column="renamed_filename" property="renamedFileName"></result>
+		</collection>
+	</resultMap>
+	
+	<!-- <select id="selectListByImportant" resultType="project">
+		select * 
+		from project_important PI join view_projectMember P on PI.project_no = P.project_no
+		where PI.member_id = #{memberId}
+	</select> -->
 </mapper>

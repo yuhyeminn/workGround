@@ -175,6 +175,22 @@ from member M left join department D on M.dept_code = D.dept_code
 --drop view view_member;
 --select * from view_member;
 
+--================================================
+--뷰: project+project_status
+--================================================
+create or replace view view_project as 
+select P.*, PS.project_status_title
+from project P left join project_status PS on P.project_status_code = PS.project_status_code; 
+--drop view view_project;
+--select * from view_project;
 
-
+--================================================
+--뷰: view_project + project_members + member
+--================================================
+create or replace view view_projectMember as
+select V.*, M.password, M.member_name, M.email, M.phone, M.date_of_birth, M.dept_code, M.job_code, M.quit_yn, M.manager_id, M.original_filename, M.renamed_filename, M.dept_title, M.job_title
+from (select P.*, PM.member_id
+      from view_project P left join project_members PM on P.project_no = PM.project_no
+      order by P.project_no desc) V 
+      join view_member M on V.member_id = M.member_id;
 
