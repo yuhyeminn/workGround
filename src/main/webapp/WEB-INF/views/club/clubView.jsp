@@ -14,6 +14,14 @@ max-height: 400px;
 #info-wrapper .card-body{padding: 3rem 1.25rem;}
 #info-wrapper .card-header{margin-top: 0;}
 #info-wrapper .card-title{color: ##464c59; font-size: 1rem; font-weight: bold;}
+/* nav new club */
+#nav-new-club{color:white;border:none;padding:0.35rem 0.5rem;margin-right:1rem;border-radius: 0.25rem;}
+/* new club card */
+#new-club-card{height: 298x; text-align: center; padding: 6rem 0rem;}
+#new-club-card .card-body{color: #17a2b8;}
+#new-club-card i{margin-bottom: .7rem; font-size:30px;}
+#new-club-card:hover {background: #17a2b8;}
+#new-club-card:hover .card-body{color: #fff;}
 </style>
 
 <script>
@@ -202,7 +210,7 @@ function tabActive(){
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="card">
                         <div class="card-body">
-                            <img src="${pageContext.request.contextPath}/resources/img/volunteer1.jpg" alt="..." class="img-thumbnail" data-toggle="modal"
+                            <img src="${pageContext.request.contextPath}/resources/img/club/volunteer1.jpg" alt="..." class="img-thumbnail" data-toggle="modal"
                             data-target="#exampleModalCenter">
                         </div>
                         </div><!-- /.card -->
@@ -235,7 +243,7 @@ function tabActive(){
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="card">
                         <div class="card-body">
-                            <img src="${pageContext.request.contextPath}/resources/img/volunteer1.jpg" alt="..." class="img-thumbnail" data-toggle="modal"
+                            <img src="${pageContext.request.contextPath}/resources/img/club/volunteer1.jpg" alt="..." class="img-thumbnail" data-toggle="modal"
                             data-target="#exampleModalCenter">
                         </div>
                         </div><!-- /.card -->
@@ -243,21 +251,21 @@ function tabActive(){
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="card">
                         <div class="card-body">
-                            <img src="${pageContext.request.contextPath}/resources/img/volunteer2.jpg" alt="..." class="img-thumbnail">
+                            <img src="${pageContext.request.contextPath}/resources/img/club/volunteer2.jpg" alt="..." class="img-thumbnail">
                         </div>
                         </div><!-- /.card -->
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="card">
                         <div class="card-body">
-                            <img src="${pageContext.request.contextPath}/resources/img/volunteer3.jpg" class="img-thumbnail">
+                            <img src="${pageContext.request.contextPath}/resources/img/club/volunteer3.jpg" class="img-thumbnail">
                         </div>
                         </div><!-- /.card -->
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="card">
                         <div class="card-body">
-                            <img src="${pageContext.request.contextPath}/resources/img/volunteer4.jfif" alt="..." class="img-thumbnail">
+                            <img src="${pageContext.request.contextPath}/resources/img/club/volunteer4.jfif" alt="..." class="img-thumbnail">
                         </div>
                         </div><!-- /.card -->
                     </div>
@@ -308,7 +316,7 @@ function tabActive(){
                         </button>
                     </div>
                     <div class="modal-body">
-                        <img src="${pageContext.request.contextPath}/resources/img/volunteer1.jpg" alt="..." class="img-thumbnail" data-toggle="modal"
+                        <img src="${pageContext.request.contextPath}/resources/img/club/volunteer1.jpg" alt="..." class="img-thumbnail" data-toggle="modal"
                         data-target="#exampleModalCenter">
                     </div>
                     <div class="modal-footer">
@@ -594,13 +602,13 @@ function tabActive(){
 
                     <!-- 일정 추가 -->
                     <div class="col-12 col-sm-6 col-md-3">
-                        <div class="card addpr-hover" data-toggle="modal" data-target="#plan">
-                        <div class="card-body addpr-center">
-                            <i class="fa fa-plus" style="font-size:30px;"></i>
-                            <h6>새 일정</h6>
-                        </div>
-                        </div><!-- /.card -->
-                    </div>
+		              <div class="card new" id="new-club-card">
+		                <div class="card-body">
+		                  <i class="fas fa-plus"></i>
+		                  <h6>새 일정</h6>
+		                </div>
+		              </div><!-- /.card -->
+		            </div>
                 </div>
             </section>
             <!-- /.card-content -->
@@ -704,14 +712,15 @@ function tabActive(){
             </div>
 
             <!-- 공지 추가 -->
+            <!-- 일정 추가 -->
             <div class="col-12 col-sm-6 col-md-3">
-                <div class="card addpr-hover" data-toggle="modal" data-target="#notice-input">
-                <div class="card-body addpr-center">
-                    <i class="fa fa-plus" style="font-size:30px;"></i>
-                    <h6>새 공지</h6>
-                </div>
-                </div><!-- /.card -->
-            </div>
+		      <div class="card new" id="new-club-card">
+		        <div class="card-body">
+		          <i class="fas fa-plus"></i>
+		          <h6>새 공지</h6>
+		        </div>
+		      </div><!-- /.card -->
+		    </div>
         </section>
         <!-- /.card-content -->
 
