@@ -27,7 +27,7 @@ public class ProjectController {
 	
 	@RequestMapping("/project/projectList.do")
 	public ModelAndView projectList(ModelAndView mav, HttpSession session) {
-		Member memberLoggedIn = projectService.selectMemberOne("kh2020122");
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		
 		try {
 			//1.업무로직
