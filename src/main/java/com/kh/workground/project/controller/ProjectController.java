@@ -31,15 +31,20 @@ public class ProjectController {
 		
 		try {
 			//1.업무로직
-			//부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
+			//1-1.부서 사람들 조회
+			List<Member> memberListByDept = projectService.selectMemberListByDept(memberLoggedIn.getDeptCode());
+			
+			//1-2.부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
 			Map<String, List<Project>> map = projectService.selectProjectListAll(memberLoggedIn);
 			
 			//뷰모델 처리
+			mav.addObject("map", map);
+			mav.addObject("memberListByDept", memberListByDept);
 			mav.setViewName("/project/projectList");
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
-			throw new ProjectException("프로젝트 리스트 조회 오류!");
+			throw new ProjectException("projectList.do 조회 오류!");
 		}
 		
 		return mav;
