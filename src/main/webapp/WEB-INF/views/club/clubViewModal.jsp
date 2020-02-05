@@ -85,12 +85,12 @@
 
 
 <!-- info Modal -->
-<div class="modal fade" id="info" tabindex="-1" role="dialog"
+<div class="modal fade cd-example-modal-lg" id="info" tabindex="-1" role="dialog"
 	aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 		<div class="modal-content card card-outline card-info">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLongTitle">봉사동아리</h5>
+				<h5 class="modal-title" id="exampleModalLongTitle">${club.clubName }</h5>
 				<button type="button" class="close" data-dismiss="modal"
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
@@ -101,19 +101,57 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-				<button type="button" class="btn btn-primary" data-dismiss="modal"
-					data-toggle="modal"
-					style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
+				<button type="button" class="btn btn-primary" 
+						data-target="#info-modify" 
+						data-dismiss="modal"
+						data-toggle="modal"
+						style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
 			</div>
 		</div>
 	</div>
 </div>
 
+<!-- info-modify Modal -->
+<div class="modal fade cd-example-modal-lg" id="info-modify" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content card card-outline card-info">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form name="clubIntroduceUpdateFrm" action="${pageContext.request.contextPath }/club/clubIntroduceUpdate.do" method="POST">
+				<input type="hidden" name="clubNo" value="${club.clubNo }" />
+				<div class="modal-body">
+					<div class="form-group">
+						<div class="mb-3">
+							<label for="inputDescription">동호회 이름</label>
+							<h5 class="modal-title" id="exampleModalLongTitle"><input type="text" name="clubName" class="form-control" value="${club.clubName }" name="" id="" /></h5>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="mb-3">
+							<label for="inputDescription">동호회 소개</label>
+							<textarea id="inputDescription" class="textarea" name="clubIntroduce" 
+									  style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">${club.clubIntroduce }</textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+					<button type="submit" class="btn btn-primary" 
+						style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 
 
 	
 <!-- insertPlan Modal -->
-<form action="" method="post">
 	<div class="modal fade cd-example-modal-lg" id="insertPlan"
 		tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
 		aria-hidden="true" data-backdrop="static">
@@ -127,132 +165,68 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<label for="inputName">일정</label> <input type="text"
-							id="inputName" class="form-control" placeholder="일정을 입력하세요.">
-					</div>
-					<!-- <div class="form-group">
-                        <label for="inputDescription">일정 내용</label>
-                        <textarea id="inputDescription" class="form-control" rows="4"></textarea>
-                    </div> -->
-					<div class="form-group">
-						<div class="mb-3">
-							<label for="inputDescription">일정 내용</label>
-							<textarea id="inputDescription" class="textarea"
-								style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+				<form name="clubPlanInsertFrm" action="${pageContext.request.contextPath }/club/clubPlanInsert.do" method="post">
+					<input type="hidden" name="clubNo" value="${club.clubNo }" />
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="inputName">일정</label> 
+							<input type="text" name="clubPlanTitle" 
+								id="inputName" class="form-control" placeholder="일정을 입력하세요.">
 						</div>
-					</div>
-					<!-- Date picker -->
-					<div class="form-group">
-						<label for="">날짜</label>
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text"><i
-									class="far fa-calendar-alt"></i></span>
+						<div class="form-group">
+							<div class="mb-3">
+								<label for="inputDescription">일정 내용</label>
+								<textarea id="inputDescription" name="clubPlanContent" class="textarea"
+									style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
 							</div>
-							<input type="text" class="form-control float-right"
-								id="reservation">
 						</div>
-						<!-- /.input group -->
+						<!-- Date picker -->
+						<div class="form-group">
+							<label for="">날짜</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i
+										class="far fa-calendar-alt"></i></span>
+								</div>
+								<input type="text" name="clubPlanDate" class="form-control float-right"
+									id="reservation">
+							</div>
+							<!-- /.input group -->
+						</div>
+						<!-- /.form group -->
+						<div class="form-group">
+							<label for="inputStatus">상태</label> 
+							<select name="clubPlanState" class="form-control custom-select">
+								<option selected disabled>선택하세요.</option>
+								<option selected>예정</option>
+								<option>완료</option>
+								<option>취소</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="inputClientCompany">장소</label> 
+							<input type="text" name="clubPlanPlace"
+								id="inputClientCompany" class="form-control"
+								placeholder="장소를 입력하세요." />
+						</div>
+						<div class="form-group">
+							<label for="inputProjectLeader">담당진행자</label> 
+							<input type="text" name="clubPlanManager"
+								id="inputProjectLeader" class="form-control"
+								placeholder="담당진행자를 입력하세요." />
+						</div>
 					</div>
-					<!-- /.form group -->
-					<div class="form-group">
-						<label for="inputStatus">상태</label> <select
-							class="form-control custom-select">
-							<option selected disabled>선택하세요.</option>
-							<option selected>예정</option>
-							<option>완료</option>
-							<option>취소</option>
-						</select>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">닫기</button>
+						<button type="submit" class="btn btn-primary" 
+							style="background-color: #17a2b8; border-color: #17a2b8;">추가</button>
 					</div>
-					<div class="form-group">
-						<label for="inputClientCompany">장소</label> <input type="text"
-							id="inputClientCompany" class="form-control"
-							placeholder="장소를 입력하세요.">
-					</div>
-					<div class="form-group">
-						<label for="inputProjectLeader">담당진행자</label> <input type="text"
-							id="inputProjectLeader" class="form-control"
-							placeholder="담당진행자를 입력하세요.">
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
-						data-dismiss="modal">닫기</button>
-					<button type="button" class="btn btn-primary"
-						data-target="#notice-modify"
-						style="background-color: #17a2b8; border-color: #17a2b8;">추가</button>
-				</div>
+				</form>
 			</div>
 		</div>
 	</div>
-</form>
-<!-- plan-modify Modal -->
-<form action="" method="post">
-	<div class="modal fade cd-example-modal-lg" id="plan-modify"
-		tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-		aria-hidden="true" data-backdrop="static" style="overflow-y: auto;">
-		<div class="modal-dialog modal-dialog-centered modal-lg"
-			role="document">
-			<div class="modal-content card card-outline card-info">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLongTitle">일정수정하기</h5>
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<label for="inputName">일정</label> <input type="text"
-							id="inputName" class="form-control" placeholder="일정을 입력하세요."
-							value="보육원 봉사">
-					</div>
-					<!-- <div class="form-group">
-                        <label for="inputDescription">일정 내용</label>
-                        <textarea id="inputDescription" class="form-control" rows="4"></textarea>
-                    </div> -->
-					<div class="form-group">
-						<div class="mb-3">
-							<label for="inputDescription">일정 내용</label>
-							<textarea id="inputDescription" class="textarea"
-								style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">희망보육원에서 오전 11시부터 오후 4시까지 봉사활동을 할 예정입니다.
-                            <br>
-                            많은 참석 부탁드립니다.</textarea>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputStatus">상태</label> <select
-							class="form-control custom-select">
-							<option selected disabled>선택하세요.</option>
-							<option selected>예정</option>
-							<option>완료</option>
-							<option>취소</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<label for="inputClientCompany">장소</label> <input type="text"
-							id="inputClientCompany" class="form-control"
-							placeholder="장소를 입력하세요." value="희망보육원">
-					</div>
-					<div class="form-group">
-						<label for="inputProjectLeader">담당진행자</label> <input type="text"
-							id="inputProjectLeader" class="form-control"
-							placeholder="담당진행자를 입력하세요." value="봉동회장">
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
-						data-dismiss="modal">닫기</button>
-					<button type="button" class="btn btn-primary"
-						data-target="#notice-modify"
-						style="background-color: #17a2b8; border-color: #17a2b8;">추가</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</form>
+
 
 <!-- notice Modal -->
 <div class="modal fade cd-example-modal-lg" id="notice" tabindex="-1"

@@ -2,6 +2,7 @@ package com.kh.workground.club.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,11 +44,84 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 //		logger.info("club={}", club);
 		
 		List<ClubPlan> clubPlanList = clubService2.selectClubPlanList(clubNo);
-		logger.debug("clubPlanList={}", clubPlanList);
+//		logger.debug("clubPlanList={}", clubPlanList);
 		
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
 		mav.setViewName("/club/clubView");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/clubIntroduceUpdate.do")
+	public ModelAndView clubIntroduceUpdate(ModelAndView mav, 
+											Club club) {
+//		logger.debug("club={}", club);
+		
+		int result = clubService2.clubIntroduceUpdate(club);
+		
+		mav.addObject("msg", result>0?"동호회 소개를 성공적으로 수정하였습니다.":"동호회 소개를 수정하지 못했습니다.");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+club.getClubNo());
+		mav.setViewName("common/msg");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/clubPlanUpdate.do")
+	public ModelAndView clubPlanUpdate(ModelAndView mav, 
+									   ClubPlan clubPlan, 
+									   @RequestParam("clubPlanDate") String clubPlanDate) {
+//		logger.debug("clubPlan={}", clubPlan);
+//		logger.debug("clubPlanDate={}", clubPlanDate);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date utilDate = new Date();
+		try {
+			utilDate = sdf.parse(clubPlanDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		java.sql.Date clubPlanStart = new java.sql.Date(utilDate.getTime());
+//		logger.debug("clubPlanStart={}", clubPlanStart);
+		
+		clubPlan.setClubPlanStart(clubPlanStart);
+//		logger.debug("clubPlan={}", clubPlan);
+		
+		int result = clubService2.updateClubPlan(clubPlan);
+		
+		mav.addObject("msg", result>0?"일정 수정을 성공적으로 완료하였습니다.":"일정 수정을 하지 못했습니다.");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubPlan.getClubNo());
+		mav.setViewName("common/msg");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/clubPlanInsert.do")
+	public ModelAndView clubPlanInsert(ModelAndView mav, 
+									   ClubPlan clubPlan, 
+									   @RequestParam("clubPlanDate") String clubPlanDate) {
+		logger.debug("clubPlan={}", clubPlan);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date utilDate = new Date();
+		try {
+			utilDate = sdf.parse(clubPlanDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		java.sql.Date clubPlanStart = new java.sql.Date(utilDate.getTime());
+//		logger.debug("clubPlanStart={}", clubPlanStart);
+		
+		clubPlan.setClubPlanStart(clubPlanStart);
+//		logger.debug("clubPlan={}", clubPlan);
+		
+		int result = clubService2.clubPlanInsert(clubPlan);
+		
+		mav.addObject("msg", result>0?"일정을 성공적으로 추가하였습니다.":"일정을 추가하지 못했습니다.");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubPlan.getClubNo());
+		mav.setViewName("common/msg");
 		
 		return mav;
 	}

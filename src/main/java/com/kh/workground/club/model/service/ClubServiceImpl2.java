@@ -31,6 +31,21 @@ public class ClubServiceImpl2 implements ClubService2 {
 		return clubDAO2.selectClubPlanList(clubNo);
 	}
 
+	@Override
+	public int updateClubPlan(ClubPlan clubPlan) {
+		return clubDAO2.updateClubPlan(clubPlan);
+	}
+
+	@Override
+	public int clubIntroduceUpdate(Club club) {
+		return clubDAO2.clubIntroduceUpdate(club);
+	}
+
+	@Override
+	public int clubPlanInsert(ClubPlan clubPlan) {
+		return clubDAO2.clubPlanInsert(clubPlan);
+	}
+
 
 
 }

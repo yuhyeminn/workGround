@@ -25,4 +25,34 @@
 		where club_no = #{clubNo} 
 		order by club_plan_start, club_plan_no asc
 	</select>
+	
+	<update id="updateClubPlan">
+		update club_plan 
+		set club_plan_title = #{clubPlanTitle}, 
+			club_plan_content = #{clubPlanContent}, 
+			club_plan_start = #{clubPlanStart}, 
+			club_plan_state = #{clubPlanState}, 
+			club_plan_place = #{clubPlanPlace}, 
+			club_plan_manager = #{clubPlanManager}
+		where club_plan_no = #{clubPlanNo}
+	</update>
+	
+	<update id="clubIntroduceUpdate">
+		update club 
+		set club_Name = #{clubName}, 
+			club_Introduce = #{clubIntroduce}
+		where club_no = #{clubNo}
+	</update>
+	
+	<insert id="clubPlanInsert">
+		insert into club_plan 
+		values(seq_club_plan_no.nextval, 
+			   #{clubPlanTitle}, 
+			   #{clubPlanContent}, 
+			   #{clubPlanStart}, 
+			   #{clubPlanState}, 
+			   #{clubPlanPlace}, 
+			   #{clubPlanManager}, 
+			   #{clubNo})
+	</insert>
 </mapper>

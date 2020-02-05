@@ -25,7 +25,6 @@ public class ClubPlan implements Serializable {
 	private String clubPlanTitle;
 	private String clubPlanContent;
 	private Date clubPlanStart;
-	private Date clubPlanEnd;
 	private String clubPlanState;
 	private String clubPlanPlace;
 	private String clubPlanManager;

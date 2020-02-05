@@ -14,4 +14,10 @@ public interface ClubDAO2 {
 
 	List<ClubPlan> selectClubPlanList(int clubNo);
 
+	int updateClubPlan(ClubPlan clubPlan);
+
+	int clubIntroduceUpdate(Club club);
+
+	int clubPlanInsert(ClubPlan clubPlan);
+
 }
