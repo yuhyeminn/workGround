@@ -194,9 +194,18 @@ public class MemberController {
 			mav.setViewName("common/msg");
 		}
 		else {
-			mav.addObject("idValid", idValid);
-			mav.addObject("member", member);
-			mav.setViewName("member/memberRegister");		
+			if(member.getPassword() != null) {
+				String msg = "이미 존재하는 회원입니다.";
+				String loc = "/member/memberRegister.do";
+				mav.addObject("msg", msg);
+				mav.addObject("loc", loc);
+				mav.setViewName("common/msg");
+			}
+			else {
+				mav.addObject("idValid", idValid);
+				mav.addObject("member", member);
+				mav.setViewName("member/memberRegister");						
+			}
 		}
 		
 		return mav;
