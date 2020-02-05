@@ -10,4 +10,6 @@ public interface ClubDAO {
 
 	int insertNewClub(Club club);
 
+	int deleteClub(int clubNo);
+
 }

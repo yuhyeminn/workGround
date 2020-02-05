@@ -192,7 +192,7 @@ function sidebarActive(){
 								<div class="card-tools text-right">
 
 									<button type="button" class="btn btn-tool"
-										data-card-widget="remove">
+										data-card-widget="remove" onclick="location.href = '${pageContext.request.contextPath}/club/deleteClub.do?clubNo=${club.clubNo }'">
 										<i class="fas fa-times"></i>
 									</button>
 								</div>
