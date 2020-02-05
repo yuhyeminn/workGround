@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.service.ClubService;
 import com.kh.workground.club.model.vo.Club;
 
@@ -44,17 +45,20 @@ public class ClubController {
 									  @RequestParam(value="meetingCycle") String meetingCycle,
 									  @RequestParam(value="meetingDate") String[] meetingDate){
 		
+		
 		//logger.info("club={}",club);
 		//logger.info("mettingCycle={}",meetingCycle);
 		String meetingDateStr = String.join(",", meetingDate);
 		String clubMeetingDate = meetingCycle+" ,"+meetingDateStr;
 		//logger.info(clubMeetingDate);
 		club.setClubMeetingDate(clubMeetingDate);
-		
+			
 		int result = clubService.insertNewClub(club);
-		
+			
 		//logger.info("result={}",result);
-		
+		mav.addObject("msg",result>0?"동호회 개설 성공!":"동호회 개설 실패");
+		mav.addObject("loc","/club/clubList.do");
+		mav.setViewName("common/msg");
 		
 		return mav;
 		

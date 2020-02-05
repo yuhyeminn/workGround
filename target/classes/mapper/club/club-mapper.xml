@@ -11,7 +11,7 @@
 	
 	<insert id="insertNewClub">
 		insert into club
-		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingDate},#{clubCategory},null)
+		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingDate},#{clubCategory},#{clubManagerId})
 	
 	</insert>
 
@@ -20,13 +20,4 @@
 		where club_no = #{clubNo}
 	</select>
 	
-	<insert id="insertClubPhoto">
-		insert into club_photo 
-		values(seq_club_photo_no.nextval, 
-			   #{clubPhotoTitle}, 
-			   #{clubPhotoOriginal}, 
-			   #{clubPhotoRenamed}, 
-			   #{clubNo}, 
-			   default)
-	</insert>
 </mapper>

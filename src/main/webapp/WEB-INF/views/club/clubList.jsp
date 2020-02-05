@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
@@ -413,6 +414,10 @@ function sidebarActive(){
 						  action="${pageContext.request.contextPath}/club/insertNewClub.do" 
 						  method="post"
 						  enctype="multipart/form-data">
+						
+						<!-- 아이디값 히든으로 넘겨주기  -->
+						<input type="hidden" name="clubManagerId" value="${memberLoggedIn.memberId}" />
+						
 						<div class="form-group">
 							<label>이름</label> <input type="text" name="clubName" class="form-control" required>
 						</div>
