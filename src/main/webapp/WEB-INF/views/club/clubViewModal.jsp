@@ -110,73 +110,7 @@
 </div>
 
 
-<!-- planView Modal -->
-<c:if test="">
-	<div class="modal fade cd-example-modal-lg" id="'planView'+${clubPlan.clubNo }" tabindex="-1"
-		role="dialog" aria-labelledby="exampleModalCenterTitle"
-		aria-hidden="true" data-backdrop="static">
-		<div class="modal-dialog modal-dialog-centered modal-lg"
-			role="document">
-			<div class="modal-content card card-outline card-info">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLongTitle">일정확인하기</h5>
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<label for="inputName">일정</label>
-						<p style="margin-left: 10px;">${clubPlan.clubPlanTitle }</p>
-					</div>
-					<div class="form-group">
-						<div class="mb-3">
-							<label for="inputDescription">일정 내용</label>
-							<div style="margin-left: 10px;">
-								${clubPlan.clubPlanContent }
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="inputStatus">상태</label> <span
-							class="btn btn-block btn-sm bg-success"
-							style="margin-left: 10px; width: 70px;">${clubPlan.clubPlanState }</span>
-					</div>
-					<div class="form-group">
-						<label for="inputClientCompany">장소</label>
-						<p style="margin-left: 10px;">${clubPlan.clubPlanPlace }</p>
-					</div>
-					<div class="form-group">
-						<label for="inputProjectLeader">담당진행자</label>
-						<p style="margin-left: 10px;">${clubPlan.clubPlanManager }</p>
-					</div>
-					<div class="form-group">
-						<label for="inputProjectLeader">참석자</label>
-						<p>
-							<!-- 프로필 사진 -->
-							<img
-								src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-								alt="User Avatar" class="img-circle img-profile"
-								style="width: 50px; margin-left: 10px;">
-						</p>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
-						data-dismiss="modal">닫기</button>
-					<button type="button" class="btn btn-primary"
-						data-target="#plan-modify" data-dismiss="modal"
-						data-toggle="modal"
-						style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
-					<button type="button" class="btn btn-info float-right">
-						<i class="fas fa-plus"></i>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</c:if>
+
 	
 <!-- insertPlan Modal -->
 <form action="" method="post">

@@ -22,6 +22,7 @@
 	
 	<select id="selectClubPlanList" resultType="clubPlan">
 		select * from club_plan 
-		where club_no = #{clubNo}
+		where club_no = #{clubNo} 
+		order by club_plan_start, club_plan_no asc
 	</select>
 </mapper>
