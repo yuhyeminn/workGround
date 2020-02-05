@@ -23,4 +23,9 @@ public class ClubDAOImpl implements ClubDAO {
 	public int insertNewClub(Club club) {
 		return sqlSession.insert("club.insertNewClub",club);
 	}
+
+	@Override
+	public int deleteClub(int clubNo) {
+		return sqlSession.insert("club.deleteClub",clubNo);
+	}
 }

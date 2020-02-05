@@ -10,6 +10,8 @@ public interface ClubService {
 
 	int insertNewClub(Club club);
 
+	int deleteClub(int clubNo);
+
 
 
 
