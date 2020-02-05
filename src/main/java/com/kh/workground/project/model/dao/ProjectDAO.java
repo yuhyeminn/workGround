@@ -13,4 +13,8 @@ public interface ProjectDAO {
 
 	List<Project> selectListByImportant(String memberId);
 
+	Project selectMyProject(String memberId);
+
+	List<Member> selectMemberListByDept(String deptCode);
+
 }
