@@ -23,4 +23,9 @@ public class ClubServiceImpl implements ClubService {
 	public int insertNewClub(Club club) {
 		return clubDAO.insertNewClub(club);
 	}
+
+	@Override
+	public int deleteClub(int clubNo) {
+		return clubDAO.deleteClub(clubNo);
+	}
 }
