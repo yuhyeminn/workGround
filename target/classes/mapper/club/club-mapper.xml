@@ -11,7 +11,7 @@
 	
 	<insert id="insertNewClub">
 		insert into club
-		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingDate},#{clubCategory},#{clubManagerId})
+		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingCycle},#{clubMeetingDate},#{clubCategory},#{clubManagerId})
 	
 	</insert>
 
@@ -25,4 +25,10 @@
 		where club_no = #{clubNo} 
 		order by club_plan_start, club_plan_no asc
 	</select>
+	
+	<delete id="deleteClub">
+		delete from club
+		where club_no = #{clubNo}
+	
+	</delete>
 </mapper>
