@@ -18,4 +18,9 @@ public class ClubServiceImpl implements ClubService {
 	public List<Club> selectAllClubList() {
 		return clubDAO.selectAllClubList();
 	}
+
+	@Override
+	public int insertNewClub(Club club) {
+		return clubDAO.insertNewClub(club);
+	}
 }

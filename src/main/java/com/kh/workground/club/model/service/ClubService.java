@@ -8,6 +8,8 @@ public interface ClubService {
 
 	List<Club> selectAllClubList();
 
+	int insertNewClub(Club club);
+
 
 
 

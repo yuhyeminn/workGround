@@ -404,59 +404,60 @@ function sidebarActive(){
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
+				
 			</div>
 			<div class="modal-body">
 				<div>
 					<!-- form start -->
-					<form role="form" id="new-club-form">
+					<form role="form" id="new-club-form" 
+						  action="${pageContext.request.contextPath}/club/insertNewClub.do" 
+						  method="post"
+						  enctype="multipart/form-data">
 						<div class="form-group">
-							<label>이름</label> <input type="text" class="form-control">
+							<label>이름</label> <input type="text" name="clubName" class="form-control" required>
 						</div>
 						<!--  /.form-group -->
 						<div class="form-group">
 							<label>소개</label>
-							<textarea class="form-control" rows="7" placeholder="소개글을 작성해주세요"></textarea>
+							<textarea class="form-control" name="clubIntroduce" rows="7" placeholder="소개글을 작성해주세요" required></textarea>
 						</div>
 						<!--  /.form-group -->
 
-						<div class="form-group" id="meeting-cycle">
-							<label>모임주기</label> <select class="form-control">
+						<div class="form-group">
+							<label>모임주기</label> <select class="form-control" name="meetingCycle">
 								<option>매주</option>
 								<option>격주</option>
-								<option>매달</option>
-								<option>3개월</option>
 							</select>
 						</div>
-
 						<label for="check-week">모임 요일</label>
 						<div id="check-week" class="input-group">
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="mon">
-								<label class="form-check-label" for="mon">월</label>
+								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate0" value="월" checked>
+								<label class="form-check-label" for="meetingDate0">월</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="tue">
-								<label class="form-check-label" for="tue">화</label>
+								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate1" value="화">
+								<label class="form-check-label" for="meetingDate1">화</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="wed">
-								<label class="form-check-label" for="wed">수</label>
+								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate2" value="수">
+								<label class="form-check-label" for="meetingDate2">수</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="thu">
-								<label class="form-check-label" for="thu">목</label>
+								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate3" value="목">
+								<label class="form-check-label" for="meetingDate3">목</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="fri">
-								<label class="form-check-label" for="fri">금</label>
+								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate4" value="금">
+								<label class="form-check-label" for="meetingDate4">금</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="sat">
-								<label class="form-check-label" for="sat">토</label>
+								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate5" value="토">
+								<label class="form-check-label" for="meetingDate5">토</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="sun">
-								<label class="form-check-label" for="sun">일</label>
+								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate6" value="일">
+								<label class="form-check-label" for="meetingDate6">일</label>
 							</div>
 						</div>
 						<!-- /.input-group -->
@@ -464,34 +465,34 @@ function sidebarActive(){
 						<label for="radio-category">카테고리</label>
 						<div id="radio-category" class="input-group">
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radio1"
-									checked> <label class="form-check-label" for="mon">사회</label>
+								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory0" value="사회"
+									checked> <label class="form-check-label" for="clubCategory0">사회</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radio1">
-								<label class="form-check-label" for="mon">취미</label>
+								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory1" value="취미">
+								<label class="form-check-label" for="clubCategory1">취미</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radio1">
-								<label class="form-check-label" for="mon">음식</label>
+								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory2" value="음식">
+								<label class="form-check-label" for="clubCategory2">음식</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radio1">
-								<label class="form-check-label" for="mon">운동</label>
+								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory3" value="운동">
+								<label class="form-check-label" for="clubCategory3">운동</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radio1">
-								<label class="form-check-label" for="mon">문학</label>
+								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory4" value="문학">
+								<label class="form-check-label" for="clubCategory4">문학</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="radio1">
-								<label class="form-check-label" for="mon">기타</label>
+								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory5" value="기타">
+								<label class="form-check-label" for="clubCategory5">기타</label>
 							</div>
 
 						</div>
 
 						<div id="btn-sub">
-							<button type="submit" id="join-btn" class="btn btn-primary">가입하기</button>
+							<button type="submit" id="join-btn" class="btn btn-primary">생성하기</button>
 						</div>
 					</form>
 					<!-- form end -->

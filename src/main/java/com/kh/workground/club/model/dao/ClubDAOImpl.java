@@ -18,4 +18,9 @@ public class ClubDAOImpl implements ClubDAO {
 	public List<Club> selectAllClubList() {
 		return sqlSession.selectList("club.selectAllClubList");
 	}
+
+	@Override
+	public int insertNewClub(Club club) {
+		return sqlSession.insert("club.insertNewClub",club);
+	}
 }

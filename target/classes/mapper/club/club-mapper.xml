@@ -8,6 +8,12 @@
 		select * from club
 		order by club_enroll_date desc
 	</select>
+	
+	<insert id="insertNewClub">
+		insert into club
+		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingDate},#{clubCategory},null)
+	
+	</insert>
 
 	<select id="selectClub" resultType="club">
 		select * from club 
