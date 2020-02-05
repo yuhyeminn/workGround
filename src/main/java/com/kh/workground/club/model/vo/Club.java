@@ -28,6 +28,7 @@ public class Club implements Serializable {
 	private String clubIntroduce;
 	private String clubMeetingDate;
 	private String clubCategory;
+	private String clubManagerId;
 	
 	
 }

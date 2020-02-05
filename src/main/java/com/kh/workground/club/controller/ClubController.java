@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,12 +30,34 @@ public class ClubController {
 	public ModelAndView clubList(ModelAndView mav) {
 		
 		List<Club> clubList = clubService.selectAllClubList();
-		logger.info("clubList{}",clubList);
+		//logger.info("clubList{}",clubList);
 		
 		mav.addObject("clubList",clubList);
 		mav.setViewName("/club/clubList");
 		
 		return mav;
+	}
+	
+	@PostMapping("/club/insertNewClub.do")
+	public ModelAndView insertNewClub(ModelAndView mav,
+									  Club club,
+									  @RequestParam(value="meetingCycle") String meetingCycle,
+									  @RequestParam(value="meetingDate") String[] meetingDate){
+		
+		//logger.info("club={}",club);
+		//logger.info("mettingCycle={}",meetingCycle);
+		String meetingDateStr = String.join(",", meetingDate);
+		String clubMeetingDate = meetingCycle+" ,"+meetingDateStr;
+		//logger.info(clubMeetingDate);
+		club.setClubMeetingDate(clubMeetingDate);
+		
+		int result = clubService.insertNewClub(club);
+		
+		//logger.info("result={}",result);
+		
+		
+		return mav;
+		
 	}
 
 }

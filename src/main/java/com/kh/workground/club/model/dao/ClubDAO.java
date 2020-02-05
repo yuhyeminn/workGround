@@ -8,4 +8,6 @@ public interface ClubDAO {
 
 	List<Club> selectAllClubList();
 
+	int insertNewClub(Club club);
+
 }
