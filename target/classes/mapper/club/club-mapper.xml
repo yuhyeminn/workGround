@@ -20,4 +20,8 @@
 		where club_no = #{clubNo}
 	</select>
 	
+	<select id="selectClubPlanList" resultType="clubPlan">
+		select * from club_plan 
+		where club_no = #{clubNo}
+	</select>
 </mapper>

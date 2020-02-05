@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.workground.club.model.service.ClubService2;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubPhoto;
+import com.kh.workground.club.model.vo.ClubPlan;
 
 @Controller
 public class ClubController2 {
@@ -34,12 +36,16 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	public ModelAndView clubView(ModelAndView mav,
 								 @RequestParam("clubNo") int clubNo) {
 		
-		logger.info("clubNo={}",clubNo);
+//		logger.info("clubNo={}",clubNo);
 		
 		Club club = clubService2.selectClub(clubNo);
-		logger.info("club={}", club);
+//		logger.info("club={}", club);
+		
+		List<ClubPlan> clubPlanList = clubService2.selectClubPlanList(clubNo);
+		logger.debug("clubPlanList={}", clubPlanList);
 		
 		mav.addObject("club", club);
+		mav.addObject("clubPlanList", clubPlanList);
 		mav.setViewName("/club/clubView");
 		
 		return mav;

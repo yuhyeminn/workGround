@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubPhoto;
+import com.kh.workground.club.model.vo.ClubPlan;
 
 @Repository
 public class ClubDAOImpl2 implements ClubDAO2 {
@@ -23,6 +24,11 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 	@Override
 	public Club selectClub(int clubNo) {
 		return sqlSession.selectOne("club.selectClub", clubNo);
+	}
+
+	@Override
+	public List<ClubPlan> selectClubPlanList(int clubNo) {
+		return sqlSession.selectList("club.selectClubPlanList", clubNo);
 	}
 
 

@@ -380,21 +380,25 @@ function validate() {
                 </div><!-- /.card-header -->
                 <div class="row card-content">
                     <!-- 일정 -->
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="card mywork" data-toggle="modal" data-target="#planView">
-                            <div class="card-body">
-                                <!-- 타이틀 -->
-                                <div class="card-title text-center">
-                                    <h5>보육원 봉사</h5>
-                                </div>
-                                <!-- 날짜정보 -->
-                                <div class="card-status">
-                                    <span class="btn btn-block btn-sm bg-success">예정</span>
-                                    <span class="end-date"><i class="far fa-calendar-alt"></i> 2월 8일</span>
-                                </div>
-                            </div>
-                        </div><!-- /.card -->
-                    </div>
+                    <c:if test="${not empty clubPlanList }">
+					<c:forEach items="${clubPlanList }" var="clubPlan" varStatus="vs">
+	                    <div class="col-12 col-sm-6 col-md-3">
+	                        <div class="card mywork" data-toggle="modal" data-target="'#planView'+${clubPlan.clubNo }">
+	                            <div class="card-body">
+	                                <!-- 타이틀 -->
+	                                <div class="card-title text-center">
+	                                    <h5>${clubPlan.clubPlanTitle }</h5>
+	                                </div>
+	                                <!-- 날짜정보 -->
+	                                <div class="card-status">
+	                                    <span class="btn btn-block btn-sm bg-success">${clubPlan.clubPlanState }</span>
+	                                    <span class="end-date"><i class="far fa-calendar-alt"></i> ${clubPlan.clubPlanStart }</span>
+	                                </div>
+	                            </div>
+	                        </div><!-- /.card -->
+	                    </div>
+                    </c:forEach>
+					</c:if>
 
                     <!-- 일정 추가 -->
                     <div class="col-12 col-sm-6 col-md-3">
