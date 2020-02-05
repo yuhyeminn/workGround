@@ -12,6 +12,10 @@
 $(function(){
 	sidebarActive(); //사이드바 활성화
 	addMember(); //프로젝트 팀원 추가
+	$("#addMember").change(function(){
+		var obj = $this.ej2_instances[0]; 
+        console.log(obj.val());
+	})
 });
 
 //사이드바 활성화
@@ -47,15 +51,14 @@ function addMember(){
       itemTemplate: '<div><img class="empImage img-circle img-sm-profile" src="${pageContext.request.contextPath}/resources/img/profile.jfif" width="35px" height="35px"/>' +
       '<div class="ename"> 이단비 </div><div class="job"> 개발팀 </div></div>',
       valueTemplate: '<div style="width:100%;height:100%;">' +
-          '<img class="value" src="${pageContext.request.contextPath}/resources/img/${profile}" height="26px" width="26px"/>' +
-          '<div class="name"> ${name}</div></div>',
+          '<img class="value" src="${pageContext.request.contextPath}/resources/img/profile.jfif" height="26px" width="26px"/>' +
+          '<div class="name">이단비</div></div>',
       placeholder: 'Select Project member',
       mode: 'Box',
-      hideSelectedItem:false,
-      allowCustomValue:true
-      
-  });
+      value:['1','2']
+  })
   listObj.appendTo('#addMember');
+  console.log(document.getElementById("addMember").items)
 }
 </script>
 
