@@ -21,4 +21,13 @@ public class ProjectController2 {
 	@Autowired
 	ProjectService projectService;
 	
+	@RequestMapping("/project/addProject.do")
+	public ModelAndView addProject(@RequestParam String projectTitle, @RequestParam(value="projectDesc", required=false) String projectDesc, HttpServletRequest request
+			,ModelAndView mav) {
+		logger.debug("projectTitle={}",projectTitle);
+		logger.debug("projectDesc={}",projectDesc);
+		String[] projectMember = request.getParameterValues("projectMember");
+		logger.debug("projectMember={}",projectMember);
+		return mav;
+	}
 }

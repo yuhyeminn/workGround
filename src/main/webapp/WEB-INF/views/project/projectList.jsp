@@ -44,13 +44,16 @@ function addMember(){
   var listObj = new ej.dropdowns.MultiSelect({
       dataSource: empData,
       fields: { text: 'name', value: 'id' },
-      itemTemplate: '<div><img class="empImage img-circle img-sm-profile" src="${pageContext.request.contextPath}/resources/img/${profile}" width="35px" height="35px"/>' +
-      '<div class="ename"> ${name} </div><div class="job"> ${dept} </div></div>',
+      itemTemplate: '<div><img class="empImage img-circle img-sm-profile" src="${pageContext.request.contextPath}/resources/img/profile.jfif" width="35px" height="35px"/>' +
+      '<div class="ename"> 이단비 </div><div class="job"> 개발팀 </div></div>',
       valueTemplate: '<div style="width:100%;height:100%;">' +
           '<img class="value" src="${pageContext.request.contextPath}/resources/img/${profile}" height="26px" width="26px"/>' +
           '<div class="name"> ${name}</div></div>',
       placeholder: 'Select Project member',
-      mode: 'Box'
+      mode: 'Box',
+      hideSelectedItem:false,
+      allowCustomValue:true
+      
   });
   listObj.appendTo('#addMember');
 }
