@@ -35,25 +35,5 @@ public class ClubController {
 		
 		return mav;
 	}
-	
-	@RequestMapping("/club/clubView.do")
-	public ModelAndView clubView(ModelAndView mav,
-								 @RequestParam("clubNo") int clubNo) {
-		
-		logger.info("clubNo{}",clubNo);
-		
-		mav.setViewName("/club/clubView");
-		
-		return mav;
-	}
-	
-	@RequestMapping("/club/clubPhotoForm.do")
-	public ModelAndView clubPhotoForm(ModelAndView mav, 
-									  Club club, 
-									  @RequestParam(value="upFile", required=false) MultipartFile upFile, 
-									  HttpServletRequest request) {
-		
-		
-		return mav;
-	}
+
 }
