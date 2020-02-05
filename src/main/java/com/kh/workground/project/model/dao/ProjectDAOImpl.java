@@ -30,4 +30,14 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.selectList("project.selectListByImportant", memberId);
 	}
 
+	@Override
+	public Project selectMyProject(String memberId) {
+		return sqlSession.selectOne("project.selectMyProject", memberId);
+	}
+
+	@Override
+	public List<Member> selectMemberListByDept(String deptCode) {
+		return sqlSession.selectList("project.selectMemberListByDept", deptCode);
+	}
+
 }

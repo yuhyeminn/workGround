@@ -12,4 +12,5 @@ public interface ProjectService {
 
 	Map<String, List<Project>> selectProjectListAll(Member memberLoggedIn);
 
+	List<Member> selectMemberListByDept(String deptCode);
 }
