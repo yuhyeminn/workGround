@@ -39,7 +39,7 @@ function sidebarActive(){
 function addMember(){
 	var empData = [
 		<c:forEach items="${memberListByDept}" var="m" varStatus="vs">
-	  	{id: '${m.memberId}', name:'${m.memberName}', dept: '${m.deptTitle}', profile: 'profile.jfif'}${vs.last?"":","}
+	  		{id: '${m.memberId}', name:'${m.memberName}', dept: '${m.deptTitle}', profile: 'profile.jfif'}${vs.last?"":","}
         </c:forEach>
   ] 
   // initialize MultiSelect component

@@ -88,7 +88,7 @@ public class ProjectController {
 	@RequestMapping("/project/projectAttachment.do")
 	public ModelAndView projectAttachment(ModelAndView mav) {
 		
-		mav.setViewName("/project/projectAttachment");
+		mav.setViewName("/project/projectAttachmentAjax");
 		
 		return mav;
 	}

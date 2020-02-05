@@ -163,29 +163,29 @@ function goTabMenu(){
 		location.href = "${pageContext.request.contextPath}/project/projectAnalysis.do";	
 	});
 	
-	btnAttach.addEventListener('click', e=>{
+	/* btnAttach.addEventListener('click', e=>{
 		location.href = "${pageContext.request.contextPath}/project/projectAttachment.do";	
-	});
+	}); */
 	
 	
 	//파일 탭
-	/* btnAttach.addEventListener('click', e=>{
+	btnAttach.addEventListener('click', e=>{
 		$.ajax({
-			url: "${pageContext.request.contextPath}/project/projectAttachment",
+			url: "${pageContext.request.contextPath}/project/projectAttachment.do",
 			type: "get",
 			dataType: "html",
 			success: data => {
 				console.log(data);
 				
 				$(contentWrapper).html("");
-				$(contentWrapper).html(data);
+				$(contentWrapper).html(data); 
 				
 			},
 			error: (x,s,e) => {
 				console.log(x,s,e);
 			}
 		});
-	}); */
+	}); 
 }
 
 function setting(){
