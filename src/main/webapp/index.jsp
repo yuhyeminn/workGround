@@ -57,7 +57,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" name="password" placeholder="비밀번호" required>
+          <input type="password" class="form-control" name="password" placeholder="비밀번호">
           <div class="input-group-append">
             <div class="input-group-text" style="background: white;">
               <span class="fas fa-lock"></span>
@@ -89,7 +89,17 @@
     <!-- /.login-card-body -->
     <div class="col-sm-6" style="display: inline-block; float: right; padding: 40px; background: rgb(220, 234, 247); box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2); height: 23rem;">
       <h2 style="font-weight:700; font-size:3rem; color: #2d235f;">WorkGround</h2>
-      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quam autem quo magni et reiciendis, nam, alias impedit corporis, molestiae omnis tempore iure dolor ea ullam fugit facere vel repellat! Earum!</p>
+      <p>
+		비밀번호 없이 바로 사번 복사해서 로그인하세요~<br>
+		이미 로그인 한 후에 로그인 페이지로 가는거 막게하는건 아직 못했어요<br>
+		admin 관리자<br>
+		kh2020122 이단비(팀장)<br>
+		kh2020123 유혜민<br>
+		kh2020124 주보라<br>
+		kh2020125 이소현<br>
+		kh2020126 김효정<br>
+		kh2020127 이주현
+		</p>
       <p class="mb-0">아직 계정이 없으신가요?&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/member/memberRegister.do" class="text-center">가입하기</a></p>
     </div>
   </div>

@@ -1,3 +1,4 @@
+
 package com.kh.workground.member.controller;
 
 import java.util.Arrays;
@@ -48,7 +49,7 @@ public class MemberController {
 		return mav;
 	}
 
-	@PostMapping("/member/memberLogin.do")
+	/*@PostMapping("/member/memberLogin.do")
 	public ModelAndView memberLogin(@RequestParam String memberId, @RequestParam String password, ModelAndView mav,
 			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -106,6 +107,41 @@ public class MemberController {
 		}
 
 		return mav;
+	}*/
+	@PostMapping("/member/memberLogin.do")
+	public ModelAndView memberLogin(@RequestParam String memberId, ModelAndView mav,
+			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			// 1. 업무로직
+			Member m = memberSerivce.selectOneMember(memberId);
+			logger.debug("m@controller={}", m);
+
+			String msg = "";
+			String loc = "/";
+			String viewName = "common/msg";
+
+			// 로그인
+			if (m == null) {
+				msg = "존재하지 않는 아이디 입니다.";
+			} else {
+				//로그인 한 경우
+				mav.addObject("memberLoggedIn", m);
+				viewName="notice/noticeList";
+			}
+
+			// 2. view모델 처리
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+
+			// viewName 지정
+			mav.setViewName(viewName);
+
+		} catch (Exception e) {
+			logger.error("로그인 오류", e);
+			throw new MemberException("회원 관리 오류!", e);
+		}
+
+		return mav;
 	}
 	
 	@RequestMapping("/member/memberLogOut.do")
@@ -119,4 +155,61 @@ public class MemberController {
 		return "redirect:/"; // /spring 으로 리다이렉트
 	}
 	
+	@PostMapping("/member/memberRegisterEnd.do")
+	public String memberRegisterEnd(Member member, Model model) {
+		String rawPassword = member.getPassword();
+		String encryptedPassword = bcryptPasswordEncoder.encode(rawPassword);
+		
+		//logger.debug("rawPassword={}", rawPassword);
+		//logger.debug("encryptPassword={}", encryptedPassword);
+		
+		//비밀번호 암호화 처리
+		member.setPassword(encryptedPassword);
+		logger.debug("member={}", member);
+		
+		int result = memberSerivce.updateRegister(member);
+		
+		String loc = "/";
+		String msg ="";
+		if(result>0) msg="환영합니다 :) "+member.getMemberName()+"님, WORKGROUND의 회원이 되셨습니다.";
+		else msg="회원가입에 실패하셨습니다. 깔깔깔";
+		
+		model.addAttribute("loc", loc);
+		model.addAttribute("msg", msg);
+		
+		return  "common/msg";
+	}
+	@RequestMapping("/member/checkIdExistence.do")
+	public ModelAndView checkIdExistence(@RequestParam("memberId") String memberId,
+										 ModelAndView mav) {
+		
+		//logger.debug("memberId={}", memberId);
+		Member member = memberSerivce.selectOneMember(memberId);
+		int idValid = 1;
+		if(member == null) {
+			String msg = "존재하지 않는 회원입니다.";
+			String loc = "/member/memberRegister.do";
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+			mav.setViewName("common/msg");
+		}
+		else {
+			if(member.getPassword() != null) {
+				String msg = "이미 존재하는 회원입니다.";
+				String loc = "/member/memberRegister.do";
+				mav.addObject("msg", msg);
+				mav.addObject("loc", loc);
+				mav.setViewName("common/msg");
+			}
+			else {
+				mav.addObject("idValid", idValid);
+				mav.addObject("member", member);
+				mav.setViewName("member/memberRegister");						
+			}
+		}
+		
+		return mav;
+	}
+	
 }
+
