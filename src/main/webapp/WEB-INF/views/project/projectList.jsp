@@ -1,5 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.util.*, com.kh.workground.project.model.vo.*, com.kh.workground.member.model.vo.* " %>
+<%
+	Map<String, List<Project>> map = (Map<String, List<Project>>)request.getAttribute("map");
+	//List<Member> memberListByDept = (List<Member>)request.getAttribute("memberListByDept");
+	
+	pageContext.setAttribute("listByDept", map.get("listByDept")); //부서 전체 프로젝트(최근 프로젝트)
+	pageContext.setAttribute("listByImportant", map.get("listByImportant")); //중요 표시된 프로젝트 조회
+	pageContext.setAttribute("listByInclude", map.get("listByInclude")); //내가 속한 프로젝트
+%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
@@ -29,17 +38,22 @@ function sidebarActive(){
 
 //프로젝트 팀원 추가
 function addMember(){
-  var empData = [
-          { id: '1', name:'이단비', dept: '개발팀', profile: 'profile.jfif' },
-          { id: '2', name:'유혜민', dept: '개발팀', profile: 'profile.jfif' },
-          { id: '3', name:'이소현', dept: '개발팀', profile: 'profile.jfif' },
-          { id: '4', name:'이주현', dept: '개발팀', profile: 'profile.jfif' },
-          { id: '5', name:'주보라', dept: '개발팀', profile: 'profile.jfif' },
-          { id: '6', name:'김효정', dept: '개발팀', profile: 'profile.jfif' },
-          { id: '7', name:'임하라', dept: '개발팀', profile: 'profile.jfif' },
-          { id: '8', name:'정영균', dept: '개발팀', profile: 'profile.jfif' },
-          { id: '9', name:'장예찬', dept: '개발팀', profile: 'profile.jfif' }
-  ]
+  /* var empData = [
+	  	  <c:forEach items="${memberListByDept}" var="m" varStatus="vs">
+          {id: '${m.memberId}', name:'${m.memberName}', dept: '${m.deptTitle}', profile: 'profile.jfif'},
+          </c:forEach>
+  ] */
+/*   var empData = [
+      { id: '1', name:'이단비', dept: '개발팀', profile: 'profile.jfif' },
+      { id: '2', name:'유혜민', dept: '개발팀', profile: 'profile.jfif' },
+      { id: '3', name:'이소현', dept: '개발팀', profile: 'profile.jfif' },
+      { id: '4', name:'이주현', dept: '개발팀', profile: 'profile.jfif' },
+      { id: '5', name:'주보라', dept: '개발팀', profile: 'profile.jfif' },
+      { id: '6', name:'김효정', dept: '개발팀', profile: 'profile.jfif' },
+      { id: '7', name:'임하라', dept: '개발팀', profile: 'profile.jfif' },
+      { id: '8', name:'정영균', dept: '개발팀', profile: 'profile.jfif' },
+      { id: '9', name:'장예찬', dept: '개발팀', profile: 'profile.jfif' }
+] */
   // initialize MultiSelect component
   var listObj = new ej.dropdowns.MultiSelect({
       dataSource: empData,
@@ -62,14 +76,16 @@ function addMember(){
     <ul class="navbar-nav">
         <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-            전체 프로젝트 (5) <span class="caret"></span>
+            전체 프로젝트 (${fn:length(listByDept)}) <span class="caret"></span>
         </a>
         <div class="dropdown-menu">
-            <a class="dropdown-item" tabindex="-1" href="#">전체 프로젝트 (5)</a>
+            <a class="dropdown-item" tabindex="-1" href="#">전체 프로젝트 (${fn:length(listByDept)})</a>
+            <c:foreach items="${listByDept}" var="p">
             <a class="dropdown-item" tabindex="-1" href="#">계획됨 (0) <span class="status-dot bg-warning"></span></a>
             <a class="dropdown-item" tabindex="-1" href="#">진행중 (1) <span class="status-dot bg-success"></span></a>
             <a class="dropdown-item" tabindex="-1" href="#">완료됨 (0) <span class="status-dot bg-info"></span></a>
             <a class="dropdown-item" tabindex="-1" href="#">상태없음 (4)</a>
+            </c:foreach>
         </div>
         </li>
     </ul>

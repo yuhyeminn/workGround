@@ -9,9 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.dao.ProjectDAO;
@@ -33,7 +30,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public Map<String, List<Project>> selectProjectListAll(Member memberLoggedIn) {
-		Map<String, List<Project>> map = new HashMap<>();
+		Map<String, List<Project>> map = new HashMap<>(); //조회한 프로젝트 담는 맵
 		String deptCode = memberLoggedIn.getDeptCode();
 		String memberId = memberLoggedIn.getMemberId();
 		
@@ -53,7 +50,7 @@ public class ProjectServiceImpl implements ProjectService {
 		else 
 			map.put("listByImportant", listByImportant);
 		
-		//3. 내가 속한 프로젝트(내 워크패드 포함) 조회
+		//3. 내가 속한 프로젝트(내 워크패드 포함) 조회	
 		List<Project> listByInclude = new ArrayList<>();
 		
 		//3-1. 내 워크패드 조회해서 listByInclude에 추가
@@ -83,14 +80,14 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		
 		map.put("listByInclude", listByInclude);
-				
+		
 		return map;
 	}
 
 	@Override
 	public List<Member> selectMemberListByDept(String deptCode) {
 		List<Member> list = projectDAO.selectMemberListByDept(deptCode);
-		
+		logger.debug("list={}", list);
 		if(list==null) 
 			throw new ProjectException("부서 멤버 조회 오류!");
 		
