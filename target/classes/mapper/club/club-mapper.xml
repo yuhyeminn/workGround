@@ -9,5 +9,18 @@
 		order by club_enroll_date desc
 	</select>
 
-
+	<select id="selectClub" resultType="club">
+		select * from club 
+		where club_no = #{clubNo}
+	</select>
+	
+	<insert id="insertClubPhoto">
+		insert into club_photo 
+		values(seq_club_photo_no.nextval, 
+			   #{clubPhotoTitle}, 
+			   #{clubPhotoOriginal}, 
+			   #{clubPhotoRenamed}, 
+			   #{clubNo}, 
+			   default)
+	</insert>
 </mapper>

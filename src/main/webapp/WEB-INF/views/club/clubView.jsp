@@ -361,9 +361,7 @@ function validate() {
                         <!-- /.card-header -->
                         <div class="card-body">
                             <p class="text-center">
-                                 봉사활동을 하고싶으신 분들을 위해 모이기 시작한 동호회입니다
-                                <br>
-                                 한 달에 두 번 토요일에 봉사활동을 하는 정기모임을 갖습니다.
+                                 ${club.clubIntroduce }
                             </p>
                         </div>
                         <!-- ./card-body -->

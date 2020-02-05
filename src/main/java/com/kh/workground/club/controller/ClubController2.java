@@ -1,5 +1,10 @@
 package com.kh.workground.club.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -7,12 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.club.model.service.ClubService2;
 import com.kh.workground.club.model.vo.Club;
+import com.kh.workground.club.model.vo.ClubPhoto;
 
 @Controller
 public class ClubController2 {
@@ -27,8 +34,12 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	public ModelAndView clubView(ModelAndView mav,
 								 @RequestParam("clubNo") int clubNo) {
 		
-		logger.info("clubNo{}",clubNo);
+		logger.info("clubNo={}",clubNo);
 		
+		Club club = clubService2.selectClub(clubNo);
+		logger.info("club={}", club);
+		
+		mav.addObject("club", club);
 		mav.setViewName("/club/clubView");
 		
 		return mav;
@@ -36,9 +47,45 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@RequestMapping("/club/clubPhotoForm.do")
 	public ModelAndView clubPhotoForm(ModelAndView mav, 
-									  Club club, 
+									  ClubPhoto clubPhoto, 
+									  @RequestParam int clubNo, 
 									  @RequestParam(value="upFile", required=false) MultipartFile upFile, 
 									  HttpServletRequest request) {
+		logger.debug("게시물 등록 요청!");
+		logger.debug("clubPhoto={}", clubPhoto);
+		
+		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club");
+		
+		//동적으로 directory 생성하기
+		File dir = new File(saveDirectory);
+		if(dir.exists() == false)
+			dir.mkdir();
+		
+		String clubPhotoOriginal = upFile.getOriginalFilename();
+		String ext = clubPhotoOriginal.substring(clubPhotoOriginal.lastIndexOf("."));
+		SimpleDateFormat sdf = new SimpleDateFormat();
+		int rndNum = (int)(Math.random()*1000);
+		String clubPhotoRenamed = sdf.format(new Date())+"_"+rndNum+ext;
+		
+		try {
+			upFile.transferTo(new File(saveDirectory+"/"+clubPhotoRenamed));
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		clubPhoto.setClubNo(clubNo);
+		clubPhoto.setClubPhotoOriginal(clubPhotoOriginal);
+		clubPhoto.setClubPhotoRenamed(clubPhotoRenamed);
+		
+		logger.debug("clubPhoto={}", clubPhoto);
+		
+		int result = clubService2.insertClubPhoto(clubPhoto);
+		
+		mav.addObject("msg", result>0?"사진등록 성공!":"사진등록 실패!");
+		mav.addObject("loc", "/club/clubList.do");
+		mav.setViewName("common/msg");
 		
 		
 		return mav;

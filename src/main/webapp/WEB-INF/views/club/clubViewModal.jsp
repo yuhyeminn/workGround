@@ -5,38 +5,45 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <!-- insertPhoto Modal -->
-<form name="clubPhotoFrm" action="${pageContext.request.contextPath }/club/clubPhotoForm.do" method="POST" enctype="multipart/form-data" onsubmit="return validate();">
 	<div class="modal fade cd-example-modal-lg" id="insertPhoto" tabindex="-1" role="dialog"
 	    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
 	    <div class="modal-dialog modal-dialog-centered modal-lg">
 	    <div class="modal-content card card-outline card-info">
-	        <div class="modal-header col-12">
-		        <input type="text" name="clubPhotoTitle" class="form-control" placeholder="제목을 입력하세요." required="required">
+		    <div class="modal-header">
+	        	<h5 class="modal-title" id="exampleModalLongTitle">사진추가하기</h5>
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		            <span aria-hidden="true">&times;</span>
+		        <span aria-hidden="true">&times;</span>
 		        </button>
-	        </div>
-	        <div class="form-group">
-              <label for="exampleInputFile">사진파일</label>
-              <div class="input-group">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" name=upFile id="exampleInputFile" required="required">
-                  <label class="custom-file-label" for="exampleInputFile">파일을 선택하세요.</label>
-                </div>
-                <!-- <div class="input-group-append">
-                  <span class="input-group-text" id="">Upload</span>
-                </div> -->
-              </div>
-            </div>
+	    	</div>
+		<form name="clubPhotoFrm" action="${pageContext.request.contextPath }/club/clubPhotoForm.do" method="POST" enctype="multipart/form-data" onsubmit="return validate();">
+	    	<div class="modal-body">
+	    		<input type="hidden" name="clubNo" value="${club.clubNo }" />
+		    	<div class="form-group">
+	              	<label for="exampleInputFile">사진제목</label>
+			    	<input type="text" name="clubPhotoTitle" class="form-control" placeholder="제목을 입력하세요." required="required">
+			    </div>
+		        <div class="form-group">
+	              <label for="exampleInputFile">사진파일</label>
+	              <div class="input-group">
+	                <div class="custom-file">
+	                  <input type="file" class="custom-file-input" name=upFile id="exampleInputFile" required="required">
+	                  <label class="custom-file-label" for="exampleInputFile">파일을 선택하세요.</label>
+	                </div>
+	                <!-- <div class="input-group-append">
+	                  <span class="input-group-text" id="">Upload</span>
+	                </div> -->
+	              </div>
+	            </div>
+	    	</div>
 	        <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
 		        <button type="submit" class="btn btn-primary"
 		            style="background-color: #17a2b8; border-color: #17a2b8;">추가</button>
 	        </div>
+		</form>
 	    </div>
 	    </div>
 	</div>
-</form>
 
 <!-- Image Modal -->
 <div class="modal fade cd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog"
@@ -76,9 +83,7 @@ aria-hidden="true">
 	    </div>
 	    <div class="modal-body">
 		<br>
-	            봉사활동을 하고싶으신 분들을 위해 모이기 시작한 동호회입니다.
-	    <br>
-	            한 달에 두 번 토요일에 봉사활동을 하는 정기모임을 갖습니다.
+	        ${club.clubIntroduce }
 	    </div>
 	    <div class="modal-footer">
 	        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
@@ -316,7 +321,7 @@ aria-hidden="true">
                     <!-- /.card-comment -->
                     <div class="card-comment">
                     <!-- User image -->
-                    <img class="img-circle img-sm" src="../dist/img/user4-128x128.jpg" alt="User Image">
+                    <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/user4-128x128.jpg" alt="User Image">
 
                     <div class="comment-text">
                         <span class="username">
@@ -333,7 +338,7 @@ aria-hidden="true">
                 <!-- /.card-footer -->
                 <div class="card-footer">
                     <form action="#" method="post">
-                    <img class="img-fluid img-circle img-sm" src="../dist/img/user4-128x128.jpg" alt="Alt Text">
+                    <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/user4-128x128.jpg" alt="Alt Text">
                     <!-- .img-push is used to add margin to elements next to floating images -->
                     <div class="img-push">
                         <input type="text" class="form-control form-control-sm" placeholder="Press enter to post comment">
