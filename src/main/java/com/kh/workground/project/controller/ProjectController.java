@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.member.model.vo.Member;
@@ -27,7 +28,7 @@ public class ProjectController {
 	
 	@RequestMapping("/project/projectList.do")
 	public ModelAndView projectList(ModelAndView mav, HttpSession session) {
-		Member memberLoggedIn = projectService.selectMemberOne("kh2020122");
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		
 		try {
 			//1.업무로직
