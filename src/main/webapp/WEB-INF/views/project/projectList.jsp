@@ -2,12 +2,11 @@
     pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, com.kh.workground.project.model.vo.*, com.kh.workground.member.model.vo.* " %>
 <%
-	Map<String, List<Project>> map = (Map<String, List<Project>>)request.getAttribute("map");
-	//List<Member> memberListByDept = (List<Member>)request.getAttribute("memberListByDept");
+	Map<String, List<Project>> projectMap = (Map<String, List<Project>>)request.getAttribute("projectMap");
 	
-	pageContext.setAttribute("listByDept", map.get("listByDept")); //부서 전체 프로젝트(최근 프로젝트)
-	pageContext.setAttribute("listByImportant", map.get("listByImportant")); //중요 표시된 프로젝트 조회
-	pageContext.setAttribute("listByInclude", map.get("listByInclude")); //내가 속한 프로젝트
+	pageContext.setAttribute("listByDept", projectMap.get("listByDept")); //부서 전체 프로젝트(최근 프로젝트)
+	pageContext.setAttribute("listByImportant", projectMap.get("listByImportant")); //중요 표시된 프로젝트 조회
+	pageContext.setAttribute("listByInclude", projectMap.get("listByInclude")); //내가 속한 프로젝트
 %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -38,27 +37,16 @@ function sidebarActive(){
 
 //프로젝트 팀원 추가
 function addMember(){
-  /* var empData = [
-	  	  <c:forEach items="${memberListByDept}" var="m" varStatus="vs">
-          {id: '${m.memberId}', name:'${m.memberName}', dept: '${m.deptTitle}', profile: 'profile.jfif'},
-          </c:forEach>
-  ] */
-/*   var empData = [
-      { id: '1', name:'이단비', dept: '개발팀', profile: 'profile.jfif' },
-      { id: '2', name:'유혜민', dept: '개발팀', profile: 'profile.jfif' },
-      { id: '3', name:'이소현', dept: '개발팀', profile: 'profile.jfif' },
-      { id: '4', name:'이주현', dept: '개발팀', profile: 'profile.jfif' },
-      { id: '5', name:'주보라', dept: '개발팀', profile: 'profile.jfif' },
-      { id: '6', name:'김효정', dept: '개발팀', profile: 'profile.jfif' },
-      { id: '7', name:'임하라', dept: '개발팀', profile: 'profile.jfif' },
-      { id: '8', name:'정영균', dept: '개발팀', profile: 'profile.jfif' },
-      { id: '9', name:'장예찬', dept: '개발팀', profile: 'profile.jfif' }
-] */
+	var empData = [
+		<c:forEach items="${memberListByDept}" var="m" varStatus="vs">
+	  	{id: '${m.memberId}', name:'${m.memberName}', dept: '${m.deptTitle}', profile: 'profile.jfif'}${vs.last?"":","}
+        </c:forEach>
+  ] 
   // initialize MultiSelect component
   var listObj = new ej.dropdowns.MultiSelect({
       dataSource: empData,
       fields: { text: 'name', value: 'id' },
-      itemTemplate: '<div><img class="empImage img-circle img-sm-profile" src="${pageContext.request.contextPath}/resources/img/${profile}" width="35px" height="35px"/>' +
+      itemTemplate: '<div><img class="empImage img-circle img-sm-profile" src="${pageContext.request.contextPath}/resources/img/profile.jfif" width="35px" height="35px"/>' +
       '<div class="ename"> ${name} </div><div class="job"> ${dept} </div></div>',
       valueTemplate: '<div style="width:100%;height:100%;">' +
           '<img class="value" src="${pageContext.request.contextPath}/resources/img/${profile}" height="26px" width="26px"/>' +
@@ -80,12 +68,10 @@ function addMember(){
         </a>
         <div class="dropdown-menu">
             <a class="dropdown-item" tabindex="-1" href="#">전체 프로젝트 (${fn:length(listByDept)})</a>
-            <c:foreach items="${listByDept}" var="p">
-            <a class="dropdown-item" tabindex="-1" href="#">계획됨 (0) <span class="status-dot bg-warning"></span></a>
-            <a class="dropdown-item" tabindex="-1" href="#">진행중 (1) <span class="status-dot bg-success"></span></a>
-            <a class="dropdown-item" tabindex="-1" href="#">완료됨 (0) <span class="status-dot bg-info"></span></a>
-            <a class="dropdown-item" tabindex="-1" href="#">상태없음 (4)</a>
-            </c:foreach>
+            <a class="dropdown-item" tabindex="-1" href="#">계획됨 (${statusCntMap['계획됨']}) <span class="status-dot bg-warning"></span></a>
+            <a class="dropdown-item" tabindex="-1" href="#">진행중 (${statusCntMap['진행중']}) <span class="status-dot bg-success"></span></a>
+            <a class="dropdown-item" tabindex="-1" href="#">완료됨 (${statusCntMap['완료됨']}) <span class="status-dot bg-info"></span></a>
+            <a class="dropdown-item" tabindex="-1" href="#">상태없음 (${statusCntMap['상태없음']})</a>
         </div>
         </li>
     </ul>

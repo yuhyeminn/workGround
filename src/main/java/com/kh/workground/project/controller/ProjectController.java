@@ -29,10 +29,6 @@ public class ProjectController {
 	@RequestMapping("/project/projectList.do")
 	public ModelAndView projectList(ModelAndView mav, HttpSession session) {
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		
-		logger.debug("projectList.do 요청");
-		logger.debug("memberLoggedIn.getDeptCode={}", memberLoggedIn.getDeptCode());
-		
 		List<Member> memberListByDept = null; //부서 사람들 담는 리스트
 		Map<String, List<Project>> projectMap = null; //조회한 프로젝트 리스트 담는 맵
 		Map<String, Integer> statusCntMap = new HashMap<>(); //부서 전체 프로젝트의 상태별 카운트 담는 맵
@@ -47,25 +43,24 @@ public class ProjectController {
 			//1-1.부서 사람들 조회
 			memberListByDept = projectService.selectMemberListByDept(memberLoggedIn.getDeptCode());
 			
-			logger.debug("memberListByDept={}", memberListByDept);
-			
 			//1-2.부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
 			projectMap = projectService.selectProjectListAll(memberLoggedIn);
 			
 			//1-3.부서 전체 프로젝트 상태 카운트
 			List<Project> listByDept = projectMap.get("listByDept");
+			
 			for(Project p: listByDept) {
 				String statusCode = p.getProjectStatusCode();
 				
-				if(statusCode.equals("PS1")) ps1++;
-				else if(statusCode.equals("PS2")) ps2++;
-				else if(statusCode.equals("PS3")) ps3++;
+				if("PS1".equals(statusCode)) ps1++;
+				else if("PS2".equals(statusCode)) ps2++;
+				else if("PS3".equals(statusCode)) ps3++;
 				else ps4++;
 			}
 			statusCntMap.put("계획됨", ps1);
-			statusCntMap.put("진행중", ps1);
-			statusCntMap.put("완료됨", ps1);
-			statusCntMap.put("상태없음", ps1);
+			statusCntMap.put("진행중", ps2);
+			statusCntMap.put("완료됨", ps3);
+			statusCntMap.put("상태없음", ps4);
 			
 			
 			//2.뷰모델 처리

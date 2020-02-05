@@ -88,6 +88,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public List<Member> selectMemberListByDept(String deptCode) {
 		List<Member> list = projectDAO.selectMemberListByDept(deptCode);
 		logger.debug("list={}", list);
+		
 		if(list==null) 
 			throw new ProjectException("부서 멤버 조회 오류!");
 		
