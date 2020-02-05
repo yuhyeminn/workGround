@@ -48,7 +48,7 @@ public class MemberController {
 		return mav;
 	}
 
-	@PostMapping("/member/memberLogin.do")
+	/*@PostMapping("/member/memberLogin.do")
 	public ModelAndView memberLogin(@RequestParam String memberId, @RequestParam String password, ModelAndView mav,
 			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -91,6 +91,41 @@ public class MemberController {
 				} else {
 					msg = "비밀번호가 틀렸습니다.";
 				}
+			}
+
+			// 2. view모델 처리
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+
+			// viewName 지정
+			mav.setViewName(viewName);
+
+		} catch (Exception e) {
+			logger.error("로그인 오류", e);
+			throw new MemberException("회원 관리 오류!", e);
+		}
+
+		return mav;
+	}*/
+	@PostMapping("/member/memberLogin.do")
+	public ModelAndView memberLogin(@RequestParam String memberId, ModelAndView mav,
+			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			// 1. 업무로직
+			Member m = memberSerivce.selectOneMember(memberId);
+			logger.debug("m@controller={}", m);
+
+			String msg = "";
+			String loc = "/";
+			String viewName = "common/msg";
+
+			// 로그인
+			if (m == null) {
+				msg = "존재하지 않는 아이디 입니다.";
+			} else {
+				//로그인 한 경우
+				mav.addObject("memberLoggedIn", m);
+				viewName="notice/noticeList";
 			}
 
 			// 2. view모델 처리
