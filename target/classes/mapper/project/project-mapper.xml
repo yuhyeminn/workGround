@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
@@ -53,4 +54,11 @@
 		from project_important PI join view_projectMember P on PI.project_no = P.project_no
 		where PI.member_id = #{memberId}
 	</select> -->
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="project">
+>>>>>>> refs/remotes/origin/member
 </mapper>
