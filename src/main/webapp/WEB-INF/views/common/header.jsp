@@ -188,7 +188,7 @@
             프로필, 이메일, 비밀번호, 그 외 더보기... 
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" id="logout" class="dropdown-item">로그아웃</a>
+          <a href="${pageContext.request.contextPath}/member/memberLogOut.do" id="logout" class="dropdown-item">로그아웃</a>
         </div> 
       </li>
     </ul>
