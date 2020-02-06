@@ -10,17 +10,30 @@
 		select * from club
 		order by club_enroll_date desc
 	</select>
-
 	<insert id="insertNewClub">
 		insert into club
-		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingDate},#{clubCategory},#{clubManagerId})
-
+		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingCycle},#{clubMeetingDate},#{clubCategory},#{clubManagerId})
 	</insert>
-
 	<delete id="deleteClub">
 		delete from club
 		where club_no = #{clubNo}
 	</delete>
+	<update id="updateClub">
+		update club
+		set club_name = #{clubName},
+			club_introduce = #{clubIntroduce},
+			club_meeting_cycle = #{clubMeetingCycle},
+			club_category = #{clubCategory}
+		where club_no = #{clubNo}
+	</update>
+	<select id="selectCountClub" resultType="_int">
+		select count(*)
+		from club
+	</select>
+	<insert id="insertClubMember">
+		insert into club_member
+		values(seq_club_member_no.nextval,#{memberId},#{clubNo},'N','N')
+	</insert>
 
 	<!-- sh end -->
 
