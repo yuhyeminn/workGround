@@ -49,6 +49,7 @@ p.view-content{margin: 1rem 1rem 2.5rem;}
 .btn-outline-success:hover{background: #007bff;}
 .note-editor.note-frame{border: 1px solid #ced4da; width: 100%; height: 100%;} /*텍스트 에디터*/
 .note-editable{height: 10rem;}
+/* .col-12.col-sm-6.col-md-3{display: inline-block;} */
 </style>
 
 <script>
@@ -71,6 +72,7 @@ function sidebarActive(){
 	
 	$("#sidebar-notice").addClass("active");
 }
+
 </script>
 
 
@@ -117,7 +119,7 @@ function sidebarActive(){
       <section class="notice-area">
         <div class="header-line">
           <h6><i class="fas fa-exclamation-circle"></i>&nbsp; 전체 공지 <span class="header-count">(6)</span>
-              <i class="fas fa-plus-square" data-toggle="modal" data-target="#addNoticeModal"></i></h6>
+              <i class="fas fa-plus-square" data-toggle="modal" data-target="#addNoticeModal" ${memberLoggedIn.jobTitle=='관리자'?'"style=display:block;"':"style=display:none;"}></i></h6>
         </div><!-- /.card-header -->
         <div id="notice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">
           <ol class="carousel-indicators">
@@ -125,116 +127,39 @@ function sidebarActive(){
             <li data-target="#notice_indicators" data-slide-to="1"></li>
             <li data-target="#notice_indicators" data-slide-to="2"></li>
           </ol>
-          <div class="carousel-inner">
+          
+          <div class="carousel-inner">          
             <!-- row1 -->
-            <div class="row card-content carousel-item active">
-              <div class="col-12 col-sm-6 col-md-3">
-                <div class="card">
-                  <!-- Default droprleft button -->
-                  <div class="dropleft">
-                    <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                    <div class="dropdown-menu">
-                      <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                      <a href="#" class="dropdown-item">공지 삭제</a>
-                    </div>
-                  </div>
-                  <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                    <img src="${pageContext.request.contextPath}/resources/img/전체공지02.png" class="card-img-top">
-                    <h5 class="card-title">모든 부서 전체 공지</h5>
-                    <p class="card-text">모든 부서 팀원들은 배부된 서류를 오늘 자정까지 제출해주세요!</p>
-                  </div>
-                </div><!-- /.card -->
-              </div>
-              <div class="col-12 col-sm-6 col-md-3">
-                <div class="card">
-                  <!-- Default droprleft button -->
-                  <div class="dropleft">
-                    <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                    <div class="dropdown-menu">
-                      <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                      <a href="#" class="dropdown-item">공지 삭제</a>
-                    </div>
-                  </div>
-                  <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                    <img src="/dist/img/city1.PNG" class="card-img-top">
-                    <h5 class="card-title">홈페이지 리뉴얼 관련 공지</h5>
-                    <p class="card-text">홈페이지 리뉴얼에 따른 공지를 모두 확인해주세요 ^^</p>
-                  </div>
-                </div><!-- /.card -->
-              </div>
-              <div class="col-12 col-sm-6 col-md-3">
-                <div class="card">
-                  <!-- Default droprleft button -->
-                  <div class="dropleft">
-                    <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                    <div class="dropdown-menu">
-                      <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                      <a href="#" class="dropdown-item">공지 삭제</a>
-                    </div>
-                  </div>
-                  <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                    <img src="${pageContext.request.contextPath}/resources/img/개발01.png" class="card-img-top">
-                    <h5 class="card-title">개발부서 프로젝트 관련 추가 공지</h5>
-                    <p class="card-text">개발부서 팀원들은 오늘 자정까지 배부된 서류를 제출해주세요!</p>
-                </div>
-              </div><!-- /.card -->
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card">
-                <!-- Default droprleft button -->
-                <div class="dropleft">
-                  <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                  <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                    <a href="#" class="dropdown-item">공지 삭제</a>
-                  </div>
-                </div>
-                <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                  <!-- <img src="images/city1.PNG" class="card-img-top"> -->
-                  <h5 class="card-title">웹사이트 기획 공지</h5>
-                  <p class="card-text">신규 웹사이트 기획 관련 공지 확인 후 문의사항은 오늘 내로 알려주시기 바랍니다! </p>
-                </div>
-              </div><!-- /.card -->
-            </div>
-          </div> <!--row1-->
-            <!-- row2 -->
-            <div class="row card-content carousel-item">
-              <div class="col-12 col-sm-6 col-md-3">
-                <div class="card">
-                  <!-- Default droprleft button -->
-                  <div class="dropleft">
-                    <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                    <div class="dropdown-menu">
-                      <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                      <a href="#" class="dropdown-item">공지 삭제</a>
-                    </div>
-                  </div>
-                  <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                    <img src="/dist/img/전체공지02.png" class="card-img-top">
-                    <h5 class="card-title">프로젝트 업무 배정 관련 공지</h5>
-                    <p class="card-text">부서별 프로젝트 업무가 배정되었습니다! 확인부탁드립니다!</p>
-                  </div>
-                </div><!-- /.card -->
-              </div>
-              <div class="col-12 col-sm-6 col-md-3">
-                  <div class="card">
-                    <!-- Default droprleft button -->
-                    <div class="dropleft">
-                      <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                      <div class="dropdown-menu">
-                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-                        <a href="#" class="dropdown-item">공지 삭제</a>
-                      </div>
-                    </div>
-                    <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-                      <img src="/dist/img/개발01.png" class="card-img-top">
-                      <h5 class="card-title">개발부서 프로젝트 관련 추가 공지</h5>
-                      <p class="card-text">개발부서 팀원들은 오늘 자정까지 배부된 서류를 제출해주세요!</p>
-                    </div>
-                  </div><!-- /.card -->
-                </div>
-            </div> <!--row2-->
-          </div> <!--/.carousel inner-->
+            <c:forEach items="${noticeList }" var="n" varStatus="ns">
+            	<c:if test="${ns.count == 1}">
+              		<div class="row card-content carousel-item active">
+          		</c:if>
+          		<c:if test="${ns.count % 4 == 1 && ns.count != 1}">
+              		<div class="row card-content carousel-item">
+          		</c:if>
+		        <div class="col-12 col-sm-6 col-md-3">
+		          <div class="card">
+		            <!-- Default droprleft button -->
+		            <div class="dropleft">
+		              <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+		              <div class="dropdown-menu">
+		                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
+		                <a href="#" class="dropdown-item">공지 삭제</a>
+		              </div>
+		            </div>
+		            <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
+		              <img src="${pageContext.request.contextPath}/resources/img/전체공지02.png" class="card-img-top">
+		              <h5 class="card-title">${n.noticeTitle }</h5>
+		              <p class="card-text">${n.noticeContent }</p>
+		            </div>
+		          </div><!-- /.card -->
+	 	        </div>
+            	<c:if test="${ns.count % 4 == 0 || ns.last}">
+					</div>
+          		</c:if>
+            </c:forEach>
+            </div> <!-- /.carousel-inner notice-carousel  -->
+          
           <!-- <a href="#notice_indicators" data-slide="prev"> -->
           <i class="fas fa-angle-left slide-arrow slide-arrow-left" data-target="#notice_indicators" data-slide="prev"></i>
           <!-- </a> -->
@@ -620,9 +545,9 @@ function sidebarActive(){
               <label for="inputDept">부서</label>
               <select class="form-control custom-select">
                 <option selected>전체</option>
-                <option>기획부</option>
-                <option>디자인부</option>
-                <option>개발부</option>
+				<option value="D1">기획부</option>
+                <option value="D2">디자인부</option>
+                <option value="D3">개발부</option>
               </select>
             </div>
             <div class="form-group">
@@ -841,5 +766,7 @@ function sidebarActive(){
     </div>
   </div>
 </div>
+
+
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
