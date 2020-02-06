@@ -25,10 +25,11 @@ public class NoticeController {
 	@RequestMapping("/notice/noticeList.do")
 	public ModelAndView noticeList(ModelAndView mav) {
 		
-		List<Notice> list = noticeService.selectNoticeList();
-		logger.debug("NoticeList={}", list);
+		//전체 공지
+		List<Notice> noticeList = noticeService.selectNoticeList();
+		logger.debug("NoticeList={}", noticeList);
+		mav.addObject("noticeList", noticeList);
 		
-		mav.addObject("list", list);
 		mav.setViewName("/notice/noticeList");
 		
 		return mav;

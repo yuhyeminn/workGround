@@ -252,6 +252,28 @@ create table attachment(
 -----------------------------------------------------------------------
 CREATE SEQUENCE seq_attachment;
 
+--================================================
+--notice 관련 테이블/시퀀스
+--================================================
+--notice테이블
+--------------------------------------------------
+create table notice (
+	notice_no	number not null,
+	notice_writer varchar2(30) not null,
+	notice_title varchar2(100) not null,
+	notice_date date default sysdate not null,
+	notice_content varchar2(4000) not null,
+	notice_original_filename varchar2(100) null,
+	notice_renamed_filename varchar2(100) null,
+	dept_code char(2) null,
+    constraint pk_notice primary key(notice_no),
+    constraint fk_notice_writer foreign key(notice_writer) references member(member_id) on delete set null
+);
+--------------------------------------------------
+--notice 테이블 시퀀스 생성
+--------------------------------------------------
+create sequence seq_notice;
+
 
 --================================================
 --drop문
@@ -291,6 +313,14 @@ drop table work_comment;
 drop sequence seq_work_comment;
 drop table attachment;
 drop sequence seq_attachment;
+
+
+--------------------------------------------------
+--project테이블 관련 drop문
+--------------------------------------------------
+drop table notice;
+drop sequence seq_notice;
+
 */
 
 
@@ -449,6 +479,10 @@ select * from checklist;
 select * from work_comment;
 select * from attachment;
 
+--------------------------------------------------
+--notice테이블 관련 select문
+--------------------------------------------------
+select * from notice;
 
 
 --================================================
