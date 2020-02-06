@@ -265,14 +265,14 @@ function addMember(){
             </div>
             <!-- modal body -->
             <div class="modal-body">
-                <form action="" id="addProjectFrm">
+                <form action="${pageContext.request.contextPath}/project/addProject.do" id="addProjectFrm" method="POST">
                 <div class="form-group">
                     <label for="projectTitle" class="col-form-label">제목</label>
                     <input type="text" class="form-control" id="projectTitle" name="projectTitle">
                 </div>
                 <div class="form-group">
                     <label for="projectDescribe" class="col-form-label">설명(선택사항)</label>
-                    <input type="text" class="form-control" id="projectDescribe" name="projectDescribe">
+                    <input type="text" class="form-control" id="projectDescribe" name="projectDesc">
                 </div>
                 <div class="form-group">
                     <label for="projectMember">프로젝트 멤버(선택사항)</label>
@@ -282,7 +282,7 @@ function addMember(){
                         </div>
                     </div>
                     <div class="row justify-content-md-center">
-                    <button type="button" class="btn bg-info add-submit">프로젝트 만들기</button>
+                    <button type="submit" class="btn bg-info add-submit">프로젝트 만들기</button>
                     </div>
                 </div>
                 </form>
