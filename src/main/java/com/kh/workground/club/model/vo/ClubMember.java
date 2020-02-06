@@ -26,3 +26,4 @@ public class ClubMember implements Serializable {
 	private String clubManagerYN;
 	private String clubApproveYN;
 }
+

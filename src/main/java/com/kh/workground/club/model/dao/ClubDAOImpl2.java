@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kh.workground.club.model.vo.Club;
+import com.kh.workground.club.model.vo.ClubMember;
+import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
 
@@ -44,6 +46,26 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 	@Override
 	public int clubPlanInsert(ClubPlan clubPlan) {
 		return sqlSession.insert("club.clubPlanInsert", clubPlan);
+	}
+
+	@Override
+	public List<ClubNotice> selectClubNoticeList(int clubNo) {
+		return sqlSession.selectList("club.selectClubNoticeList", clubNo);
+	}
+
+	@Override
+	public int clubNoticeUpdate(ClubNotice clubNotice) {
+		return sqlSession.update("club.clubNoticeUpdate", clubNotice);
+	}
+
+	@Override
+	public int clubNoticeInsert(ClubNotice clubNotice) {
+		return sqlSession.insert("club.clubNoticeInsert", clubNotice);
+	}
+
+	@Override
+	public ClubMember selectOneClubMember(ClubNotice clubNotice) {
+		return sqlSession.selectOne("club.selectOneClubMember", clubNotice);
 	}
 
 
