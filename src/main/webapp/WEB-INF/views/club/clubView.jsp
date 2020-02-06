@@ -546,26 +546,22 @@ function validate() {
 												<label for="inputProjectLeader">참석자</label>
 												<p>
 													<!-- 프로필 사진 -->
-													<img
-														src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-														alt="User Avatar" class="img-circle img-profile"
-														style="width: 50px; margin-left: 10px;">
+													<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+														 alt="User Avatar" class="img-circle img-profile"
+														 style="width: 50px; margin-left: 10px;">
 												</p>
 											</div>
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary"
-												data-dismiss="modal">닫기</button>
-											<button type="button" class="btn btn-primary"
-													data-target="#plan-modify${vs.index }" 
-													data-dismiss="modal"
-													data-toggle="modal"
-													style="background-color: #17a2b8; border-color: #17a2b8;">
-												수정
-											</button>
 											<button type="button" class="btn btn-info float-right">
 												<i class="fas fa-plus"></i>
 											</button>
+											<button type="button" class="btn btn-info"
+													data-target="#plan-modify${vs.index }" 
+													data-dismiss="modal"
+													data-toggle="modal">수정</button>
+											<button type="button" class="btn btn-secondary"
+												data-dismiss="modal">닫기</button>
 										</div>
 									</div>
 								</div>
@@ -650,10 +646,9 @@ function validate() {
 												</div>
 											</div>
 											<div class="modal-footer">
+												<button type="submit" class="btn btn-info">수정</button>
 												<button type="button" class="btn btn-secondary"
 													data-dismiss="modal">닫기</button>
-												<button type="submit" class="btn btn-primary" 
-													style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
 											</div>
 										</form>
 									</div>
@@ -765,15 +760,15 @@ function validate() {
 						            </div>
 								</div>
 								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-dismiss="modal">닫기</button>
 									<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubNotice.memberId }">
+									<button type="button" class="btn btn-danger"
+										data-dismiss="modal" data-toggle="modal">삭제</button>
 									<button type="button" class="btn btn-info"
 										data-dismiss="modal" data-toggle="modal"
 										data-target="#notice-modify${vs.index }">수정</button>
-									<button type="button" class="btn btn-danger"
-										data-dismiss="modal" data-toggle="modal">삭제</button>
 									</c:if>
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">닫기</button>
 								</div>
 							</div>
 						</div>
@@ -810,10 +805,9 @@ function validate() {
 										</div>
 									</div>
 									<div class="modal-footer">
+										<button type="submit" class="btn btn-info">수정</button>
 										<button type="button" class="btn btn-secondary"
 											data-dismiss="modal">닫기</button>
-										<button type="submit" class="btn btn-primary"
-											style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
 									</div>
 								</form>
 							</div>

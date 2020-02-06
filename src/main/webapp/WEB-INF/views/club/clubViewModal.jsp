@@ -44,10 +44,9 @@
 					</div>
 				</div>
 				<div class="modal-footer">
+					<button type="submit" class="btn btn-info">추가</button>
 					<button type="button" class="btn btn-secondary"
 						data-dismiss="modal">닫기</button>
-					<button type="submit" class="btn btn-primary"
-						style="background-color: #17a2b8; border-color: #17a2b8;">추가</button>
 				</div>
 			</form>
 		</div>
@@ -100,12 +99,11 @@
 				<br> ${club.clubIntroduce }
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-				<button type="button" class="btn btn-primary" 
+				<button type="button" class="btn btn-info" 
 						data-target="#info-modify" 
 						data-dismiss="modal"
-						data-toggle="modal"
-						style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
+						data-toggle="modal">수정</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
 			</div>
 		</div>
 	</div>
@@ -140,9 +138,8 @@
 					</div>
 				</div>
 				<div class="modal-footer">
+					<button type="submit" class="btn btn-info">수정</button>
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-					<button type="submit" class="btn btn-primary" 
-						style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
 				</div>
 			</form>
 		</div>
@@ -217,10 +214,9 @@
 					</div>
 				</div>
 				<div class="modal-footer">
+					<button type="submit" class="btn btn-info">추가</button>
 					<button type="button" class="btn btn-secondary"
 						data-dismiss="modal">닫기</button>
-					<button type="submit" class="btn btn-primary" 
-						style="background-color: #17a2b8; border-color: #17a2b8;">추가</button>
 				</div>
 			</form>
 		</div>
@@ -259,10 +255,9 @@
 					</div>
 				</div>
 				<div class="modal-footer">
+					<button type="submit" class="btn btn-info">추가</button>
 					<button type="button" class="btn btn-secondary"
 						data-dismiss="modal">닫기</button>
-					<button type="submit" class="btn btn-primary"
-						style="background-color: #17a2b8; border-color: #17a2b8;">추가</button>
 				</div>
 			</form>
 		</div>
