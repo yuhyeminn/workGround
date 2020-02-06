@@ -119,7 +119,7 @@ function sidebarActive(){
       <section class="notice-area">
         <div class="header-line">
           <h6><i class="fas fa-exclamation-circle"></i>&nbsp; 전체 공지 <span class="header-count">(6)</span>
-              <i class="fas fa-plus-square" data-toggle="modal" data-target="#addNoticeModal"></i></h6>
+              <i class="fas fa-plus-square" data-toggle="modal" data-target="#addNoticeModal" ${memberLoggedIn.jobTitle=='관리자'?'"style=display:block;"':"style=display:none;"}></i></h6>
         </div><!-- /.card-header -->
         <div id="notice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">
           <ol class="carousel-indicators">
@@ -545,9 +545,9 @@ function sidebarActive(){
               <label for="inputDept">부서</label>
               <select class="form-control custom-select">
                 <option selected>전체</option>
-                <option>기획부</option>
-                <option>디자인부</option>
-                <option>개발부</option>
+				<option value="D1">기획부</option>
+                <option value="D2">디자인부</option>
+                <option value="D3">개발부</option>
               </select>
             </div>
             <div class="form-group">
