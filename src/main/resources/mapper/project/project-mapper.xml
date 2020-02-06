@@ -69,9 +69,10 @@
 	</select>
 	
 	<select id="selectWorkListByWorklistNo" resultMap="workListCollectionMap">
-		select V.*, M.*
+		select V.*, WCM.work_charged_members_no, VM.*
 		from (select * from view_workTag where worklist_no = #{worklistNo} 
-         	  order by work_no desc) V left join work_charged_members M on V.work_no = M.work_no
+         		order by work_no desc) V left join work_charged_members WCM on V.work_no = WCM.work_no
+                                         left join view_member VM on WCM.charged_member_id = VM.member_id
 	</select>
 	
 	<resultMap type="work" id="workListCollectionMap">

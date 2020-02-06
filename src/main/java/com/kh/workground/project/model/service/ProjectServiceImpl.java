@@ -111,16 +111,18 @@ public class ProjectServiceImpl implements ProjectService {
 		// -> 각각의 업무리스트에 업무 담고, 업무리스트를 각각 map에 담기
 		//2-1. 프로젝트 번호로 업무리스트 가져오기
 		List<Worklist> worklistList = projectDAO.selectWorklistListByProjectNo(projectNo);
-		logger.debug("worklistList={}", worklistList);
 		
 		//2-2. worklist번호로 work 리스트 가져오기
-		Worklist wl = worklistList.get(0);
-		List<Work> workList = projectDAO.selectWorkListByWorklistNo(wl.getWorklistNo());
-		logger.debug("workList={}", workList);
+		List<Work> workList = new ArrayList<>();
+		for(int i=0; i<worklistList.size(); i++) {
+			Worklist wl = worklistList.get(i);
+			
+			workList = projectDAO.selectWorkListByWorklistNo(wl.getWorklistNo());
+			wl.setWorkList(workList); //Worklist(업무리스트)에 workList담기 
+		}
 		
+		logger.debug("worklistList={}", worklistList);
 		
-		
-		//2-3. 업무 번호로 업무에 배정된 멤버 리스트 가져오기 -> 업무에 멤버리스트 setter로 담기
 		
 		//2-4. 업무리스트에 업무 setter로 담기
 		//2-5. 업무리스트를 map에 담기
