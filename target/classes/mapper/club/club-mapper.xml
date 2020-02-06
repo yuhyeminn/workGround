@@ -4,55 +4,68 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="club">
 
+	<!-- sh start -->
+
 	<select id="selectAllClubList" resultType="club">
 		select * from club
 		order by club_enroll_date desc
 	</select>
-	
+
 	<insert id="insertNewClub">
 		insert into club
 		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingDate},#{clubCategory},#{clubManagerId})
-	
+
 	</insert>
 
+	<delete id="deleteClub">
+		delete from club
+		where club_no = #{clubNo}
+	</delete>
+
+	<!-- sh end -->
+
+	<!-- br start -->
 	<select id="selectClub" resultType="club">
-		select * from club 
+		select * from club
 		where club_no = #{clubNo}
 	</select>
-	
+
 	<select id="selectClubPlanList" resultType="clubPlan">
-		select * from club_plan 
-		where club_no = #{clubNo} 
+		select * from
+		club_plan
+		where club_no = #{clubNo}
 		order by club_plan_start, club_plan_no asc
 	</select>
-	
+
 	<update id="updateClubPlan">
-		update club_plan 
-		set club_plan_title = #{clubPlanTitle}, 
-			club_plan_content = #{clubPlanContent}, 
-			club_plan_start = #{clubPlanStart}, 
-			club_plan_state = #{clubPlanState}, 
-			club_plan_place = #{clubPlanPlace}, 
-			club_plan_manager = #{clubPlanManager}
+		update club_plan
+		set club_plan_title = #{clubPlanTitle},
+		club_plan_content = #{clubPlanContent},
+		club_plan_start = #{clubPlanStart},
+		club_plan_state = #{clubPlanState},
+		club_plan_place = #{clubPlanPlace},
+		club_plan_manager = #{clubPlanManager}
 		where club_plan_no = #{clubPlanNo}
 	</update>
-	
+
 	<update id="clubIntroduceUpdate">
-		update club 
-		set club_Name = #{clubName}, 
-			club_Introduce = #{clubIntroduce}
+		update club
+		set club_Name = #{clubName},
+		club_Introduce = #{clubIntroduce}
 		where club_no = #{clubNo}
 	</update>
-	
+
 	<insert id="clubPlanInsert">
-		insert into club_plan 
-		values(seq_club_plan_no.nextval, 
-			   #{clubPlanTitle}, 
-			   #{clubPlanContent}, 
-			   #{clubPlanStart}, 
-			   #{clubPlanState}, 
-			   #{clubPlanPlace}, 
-			   #{clubPlanManager}, 
-			   #{clubNo})
+		insert into club_plan
+		values(seq_club_plan_no.nextval,
+		#{clubPlanTitle},
+		#{clubPlanContent},
+		#{clubPlanStart},
+		#{clubPlanState},
+		#{clubPlanPlace},
+		#{clubPlanManager},
+		#{clubNo})
 	</insert>
+
+	<!-- br end -->
 </mapper>
