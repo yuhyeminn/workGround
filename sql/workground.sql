@@ -1,5 +1,13 @@
 --================================================
---workground계정
+--workground계정 생성
+--================================================
+create user workground identified by workground
+default tablespace users;
+
+grant connect, resource to workground;
+grant create view to workground;
+--drop user workgroundtest cascade;
+
 --================================================
 --member관련 테이블/시퀀스
 --================================================
@@ -58,6 +66,7 @@ CREATE SEQUENCE seq_member START WITH 100 INCREMENT BY 1 NOMINVALUE NOMAXVALUE N
 create table project_status(
     project_status_code char(3) not null,
     project_status_title varchar2(20) not null,
+    project_status_color varchar2(20) not null,
     constraint pk_project_status primary key(project_status_code)
 );
 
@@ -269,8 +278,9 @@ drop sequence seq_member;
 --project테이블 관련 drop문
 --------------------------------------------------
 drop table project_status;
-drop table project_members;
 drop table project;
+drop table project_members;
+drop sequence seq_project_members;
 drop sequence seq_project;
 drop table project_important;
 drop sequence seq_project_important;
@@ -345,13 +355,18 @@ insert into member values('kh2020'||seq_member.nextval, null, '이주현', 'jooh
 --------------------------------------------------
 --project테이블 관련 insert문
 --------------------------------------------------
---프로젝트 상태
-insert into project_status values('PS1', '계획됨');
-insert into project_status values('PS2', '진행중');
-insert into project_status values('PS3', '완료됨');
+insert into project_status values('PS1', '계획됨', 'warning');
+insert into project_status values('PS2', '진행중', 'success');
+insert into project_status values('PS3', '완료됨', 'info');
 -- 프로젝트
 insert into project values(seq_project.nextval, 'kh2020115', '개발1팀', default, '개발 1팀 프로젝트입니다', default, sysdate+10, null, null);
 insert into project values(seq_project.nextval, 'kh2020122', '개발2팀', default, '개발 2팀 프로젝트입니다', default, null, null, 'PS1');
+insert into project values(seq_project.nextval, 'kh2020108', '디자인팀', default, '디자인팀 프로젝트입니다', default, null, null, 'PS2');
+insert into project values(seq_project.nextval, 'kh2020101', '기획팀', default, '기획팀 프로젝트입니다', default, null, null, 'PS3');
+insert into project values(seq_project.nextval, 'kh2020122', 'projectList', default, null, default, sysdate+20, null, 'PS2');
+--내 프로젝트
+insert into project values(seq_project.nextval, 'kh2020122', '나의 워크패드', 'Y', null, null, null, null, null);
+insert into project values(seq_project.nextval, 'kh2020123', '나의 워크패드', 'Y', null, null, null, null, null);
 -- 프로젝트 팀원
 insert into project_members values(seq_project_members.nextval, 1, 'kh2020115', 'Y');
 insert into project_members values(seq_project_members.nextval, 1, 'kh2020116', default);
@@ -366,12 +381,16 @@ insert into project_members values(seq_project_members.nextval, 2, 'kh2020124', 
 insert into project_members values(seq_project_members.nextval, 2, 'kh2020125', default);
 insert into project_members values(seq_project_members.nextval, 2, 'kh2020126', default);
 insert into project_members values(seq_project_members.nextval, 2, 'kh2020127', default);
+insert into project_members values(seq_project_members.nextval, 3, 'kh2020108', 'Y');
+insert into project_members values(seq_project_members.nextval, 4, 'kh2020101', 'Y');
+insert into project_members values(seq_project_members.nextval, 5, 'kh2020122', 'Y');
+insert into project_members values(seq_project_members.nextval, 5, 'kh2020123', default);
+insert into project_members values(seq_project_members.nextval, 6, 'kh2020122', 'Y');
+insert into project_members values(seq_project_members.nextval, 7, 'kh2020123', default);
 --중요표시 프로젝트
 insert into project_important values (seq_project_important.nextval, 'kh2020122', 2);
+insert into project_important values (seq_project_important.nextval, 'kh2020122', 5);
 insert into project_important values (seq_project_important.nextval, 'kh2020123', 2);
---내 private 프로젝트
-insert into project values(seq_project.nextval, 'kh2020112', '나의 워크패드', 'Y', null, null, null, null, null);
-insert into project values(seq_project.nextval, 'kh2020113', '나의 워크패드', 'Y', null, null, null, null, null);
 
 --------------------------------------------------
 --worklist/work 테이블 관련 insert문
@@ -465,7 +484,7 @@ from member M left join department D on M.dept_code = D.dept_code
 --뷰: project+project_status
 --================================================
 create or replace view view_project as 
-select P.*, PS.project_status_title
+select P.*, PS.project_status_title, PS.project_status_color
 from project P left join project_status PS on P.project_status_code = PS.project_status_code; 
 --drop view view_project;
 --select * from view_project;
@@ -478,5 +497,10 @@ select V.*, M.password, M.member_name, M.email, M.phone, M.date_of_birth, M.dept
 from (select P.*, PM.member_id
       from view_project P left join project_members PM on P.project_no = PM.project_no
       order by P.project_no desc) V 
-      join view_member M on V.member_id = M.member_id;
+      left join view_member M on V.member_id = M.member_id;
 
+
+select * from view_projectMember where dept_code = 'D3' and private_yn = 'N';
+
+select * from view_projectMember
+where private_yn = 'Y' and project_writer = 'kh2020122';

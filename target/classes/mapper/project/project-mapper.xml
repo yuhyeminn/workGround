@@ -16,6 +16,7 @@
 		<result column="project_realenddate" property="projectRealEndDate"></result>
 		<result column="project_status_code" property="projectStatusCode"></result>
 		<result column="project_status_title" property="projectStatusTitle"></result>
+		<result column="project_status_color" property="projectStatusColor"></result>
 		<collection property="projectMemberList" ofType="member">
 			<id column="member_id" property="memberId"></id>
 			<result column="password" property="password"></result>
@@ -41,7 +42,7 @@
 	
 	<!-- projectList.do : 부서 전체 프로젝트(최근 프로젝트) 조회 -->
 	<select id="selectListByDept" resultMap="listByDeptCollectionMap">
-		select * from view_projectMember where dept_code = #{deptCode}
+		select * from view_projectMember where private_yn = 'N' and dept_code = #{deptCode}
 	</select>
 	
 	<!-- projectList.do : 중요 표시된 프로젝트 조회 -->
@@ -53,7 +54,7 @@
 	
 	<!-- projectList.do : 내 워크패드 조회 -->
 	<select id="selectMyProject" resultType="project">
-		select * from project
+		select * from view_projectMember
 		where private_yn = 'Y' and project_writer = #{memberId}
 	</select>
 	
