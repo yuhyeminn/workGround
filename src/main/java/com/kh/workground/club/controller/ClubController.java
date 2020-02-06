@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -36,16 +37,9 @@ public class ClubController {
 	}
 
 	@PostMapping("/club/insertNewClub.do")
-	public ModelAndView insertNewClub(ModelAndView mav, Club club,
-			@RequestParam(value = "meetingCycle") String meetingCycle,
-			@RequestParam(value = "meetingDate") String[] meetingDate) {
+	public ModelAndView insertNewClub(ModelAndView mav, Club club) {
 
 		// logger.info("club={}",club);
-		// logger.info("mettingCycle={}",meetingCycle);
-		String meetingDateStr = String.join(",", meetingDate);
-		String clubMeetingDate = meetingCycle + " ," + meetingDateStr;
-		// logger.info(clubMeetingDate);
-		club.setClubMeetingDate(clubMeetingDate);
 
 		int result = clubService.insertNewClub(club);
 
@@ -58,9 +52,10 @@ public class ClubController {
 
 	}
 
-	@DeleteMapping("/club/deleteClub.do")
+	@RequestMapping(value="/club/deleteClub.do",method= {RequestMethod.POST,RequestMethod.GET})
 	public ModelAndView deleteClub(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo) {
 
+		logger.info("clubNo={}", clubNo);
 		int result = clubService.deleteClub(clubNo);
 		logger.info("result={}", result);
 		mav.addObject("msg", result > 0 ? "동호회 삭제 성공!" : "동호회 삭제 실패");

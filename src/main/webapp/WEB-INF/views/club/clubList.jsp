@@ -178,42 +178,197 @@ function sidebarActive(){
 				<!-- /.card-header -->
 
 				<div class="row card-content">
-				
-				<c:forEach items="${clubList}" var="club">
-					<div class="col-12 col-sm-6 col-md-3">
-						<div class="card club card-hover">
-							<div class="card-body" onclick="location.href = '${pageContext.request.contextPath}/club/clubView.do?clubNo=${club.clubNo }'">
-								<div class="card-title">
-									${club.clubName }
-								</div>
+
+					<c:forEach items="${clubList}" var="club">
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="card club card-hover">
+								<div class="card-body">
+									<div class="card-title">${club.clubName }</div>
 
 
-								<!-- 삭제 버튼 -->
-								<div class="card-tools text-right">
+									<!-- 삭제 버튼 -->
+									<div class="card-tools text-right">
 
-									<button type="button" class="btn btn-tool"
-										data-card-widget="remove" onclick="location.href = '${pageContext.request.contextPath}/club/deleteClub.do?clubNo=${club.clubNo }'">
-										<i class="fas fa-times"></i>
+										<button type="button" class="btn btn-tool"
+											data-card-widget="remove"
+											onclick="location.href = '${pageContext.request.contextPath}/club/deleteClub.do?clubNo=${club.clubNo }'">
+											<i class="fas fa-times"></i>
+										</button>
+									</div>
+
+									<div class="card-club-image">
+										<img
+											src="${pageContext.request.contextPath}/resources/img/fs.JPG"
+											alt=""
+											onclick="location.href = '${pageContext.request.contextPath}/club/clubView.do?clubNo=${club.clubNo }'">
+									</div>
+									<!-- 수정 버튼 -->
+									<button type="button" id="up-btn" data-toggle="modal"
+										data-target="#modal-update-${club.clubNo }">
+										<i class="fas fa-edit"></i>
 									</button>
-								</div>
 
-								<div class="card-club-image">
-									<img
-										src="${pageContext.request.contextPath}/resources/img/fs.JPG"
-										alt="">
-								</div>
-								<!-- 수정 버튼 -->
-								<button type="button" id="up-btn">
-									<i class="fas fa-edit"></i>
-								</button>
-								<div class="card-enroll-date">
-									<span class="enroll-date">${club.clubEnrollDate }</span>
+									<div class="card-enroll-date">
+										<span class="enroll-date">${club.clubEnrollDate }</span>
+									</div>
 								</div>
 							</div>
+							<!-- /.card -->
 						</div>
-						<!-- /.card -->
-					</div>
-				</c:forEach>
+
+						<!--  modal 수정 -->
+						<!-- modal 부분 -->
+						<div class="modal fade" id="modal-update-${club.clubNo }"
+							data-backdrop="static">
+							<div class="modal-dialog modal-lg">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h4 class="modal-title">동호회 정보 수정</h4>
+
+										<button type="button" class="close" data-dismiss="modal"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+
+									</div>
+									<div class="modal-body">
+										<div>
+											<!-- form start -->
+											<form role="form" id="update-club-form"
+												action="${pageContext.request.contextPath}/club/updateClub.do"
+												method="post" enctype="multipart/form-data">
+
+												<!-- clubNo 값 히든으로 넘겨주기  -->
+												<input type="hidden" name="clubNo" value="${club.clubNo}" />
+
+												<div class="form-group">
+													<label>이름</label> <input type="text" name="clubName"
+														class="form-control" value="${club.clubName }" required>
+												</div>
+												<!--  /.form-group -->
+												<div class="form-group">
+													<label>소개</label>
+													<textarea class="form-control" name="clubIntroduce"
+														rows="7" required>${club.clubIntroduce }</textarea>
+												</div>
+												<!--  /.form-group -->
+
+												<div class="form-group">
+													<label>모임주기</label> <select class="form-control"
+														name="meetingCycle">
+														<option
+															<c:if test="${club.clubMeetingCycle eq '매주'}">selected</c:if>>매주</option>
+														<option
+															<c:if test="${club.clubMeetingCycle eq '격주'}">selected</c:if>>격주</option>
+													</select>
+												</div>
+
+
+												<c:set var="dateStr" value="${club.clubMeetingDate }"></c:set>
+												<label for="check-week">모임 요일</label>
+												<div id="check-week" class="input-group">
+													<div class="form-check">
+														<input type="checkbox" class="form-check-input"
+															name="meetingDate" id="meetingDate0" value="월"
+															<c:if test="${fn:contains(dateStr,'월') }">checked</c:if>> <label
+															class="form-check-label" for="meetingDate0">월</label>
+													</div>
+													<div class="form-check">
+														<input type="checkbox" class="form-check-input"
+															name="meetingDate" id="meetingDate1" value="화"
+															<c:if test="${fn:contains(dateStr,'화') }">checked</c:if>> <label
+															class="form-check-label" for="meetingDate1">화</label>
+													</div>
+													<div class="form-check">
+														<input type="checkbox" class="form-check-input"
+															name="meetingDate" id="meetingDate2" value="수"
+															<c:if test="${fn:contains(dateStr,'수') }">checked</c:if>> <label
+															class="form-check-label" for="meetingDate2">수</label>
+													</div>
+													<div class="form-check">
+														<input type="checkbox" class="form-check-input"
+															name="meetingDate" id="meetingDate3" value="목"
+															<c:if test="${fn:contains(dateStr,'목') }">checked</c:if>> <label
+															class="form-check-label" for="meetingDate3">목</label>
+													</div>
+													<div class="form-check">
+														<input type="checkbox" class="form-check-input"
+															name="meetingDate" id="meetingDate4" value="금"
+															<c:if test="${fn:contains(dateStr,'금') }">checked</c:if>> <label
+															class="form-check-label" for="meetingDate4">금</label>
+													</div>
+													<div class="form-check">
+														<input type="checkbox" class="form-check-input"
+															name="meetingDate" id="meetingDate5" value="토"> <label
+															class="form-check-label" for="meetingDate5"
+															<c:if test="${fn:contains(dateStr,'토') }">checked</c:if>>토</label>
+													</div>
+													<div class="form-check">
+														<input type="checkbox" class="form-check-input"
+															name="meetingDate" id="meetingDate6" value="일"
+															<c:if test="${fn:contains(dateStr,'일') }">checked</c:if>> <label
+															class="form-check-label" for="meetingDate6">일</label>
+													</div>
+												</div>
+												<!-- /.input-group -->
+
+												<label for="radio-category">카테고리</label>
+												<div id="radio-category" class="input-group">
+													<div class="form-check">
+														<input class="form-check-input" type="radio"
+															name="clubCategory" id="clubCategory0" value="사회"
+															<c:if test="${club.clubCategory eq '사회'}">checked</c:if>>
+														<label class="form-check-label" for="clubCategory0">사회</label>
+													</div>
+													<div class="form-check">
+														<input class="form-check-input" type="radio"
+															name="clubCategory" id="clubCategory1" value="취미"
+															<c:if test="${club.clubCategory eq '취미'}">checked</c:if>>
+														<label class="form-check-label" for="clubCategory1">취미</label>
+													</div>
+													<div class="form-check">
+														<input class="form-check-input" type="radio"
+															name="clubCategory" id="clubCategory2" value="음식"
+															<c:if test="${club.clubCategory eq '음식'}">checked</c:if>>
+														<label class="form-check-label" for="clubCategory2">음식</label>
+													</div>
+													<div class="form-check">
+														<input class="form-check-input" type="radio"
+															name="clubCategory" id="clubCategory3" value="운동"
+															<c:if test="${club.clubCategory eq '운동'}">checked</c:if>>
+														<label class="form-check-label" for="clubCategory3">운동</label>
+													</div>
+													<div class="form-check">
+														<input class="form-check-input" type="radio"
+															name="clubCategory" id="clubCategory4" value="문학"
+															<c:if test="${club.clubCategory eq '문학'}">checked</c:if>>
+														<label class="form-check-label" for="clubCategory4">문학</label>
+													</div>
+													<div class="form-check">
+														<input class="form-check-input" type="radio"
+															name="clubCategory" id="clubCategory5" value="기타"
+															<c:if test="${club.clubCategory eq '기타'}">checked</c:if>>
+														<label class="form-check-label" for="clubCategory5">기타</label>
+													</div>
+
+												</div>
+
+												<div id="btn-sub">
+													<button type="submit" id="update-btn"
+														class="btn btn-primary">수정하기</button>
+												</div>
+											</form>
+											<!-- form end -->
+										</div>
+									</div>
+									<!-- /.modal-body -->
+								</div>
+								<!-- /.modal-content -->
+							</div>
+							<!-- /.modal-dialog -->
+						</div>
+						<!-- /.modal -->
+					</c:forEach>
 
 					<div class="col-12 col-sm-6 col-md-3">
 						<div class="card new" id="new-club-card">
@@ -405,31 +560,34 @@ function sidebarActive(){
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
-				
+
 			</div>
 			<div class="modal-body">
 				<div>
 					<!-- form start -->
-					<form role="form" id="new-club-form" 
-						  action="${pageContext.request.contextPath}/club/insertNewClub.do" 
-						  method="post"
-						  enctype="multipart/form-data">
-						
+					<form role="form" id="new-club-form"
+						action="${pageContext.request.contextPath}/club/insertNewClub.do"
+						method="post" enctype="multipart/form-data">
+
 						<!-- 아이디값 히든으로 넘겨주기  -->
-						<input type="hidden" name="clubManagerId" value="${memberLoggedIn.memberId}" />
-						
+						<input type="hidden" name="clubManagerId"
+							value="${memberLoggedIn.memberId}" />
+
 						<div class="form-group">
-							<label>이름</label> <input type="text" name="clubName" class="form-control" required>
+							<label>이름</label> <input type="text" name="clubName"
+								class="form-control" required>
 						</div>
 						<!--  /.form-group -->
 						<div class="form-group">
 							<label>소개</label>
-							<textarea class="form-control" name="clubIntroduce" rows="7" placeholder="소개글을 작성해주세요" required></textarea>
+							<textarea class="form-control" name="clubIntroduce" rows="7"
+								placeholder="소개글을 작성해주세요" required></textarea>
 						</div>
 						<!--  /.form-group -->
 
 						<div class="form-group">
-							<label>모임주기</label> <select class="form-control" name="meetingCycle">
+							<label>모임주기</label> <select class="form-control"
+								name="clubMeetingCycle">
 								<option>매주</option>
 								<option>격주</option>
 							</select>
@@ -437,32 +595,39 @@ function sidebarActive(){
 						<label for="check-week">모임 요일</label>
 						<div id="check-week" class="input-group">
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate0" value="월" checked>
+								<input type="checkbox" class="form-check-input"
+									name="clubMeetingDate" id="meetingDate0" value="월" checked>
 								<label class="form-check-label" for="meetingDate0">월</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate1" value="화">
-								<label class="form-check-label" for="meetingDate1">화</label>
+								<input type="checkbox" class="form-check-input"
+									name="clubMeetingDate" id="meetingDate1" value="화"> <label
+									class="form-check-label" for="meetingDate1">화</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate2" value="수">
-								<label class="form-check-label" for="meetingDate2">수</label>
+								<input type="checkbox" class="form-check-input"
+									name="clubMeetingDate" id="meetingDate2" value="수"> <label
+									class="form-check-label" for="meetingDate2">수</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate3" value="목">
-								<label class="form-check-label" for="meetingDate3">목</label>
+								<input type="checkbox" class="form-check-input"
+									name="clubMeetingDate" id="meetingDate3" value="목"> <label
+									class="form-check-label" for="meetingDate3">목</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate4" value="금">
-								<label class="form-check-label" for="meetingDate4">금</label>
+								<input type="checkbox" class="form-check-input"
+									name="clubMeetingDate" id="meetingDate4" value="금"> <label
+									class="form-check-label" for="meetingDate4">금</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate5" value="토">
-								<label class="form-check-label" for="meetingDate5">토</label>
+								<input type="checkbox" class="form-check-input"
+									name="clubMeetingDate" id="meetingDate5" value="토"> <label
+									class="form-check-label" for="meetingDate5">토</label>
 							</div>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" name="meetingDate" id="meetingDate6" value="일">
-								<label class="form-check-label" for="meetingDate6">일</label>
+								<input type="checkbox" class="form-check-input"
+									name="clubMeetingDate" id="meetingDate6" value="일"> <label
+									class="form-check-label" for="meetingDate6">일</label>
 							</div>
 						</div>
 						<!-- /.input-group -->
@@ -470,28 +635,34 @@ function sidebarActive(){
 						<label for="radio-category">카테고리</label>
 						<div id="radio-category" class="input-group">
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory0" value="사회"
-									checked> <label class="form-check-label" for="clubCategory0">사회</label>
+								<input class="form-check-input" type="radio" name="clubCategory"
+									id="clubCategory0" value="사회" checked> <label
+									class="form-check-label" for="clubCategory0">사회</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory1" value="취미">
-								<label class="form-check-label" for="clubCategory1">취미</label>
+								<input class="form-check-input" type="radio" name="clubCategory"
+									id="clubCategory1" value="취미"> <label
+									class="form-check-label" for="clubCategory1">취미</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory2" value="음식">
-								<label class="form-check-label" for="clubCategory2">음식</label>
+								<input class="form-check-input" type="radio" name="clubCategory"
+									id="clubCategory2" value="음식"> <label
+									class="form-check-label" for="clubCategory2">음식</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory3" value="운동">
-								<label class="form-check-label" for="clubCategory3">운동</label>
+								<input class="form-check-input" type="radio" name="clubCategory"
+									id="clubCategory3" value="운동"> <label
+									class="form-check-label" for="clubCategory3">운동</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory4" value="문학">
-								<label class="form-check-label" for="clubCategory4">문학</label>
+								<input class="form-check-input" type="radio" name="clubCategory"
+									id="clubCategory4" value="문학"> <label
+									class="form-check-label" for="clubCategory4">문학</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="clubCategory" id="clubCategory5" value="기타">
-								<label class="form-check-label" for="clubCategory5">기타</label>
+								<input class="form-check-input" type="radio" name="clubCategory"
+									id="clubCategory5" value="기타"> <label
+									class="form-check-label" for="clubCategory5">기타</label>
 							</div>
 
 						</div>
@@ -510,5 +681,6 @@ function sidebarActive(){
 	<!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
