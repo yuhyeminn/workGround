@@ -57,4 +57,116 @@
 		where private_yn = 'Y' and project_writer = #{memberId}
 	</select>
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- ########################혜민############################# -->
+	<!-- 프로젝트 생성 -->
+	<insert id="insertProject" parameterType="project">
+		insert into project
+		values(seq_project.nextval,#{projectWriter},#{projectTitle},default,#{projectDesc},default,null,null,null)
+		<selectKey keyProperty="projectNo" resultType="_int" order="AFTER">
+			select seq_project.currval from dual
+		</selectKey>
+	</insert>
+	
+	<!-- 프로젝트팀원 테이블에 팀장 추가 -->
+	<insert id="insertProjectManager" parameterType="project">
+		insert into project_members
+		values(seq_project_members.nextval,#{projectNo},#{projectWriter},'Y')
+	</insert>
+	
+	<!-- 프로젝트팀원 테이블에 팀원 추가 -->
+	<insert id="insertProjectMember">
+		insert into project_members
+		values(seq_project_members.nextval,to_number(#{projectNo}),#{projectMember},default)
+	</insert>
+	
 </mapper>

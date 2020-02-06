@@ -8,4 +8,6 @@ import com.kh.workground.project.model.vo.Project;
 
 public interface ProjectService2 {
 
+	int insertProject(Project p, List<String> projectMemberList);
+
 }

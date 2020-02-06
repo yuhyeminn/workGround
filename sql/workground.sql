@@ -449,8 +449,8 @@ select * from checklist;
 select * from work_comment;
 select * from attachment;
 
-
-
+--delete from project_members where project_no = 23;
+--delete from project_members where project_no =25;
 --================================================
 --뷰: member+department+job 
 --================================================

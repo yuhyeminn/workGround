@@ -20,8 +20,6 @@
 $(function(){
 	sidebarActive(); //사이드바 활성화
 	addMember(); //프로젝트 팀원 추가
-	
-	
 });
 
 //사이드바 활성화
@@ -48,17 +46,15 @@ function addMember(){
       dataSource: empData,
       fields: { text: 'name', value: 'id' },
       itemTemplate: '<div><img class="empImage img-circle img-sm-profile" src="${pageContext.request.contextPath}/resources/img/profile.jfif" width="35px" height="35px"/>' +
-      '<div class="ename"> ${empData.name} </div><div class="job"> ${dept} </div></div>',
+      '<div class="ename">'+ empData.name +'</div><div class="job"> ${dept} </div></div>',
       valueTemplate: '<div style="width:100%;height:100%;">' +
           '<img class="value" src="${pageContext.request.contextPath}/resources/img/profile.jfif" height="26px" width="26px"/>' +
           '<div class="name"> ${name}</div></div>',
       placeholder: 'Select Project member',
-      mode: 'Box',
-      value:['kh2020116','kh2020115']
+      mode: 'Box'
   });
-  listObj.appendTo('#addMember');
+  listObj.appendTo('#projectMember');
   console.log(listObj.value);
-  console.log($("#addMember").val());
 }
 </script>
 
@@ -274,7 +270,7 @@ function addMember(){
                 <form action="${pageContext.request.contextPath}/project/addProject.do" id="addProjectFrm" method="POST">
                 <div class="form-group">
                     <label for="projectTitle" class="col-form-label">제목</label>
-                    <input type="text" class="form-control" id="projectTitle" name="projectTitle">
+                    <input type="text" class="form-control" id="projectTitle" name="projectTitle" required>
                 </div>
                 <div class="form-group">
                     <label for="projectDescribe" class="col-form-label">설명(선택사항)</label>
@@ -284,7 +280,7 @@ function addMember(){
                     <label for="projectMember">프로젝트 멤버(선택사항)</label>
                     <div class='control-wrapper'>
                         <div class="control-styles">
-                            <input type="text" tabindex="1" id="addMember" name="projectMember"/>
+                            <input type="text" tabindex="1" id="projectMember" name="projectMember"/>
                         </div>
                     </div>
                     <div class="row justify-content-md-center">
