@@ -767,23 +767,6 @@ function sidebarActive(){
   </div>
 </div>
 
-<script>
 
-/*  $(()=>{
-	//전체공지
-	$.ajax({
-		url: "${pageContext.request.contextPath}/notice/noticeList.do",
-		type: "GET",
-		success: data => {
-			console.log(data);
-			
-			
-		},
-		error: (x,s,e) => {
-			console.log(x,s,e);
-		}
-	});
-}); */
-</script>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

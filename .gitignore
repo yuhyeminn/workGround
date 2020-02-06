@@ -1,7 +1,8 @@
 # Created by https://www.gitignore.io/api/eclipse
 # Edit at https://www.gitignore.io/?templates=eclipse
 
-### Eclipse ###
+### Eclipse ##
+*/target
 .metadata
 bin/
 tmp/
@@ -10,7 +11,7 @@ tmp/
 *.swp
 *~.nib
 local.properties
-# .settings/
+ .settings/
 .loadpath
 .recommenders
 
@@ -62,10 +63,10 @@ MANIFEST.MF
 
 ### Eclipse Patch ###
 # Eclipse Core
-# .project
+ .project
 
 # JDT-specific (Eclipse Java Development Tools)
-# .classpath
+ .classpath
 
 # Annotation Processing
 .apt_generated
