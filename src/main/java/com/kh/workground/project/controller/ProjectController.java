@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.member.model.vo.Member;
@@ -71,16 +72,29 @@ public class ProjectController {
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
-			throw new ProjectException("projectList.do 조회 오류!");
+			throw new ProjectException("프로젝트 목록 조회 오류!");
 		}
 		
 		return mav;
 	}
 	
 	@RequestMapping("/project/projectView.do")
-	public ModelAndView projectView(ModelAndView mav) {
+	public ModelAndView projectView(ModelAndView mav, @RequestParam int projectNo) {
+		logger.debug("projectNo={}", projectNo);
 		
-		mav.setViewName("/project/projectView");
+		try {
+			//1. 업무로직
+			Map<String, Object> map = projectService.selectProjectWorklistAll(projectNo);
+			
+			//2. 뷰모델 처리
+			mav.setViewName("/project/projectView");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 상세 조회 오류!");
+		}
+		
+		
 		
 		return mav;
 	}
@@ -88,7 +102,7 @@ public class ProjectController {
 	@RequestMapping("/project/projectAttachment.do")
 	public ModelAndView projectAttachment(ModelAndView mav) {
 		
-		mav.setViewName("/project/projectAttachment");
+		mav.setViewName("/project/projectAttachmentAjax");
 		
 		return mav;
 	}

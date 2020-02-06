@@ -38,7 +38,7 @@ function sidebarActive(){
 function addMember(){
 	var empData = [
 		<c:forEach items="${memberListByDept}" var="m" varStatus="vs">
-	  	{id: '${m.memberId}', name:'${m.memberName}', dept: '${m.deptTitle}', profile: 'profile.jfif'}${vs.last?"":","}
+	  		{id: '${m.memberId}', name:'${m.memberName}', dept: '${m.deptTitle}', profile: 'profile.jfif'}${vs.last?"":","}
         </c:forEach>
   ] 
   // initialize MultiSelect component
@@ -112,47 +112,40 @@ function addMember(){
                 <h3><i class="fas fa-chevron-down"></i> 최근 프로젝트</h3>
             </div><!-- /.card-header -->
             <div class="row card-content">
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="card card-hover">
-                <a href="#">
-                    <div class="card-body">
-                    <div class="card-title">
-                        <h5>기획</h5>
-                    </div>
-                    <div class="card-star text-right">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    </div>
-                </a>
-                </div><!-- /.card -->
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="card card-hover">
-                <a href="#">
-                    <div class="card-body">
-                    <div class="card-title">
-                        <h5>기획2</h5>
-                    </div>
-                    </div>
-                </a>
-                </div><!-- /.card -->
-            </div>
-            </div><!-- /.card-content -->
+            
+            <c:forEach items="${listByDept}" var="p">
+	            <div class="col-12 col-sm-6 col-md-3">
+	                <div class="card card-hover">
+	                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
+	                <%-- <a href="${pageContext.request.contextPath}/project/projectView.do"> --%>
+	                    <div class="card-body">
+	                    <div class="card-title">
+	                        <h5>${p.projectTitle}</h5>
+	                    </div>
+	                    </div>
+	                </a>
+	                </div><!-- /.card -->
+	            </div>
+	        </c:forEach> 
+	        
+	        </div><!-- /.card-content -->
         </section>
 
         <!-- 중요 표시된 프로젝트 -->
         <section id="project-important">
             <div class="card-header" role="button" tabindex="0" onclick="toggleList(this);">
-            <h3><i class="fas fa-chevron-down"></i> <i class="fas fa-star"></i> 중요 표시된 프로젝트 <span class="header-count">(1)</span></h3>
+            <h3><i class="fas fa-chevron-down"></i> <i class="fas fa-star"></i> 중요 표시된 프로젝트 <span class="header-count">(${fn:length(listByImportant)})</span></h3>
             </div><!-- /.card-header -->
             <div class="row card-content">
+            
+            <c:forEach items="${listByImportant}" var="p">
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hover">
-                    <a href="${pageContext.request.contextPath}/project/projectView.do">
+                    <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
                     <div class="card-body">
                         <!-- 타이틀 -->
                         <div class="card-title">
-                        <h5>기획</h5>
+                        <h5>${p.projectTitle}</h5>
                         </div>
                         <!-- 중요표시 -->
                         <div class="card-star text-right">
@@ -160,8 +153,13 @@ function addMember(){
                         </div>
                         <!-- 프로젝트 상태 / 마감일 -->
                         <div class="card-status">
-                        <span class="btn btn-block btn-sm bg-success">진행중</span>
-                        <span class="end-date"><i class="far fa-calendar-alt"></i> 1월 31일</span>
+                        <span class="btn btn-block btn-sm bg-${p.projectStatusColor}">${p.projectStatusTitle}</span>
+                        <span class="end-date">
+                        	<c:if test="${p.projectEndDate!=null}">
+                        	<i class="far fa-calendar-alt"></i> 
+                        	</c:if>
+                        	${p.projectEndDate}
+                        </span>
                         </div>
                         <div class="progress-group card-progress">
                         <span class="progress-title"><span class="percent">11%</span> 완료</span>
@@ -174,47 +172,53 @@ function addMember(){
                     </a>
                 </div><!-- /.card -->
             </div>
+            </c:forEach>
+            
             </div><!-- /.card-content -->
         </section>
         
         <!-- 내가 속한 프로젝트 -->
         <section id="project-in">
             <div class="card-header" role="button" tabindex="0" onclick="toggleList(this);">
-            <h3><i class="fas fa-chevron-down"></i> 내가 속한 프로젝트 <span class="header-count">(1)</span></h3>
+            <h3><i class="fas fa-chevron-down"></i> 내가 속한 프로젝트 <span class="header-count">(${fn:length(listByInclude)})</span></h3>
             </div><!-- /.card-header -->
             <div class="row card-content">
             <!-- 내 업무 -->
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hover mywork">
-                    <a href="#">
+                    <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${listByInclude[0].projectNo}">
                     <div class="card-body">
                         <!-- 프로필 사진 -->
+                        <%-- <c:if test="${listByInclude[0].originalFileName==null}">
+                        <img src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="User Avatar" class="img-circle img-profile">
+                        </c:if>
+                        <c:if test="${listByInclude[0].originalFileName!=null}"> --%>
                         <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile">
+                        <%-- </c:if> --%>
                         <!-- 타이틀 -->
-                        <div class="card-title text-center">
-                        <h5>내 업무</h5>
-                        </div>
-                        <!-- 프로젝트 상태 / 마감일 -->
+                        <div class="card-title text-center"><h5>${listByInclude[0].projectTitle}</h5></div>
+                        <!-- 프로젝트 상태  -->
                         <div class="progress-group card-progress">
-                        <span class="progress-title"><span class="percent">11%</span> 완료</span>
-                        <span class="progress-title float-right"><span>1</span>/<span>9</span> 개 업무</span>
-                        <div class="progress progress-sm">
-                            <div class="progress-bar bg-info" style="width: 11%"></div>
-                        </div>
+	                        <span class="progress-title"><span class="percent">11%</span> 완료</span>
+	                        <span class="progress-title float-right"><span>1</span>/<span>9</span> 개 업무</span>
+	                        <div class="progress progress-sm">
+	                            <div class="progress-bar bg-info" style="width: 11%"></div>
+	                        </div>
                         </div>
                     </div>
                     </a>
                 </div><!-- /.card -->
             </div>
-
+            
             <!-- 프로젝트 -->
+			<c:forEach items="${listByInclude}" begin="1" var="p">
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hover">
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
                     <div class="card-body">
                     <!-- 타이틀 -->
                     <div class="card-title">
-                        <h5>기획2</h5>
+                        <h5>${p.projectTitle}</h5>
                     </div>
 
                     <!-- 중요표시 -->
@@ -223,8 +227,13 @@ function addMember(){
 
                     <!-- 프로젝트 상태 / 마감일 -->
                     <div class="card-status">
-                        <span class="btn btn-block btn-sm bg-success">진행중</span>
-                        <span class="end-date"><i class="far fa-calendar-alt"></i> 1월 31일</span>
+                        <span class="btn btn-block btn-sm bg-${p.projectStatusColor}">${p.projectStatusTitle}</span>
+                        <span class="end-date">
+                        	<c:if test="${p.projectEndDate!=null}">
+                        	<i class="far fa-calendar-alt"></i> 
+                        	</c:if>
+                        	${p.projectEndDate}
+                        	</span>
                     </div>
                     <div class="progress-group card-progress">
                         <span class="progress-title"><span class="percent">11%</span> 완료</span>
@@ -237,7 +246,8 @@ function addMember(){
                 </a>
                 </div><!-- /.card -->
             </div>
-
+            </c:forEach> 
+            
             <!-- 새 프로젝트 추가 -->
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card addpr-hover" data-toggle="modal" data-target="#add-project-modal">

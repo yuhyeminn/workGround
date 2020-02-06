@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.vo.Project;
+import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.Worklist;
 
 @Repository
 public class ProjectDAOImpl implements ProjectDAO {
@@ -38,6 +40,21 @@ public class ProjectDAOImpl implements ProjectDAO {
 	@Override
 	public List<Member> selectMemberListByDept(String deptCode) {
 		return sqlSession.selectList("project.selectMemberListByDept", deptCode);
+	}
+
+	@Override
+	public Project selectProjectOne(int projectNo) {
+		return sqlSession.selectOne("project.selectProjectOne", projectNo);
+	}
+
+	@Override
+	public List<Worklist> selectWorklistListByProjectNo(int projectNo) {
+		return sqlSession.selectList("project.selectWorklistListbyProjectNo", projectNo);
+	}
+
+	@Override
+	public List<Work> selectWorkListByWorklistNo(int worklistNo) {
+		return sqlSession.selectList("project.selectWorkListByWorklistNo", worklistNo);
 	}
 
 }

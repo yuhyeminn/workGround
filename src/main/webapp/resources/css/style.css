@@ -94,9 +94,11 @@ button:active, button:focus{outline: none;}
 .card-header .fa-star{margin: 0 5px;}
 /* 프로젝트 상태 / 마감일 */
 .card-status{margin-top: 7.5rem;}
-.card-status .btn-block, .card-status .end-date{display: inline-block; width: 4rem;}
+.card-status .btn-block, .card-status .end-date{display: inline-block; width: 5rem;}
 .card-status .btn-group-sm>.btn, .btn-sm {padding: .1rem .1rem;}
 .card-status .bg-success.btn:hover{border-color:#28a745;}
+.card-status .bg-info.btn:hover{border-color:#17a2b8;}
+.card-status .bg-warning.btn:hover{border-color:#ffc107;}
 .card-status .end-date{float:right; padding: .1rem 0 .1rem .1rem; font-size: .75rem; color: #17a2b8;}
 .card-progress .progress-title {color: #8d919a; font-size: 0.75rem;}
 .card-progress{margin-top: .5rem;}
