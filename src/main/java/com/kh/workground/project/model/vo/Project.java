@@ -37,6 +37,7 @@ public class Project implements Serializable {
 	private String projectStatusColor; //project_status_code테이블값 
 	
 	private List<Member> projectMemberList; //프로젝트에 포함된 팀원 리스트
+	private List<Worklist> worklistList; //프로젝트 안의 업무리스트들
 	
 	
 }

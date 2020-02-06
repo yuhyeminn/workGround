@@ -116,8 +116,8 @@ function addMember(){
             <c:forEach items="${listByDept}" var="p">
 	            <div class="col-12 col-sm-6 col-md-3">
 	                <div class="card card-hover">
-	                <%-- <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}"> --%>
-	                <a href="${pageContext.request.contextPath}/project/projectView.do">
+	                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
+	                <%-- <a href="${pageContext.request.contextPath}/project/projectView.do"> --%>
 	                    <div class="card-body">
 	                    <div class="card-title">
 	                        <h5>${p.projectTitle}</h5>
@@ -141,7 +141,7 @@ function addMember(){
             <c:forEach items="${listByImportant}" var="p">
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hover">
-                    <a href="${pageContext.request.contextPath}/project/projectView.do">
+                    <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
                     <div class="card-body">
                         <!-- 타이틀 -->
                         <div class="card-title">
@@ -186,7 +186,7 @@ function addMember(){
             <!-- 내 업무 -->
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hover mywork">
-                    <a href="#">
+                    <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${listByInclude[0].projectNo}">
                     <div class="card-body">
                         <!-- 프로필 사진 -->
                         <%-- <c:if test="${listByInclude[0].originalFileName==null}">
@@ -214,7 +214,7 @@ function addMember(){
 			<c:forEach items="${listByInclude}" begin="1" var="p">
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hover">
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
                     <div class="card-body">
                     <!-- 타이틀 -->
                     <div class="card-title">
@@ -233,7 +233,7 @@ function addMember(){
                         	<i class="far fa-calendar-alt"></i> 
                         	</c:if>
                         	${p.projectEndDate}
-                        </span>
+                        	</span>
                     </div>
                     <div class="progress-group card-progress">
                         <span class="progress-title"><span class="percent">11%</span> 완료</span>

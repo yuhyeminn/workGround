@@ -402,6 +402,10 @@ insert into worklist values(seq_worklist.nextval, 1, '완료');
 insert into worklist values(seq_worklist.nextval, 2, '해야할 일');
 insert into worklist values(seq_worklist.nextval, 2, '진행중');
 insert into worklist values(seq_worklist.nextval, 2, '완료');
+--업무 태그
+insert into work_tag values('WT1', 'priority', 'danger');
+insert into work_tag values('WT2', 'important', 'primary');
+insert into work_tag values('WT3', 'review', 'warning');
 -- 업무
 insert into work values(seq_work.nextval, 1, '회식하기', '내일 회식이요', default, default, null, default, 'WT1', null);
 insert into work values(seq_work.nextval, 2, '밥먹기', '밥 먹는 중!', default, default, null, default, null, null);
@@ -499,8 +503,10 @@ from (select P.*, PM.member_id
       order by P.project_no desc) V 
       left join view_member M on V.member_id = M.member_id;
 
+--================================================
+--뷰: work + work_tag
+--================================================
+create or replace view view_workTag as
+select W.*, WT.work_tag_title, WT.work_tag_color
+from work W left join work_tag WT on W.work_tag_code = WT.work_tag_code;
 
-select * from view_projectMember where dept_code = 'D3' and private_yn = 'N';
-
-select * from view_projectMember
-where private_yn = 'Y' and project_writer = 'kh2020122';
