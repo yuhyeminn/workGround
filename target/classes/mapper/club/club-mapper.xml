@@ -108,5 +108,30 @@
 		select * from club_member 
 		where emp_id = #{memberId} and club_code = #{clubNo}
 	</select>
+	
+	<delete id="deleteClubNotice">
+		delete from club_notice 
+		where club_notice_no = #{clubNoticeNo}
+	</delete>
+	
+	<insert id="insertClubPhoto">
+		insert into club_photo 
+		values(seq_club_photo_no.nextval, 
+			   #{clubPhotoTitle}, 
+			   #{clubPhotoOriginal}, 
+			   #{clubPhotoRenamed}, 
+			   #{clubNo}, 
+			   default)
+	</insert>
+	
+	<select id="selectClubPhotoList" resultType="clubPhoto">
+		select * from club_photo 
+		where club_no = #{clubNo}
+	</select>
+	
+	<delete id="deleteClubPhoto">
+		delete from club_photo 
+		where club_photo_no = #{clubPhotoNo}
+	</delete>
 	<!-- br end -->
 </mapper>

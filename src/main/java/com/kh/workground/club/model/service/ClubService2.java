@@ -30,6 +30,12 @@ public interface ClubService2 {
 
 	ClubMember selectOneClubMember(ClubNotice clubNotice);
 
+	int deleteClubNotice(int clubNoticeNo);
+
+	List<ClubPhoto> selectClubPhotoList(int clubNo);
+
+	int deleteClubPhoto(ClubPhoto clubPhoto);
+
 
 
 

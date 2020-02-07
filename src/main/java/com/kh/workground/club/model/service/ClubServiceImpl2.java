@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kh.workground.club.model.dao.ClubDAO2;
+import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
@@ -20,7 +21,13 @@ public class ClubServiceImpl2 implements ClubService2 {
 
 	@Override
 	public int insertClubPhoto(ClubPhoto clubPhoto) {
-		return clubDAO2.insertClubPhoto(clubPhoto);
+		int result = 0;
+		
+		result = clubDAO2.insertClubPhoto(clubPhoto);
+		if(result==0)
+			throw new ClubException("사진 등록오류!");
+		
+		return result;
 	}
 
 	@Override
@@ -66,6 +73,21 @@ public class ClubServiceImpl2 implements ClubService2 {
 	@Override
 	public ClubMember selectOneClubMember(ClubNotice clubNotice) {
 		return clubDAO2.selectOneClubMember(clubNotice);
+	}
+
+	@Override
+	public int deleteClubNotice(int clubNoticeNo) {
+		return clubDAO2.deleteClubNotice(clubNoticeNo);
+	}
+
+	@Override
+	public List<ClubPhoto> selectClubPhotoList(int clubNo) {
+		return clubDAO2.selectClubPhotoList(clubNo);
+	}
+
+	@Override
+	public int deleteClubPhoto(ClubPhoto clubPhoto) {
+		return clubDAO2.deleteClubPhoto(clubPhoto);
 	}
 
 

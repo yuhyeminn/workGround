@@ -49,10 +49,14 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 //		logger.debug("clubPlanList={}", clubPlanList);
 		List<ClubNotice> clubNoticeList = clubService2.selectClubNoticeList(clubNo);
 //		logger.debug("clubNoticeList={}", clubNoticeList);
+		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
+//		logger.debug("clubPhotoList={}", clubPhotoList);
 		
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
 		mav.addObject("clubNoticeList", clubNoticeList);
+		mav.addObject("clubPhotoList", clubPhotoList);
+		mav.addObject("clubPhotoListSize", clubPhotoList.size());
 		mav.setViewName("/club/clubView");
 		
 		return mav;
@@ -165,14 +169,32 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		return mav;
 	}
 	
+	@PostMapping("/club/deleteClubNotice.do")
+	public ModelAndView deleteClubNotice(ModelAndView mav, 
+										 @RequestParam("clubNoticeNo") int clubNoticeNo, 
+										 @RequestParam("clubNo") int clubNo) {
+		logger.debug("clubNoticeNo={}", clubNoticeNo);
+		logger.debug("clubNo={}", clubNo);
+		
+		int result = clubService2.deleteClubNotice(clubNoticeNo);
+		
+		mav.addObject("msg", result>0?"공지사항을 성공적으로 삭제하였습니다.":"공지사항을 삭제하지 못했습니다.");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNo);
+		mav.setViewName("common/msg");
+		
+		return mav;
+	}
+	
 	@RequestMapping("/club/clubPhotoForm.do")
 	public ModelAndView clubPhotoForm(ModelAndView mav, 
 									  ClubPhoto clubPhoto, 
-									  @RequestParam int clubNo, 
 									  @RequestParam(value="upFile", required=false) MultipartFile upFile, 
 									  HttpServletRequest request) {
 		logger.debug("게시물 등록 요청!");
 		logger.debug("clubPhoto={}", clubPhoto);
+//		logger.debug("사용자입력 name={}", upFile.getName());
+//		logger.debug("fileName={}", upFile.getOriginalFilename());
+//		logger.debug("size={}", upFile.getSize());
 		
 		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club");
 		
@@ -183,7 +205,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		String clubPhotoOriginal = upFile.getOriginalFilename();
 		String ext = clubPhotoOriginal.substring(clubPhotoOriginal.lastIndexOf("."));
-		SimpleDateFormat sdf = new SimpleDateFormat();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
 		int rndNum = (int)(Math.random()*1000);
 		String clubPhotoRenamed = sdf.format(new Date())+"_"+rndNum+ext;
 		
@@ -195,7 +217,6 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			e.printStackTrace();
 		}
 		
-		clubPhoto.setClubNo(clubNo);
 		clubPhoto.setClubPhotoOriginal(clubPhotoOriginal);
 		clubPhoto.setClubPhotoRenamed(clubPhotoRenamed);
 		
@@ -204,12 +225,24 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		int result = clubService2.insertClubPhoto(clubPhoto);
 		
 		mav.addObject("msg", result>0?"사진등록 성공!":"사진등록 실패!");
-		mav.addObject("loc", "/club/clubList.do");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubPhoto.getClubNo());
 		mav.setViewName("common/msg");
-		
 		
 		return mav;
 	}
 	
+	@PostMapping("/club/deleteClubPhoto.do")
+	public ModelAndView deleteClubPhoto(ModelAndView mav, 
+										ClubPhoto clubPhoto) {
+		logger.debug("clubPhoto={}", clubPhoto);
+		
+		int result = clubService2.deleteClubPhoto(clubPhoto);
+		
+		mav.addObject("msg", result>0?"사진을 성공적으로 삭제하였습니다.":"사진을 삭제하지 못했습니다.");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubPhoto.getClubNo());
+		mav.setViewName("common/msg");
+		
+		return mav;
+	}
 
 }

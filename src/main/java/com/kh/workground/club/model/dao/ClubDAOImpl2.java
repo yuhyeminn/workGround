@@ -68,6 +68,21 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 		return sqlSession.selectOne("club.selectOneClubMember", clubNotice);
 	}
 
+	@Override
+	public int deleteClubNotice(int clubNoticeNo) {
+		return sqlSession.delete("club.deleteClubNotice", clubNoticeNo);
+	}
+
+	@Override
+	public List<ClubPhoto> selectClubPhotoList(int clubNo) {
+		return sqlSession.selectList("club.selectClubPhotoList", clubNo);
+	}
+
+	@Override
+	public int deleteClubPhoto(ClubPhoto clubPhoto) {
+		return sqlSession.delete("club.deleteClubPhoto", clubPhoto);
+	}
+
 
 
 

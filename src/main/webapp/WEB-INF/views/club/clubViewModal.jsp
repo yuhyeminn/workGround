@@ -17,25 +17,19 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form name="clubPhotoFrm"
-				action="${pageContext.request.contextPath }/club/clubPhotoForm.do"
-				method="POST" enctype="multipart/form-data"
-				onsubmit="return validate();">
+			<form name="clubPhotoFrm" action="${pageContext.request.contextPath }/club/clubPhotoForm.do" method="POST" enctype="multipart/form-data" onsubmit="return validate();">
 				<div class="modal-body">
 					<input type="hidden" name="clubNo" value="${club.clubNo }" />
 					<div class="form-group">
-						<label for="exampleInputFile">사진제목</label> <input type="text"
-							name="clubPhotoTitle" class="form-control"
-							placeholder="제목을 입력하세요." required="required">
+						<label for="exampleInputFile">사진제목</label> 
+						<input type="text" name="clubPhotoTitle" class="form-control" placeholder="제목을 입력하세요." required="required">
 					</div>
 					<div class="form-group">
 						<label for="exampleInputFile">사진파일</label>
 						<div class="input-group">
 							<div class="custom-file">
-								<input type="file" class="custom-file-input" name=upFile
-									id="exampleInputFile" required="required"> <label
-									class="custom-file-label" for="exampleInputFile">파일을
-									선택하세요.</label>
+								<input type="file" class="custom-file-input" name=upFile id="exampleInputFile" required="required"> 
+								<label class="custom-file-label" for="exampleInputFile">파일을 선택하세요.</label>
 							</div>
 							<!-- <div class="input-group-append">
 	                  <span class="input-group-text" id="">Upload</span>
@@ -45,42 +39,13 @@
 				</div>
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-info">추가</button>
-					<button type="button" class="btn btn-secondary"
-						data-dismiss="modal">닫기</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
 				</div>
 			</form>
 		</div>
 	</div>
 </div>
 
-<!-- Image Modal -->
-<div class="modal fade cd-example-modal-lg" id="exampleModalCenter"
-	tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-	aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content card card-outline card-info">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLongTitle">연탄봉사활동</h5>
-				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<img
-					src="${pageContext.request.contextPath}/resources/img/club/volunteer1.jpg"
-					alt="..." class="img-thumbnail" data-toggle="modal"
-					data-target="#exampleModalCenter">
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-				<button type="button" class="btn btn-primary" data-dismiss="modal"
-					data-toggle="modal"
-					style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
-			</div>
-		</div>
-	</div>
-</div>
 
 
 <!-- info Modal -->
