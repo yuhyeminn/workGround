@@ -9,18 +9,6 @@
 	<select id="selectNoticeList" resultMap="noticeMap">
 		select * from notice where dept_code is null
 	</select>
-
-	<select id="selectPlanningDeptNoticeList" resultMap="noticeMap">
-		select * from notice where dept_code = 'D1'
-	</select>
-
-	<select id="selectDesignDeptNoticeList" resultMap="noticeMap">
-		select * from notice where dept_code = 'D2'
-	</select>
-
-	<select id="selectDevelopmentDeptNoticeList" resultMap="noticeMap">
-		select * from notice where dept_code  = 'D3'
-	</select>
 	
 
 </mapper>

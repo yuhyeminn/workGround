@@ -22,21 +22,6 @@ public class NoticeServiceImpl implements NoticeService {
 	public List<Notice> selectNoticeList() {
 		return noticeDAO.selectNoticeList();
 	}
-
-	@Override
-	public List<Notice> selectPlanningDeptNoticeList() {
-		return noticeDAO.selectPlanningDeptNoticeList();
-	}
-
-	@Override
-	public List<Notice> selectDesignDeptNoticeList() {
-		return noticeDAO.selectDesignDeptNoticeList();
-	}
-
-	@Override
-	public List<Notice> selectDevelopmentDeptNoticeList() {
-		return noticeDAO.selectDevelopmentDeptNoticeList();
-	}
-
+	
 
 }

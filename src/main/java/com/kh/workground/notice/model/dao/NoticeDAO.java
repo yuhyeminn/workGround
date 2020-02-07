@@ -8,11 +8,4 @@ public interface NoticeDAO {
 
 	List<Notice> selectNoticeList();
 
-	List<Notice> selectPlanningDeptNoticeList();
-
-	List<Notice> selectDesignDeptNoticeList();
-	
-	List<Notice> selectDevelopmentDeptNoticeList();
-	
-	
 }
