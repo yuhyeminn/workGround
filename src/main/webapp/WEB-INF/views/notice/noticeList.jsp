@@ -76,8 +76,10 @@ function sidebarActive(){
 </script>
 
 <!-- #############주현 할 일############
+0. 수정 모달창 forEach / 카드 안에 수정모달창 index주기
 1. 카드 내용 ...
 2. 관리자일 경우 부서별공지,자유게시판에서 관리자가 쓴 글 아닐 시 수정/삭제 가능하게 할지? / 삭제만?
+3. 관리자 기획부가 맞는 건지?
  -->
 
 <!-- Navbar NoticeList -->
@@ -131,11 +133,11 @@ function sidebarActive(){
           </ol>
           <div class="carousel-inner">          
             <!-- row1 -->
-            <c:forEach items="${noticeList }" var="n" varStatus="ns">
-            	<c:if test="${ns.count == 1}">
+            <c:forEach items="${noticeList }" var="n" varStatus="nvs">
+            	<c:if test="${nvs.count == 1}">
               	<div class="row card-content carousel-item active">
           	</c:if>
-          	<c:if test="${ns.count % 4 == 1 && ns.count != 1}">
+          	<c:if test="${nvs.count % 4 == 1 && nvs.count != 1}">
               	<div class="row card-content carousel-item">
           	</c:if>
    	        <div class="col-12 col-sm-6 col-md-3">
@@ -155,7 +157,7 @@ function sidebarActive(){
    	            </div>
    	          </div><!-- /.card -->
    	        </div>
-            	<c:if test="${ns.count % 4 == 0 || ns.last}">
+            	<c:if test="${nvs.count % 4 == 0 || nvs.last}">
    				</div>
           	</c:if>
             </c:forEach>
@@ -183,34 +185,31 @@ function sidebarActive(){
             <li data-target="#myDeptNotice_indicators" data-slide-to="2"></li>
           </ol>
           <div class="carousel-inner">
-            <!-- row1 -->
-<%--                         <c:forEach items="${noticeList }" var="n" varStatus="ns">
- --%>            
-            <c:forEach items="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}" var="${memberLoggedIn.deptCode=='D1'?d1n:memberLoggedIn.deptCode=='D2'?d2n:d3n}" varStatus="pdns">
-            	<c:if test="${pdns.count == 1}">
+            <c:forEach items="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}" var="deptn" varStatus="deptnvs">
+            	<c:if test="${pdptnvs.count == 1}">
               	<div class="row card-content carousel-item active">
           	</c:if>
-          	<c:if test="${pdns.count % 4 == 1 && pdns.count != 1}">
+          	<c:if test="${deptnvs.count % 4 == 1 && deptnvs.count != 1}">
               	<div class="row card-content carousel-item">
           	</c:if>
    	        <div class="col-12 col-sm-6 col-md-3">
    	          <div class="card">
    	            <!-- Default droprleft button -->
    	            <div class="dropleft">
-   	              <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${memberLoggedIn.memberId==n.noticeWriter?"style=display:block;":"style=display:none;"}><i class="fas fa-ellipsis-v"></i></button>
+   	              <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${memberLoggedIn.memberId==deptn.noticeWriter?"style=display:block;":"style=display:none;"}><i class="fas fa-ellipsis-v"></i></button>
    	              <div class="dropdown-menu">
    	                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
    	                <a href="#" class="dropdown-item">공지 삭제</a>
    	              </div>
    	            </div>
    	            <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-   	              <img src="${pageContext.request.contextPath}/resources/img/${n.noticeRenamedFileName}" class="card-img-top">
-   	              <h5 class="card-title">${pdn.noticeTitle }</h5>
-   	              <p class="card-text">${pdn.noticeContent }</p>
+   	              <img src="${pageContext.request.contextPath}/resources/img/${deptn.noticeRenamedFileName}" class="card-img-top">
+   	              <h5 class="card-title">${deptn.noticeTitle }</h5>
+   	              <p class="card-text">${deptn.noticeContent }</p>
    	            </div>
    	          </div><!-- /.card -->
    	        </div>
-            	<c:if test="${pdns.count % 4 == 0 || ns.last}">
+            	<c:if test="${deptnvs.count % 4 == 0 || deptnvs.last}">
    				</div>
           	</c:if>
             </c:forEach>
