@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.kh.workground.club.model.dao.ClubDAO2;
 import com.kh.workground.club.model.vo.Club;
+import com.kh.workground.club.model.vo.ClubMember;
+import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
 
@@ -44,6 +46,26 @@ public class ClubServiceImpl2 implements ClubService2 {
 	@Override
 	public int clubPlanInsert(ClubPlan clubPlan) {
 		return clubDAO2.clubPlanInsert(clubPlan);
+	}
+
+	@Override
+	public List<ClubNotice> selectClubNoticeList(int clubNo) {
+		return clubDAO2.selectClubNoticeList(clubNo);
+	}
+
+	@Override
+	public int clubNoticeUpdate(ClubNotice clubNotice) {
+		return clubDAO2.clubNoticeUpdate(clubNotice);
+	}
+
+	@Override
+	public int clubNoticeInsert(ClubNotice clubNotice) {
+		return clubDAO2.clubNoticeInsert(clubNotice);
+	}
+
+	@Override
+	public ClubMember selectOneClubMember(ClubNotice clubNotice) {
+		return clubDAO2.selectOneClubMember(clubNotice);
 	}
 
 

@@ -22,6 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.club.model.service.ClubService2;
 import com.kh.workground.club.model.vo.Club;
+import com.kh.workground.club.model.vo.ClubMember;
+import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
 
@@ -45,9 +47,12 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		List<ClubPlan> clubPlanList = clubService2.selectClubPlanList(clubNo);
 //		logger.debug("clubPlanList={}", clubPlanList);
+		List<ClubNotice> clubNoticeList = clubService2.selectClubNoticeList(clubNo);
+//		logger.debug("clubNoticeList={}", clubNoticeList);
 		
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
+		mav.addObject("clubNoticeList", clubNoticeList);
 		mav.setViewName("/club/clubView");
 		
 		return mav;
@@ -121,6 +126,40 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		mav.addObject("msg", result>0?"일정을 성공적으로 추가하였습니다.":"일정을 추가하지 못했습니다.");
 		mav.addObject("loc", "/club/clubView.do?clubNo="+clubPlan.getClubNo());
+		mav.setViewName("common/msg");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/clubNoticeUpdate.do")
+	public ModelAndView clubNoticeUpdate(ModelAndView mav, 
+										 ClubNotice clubNotice) {
+//		logger.debug("clubNotice={}", clubNotice);
+		
+		int result = clubService2.clubNoticeUpdate(clubNotice);
+		
+		mav.addObject("msg", result>0?"공지사항을 성공적으로 수정하였습니다.":"공지사항을 수정하지 못했습니다.");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNotice.getClubNo());
+		mav.setViewName("common/msg");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/insertClubNotice.do")
+	public ModelAndView clubNoticeInsert(ModelAndView mav, 
+										 ClubNotice clubNotice) {
+//		logger.debug("clubNotice={}", clubNotice);
+		
+		//memberLoggedIn.memberId와 clubNotice.clubNo으로 글 작성자(clubMemberNo) 넣어주기
+		ClubMember clubMember = clubService2.selectOneClubMember(clubNotice);
+		
+		clubNotice.setClubMemberNo(clubMember.getClubMemberNo());
+//		logger.debug("clubNotice={}", clubNotice);
+		
+		int result = clubService2.clubNoticeInsert(clubNotice);
+		
+		mav.addObject("msg", result>0?"공지사항을 성공적으로 추가하였습니다.":"공지사항을 추가하지 못했습니다.");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNotice.getClubNo());
 		mav.setViewName("common/msg");
 		
 		return mav;

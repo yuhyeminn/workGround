@@ -63,6 +63,15 @@
 #new-club-card:hover .card-body {
 	color: #fff;
 }
+
+.comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93);}
+.comment-text-area{display: inline-block; width: 90%; height: 2rem; margin-right: .3rem;}
+.comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
+.comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
+.comment-submit{border: 0; background: darkgray; border-radius: 3px; width: 3rem; height: 2rem; color: white;}
+.comment-submit:hover, .comment-reply:hover{background: #007bff;}
+.comment-delete:hover{background: #dc3545;}
+.comment-level2{margin-left: 3rem;}
 </style>
 
 <script>
@@ -235,7 +244,8 @@ function validate() {
 							</div>
 						</div>
 					</div> <!-- Message End -->
-				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
+				</a> 
+				<a href="#" class="dropdown-item"> <!-- Message Start -->
 					<div class="media">
 						<img
 							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
@@ -431,6 +441,7 @@ function validate() {
 					<h3>
 						<i class="fas fa-chevron-down"></i> <i class="fas fa-poll-h"></i>
 						동호회 소개
+					</h3>
 				</div>
 				<!-- /.card-header -->
 				<div class="col-md-12" data-toggle="modal" data-target="#info">
@@ -535,26 +546,22 @@ function validate() {
 												<label for="inputProjectLeader">참석자</label>
 												<p>
 													<!-- 프로필 사진 -->
-													<img
-														src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-														alt="User Avatar" class="img-circle img-profile"
-														style="width: 50px; margin-left: 10px;">
+													<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+														 alt="User Avatar" class="img-circle img-profile"
+														 style="width: 50px; margin-left: 10px;">
 												</p>
 											</div>
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary"
-												data-dismiss="modal">닫기</button>
-											<button type="button" class="btn btn-primary"
-													data-target="#plan-modify${vs.index }" 
-													data-dismiss="modal"
-													data-toggle="modal"
-													style="background-color: #17a2b8; border-color: #17a2b8;">
-												수정
-											</button>
 											<button type="button" class="btn btn-info float-right">
 												<i class="fas fa-plus"></i>
 											</button>
+											<button type="button" class="btn btn-info"
+													data-target="#plan-modify${vs.index }" 
+													data-dismiss="modal"
+													data-toggle="modal">수정</button>
+											<button type="button" class="btn btn-secondary"
+												data-dismiss="modal">닫기</button>
 										</div>
 									</div>
 								</div>
@@ -628,9 +635,9 @@ function validate() {
 													</select>
 												</div>
 												<div class="form-group">
-													<label for="inputClientCompany">장소</label> <input
-														type="text" id="inputClientCompany" class="form-control" name="clubPlanPlace"
-														placeholder="장소를 입력하세요." value="${clubPlan.clubPlanPlace }">
+													<label for="inputClientCompany">장소</label> 
+													<input type="text" id="inputClientCompany" class="form-control" name="clubPlanPlace"
+														placeholder="장소를 입력하세요." value="${clubPlan.clubPlanPlace }" />
 												</div>
 												<div class="form-group">
 													<label for="inputProjectLeader">담당진행자</label> <input
@@ -639,10 +646,9 @@ function validate() {
 												</div>
 											</div>
 											<div class="modal-footer">
+												<button type="submit" class="btn btn-info">수정</button>
 												<button type="button" class="btn btn-secondary"
 													data-dismiss="modal">닫기</button>
-												<button type="submit" class="btn btn-primary" 
-													style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
 											</div>
 										</form>
 									</div>
@@ -662,13 +668,13 @@ function validate() {
 						</div>
 						<!-- /.card -->
 					</div>
-				</div>
+				</div> <!-- .row card-content -->
 			</section>
 			<!-- /.card-content -->
 
 
 
-			<!-- 공지사항 -->
+			<!-- clubNotice -->
 			<section id="project-in">
 				<div class="card-header" role="button" onclick="toggleList(this);">
 					<h3>
@@ -678,75 +684,152 @@ function validate() {
 					</h3>
 				</div>
 				<!-- /.card-header -->
-				<div class="row card-content">
-					<!-- 공지사항 -->
-					<div class="col-12 col-sm-6 col-md-3">
-						<div class="card mywork">
-							<div class="card-body" data-toggle="modal" data-target="#notice">
-								<!-- 제목 -->
-								<div class="card-title" style="margin-bottom: 50px;">
-									<h5>2월 14일 신입회원 환영회식 있습니다.</h5>
+					<div class="row card-content">
+					<c:if test="${not empty clubNoticeList }">
+					<c:forEach items="${clubNoticeList }" var="clubNotice" varStatus="vs">
+						<!-- 공지사항 -->
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="card mywork">
+								<div class="card-body" data-toggle="modal" data-target="#notice${vs.index }">
+									<!-- 제목 -->
+									<div class="card-title" style="margin-bottom: 50px;">
+										<h5>${clubNotice.clubNoticeTitle }</h5>
+									</div>
+									<!-- 프로필 사진 -->
+									<img
+										src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+										alt="User Avatar" class="img-circle img-profile">
+									<!-- 타이틀 -->
+									<div class="card-title text-center">
+										<h5>${clubNotice.memberName }</h5>
+									</div>
 								</div>
-								<!-- 프로필 사진 -->
-								<img
-									src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-									alt="User Avatar" class="img-circle img-profile">
-								<!-- 타이틀 -->
-								<div class="card-title text-center">
-									<h5>봉동회장</h5>
+							</div>
+							<!-- /.card -->
+						</div>
+		
+					<!-- notice Modal -->
+					<div class="modal fade cd-example-modal-lg" id="notice${vs.index }" tabindex="-1"
+						role="dialog" aria-labelledby="exampleModalCenterTitle"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered modal-lg"
+							role="document">
+							<div class="modal-content card card-outline card-info" style="min-height: 500px;">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group">
+										<h5 class="modal-title" id="exampleModalLongTitle">
+											${clubNotice.clubNoticeTitle }
+										</h5>
+									</div>
+									<div class="form-group">
+										<br />
+									</div>
+									<div class="form-group">
+										${clubNotice.clubNoticeContent }
+									</div>
+									<div class="form-group">
+										<br />
+									</div>
+									<!-- NoticeModalComment -->
+									<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
+						            <div class="card-footer card-comments">
+						              <div class="card-comment">
+						                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/고양이.jpg" alt="User Image">
+						                <div class="comment-text">
+						                  <span class="username">이단비<span class="text-muted float-right">2020-01-25</span></span>
+						                  <span>네! 알겠습니다!</span>
+						                  <button class="comment-delete float-right">삭제</button>
+						                  <button class="comment-reply float-right">답글</button>
+						                </div>
+						              </div>
+						              <div class="card-comment comment-level2">
+						                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/차은우.jpg" alt="User Image">
+						                <div class="comment-text">
+						                  <span class="username">유혜민<span class="text-muted float-right">2020-01-26</span></span>
+						                  <span>넵! 알겠습니당</span>
+						                  <button class="comment-delete float-right">삭제</button>
+						                  <button class="comment-reply float-right">답글</button>
+						                </div>
+						              </div>
+						            </div>
+								</div>
+								<div class="modal-footer">
+									<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubNotice.memberId }">
+									<button type="button" class="btn btn-danger"
+										data-dismiss="modal" data-toggle="modal">삭제</button>
+									<button type="button" class="btn btn-info"
+										data-dismiss="modal" data-toggle="modal"
+										data-target="#notice-modify${vs.index }">수정</button>
+									</c:if>
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">닫기</button>
 								</div>
 							</div>
 						</div>
-						<!-- /.card -->
 					</div>
+					
+					<!-- #notice-modify modal -->
+					<div class="modal fade cd-example-modal-lg" id="notice-modify${vs.index }"
+						tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+						aria-hidden="true" data-backdrop="static">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+							<div class="modal-content card card-outline card-info" style="min-height: 500px;">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<form name="clubNoticeUpdateFrm" action="${pageContext.request.contextPath }/club/clubNoticeUpdate.do" method="POST">
+									<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
+									<input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />
+									<div class="modal-body">
+										<div class="form-group">
+											<label for="inputClientCompany">제목</label> 
+											<input type="text" id="inputClientCompany" class="form-control" name="clubNoticeTitle"
+												   placeholder="제목을 입력하세요." value="${clubNotice.clubNoticeTitle }" />
+										</div>
+										<div class="form-group">
+											<label for="inputClientCompany">공지내용</label> 
+											<div class="card-body pad">
+												<div class="mb-3">
+													<textarea class="textarea" name="clubNoticeContent"
+															  style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">${clubNotice.clubNoticeContent }</textarea>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="submit" class="btn btn-info">수정</button>
+										<button type="button" class="btn btn-secondary"
+											data-dismiss="modal">닫기</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</c:forEach>
+				</c:if>
+				
+				<!-- 공지 추가 -->
+				<div class="col-12 col-sm-6 col-md-3">
+					<div class="card new" id="new-club-card" data-toggle="modal"
+						data-target="#insertNotice">
+						<div class="card-body">
+							<i class="fas fa-plus"></i>
+							<h6>새 공지</h6>
+						</div>
+					</div>
+					<!-- /.card -->
 				</div>
-
-					<!-- 공지 추가 -->
-					<!-- 일정 추가 -->
-					<div class="col-12 col-sm-6 col-md-3">
-						<div class="card new" id="new-club-card" data-toggle="modal"
-							data-target="#insertNotice">
-							<div class="card-body">
-								<i class="fas fa-plus"></i>
-								<h6>새 공지</h6>
-							</div>
-						</div>
-						<!-- /.card -->
-					</div>
+				</div>
 			</section>
 			<!-- /.card-content -->
-
-			<!-- notice Modal -->
-			<div class="modal fade cd-example-modal-lg" id="notice" tabindex="-1"
-				role="dialog" aria-labelledby="exampleModalCenterTitle"
-				aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered modal-lg"
-					role="document">
-					<div class="modal-content card card-outline card-info">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLongTitle">2월 14일
-								신입회원 환영회 있습니다.</h5>
-							<button type="button" class="close" data-dismiss="modal"
-								aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							2월 14일 신입회원 환영회식 있습니다. <br> 장소는 진씨화로이며 시간은 퇴근 후 7시 30분입니다. <br>
-							<br> 새로 들어오신 신입회원분들과 친해지기 위해서 모두 늦지않게 도착해주시기 바랍니다. <br>
-							<br> 항상 열심히 해주시는 모든 회원분들께 감사드립니다. <br> 좋은하루 보내시기 바랍니다.
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary"
-								data-dismiss="modal">닫기</button>
-							<button type="button" class="btn btn-primary"
-								data-dismiss="modal" data-toggle="modal"
-								data-target="#notice-modify"
-								style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 		<!-- /.container-fluid -->
 	</div>

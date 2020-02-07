@@ -1,8 +1,6 @@
-
 package com.kh.workground.club.model.vo;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,21 +13,17 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Club implements Serializable {
+public class ClubMember implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private int clubNo;
-	private String clubName;
-	private Date clubEnrollDate;
-	private String clubIntroduce;
-	private String clubMeetingCycle;
-	private String clubMeetingDate;
-	private String clubCategory;
-	private String clubManagerId;
-	
-	
+	private int clubMemberNo;
+	private String empId;
+	private int clubCode;
+	private String clubManagerYN;
+	private String clubApproveYN;
 }
+
