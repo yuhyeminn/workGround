@@ -19,5 +19,20 @@ public class NoticeDAOImpl implements NoticeDAO {
 		return sqlSession.selectList("notice.selectNoticeList");
 	}
 
+	@Override
+	public List<Notice> selectPlanningDeptNoticeList() {
+		return sqlSession.selectList("notice.selectPlanningDeptNoticeList");
+	}
+
+	@Override
+	public List<Notice> selectDesignDeptNoticeList() {
+		return sqlSession.selectList("notice.selectDesignDeptNoticeList");
+	}
+
+	@Override
+	public List<Notice> selectDevelopmentDeptNoticeList() {
+		return sqlSession.selectList("notice.selectDevelopmentDeptNoticeList");
+	}
+
 
 }

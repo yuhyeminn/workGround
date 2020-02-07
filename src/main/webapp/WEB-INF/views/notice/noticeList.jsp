@@ -75,6 +75,10 @@ function sidebarActive(){
 
 </script>
 
+<!-- #############주현 할 일############
+1. 카드 내용 ...
+2. 관리자일 경우 부서별공지,자유게시판에서 관리자가 쓴 글 아닐 시 수정/삭제 가능하게 할지? / 삭제만?
+ -->
 
 <!-- Navbar NoticeList -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
@@ -110,15 +114,13 @@ function sidebarActive(){
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <h2 class="sr-only">공지 목록</h2>
-
   <!-- Main content -->
   <div class="content">
     <div class="container-fluid">
-
       <!-- 전체공지 -->
       <section class="notice-area">
         <div class="header-line">
-          <h6><i class="fas fa-exclamation-circle"></i>&nbsp; 전체 공지 <span class="header-count">(6)</span>
+          <h6><i class="fas fa-exclamation-circle"></i>&nbsp; 전체 공지 <span class="header-count">(${fn:length(noticeList)})</span>
               <i class="fas fa-plus-square" data-toggle="modal" data-target="#addNoticeModal" ${memberLoggedIn.jobTitle=='관리자'?'"style=display:block;"':"style=display:none;"}></i></h6>
         </div><!-- /.card-header -->
         <div id="notice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">
@@ -127,39 +129,37 @@ function sidebarActive(){
             <li data-target="#notice_indicators" data-slide-to="1"></li>
             <li data-target="#notice_indicators" data-slide-to="2"></li>
           </ol>
-          
           <div class="carousel-inner">          
             <!-- row1 -->
             <c:forEach items="${noticeList }" var="n" varStatus="ns">
             	<c:if test="${ns.count == 1}">
-              		<div class="row card-content carousel-item active">
-          		</c:if>
-          		<c:if test="${ns.count % 4 == 1 && ns.count != 1}">
-              		<div class="row card-content carousel-item">
-          		</c:if>
-		        <div class="col-12 col-sm-6 col-md-3">
-		          <div class="card">
-		            <!-- Default droprleft button -->
-		            <div class="dropleft">
-		              <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-		              <div class="dropdown-menu">
-		                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
-		                <a href="#" class="dropdown-item">공지 삭제</a>
-		              </div>
-		            </div>
-		            <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
-		              <img src="${pageContext.request.contextPath}/resources/img/전체공지02.png" class="card-img-top">
-		              <h5 class="card-title">${n.noticeTitle }</h5>
-		              <p class="card-text">${n.noticeContent }</p>
-		            </div>
-		          </div><!-- /.card -->
-	 	        </div>
+              	<div class="row card-content carousel-item active">
+          	</c:if>
+          	<c:if test="${ns.count % 4 == 1 && ns.count != 1}">
+              	<div class="row card-content carousel-item">
+          	</c:if>
+   	        <div class="col-12 col-sm-6 col-md-3">
+   	          <div class="card">
+   	            <!-- Default droprleft button -->
+   	            <div class="dropleft">
+   	              <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${memberLoggedIn.memberId==n.noticeWriter?"style=display:block;":"style=display:none;"}><i class="fas fa-ellipsis-v"></i></button>
+   	              <div class="dropdown-menu">
+   	                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
+   	                <a href="#" class="dropdown-item">공지 삭제</a>
+   	              </div>
+   	            </div>
+   	            <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
+   	              <img src="${pageContext.request.contextPath}/resources/img/${n.noticeRenamedFileName}" class="card-img-top">
+   	              <h5 class="card-title">${n.noticeTitle }</h5>
+   	              <p class="card-text">${n.noticeContent }</p>
+   	            </div>
+   	          </div><!-- /.card -->
+   	        </div>
             	<c:if test="${ns.count % 4 == 0 || ns.last}">
-					</div>
-          		</c:if>
+   				</div>
+          	</c:if>
             </c:forEach>
-            </div> <!-- /.carousel-inner notice-carousel  -->
-          
+          </div> <!-- /.carousel-inner notice-carousel  -->
           <!-- <a href="#notice_indicators" data-slide="prev"> -->
           <i class="fas fa-angle-left slide-arrow slide-arrow-left" data-target="#notice_indicators" data-slide="prev"></i>
           <!-- </a> -->
@@ -172,8 +172,8 @@ function sidebarActive(){
       <!-- 내가 속한 부서 공지 -->
       <section class="myDeptNotice-area">
         <div class="header-line" style="margin-top: 4rem;">
-          <h6><span id="myDept"><i class="fas fa-user"></i> &nbsp;개발</span>
-              &nbsp; 내가 속한 부서의 공지 <span class="header-count">(5)</span>
+          <h6><span id="myDept"><i class="fas fa-user"></i> &nbsp;${memberLoggedIn.deptCode=='D1'?"기획":memberLoggedIn.deptCode=='D2'?"디자인":"개발" }</span>
+              &nbsp; 내가 속한 부서의 공지 <span class="header-count">(${fn:length(memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList)})</span>
               <i class="fas fa-plus-square" data-toggle="modal" data-target="#addNoticeModal"></i></h6>
         </div><!-- /.card-header -->
         <div id="myDeptNotice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">
@@ -184,7 +184,37 @@ function sidebarActive(){
           </ol>
           <div class="carousel-inner">
             <!-- row1 -->
-            <div class="row card-content carousel-item active">
+<%--                         <c:forEach items="${noticeList }" var="n" varStatus="ns">
+ --%>            
+            <c:forEach items="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}" var="${memberLoggedIn.deptCode=='D1'?d1n:memberLoggedIn.deptCode=='D2'?d2n:d3n}" varStatus="pdns">
+            	<c:if test="${pdns.count == 1}">
+              	<div class="row card-content carousel-item active">
+          	</c:if>
+          	<c:if test="${pdns.count % 4 == 1 && pdns.count != 1}">
+              	<div class="row card-content carousel-item">
+          	</c:if>
+   	        <div class="col-12 col-sm-6 col-md-3">
+   	          <div class="card">
+   	            <!-- Default droprleft button -->
+   	            <div class="dropleft">
+   	              <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${memberLoggedIn.memberId==n.noticeWriter?"style=display:block;":"style=display:none;"}><i class="fas fa-ellipsis-v"></i></button>
+   	              <div class="dropdown-menu">
+   	                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal">공지 수정</a>
+   	                <a href="#" class="dropdown-item">공지 삭제</a>
+   	              </div>
+   	            </div>
+   	            <div class="card-body" data-toggle="modal" data-target="#noticeViewModal">
+   	              <img src="${pageContext.request.contextPath}/resources/img/${n.noticeRenamedFileName}" class="card-img-top">
+   	              <h5 class="card-title">${pdn.noticeTitle }</h5>
+   	              <p class="card-text">${pdn.noticeContent }</p>
+   	            </div>
+   	          </div><!-- /.card -->
+   	        </div>
+            	<c:if test="${pdns.count % 4 == 0 || ns.last}">
+   				</div>
+          	</c:if>
+            </c:forEach>
+<%--             <div class="row card-content carousel-item active">
               <div class="col-12 col-sm-6 col-md-3">
                 <div class="card">
                   <!-- Default droprleft button -->
@@ -273,7 +303,7 @@ function sidebarActive(){
                   </div>
                 </div><!-- /.card -->
               </div>
-            </div> <!--row2-->
+            </div> <!--row2--> --%>
           </div> <!--/.carousel inner-->
           <!-- <a href="#notice_indicators" data-slide="prev"> -->
           <i class="fas fa-angle-left slide-arrow slide-arrow-left" data-target="#myDeptNotice_indicators" data-slide="prev"></i>
