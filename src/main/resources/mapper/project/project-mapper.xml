@@ -215,4 +215,12 @@
 		values(seq_project_members.nextval,to_number(#{projectNo}),#{projectMember},default)
 	</insert>
 	
+	<!-- 프로젝트 생성 시 기본 3개 업무리스트 추가 -->
+	<insert id="insertDefaultWorkList" parameterType="java.util.Map">
+		insert into worklist(worklist_no,project_no,worklist_title)
+		select seq_worklist.nextval, A.* from(
+		<foreach item="item" collection = "worklistTitle" separator="UNION ALL " >
+		select #{projectNo} as project_no, #{item} as worklist_title from dual
+		</foreach>)A
+	</insert>
 </mapper>

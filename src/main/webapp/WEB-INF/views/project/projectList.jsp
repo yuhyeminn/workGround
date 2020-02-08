@@ -19,8 +19,11 @@
 <script>
 $(function(){
 	sidebarActive(); //사이드바 활성화
-	addMember(); //프로젝트 팀원 추가
+	addMember(); //프로젝트 팀원 추가 - multiselect.js
 });
+
+//multiselect.js파일에서 사용할 contextPath 전역변수
+var contextPath = "${pageContext.request.contextPath}";
 
 //사이드바 활성화
 function sidebarActive(){
@@ -34,28 +37,7 @@ function sidebarActive(){
 	
 	$("#sidebar-project").addClass("active");
 }
-//프로젝트 팀원 추가
-function addMember(){
-	var empData = [
-		<c:forEach items="${memberListByDept}" var="m" varStatus="vs">
-	  		{id: '${m.memberId}', name:'${m.memberName}', dept: '${m.deptTitle}', profile: 'profile.jfif'}${vs.last?"":","}
-        </c:forEach>
-  ] 
-  // initialize MultiSelect component
-  var listObj = new ej.dropdowns.MultiSelect({
-      dataSource: empData,
-      fields: { text: 'name', value: 'id' },
-      itemTemplate: '<div><img class="empImage img-circle img-sm-profile" src="${pageContext.request.contextPath}/resources/img/profile.jfif" width="35px" height="35px"/>' +
-      '<div class="ename">'+ empData.name +'</div><div class="job"> ${dept} </div></div>',
-      valueTemplate: '<div style="width:100%;height:100%;">' +
-          '<img class="value" src="${pageContext.request.contextPath}/resources/img/profile.jfif" height="26px" width="26px"/>' +
-          '<div class="name"> ${name}</div></div>',
-      placeholder: 'Select Project member',
-      mode: 'Box'
-  });
-  listObj.appendTo('#projectMember');
-  console.log(listObj.value);
-}
+
 </script>
 
 <!-- Navbar Project -->
@@ -90,12 +72,14 @@ function addMember(){
         </div>
         </li>
         <!-- 새 프로젝트 만들기 -->
+        <c:if test="${memberLoggedIn.jobTitle eq '팀장'}">
         <li class="nav-item add-project">
         <button id="add-project" class="bg-info" style="font-size:0.85rem;" data-toggle="modal" data-target="#add-project-modal">
             <i class="fa fa-plus"></i>
             <span>새 프로젝트</span>
         </button>  
         </li>	
+        </c:if>
     </ul>
 </nav>
 <!-- /.navbar -->
@@ -249,14 +233,16 @@ function addMember(){
             </c:forEach> 
             
             <!-- 새 프로젝트 추가 -->
+            <c:if test="${memberLoggedIn.jobTitle eq '팀장'}">
             <div class="col-12 col-sm-6 col-md-3">
-                <div class="card addpr-hover" data-toggle="modal" data-target="#add-project-modal">
+                <div class="card addpr-hover add-project" data-toggle="modal" data-target="#add-project-modal">
                 <div class="card-body addpr-center">
                     <i class="fa fa-plus" style="font-size:30px;"></i>
                     <h6>새 프로젝트</h6>
                 </div>
                 </div><!-- /.card -->
             </div>
+            </c:if>
             </div><!-- /.card-content -->
         </section>
         </div><!-- /.container-fluid -->
@@ -306,3 +292,4 @@ function addMember(){
 </div>		
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
+<script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

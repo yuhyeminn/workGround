@@ -10,4 +10,6 @@ public interface ProjectService2 {
 
 	int insertProject(Project p, List<String> projectMemberList);
 
+	List<Member> selectMemberListByDept(String deptCode);
+
 }

@@ -1,7 +1,9 @@
 package com.kh.workground.project.model.dao;
 
+import java.util.List;
 import java.util.Map;
 
+import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.vo.Project;
 
 public interface ProjectDAO2 {
@@ -11,5 +13,9 @@ public interface ProjectDAO2 {
 	int insertProjectManager(Project p);
 
 	int insertProjectMember(Map<String, String> param);
+
+	List<Member> selectMemberListByDept(String deptCode);
+
+	int insertDefaultWorkList(Map<String, Object> param);
 
 }

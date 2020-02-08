@@ -1,5 +1,6 @@
 package com.kh.workground.project.model.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.controller.ProjectController2;
 import com.kh.workground.project.model.vo.Project;
 
@@ -36,6 +38,16 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	@Override
 	public int insertProjectMember(Map<String, String> param) {
 		return sqlSession.insert("project.insertProjectMember",param);
+	}
+
+	@Override
+	public List<Member> selectMemberListByDept(String deptCode) {
+		return sqlSession.selectList("project.selectMemberListByDept", deptCode);
+	}
+
+	@Override
+	public int insertDefaultWorkList(Map<String, Object> param) {
+		return sqlSession.insert("project.insertDefaultWorkList",param);
 	}
 	
 
