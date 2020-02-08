@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kh.workground.notice.model.dao.NoticeDAO;
+import com.kh.workground.notice.model.vo.Community;
 import com.kh.workground.notice.model.vo.Notice;
 
 @Service
@@ -36,6 +37,11 @@ public class NoticeServiceImpl implements NoticeService {
 	@Override
 	public List<Notice> selectDevelopmentDeptNoticeList() {
 		return noticeDAO.selectDevelopmentDeptNoticeList();
+	}
+
+	@Override
+	public List<Community> selectCommunityList() {
+		return noticeDAO.selectCommunityList();
 	}
 
 

@@ -32,6 +32,8 @@ public class Notice implements Serializable{
 	private String noticeOriginalFileName;
 	private String noticeRenamedFileName;
 	private String deptCode;
+	private String memberName; //view_noticeMember 이용해서 조회
+	private String renamedFileName; //프로필사진: view_noticeMember 이용해서 조회
 	
 
 }

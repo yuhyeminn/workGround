@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.notice.model.service.NoticeService;
+import com.kh.workground.notice.model.vo.Community;
 import com.kh.workground.notice.model.vo.Notice;
 
 //Exception 던지기!!!!!
@@ -27,21 +28,29 @@ public class NoticeController {
 		
 		//전체 공지
 		List<Notice> noticeList = noticeService.selectNoticeList();
-		logger.debug("noticeList={}", noticeList);
+		//logger.debug("noticeList={}", noticeList);
+		
 		//D1: 기획부 공지
 		List<Notice> planningDeptNoticeList = noticeService.selectPlanningDeptNoticeList();
-		logger.debug("planningDeptNoticeList={}", planningDeptNoticeList);
+		//logger.debug("planningDeptNoticeList={}", planningDeptNoticeList);
+		
 		//D2: 디자인부 공지
 		List<Notice> designDeptNoticeList = noticeService.selectDesignDeptNoticeList();
-		logger.debug("designDeptNoticeList={}", designDeptNoticeList);
+		//logger.debug("designDeptNoticeList={}", designDeptNoticeList);
+		
 		//D3: 개발부 공지
 		List<Notice> developmentDeptNoticeList = noticeService.selectDevelopmentDeptNoticeList();
-		logger.debug("developmentDeptNoticeList={}", developmentDeptNoticeList);	
+		//logger.debug("developmentDeptNoticeList={}", developmentDeptNoticeList);	
+		
+		//자유게시판
+		List<Community> communityList = noticeService.selectCommunityList();
+		//logger.debug("communityList={}", communityList);	
 		
 		mav.addObject("noticeList", noticeList);
 		mav.addObject("planningDeptNoticeList", planningDeptNoticeList);
 		mav.addObject("designDeptNoticeList", designDeptNoticeList);
 		mav.addObject("developmentDeptNoticeList", developmentDeptNoticeList);
+		mav.addObject("communityList", communityList);
 		
 		mav.setViewName("/notice/noticeList");
 		
