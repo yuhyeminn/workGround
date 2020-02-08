@@ -14,8 +14,12 @@ public interface ProjectDAO2 {
 
 	int insertProjectMember(Map<String, String> param);
 
-	List<Member> selectMemberListByDept(String deptCode);
+	List<Member> selectMemberListByDeptCode(Member memberLoggedIn);
 
 	int insertDefaultWorkList(Map<String, Object> param);
+
+	List<Project> selectListByDeptAndStatusCode(Map<String, Object> param);
+
+	List<Project> selectListByImportantAndStatusCode(Map<String, Object> param);
 
 }

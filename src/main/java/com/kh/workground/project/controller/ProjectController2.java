@@ -3,8 +3,11 @@ package com.kh.workground.project.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -19,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService2;
-import com.kh.workground.project.model.service.ProjectServiceImpl;
 import com.kh.workground.project.model.vo.Project;
 
 @Controller
@@ -68,14 +70,36 @@ public class ProjectController2 {
 		List<Member> list = null;
 		try {
 			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-			list = projectService.selectMemberListByDept(memberLoggedIn.getDeptCode());
+			list = projectService.selectMemberListByDeptCode(memberLoggedIn);
 			
-			logger.debug("list@controller2={}",list);
+//			logger.debug("list@controller2={}",list);
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("부서별 프로젝트 멤버 조회 오류!");
 		}
 		
 		return list;
+	}
+	
+	@RequestMapping("/project/projectListByStatusCode.do")
+	@ResponseBody
+	public Map<String, List<Project>> projectListByStatusCode(HttpServletRequest request, HttpSession session){
+		String statusCode = request.getParameter("statusCode");
+		Map<String, List<Project>> projectMap = null; //조회한 프로젝트 리스트 담는 맵
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		logger.debug("statusCode= {}",statusCode);
+		try {
+			Map<String, Object> param = new HashMap<>();
+			param.put("memberLoggedIn", memberLoggedIn);
+			param.put("statusCode", statusCode);
+			
+			projectMap = projectService.selectProjectListByStatusCode(param);
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("부서별 프로젝트 멤버 조회 오류!");
+		}
+		
+		return projectMap;
 	}
 }

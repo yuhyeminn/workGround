@@ -38,6 +38,22 @@ function sidebarActive(){
 	$("#sidebar-project").addClass("active");
 }
 
+function sortByStatus(statusCodeElem){
+	$("#sort-by-status").html(statusCodeElem.innerHTML);
+	var statusCode = statusCodeElem.id;
+	$.ajax({
+		url:"${pageContext.request.contextPath}/project/projectListByStatusCode.do",
+		data:{statusCode : statusCode},
+		dataType:"json",
+		success: data => {
+			console.log(data);
+		},
+		error : (x,s,e) => {
+			console.log(x,s,e);
+		}
+	})
+}
+
 </script>
 
 <!-- Navbar Project -->
@@ -45,15 +61,15 @@ function sidebarActive(){
     <!-- Left navbar links -->
     <ul class="navbar-nav">
         <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="sort-by-status">
             전체 프로젝트 (${fn:length(listByDept)}) <span class="caret"></span>
         </a>
         <div class="dropdown-menu">
-            <a class="dropdown-item" tabindex="-1" href="#">전체 프로젝트 (${fn:length(listByDept)})</a>
-            <a class="dropdown-item" tabindex="-1" href="#">계획됨 (${statusCntMap['계획됨']}) <span class="status-dot bg-warning"></span></a>
-            <a class="dropdown-item" tabindex="-1" href="#">진행중 (${statusCntMap['진행중']}) <span class="status-dot bg-success"></span></a>
-            <a class="dropdown-item" tabindex="-1" href="#">완료됨 (${statusCntMap['완료됨']}) <span class="status-dot bg-info"></span></a>
-            <a class="dropdown-item" tabindex="-1" href="#">상태없음 (${statusCntMap['상태없음']})</a>
+            <a class="dropdown-item sort-by-status" id="" tabindex="-1" onclick="sortByStatus(this);">전체 프로젝트 (${fn:length(listByDept)})</a>
+            <a class="dropdown-item sort-by-status" id="PS1" tabindex="-1" onclick="sortByStatus(this);">계획됨 (${statusCntMap['계획됨']}) <span class="status-dot bg-warning"></span></a>
+            <a class="dropdown-item sort-by-status" id="PS2" tabindex="-1" onclick="sortByStatus(this);">진행중 (${statusCntMap['진행중']}) <span class="status-dot bg-success"></span></a>
+            <a class="dropdown-item sort-by-status" id="PS3" tabindex="-1" onclick="sortByStatus(this);">완료됨 (${statusCntMap['완료됨']}) <span class="status-dot bg-info"></span></a>
+            <a class="dropdown-item sort-by-status" id="PS4" tabindex="-1" onclick="sortByStatus(this);">상태없음 (${statusCntMap['상태없음']})</a>
         </div>
         </li>
     </ul>

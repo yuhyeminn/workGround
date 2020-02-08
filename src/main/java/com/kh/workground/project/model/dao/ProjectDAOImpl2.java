@@ -41,13 +41,23 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	}
 
 	@Override
-	public List<Member> selectMemberListByDept(String deptCode) {
-		return sqlSession.selectList("project.selectMemberListByDept", deptCode);
+	public List<Member> selectMemberListByDeptCode(Member memberLoggedIn) {
+		return sqlSession.selectList("project.selectMemberListByDeptCode", memberLoggedIn);
 	}
 
 	@Override
 	public int insertDefaultWorkList(Map<String, Object> param) {
 		return sqlSession.insert("project.insertDefaultWorkList",param);
+	}
+
+	@Override
+	public List<Project> selectListByDeptAndStatusCode(Map<String, Object> param) {
+		return sqlSession.selectList("project.selectListByDeptAndStatusCode",param);
+	}
+
+	@Override
+	public List<Project> selectListByImportantAndStatusCode(Map<String, Object> param) {
+		return sqlSession.selectList("project.selectListByImportantAndStatusCode",param);
 	}
 	
 
