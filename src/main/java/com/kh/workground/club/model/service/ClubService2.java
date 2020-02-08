@@ -1,6 +1,7 @@
 package com.kh.workground.club.model.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
@@ -28,13 +29,17 @@ public interface ClubService2 {
 
 	int clubNoticeInsert(ClubNotice clubNotice);
 
-	ClubMember selectOneClubMember(ClubNotice clubNotice);
+	ClubMember selectOneClubMember(Map<String, String> param);
 
 	int deleteClubNotice(int clubNoticeNo);
 
 	List<ClubPhoto> selectClubPhotoList(int clubNo);
 
 	int deleteClubPhoto(ClubPhoto clubPhoto);
+
+	int selectClubPlanCount(int clubNo);
+
+	int selectClubNoticeCount(int clubNo);
 
 
 

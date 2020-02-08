@@ -1,6 +1,7 @@
 package com.kh.workground.club.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +65,8 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 	}
 
 	@Override
-	public ClubMember selectOneClubMember(ClubNotice clubNotice) {
-		return sqlSession.selectOne("club.selectOneClubMember", clubNotice);
+	public ClubMember selectOneClubMember(Map<String, String> param) {
+		return sqlSession.selectOne("club.selectOneClubMember", param);
 	}
 
 	@Override
@@ -81,6 +82,16 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 	@Override
 	public int deleteClubPhoto(ClubPhoto clubPhoto) {
 		return sqlSession.delete("club.deleteClubPhoto", clubPhoto);
+	}
+
+	@Override
+	public int selectClubPlanCount(int clubNo) {
+		return sqlSession.selectOne("club.selectClubPlanCount", clubNo);
+	}
+
+	@Override
+	public int selectClubNoticeCount(int clubNo) {
+		return sqlSession.selectOne("club.selectClubNoticeCount", clubNo);
 	}
 
 

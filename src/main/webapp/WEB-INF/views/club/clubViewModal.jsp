@@ -20,6 +20,7 @@
 			<form name="clubPhotoFrm" action="${pageContext.request.contextPath }/club/clubPhotoForm.do" method="POST" enctype="multipart/form-data" onsubmit="return validate();">
 				<div class="modal-body">
 					<input type="hidden" name="clubNo" value="${club.clubNo }" />
+					<input type="hidden" name="memberId" value="${memberLoggedIn.memberId }" />
 					<div class="form-group">
 						<label for="exampleInputFile">사진제목</label> 
 						<input type="text" name="clubPhotoTitle" class="form-control" placeholder="제목을 입력하세요." required="required">

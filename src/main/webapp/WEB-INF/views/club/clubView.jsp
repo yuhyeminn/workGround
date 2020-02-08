@@ -280,155 +280,170 @@ function validate() {
 						<i class="fas fa-chevron-down"></i> <i class="fas fa-images"></i> 활동사진
 					</h3>
 				</div>
-				<!-- /.card-header -->
-				<!-- 슬라이더 화살표 포함 -->
-				<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
 				<c:if test="${not empty clubPhotoList }">
-				<c:if test="${clubPhotoListSize%4 != 0 }">
-					<!-- 슬라이더 컨텐츠(화살표 미포함) -->
-					<div class="carousel-inner">
-						<!-- 첫번째반복div(첫번째만 active) -->
-						<div class="carousel-item active">
-							<div class="row card-content">
-							<c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
-							<c:if test="${vs.index<4 }">
-								<!-- 두번째반복div 4장씩 -->
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
-											 alt="..." class="img-thumbnail" data-toggle="modal"
-											 data-target="#clubPhoto${vs.index }">
-									</div>
-									<!-- /.card -->
-								</div>
-							</c:if>
-							<!-- Image Modal -->
-							<div class="modal fade cd-example-modal-lg" id="clubPhoto${vs.index }"
-								tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-								aria-hidden="true">
-								<div class="modal-dialog modal-dialog-centered" role="document">
-									<div class="modal-content card card-outline card-info">
-										<div class="modal-header">
-											<h5 class="modal-title" id="exampleModalLongTitle">연탄봉사활동</h5>
-											<button type="button" class="close" data-dismiss="modal"
-												aria-label="Close">
-												<span aria-hidden="true">&times;</span>
-											</button>
-										</div>
-										<div class="modal-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
-												alt="..." class="img-thumbnail" data-toggle="modal"
-												data-target="#clubPhoto${vs.index }">
-										</div>
-										<div class="modal-footer">
-											<form name="deleteClubPhotoFrm" action="${pageContext.request.contextPath }/club/deleteClubPhoto.do" method="POST">
-												<input type="hidden" name="clubNo" value="${club.clubNo }" />
-												<input type="hidden" name="clubPhotoNo" value=${clubPhoto.clubPhotoNo } />
-												<button type="submit" class="btn btn-danger">삭제</button>
-											</form>
-											<button type="button" class="btn btn-info" data-dismiss="modal" data-toggle="modal">수정</button>
-											<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-										</div>
-									</div>
-								</div>
+				  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+				    <div class="carousel-inner">
+				    <c:forEach var="i" begin="1" end="${Math.ceil(clubPhotoListSize/4) }" step="1">
+				    <c:if test="${i == 1 }">
+				      <div class="carousel-item active">
+				        <div class="row card-content">
+				        <c:if test="${clubPhotoListSize<4 }">
+				        <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				        <c:if test="${vs.index<4 }">
+				  	  	  <div class="col-12 col-sm-6 col-md-3">
+					  	    <div class="card">
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+					  			   alt="..." class="img-thumbnail" data-toggle="modal"
+					  			   data-target="#clubPhoto${vs.index }">
+					  		</div>
+					  	  </div>
+				        </c:if>
+				        </c:forEach>
+				          <div class="col-12 col-sm-6 col-md-3">
+				              <div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
+				                <div class="card-body">
+				  	            <i class="fas fa-plus"></i>
+				  	            <h6>새 사진</h6>
+				                </div>
+				              </div>
+				            </div>
+				        </c:if>
+				        <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				        <c:if test="${clubPhotoListSize>=4 }">
+				        <c:if test="${vs.index<4 }">
+				  	  	  <div class="col-12 col-sm-6 col-md-3">
+					  	    <div class="card">
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+					  			   alt="..." class="img-thumbnail" data-toggle="modal"
+					  			   data-target="#clubPhoto${vs.index }">
+					  		</div>
+					  	  </div>
+				        </c:if>
+				        </c:if>
+				        </c:forEach>
+				        </div>
+				      </div>
+				    </c:if>
+				    <c:if test="${i != 1 }">
+				      <div class="carousel-item">
+				        <div class="row card-content">
+				        <c:if test="${i != Math.ceil(clubPhotoListSize/4) }">
+					    <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<i*4 }">
+				  	  	  <div class="col-12 col-sm-6 col-md-3">
+					  	    <div class="card">
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+					  			   alt="..." class="img-thumbnail" data-toggle="modal"
+					  			   data-target="#clubPhoto${vs.index }">
+					  		</div>
+					  	  </div>
+				  		</c:if>
+					    </c:forEach>
+				        </c:if>
+				        <c:if test="${i == Math.ceil(clubPhotoListSize/4) }"> <!-- 마지막 슬라이드라면 조건 -->
+					    <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<clubPhotoListSize }"> <!-- 4개씩 반복 조건 -->
+				  	  	  <div class="col-12 col-sm-6 col-md-3">
+					  	    <div class="card">
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+					  			   alt="..." class="img-thumbnail" data-toggle="modal"
+					  			   data-target="#clubPhoto${vs.index }">
+					  		</div>
+					  	  </div>
+				  		</c:if> <!-- 4개씩 반복 조건 끝 -->
+					    </c:forEach>
+				  		<c:if test="${clubPhotoListSize%4 != 0 }"> <!-- 플러스버튼 조건 -->
+				  		  <div class="col-12 col-sm-6 col-md-3">
+							<div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
+							  <div class="card-body">
+								<i class="fas fa-plus"></i>
+								<h6>새 사진</h6>
+							  </div>
 							</div>
-							</c:forEach>
-							</div>
+						  </div>
+				  		</c:if> <!-- 플러스버튼 조건 끝 -->
+				        </c:if> <!-- 마지막 슬라이드라면 조건 끝 -->
+	              	    </div>
+				      </div>
+				    </c:if>
+				    </c:forEach>
+				    <c:if test="${clubPhotoListSize%4 == 0 }"> <!-- 플러스버튼 조건 -->
+				      <div class="carousel-item">
+				        <div class="row card-content">
+				          <div class="col-12 col-sm-6 col-md-3">
+				  		     <div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
+				  		       <div class="card-body">
+				  			     <i class="fas fa-plus"></i>
+				  			     <h6>새 사진</h6>
+				  		       </div>
+				  		     </div>
+				  	       </div>
+				  	     </div>
+				  	   </div>
+				    </c:if> <!-- 플러스버튼 조건 끝 -->
+				    </div>
+				    <!-- 화살표 -->
+				    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+				      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				      <span class="sr-only">Previous</span>
+				    </a>
+				    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+				      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+				      <span class="sr-only">Next</span>
+				    </a>
+				  </div>
+				</c:if>
+				<c:if test="${empty clubPhotoList }">
+				  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+				    <div class="carousel-inner">
+				      <div class="carousel-item active">
+				        <div class="row card-content">
+				          <div class="col-12 col-sm-6 col-md-3">
+				            <div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
+				              <div class="card-body">
+					            <i class="fas fa-plus"></i>
+					            <h6>새 사진</h6>
+				              </div>
+				            </div>
+				          </div>
+				        </div>
+				      </div>
+				    </div>
+				  </div>
+				</c:if>
+				  
+				  <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				  <!-- clubPhotoModal -->
+				  <div class="modal fade cd-example-modal-lg" id="clubPhoto${vs.index }"
+					   tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+					  <div class="modal-content card card-outline card-info">
+						<div class="modal-header">
+						  <h5 class="modal-title" id="exampleModalLongTitle">${clubPhoto.clubPhotoTitle }</h5>
+						  <button type="button" class="close" data-dismiss="modal"
+								  aria-label="Close">
+						    <span aria-hidden="true">&times;</span>
+						  </button>
 						</div>
-						<!-- 첫번째반복(첫번째만 active) -->
-						<div class="carousel-item">
-							<div class="row card-content">
-							<c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
-							<c:if test="${vs.index>=4 and vs.index<clubPhotoListSize }">
-								<!-- 두번째반복 4장 -->
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
-											 alt="..." class="img-thumbnail" data-toggle="modal"
-											 data-target="#clubPhoto${vs.index }">
-									</div>
-									<!-- /.card -->
-								</div>
-							</c:if>
-							</c:forEach>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
-										<div class="card-body">
-											<i class="fas fa-plus"></i>
-											<h6>새 사진</h6>
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-							</div>
+						<div class="modal-body">
+						  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+							   alt="..." class="img-thumbnail" data-toggle="modal"
+							   data-target="#clubPhoto${vs.index }">
 						</div>
+						<div class="modal-footer">
+						<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubPhoto.memberId }">
+						  <form name="deleteClubPhotoFrm" action="${pageContext.request.contextPath }/club/deleteClubPhoto.do" method="POST">
+							<input type="hidden" name="clubNo" value="${club.clubNo }" />
+							<input type="hidden" name="clubPhotoNo" value=${clubPhoto.clubPhotoNo } />
+							<button type="submit" class="btn btn-danger">삭제</button>
+						  </form>
+						</c:if>
+						  <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+						</div>
+					  </div>
 					</div>
-				</c:if>
-				<c:if test="${clubPhotoListSize%4 == 0 }">
-					<!-- 슬라이더 컨텐츠(화살표 미포함) -->
-					<div class="carousel-inner">
-						<!-- 첫번째반복div(첫번째만 active) -->
-						<div class="carousel-item active">
-							<div class="row card-content">
-							<c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
-							<c:if test="${vs.index<4 }">
-								<!-- 두번째반복div 4장씩 -->
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
-											 alt="..." class="img-thumbnail" data-toggle="modal"
-											 data-target="#clubPhoto${vs.index }">
-									</div>
-									<!-- /.card -->
-								</div>
-							</c:if>
-							</c:forEach>
-							</div>
-						</div>
-						<!-- 첫번째반복(첫번째만 active) -->
-						<div class="carousel-item">
-							<div class="row card-content">
-							<c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
-							<c:if test="${vs.index>=4 and vs.index<clubPhotoListSize }">
-								<!-- 두번째반복 4장 -->
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
-											 alt="..." class="img-thumbnail" data-toggle="modal"
-											 data-target="#clubPhoto${vs.index }">
-									</div>
-									<!-- /.card -->
-								</div>
-							</c:if>
-							</c:forEach>
-							</div>
-						</div>
-						<div class="carousel-item">
-							<div class="col-12 col-sm-6 col-md-3">
-								<div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
-									<div class="card-body">
-										<i class="fas fa-plus"></i>
-										<h6>새 사진</h6>
-									</div>
-								</div>
-								<!-- /.card -->
-							</div>
-						</div>
-					</div>
-				</c:if>
-				</c:if>
-	
-					<!-- 화살표 -->
-					<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev"> 
-						<span class="carousel-control-prev-icon" aria-hidden="true"></span> 
-						<span class="sr-only">Previous</span>
-					</a> 
-					<a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next"> <span
-						class="carousel-control-next-icon" aria-hidden="true"></span> 
-						<span class="sr-only">Next</span>
-					</a>
 				</div>
+				</c:forEach>
 			</section>
 			<!-- /.card-content -->
 
@@ -464,7 +479,7 @@ function validate() {
 				<div class="card-header" role="button" onclick="toggleList(this);">
 					<h3>
 						<i class="fas fa-chevron-down"></i> <i class="fas fa-calendar-alt"></i>
-						2월 일정 <span class="header-count">(2)</span>
+						2월 일정 <span class="header-count">(${clubPlanCount })</span>
 					</h3>
 				</div>
 				<!-- /.card-header -->
@@ -677,7 +692,7 @@ function validate() {
 					<h3>
 						<i class="fas fa-chevron-down"></i> <i
 							class="fas fa-exclamation-circle"></i> 공지사항 <span
-							class="header-count">(1)</span>
+							class="header-count">(${clubNoticeCount })</span>
 					</h3>
 				</div>
 				<!-- /.card-header -->

@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,11 +54,16 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
 //		logger.debug("clubPhotoList={}", clubPhotoList);
 		
+		int clubPlanCount = clubService2.selectClubPlanCount(clubNo);
+		int clubNoticeCount = clubService2.selectClubNoticeCount(clubNo);
+		
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
 		mav.addObject("clubNoticeList", clubNoticeList);
 		mav.addObject("clubPhotoList", clubPhotoList);
 		mav.addObject("clubPhotoListSize", clubPhotoList.size());
+		mav.addObject("clubPlanCount", clubPlanCount);
+		mav.addObject("clubNoticeCount", clubNoticeCount);
 		mav.setViewName("/club/clubView");
 		
 		return mav;
@@ -110,7 +117,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	public ModelAndView clubPlanInsert(ModelAndView mav, 
 									   ClubPlan clubPlan, 
 									   @RequestParam("clubPlanDate") String clubPlanDate) {
-		logger.debug("clubPlan={}", clubPlan);
+//		logger.debug("clubPlan={}", clubPlan);
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date utilDate = new Date();
@@ -154,8 +161,12 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 										 ClubNotice clubNotice) {
 //		logger.debug("clubNotice={}", clubNotice);
 		
+		Map<String, String> param = new HashMap<>();
+		param.put("clubNo", clubNotice.getClubNo()+"");
+		param.put("memberId", clubNotice.getMemberId());
+		
 		//memberLoggedIn.memberId와 clubNotice.clubNo으로 글 작성자(clubMemberNo) 넣어주기
-		ClubMember clubMember = clubService2.selectOneClubMember(clubNotice);
+		ClubMember clubMember = clubService2.selectOneClubMember(param);
 		
 		clubNotice.setClubMemberNo(clubMember.getClubMemberNo());
 //		logger.debug("clubNotice={}", clubNotice);
@@ -173,8 +184,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	public ModelAndView deleteClubNotice(ModelAndView mav, 
 										 @RequestParam("clubNoticeNo") int clubNoticeNo, 
 										 @RequestParam("clubNo") int clubNo) {
-		logger.debug("clubNoticeNo={}", clubNoticeNo);
-		logger.debug("clubNo={}", clubNo);
+//		logger.debug("clubNoticeNo={}", clubNoticeNo);
+//		logger.debug("clubNo={}", clubNo);
 		
 		int result = clubService2.deleteClubNotice(clubNoticeNo);
 		
@@ -190,11 +201,20 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 									  ClubPhoto clubPhoto, 
 									  @RequestParam(value="upFile", required=false) MultipartFile upFile, 
 									  HttpServletRequest request) {
-		logger.debug("게시물 등록 요청!");
-		logger.debug("clubPhoto={}", clubPhoto);
+//		logger.debug("게시물 등록 요청!");
+//		logger.debug("clubPhoto={}", clubPhoto);
 //		logger.debug("사용자입력 name={}", upFile.getName());
 //		logger.debug("fileName={}", upFile.getOriginalFilename());
 //		logger.debug("size={}", upFile.getSize());
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("clubNo", clubPhoto.getClubNo()+"");
+		param.put("memberId", clubPhoto.getMemberId());
+		
+		//memberLoggedIn.memberId와 clubNotice.clubNo으로 글 작성자(clubMemberNo) 넣어주기
+		ClubMember clubMember = clubService2.selectOneClubMember(param);
+		
+		clubPhoto.setClubMemberNo(clubMember.getClubMemberNo());
 		
 		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club");
 		
@@ -220,7 +240,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		clubPhoto.setClubPhotoOriginal(clubPhotoOriginal);
 		clubPhoto.setClubPhotoRenamed(clubPhotoRenamed);
 		
-		logger.debug("clubPhoto={}", clubPhoto);
+//		logger.debug("clubPhoto={}", clubPhoto);
 		
 		int result = clubService2.insertClubPhoto(clubPhoto);
 		
@@ -234,7 +254,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	@PostMapping("/club/deleteClubPhoto.do")
 	public ModelAndView deleteClubPhoto(ModelAndView mav, 
 										ClubPhoto clubPhoto) {
-		logger.debug("clubPhoto={}", clubPhoto);
+//		logger.debug("clubPhoto={}", clubPhoto);
 		
 		int result = clubService2.deleteClubPhoto(clubPhoto);
 		
