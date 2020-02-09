@@ -8,11 +8,9 @@ import com.kh.workground.project.model.vo.Project;
 
 public interface ProjectService {
 
-	Member selectMemberOne(String string);
-
 	Map<String, List<Project>> selectProjectListAll(Member memberLoggedIn);
 
 	List<Member> selectMemberListByDept(String deptCode);
 
-	Map<String, Object> selectProjectWorklistAll(int projectNo);
+	Project selectProjectWorklistAll(int projectNo);
 }

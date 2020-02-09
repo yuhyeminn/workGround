@@ -1,5 +1,11 @@
+<%@page import="com.kh.workground.member.model.vo.Member"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	/* Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+	System.out.println("memberLoggedIn="+memberLoggedIn); */
+	//application.setAttribute("memberLoggedIn", memberLoggedIn);
+%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -173,13 +179,13 @@
 
       <!-- 프로필 -->
       <li id="user-panel" class="nav-item dropdown">
-        <a href="" class="d-block image" data-toggle="dropdown"><img src="${pageContext.request.contextPath }/resources/img/profile.jfif" alt="User Image"></a>
+        <a href="" class="d-block image" data-toggle="dropdown"><img src="${pageContext.request.contextPath }/resources/img/${memberLoggedIn.renamedFileName}" alt="User Image"></a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <a href="#" id="user-profile" class="dropdown-item">
-            <img src="${pageContext.request.contextPath }/resources/img/profile.jfif" alt="User Image">
+            <img src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName}" alt="User Image">
             <div id="user-info">
-              <p>이단비</p>
-              <p>danbi.db@gmail.com</p>
+              <p>${memberLoggedIn.memberName}</p>
+              <p>${memberLoggedIn.email}</p>
             </div>
           </a>
           <div class="dropdown-divider"></div>

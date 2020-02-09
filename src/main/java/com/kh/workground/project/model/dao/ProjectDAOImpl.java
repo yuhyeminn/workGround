@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kh.workground.member.model.vo.Member;
+import com.kh.workground.project.model.vo.Attachment;
+import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 
 @Repository
@@ -17,11 +20,6 @@ public class ProjectDAOImpl implements ProjectDAO {
 	@Autowired
 	SqlSessionTemplate sqlSession;
 	
-	@Override
-	public Member selectMemberOne(String string) {
-		return sqlSession.selectOne("project.selectMemberOne", string);
-	}
-
 	@Override
 	public List<Project> selectListByDept(String deptCode) {
 		return sqlSession.selectList("project.selectListByDept", deptCode);
@@ -56,5 +54,31 @@ public class ProjectDAOImpl implements ProjectDAO {
 	public List<Work> selectWorkListByWorklistNo(int worklistNo) {
 		return sqlSession.selectList("project.selectWorkListByWorklistNo", worklistNo);
 	}
+
+	@Override
+	public List<Checklist> selectChklstListByWorkNo(int workNo) {
+		return sqlSession.selectList("project.selectChklstListByWorkNo", workNo);
+	}
+
+	@Override
+	public List<Attachment> selectAttachListByWorkNo(int workNo) {
+		return sqlSession.selectList("project.selectAttachListByWorkNo", workNo);
+	}
+
+	@Override
+	public List<WorkComment> selectCommentListByWorkNo(int workNo) {
+		return sqlSession.selectList("project.selectCommentListByWorkNo", workNo);
+	}
+
+	@Override
+	public Member selectMemberOneByMemberId(String memberId) {
+		return sqlSession.selectOne("project.selectMemberOneByMemberId", memberId);
+	}
+
+	@Override
+	public int selectTotalWorkCompleteYn(int worklistNo) {
+		return sqlSession.selectOne("project.selectTotalWorkCompleteYn", worklistNo);
+	}
+
 
 }

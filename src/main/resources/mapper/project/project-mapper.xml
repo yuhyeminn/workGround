@@ -65,16 +65,16 @@
 	
 	<!-- projectView.do : 프로젝트 번호로 업무리스트 조회 -->
 	<select id="selectWorklistListbyProjectNo" resultType="worklist">
-		select * from worklist where project_no = #{projectNo}
+		select * from worklist where project_no = #{projectNo} order by worklist_no
 	</select>
 	
+	<!-- projectView.do : 업무리스트 번호로 업무 리스트 조회 -->
 	<select id="selectWorkListByWorklistNo" resultMap="workListCollectionMap">
 		select V.*, WCM.work_charged_members_no, VM.*
 		from (select * from view_workTag where worklist_no = #{worklistNo} 
          		order by work_no desc) V left join work_charged_members WCM on V.work_no = WCM.work_no
                                          left join view_member VM on WCM.charged_member_id = VM.member_id
 	</select>
-	
 	<resultMap type="work" id="workListCollectionMap">
 		<id column="work_no" property="workNo"></id>
 		<result column="work_title" property="workTitle"></result>
@@ -82,6 +82,7 @@
 		<result column="work_point" property="workPoint"></result>
 		<result column="work_startdate" property="workStartDate"></result>
 		<result column="work_enddate" property="workEndDate"></result>
+		<result column="work_realenddate" property="workRealEndDate"></result>
 		<result column="work_complete_yn" property="workCompleteYn"></result>
 		<result column="work_tag_code" property="workTagCode"></result>
 		<result column="work_tag_title" property="workTagTitle"></result>
@@ -104,4 +105,49 @@
 			<result column="renamed_filename" property="renamedFileName"></result>
 		</collection>
 	</resultMap>
+	
+	<!-- projectView.do : 업무번호로 체크리스트 조회 -->
+	<select id="selectChklstListByWorkNo" resultMap="checklistMap">
+		select C.*, WM.charged_member_id
+		from checklist C join work_charged_members WM on C.checklist_charged_members_no = WM.work_charged_members_no
+		where C.work_no = #{workNo}
+		order by checklist_no
+	</select>
+	<resultMap type="checklist" id="checklistMap">
+		<result column="charged_member_id" property="checklistChargedMemberId"></result>
+	</resultMap>
+	
+	<!-- projectView.do : 업무번호로 첨부파일 조회 -->
+	<select id="selectAttachListByWorkNo" resultMap="attachmentMap">
+		select A.*, PM.member_id
+		from attachment A join project_members PM on A.attachment_writer_no = PM.project_members_no
+		where A.work_no = #{workNo}
+		order by A.attachment_no desc
+	</select>
+	<resultMap type="attachment" id="attachmentMap">
+		<result column="member_id" property="attachmentWriterId"></result>
+	</resultMap>
+	
+	<!-- projectView.do : 업무번호로 코멘트 조회 -->
+	<select id="selectCommentListByWorkNo" resultMap="workCommentMap">
+		select WC.*, PM.member_id
+		from work_comment WC join project_members PM on WC.work_comment_writer_no = PM.project_members_no
+		where WC.work_no = #{workNo}
+		order by WC.work_comment_no
+	</select>
+	<resultMap type="workComment" id="workCommentMap">
+		<result column="member_id" property="workCommentWriterId"></result>
+	</resultMap>
+	
+	<!-- projectView.do : 아이디로 멤버 조회 -->
+	<select id="selectMemberOneByMemberId" resultType="member">
+		select * from view_member where member_id = #{memberId}
+	</select>
+	
+	<!-- projectView.do : 업무리스트번호로 진행 중인 업무 수 조회 -->
+	<select id="selectTotalWorkCompleteYn" resultType="_int">
+		select count(*) total_work_complete_yn
+		from worklist WL left join Work W on WL.worklist_no = W.worklist_no
+		where WL.worklist_no = #{worklistNo} and W.work_complete_yn = 'N'
+	</select>
 </mapper>

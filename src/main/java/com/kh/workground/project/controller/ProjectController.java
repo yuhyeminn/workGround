@@ -18,6 +18,7 @@ import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
 import com.kh.workground.project.model.vo.Project;
+import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
 public class ProjectController {
@@ -80,13 +81,15 @@ public class ProjectController {
 	
 	@RequestMapping("/project/projectView.do")
 	public ModelAndView projectView(ModelAndView mav, @RequestParam int projectNo) {
-		logger.debug("projectNo={}", projectNo);
 		
 		try {
 			//1. 업무로직
-			Map<String, Object> map = projectService.selectProjectWorklistAll(projectNo);
+			Project p = projectService.selectProjectWorklistAll(projectNo);
 			
 			//2. 뷰모델 처리
+			mav.addObject("project", p);
+			mav.addObject("pMemList", p.getProjectMemberList());
+			mav.addObject("wlList", p.getWorklistList());
 			mav.setViewName("/project/projectView");
 			
 		} catch(Exception e) {

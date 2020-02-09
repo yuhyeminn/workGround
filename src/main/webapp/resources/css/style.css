@@ -130,7 +130,7 @@ button:active, button:focus{outline: none;}
 #viewRightNavbar-wrapper .nav-item:first-of-type .nav-link, #viewRightNavbar-wrapper .nav-item:last-of-type .nav-link{padding: 0rem .3rem; background: transparent;}
 #viewRightNavbar-wrapper .nav-item:nth-of-type(2), #viewRightNavbar-wrapper .nav-item:last-of-type .nav-link{margin-left: .3rem;}
 /* 멤버 */
-.navbar-project #nav-member .dropdown-menu{min-width: 11rem;}
+.navbar-project #nav-member .dropdown-menu{min-width: 10rem;}
 #nav-member .dropdown-menu{max-height: 175px; overflow-y: auto;}
 #nav-member .img-profile{width: 25px;}
 #nav-member .memberName{margin-left: .3rem; font-size: .75rem;}
