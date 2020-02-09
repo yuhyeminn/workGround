@@ -40,7 +40,7 @@ div.modal-dialog{max-width: 50%;}
 .deptNoticeView>.view-title, .boardView>.view-title{margin-bottom: .5rem;}
 p.view-title{font-size: 1.2rem; font-weight: bold;}
 p.view-content{margin: 1rem 1rem 2.5rem;}
-.comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93);}
+.comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93); margin-top: 2.5rem;}
 .comment-text-area{display: inline-block; width: 90%; height: 2rem; margin-right: .3rem;}
 .comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
 .comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
@@ -94,6 +94,9 @@ function sidebarActive(){
 @ - 슬라이드 바 개수 맞추기!!
 - 공지 수정 창 추가: #updateDeptNoticeModal${deptnvs.count}
 - 바가 헤더 앞으로 나옴
+- DB: 공지, 게시판 : on delete 확인
+- 기본 프로필 이미지 지우기
+@- 바 누르는 거 이상함
  -->
 
 <!-- Navbar NoticeList -->
@@ -151,7 +154,7 @@ function sidebarActive(){
           	<!-- barCnt: 바개수 올림 (공지 개수/4 올림) -->
 			<c:set var="noticeBarCnt" value="${fn:length(noticeList)/4}"/>
           	<c:forEach var="i" begin="1" end="${noticeBarCnt+(1-(noticeBarCnt%1))%1-1}" step="1">
-	            <li data-target="#notice_indicators" data-slide-to="i"></li>
+	            <li data-target="#notice_indicators" data-slide-to="${i}"></li>
           	</c:forEach>
           </ol>
           <div class="carousel-inner">          
@@ -216,7 +219,7 @@ function sidebarActive(){
           	<!-- barCnt: 바개수 올림 (공지 개수/4 올림) -->
 			<c:set var="deptNoticeBarCnt" value="${fn:length(deptNoticeList)/4}"/>
           	<c:forEach var="i" begin="1" end="${deptNoticeBarCnt+(1-(deptNoticeBarCnt%1))%1-1}" step="1">
-	            <li data-target="#myDeptNotice_indicators" data-slide-to="i"></li>
+	            <li data-target="#myDeptNotice_indicators" data-slide-to="${i}"></li>
           	</c:forEach>
           </ol>
           <div class="carousel-inner">
@@ -276,7 +279,7 @@ function sidebarActive(){
           	<!-- barCnt: 바개수 올림 (공지 개수/4 올림) -->
 			<c:set var="boardBarCnt" value="${fn:length(communityList)/4}"/>
           	<c:forEach var="i" begin="1" end="${boardBarCnt+(1-(boardBarCnt%1))%1-1}" step="1">
-	            <li data-target="#board_indicators" data-slide-to="i"></li>
+	            <li data-target="#board_indicators" data-slide-to="${i}"></li>
           	</c:forEach>
           </ol>
           <div class="carousel-inner">
