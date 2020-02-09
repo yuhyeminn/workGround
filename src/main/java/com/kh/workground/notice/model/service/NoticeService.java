@@ -8,4 +8,6 @@ public interface NoticeService {
 
 	List<Notice> selectNoticeList();
 
+	int insertNotice(Notice notice);
+
 }

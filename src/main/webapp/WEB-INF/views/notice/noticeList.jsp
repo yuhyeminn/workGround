@@ -538,13 +538,15 @@ function sidebarActive(){
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="">
+      <form action="${pageContext.request.contextPath}/notice/noticeFormEnd.do" 
+      		method="post"
+      		enctype="multipart/form-data">
         <div class="modal-body">
           <div class="addNotice" style="padding: 1rem;">
             <div class="form-group">
               <label for="inputDept">부서</label>
-              <select class="form-control custom-select">
-                <option selected>전체</option>
+              <select class="form-control custom-select" name="deptCode">
+                <option value="null" selected>전체</option>
 				<option value="D1">기획부</option>
                 <option value="D2">디자인부</option>
                 <option value="D3">개발부</option>
@@ -552,7 +554,7 @@ function sidebarActive(){
             </div>
             <div class="form-group">
               <label for="inputName">공지 제목</label>
-              <input type="text" id="inputName" class="form-control">
+              <input type="text" id="inputName" name="noticeTitle" class="form-control">
             </div>
             <!-- <div class="form-group">
               <label for="inputDescription">공지 카드 내용</label>
@@ -560,11 +562,11 @@ function sidebarActive(){
             </div> -->
             <div class="form-group">
               <label for="inputDescription">공지 내용</label>
-              <textarea class="textarea"></textarea>
+              <textarea class="textarea" name="noticeContent"></textarea>
             </div>
             <div class="form-group">
               <label for="exampleFormControlFile1">파일 첨부</label>
-              <input type="file" class="form-control-file" id="exampleFormControlFile1">
+              <input type="file" class="form-control-file" id="exampleFormControlFile1" name="upFile">
             </div>
           </div><!-- /.card-body -->
         </div> <!--/.modal-body-->

@@ -10,5 +10,15 @@
 		select * from notice
 	</select>
 	
-
+	<insert id="insertNotice">
+		insert into notice
+		values(seq_notice.nextval,
+			   #{noticeWriter},
+		 	   #{noticeTitle},
+		 	   default,
+		 	   #{noticeContent},
+		 	   #{noticeOriginalFilename},
+		 	   #{noticeRenamedFilename},
+		 	   null)
+	</insert>
 </mapper>

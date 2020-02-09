@@ -8,4 +8,6 @@ public interface NoticeDAO {
 
 	List<Notice> selectNoticeList();
 
+	int insertNotice(Notice notice);
+
 }
