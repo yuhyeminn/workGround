@@ -97,13 +97,15 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		boolean bool = false; //내가 포함됐는지 여부
 		if(!listByDept.isEmpty()) {
 			for(Project p: listByDept) {
+				bool = false;
 				List<Member> memList = p.getProjectMemberList();
-				
+				logger.debug("memList={}",memList);
 				for(Member m: memList) {
 					String pMemId = m.getMemberId();
 					Member member = (Member)param.get("memberLoggedIn");
-					if((member.getMemberId()).equals(pMemId)) 
+					if((member.getMemberId()).equals(pMemId)) {
 						bool = true;
+					}
 				}
 				
 				//포함됐으면 list에 추가

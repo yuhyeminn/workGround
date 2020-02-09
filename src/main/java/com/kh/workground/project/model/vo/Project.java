@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kh.workground.member.model.vo.Member;
 
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class Project implements Serializable {
 	private String projectYn;
 	private String projectDesc;
 	private Date projectStartDate;
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	private Date projectEndDate;
 	private Date projectRealEndDate;
 	private String projectStatusCode;

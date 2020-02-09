@@ -41,12 +41,63 @@ function sidebarActive(){
 function sortByStatus(statusCodeElem){
 	$("#sort-by-status").html(statusCodeElem.innerHTML);
 	var statusCode = statusCodeElem.id;
+	console.log(statusCode);
+	if(statusCode == 'ALL'){
+		location.href="${pageContext.request.contextPath}/project/projectList.do"
+		return;
+	}
 	$.ajax({
 		url:"${pageContext.request.contextPath}/project/projectListByStatusCode.do",
 		data:{statusCode : statusCode},
 		dataType:"json",
 		success: data => {
-			console.log(data);
+			//최근 프로젝트
+			let depthtml='';
+		    $.each(data.listByDept,(idx,list)=>{
+		    	depthtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card card-hover"><a href="${pageContext.request.contextPath}/project/projectView.do?projectNo='+list.projectNo+'">'
+		    					+'<div class="card-body"><div class="card-title"><h5>'+list.projectTitle+'</h5></div></div></a></div></div>'
+		    });
+			
+			//중요 표시한 프로젝트
+			let importanthtml ='';
+			$.each(data.listByImportant, (idx,list)=>{
+				importanthtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card card-hover"><a href="${pageContext.request.contextPath}/project/projectView.do?projectNo='+list.projectNo+'">'
+                		+'<div class="card-body"><div class="card-title"><h5>'+list.projectTitle+'</h5></div>'
+                		+'<div class="card-star text-right"><i class="fas fa-star"></i></div>'
+                		+'<div class="card-status"><span class="btn btn-block btn-sm bg-'+list.projectStatusColor+'">'+list.projectStatusTitle+'</span><span class="end-date">'; //프로젝트 상태
+				if(list.projectEndDate != null){
+					importanthtml += '<i class="far fa-calendar-alt"></i>'+list.projectEndDate;
+				}
+				importanthtml +='</span></div><div class="progress-group card-progress"><span class="progress-title"><span class="percent">11%</span> 완료</span>'
+                    			+'<span class="progress-title float-right"><span>1</span>/<span>9</span> 개 업무</span><div class="progress progress-sm"><div class="progress-bar bg-info" style="width: 11%"></div>'
+                    			+'</div></div></div></a></div></div>'               
+			});
+			
+			//내가 속한 프로젝트
+			let includehtml ='';
+			$.each(data.listByInclude, (idx,list)=>{
+				includehtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card card-hover"><a href="${pageContext.request.contextPath}/project/projectView.do?projectNo='+list.projectNo+'">'
+        		+'<div class="card-body"><div class="card-title"><h5>'+list.projectTitle+'</h5></div>'
+        		+'<div class="card-status"><span class="btn btn-block btn-sm bg-'+list.projectStatusColor+'">'+(list.projectStatusTitle==null?"":list.projectStatusTitle)+'</span><span class="end-date">'; //프로젝트 상태
+				if(list.projectEndDate != null){
+					includehtml += '<i class="far fa-calendar-alt"></i>'+list.projectEndDate;
+				}
+				includehtml +='</span></div><div class="progress-group card-progress"><span class="progress-title"><span class="percent">11%</span> 완료</span>'
+            					+'<span class="progress-title float-right"><span>1</span>/<span>9</span> 개 업무</span><div class="progress progress-sm"><div class="progress-bar bg-info" style="width: 11%"></div>'
+            					+'</div></div></div></a></div></div>'     
+			});
+			
+			$("#include-count").text('('+Object.keys(data.listByInclude).length+')');
+			$("#important-count").text('('+Object.keys(data.listByImportant).length+')');
+			
+			$("#project-recent-content").html(''); //데이터 없을 경우 비우기 위함.
+			$("#project-important-content").html(''); //데이터 없을 경우 비우기 위함.
+			$("#project-include-content").html(''); //데이터 없을 경우 비우기 위함.
+			
+			$("#project-recent-content").html(depthtml);
+			$("#project-important-content").html(importanthtml);
+			$("#project-include-content").html(includehtml);
+			
 		},
 		error : (x,s,e) => {
 			console.log(x,s,e);
@@ -65,11 +116,11 @@ function sortByStatus(statusCodeElem){
             전체 프로젝트 (${fn:length(listByDept)}) <span class="caret"></span>
         </a>
         <div class="dropdown-menu">
-            <a class="dropdown-item sort-by-status" id="" tabindex="-1" onclick="sortByStatus(this);">전체 프로젝트 (${fn:length(listByDept)})</a>
+            <a class="dropdown-item sort-by-status" id="ALL" tabindex="-1" onclick="sortByStatus(this);">전체 프로젝트 (${fn:length(listByDept)})</a>
             <a class="dropdown-item sort-by-status" id="PS1" tabindex="-1" onclick="sortByStatus(this);">계획됨 (${statusCntMap['계획됨']}) <span class="status-dot bg-warning"></span></a>
             <a class="dropdown-item sort-by-status" id="PS2" tabindex="-1" onclick="sortByStatus(this);">진행중 (${statusCntMap['진행중']}) <span class="status-dot bg-success"></span></a>
             <a class="dropdown-item sort-by-status" id="PS3" tabindex="-1" onclick="sortByStatus(this);">완료됨 (${statusCntMap['완료됨']}) <span class="status-dot bg-info"></span></a>
-            <a class="dropdown-item sort-by-status" id="PS4" tabindex="-1" onclick="sortByStatus(this);">상태없음 (${statusCntMap['상태없음']})</a>
+            <a class="dropdown-item sort-by-status" id="" tabindex="-1" onclick="sortByStatus(this);">상태없음 (${statusCntMap['상태없음']})</a>
         </div>
         </li>
     </ul>
@@ -111,7 +162,7 @@ function sortByStatus(statusCodeElem){
             <div class="card-header" role="button" tabindex="0" onclick="toggleList(this);">
                 <h3><i class="fas fa-chevron-down"></i> 최근 프로젝트</h3>
             </div><!-- /.card-header -->
-            <div class="row card-content">
+            <div class="row card-content" id="project-recent-content">
             
             <c:forEach items="${listByDept}" var="p">
 	            <div class="col-12 col-sm-6 col-md-3">
@@ -134,9 +185,9 @@ function sortByStatus(statusCodeElem){
         <!-- 중요 표시된 프로젝트 -->
         <section id="project-important">
             <div class="card-header" role="button" tabindex="0" onclick="toggleList(this);">
-            <h3><i class="fas fa-chevron-down"></i> <i class="fas fa-star"></i> 중요 표시된 프로젝트 <span class="header-count">(${fn:length(listByImportant)})</span></h3>
+            <h3><i class="fas fa-chevron-down"></i> <i class="fas fa-star"></i> 중요 표시된 프로젝트 <span class="header-count" id="important-count">(${fn:length(listByImportant)})</span></h3>
             </div><!-- /.card-header -->
-            <div class="row card-content">
+            <div class="row card-content" id="project-important-content">
             
             <c:forEach items="${listByImportant}" var="p">
             <div class="col-12 col-sm-6 col-md-3">
@@ -180,9 +231,9 @@ function sortByStatus(statusCodeElem){
         <!-- 내가 속한 프로젝트 -->
         <section id="project-in">
             <div class="card-header" role="button" tabindex="0" onclick="toggleList(this);">
-            <h3><i class="fas fa-chevron-down"></i> 내가 속한 프로젝트 <span class="header-count">(${fn:length(listByInclude)})</span></h3>
+            <h3><i class="fas fa-chevron-down"></i> 내가 속한 프로젝트 <span class="header-count" id="include-count">(${fn:length(listByInclude)})</span></h3>
             </div><!-- /.card-header -->
-            <div class="row card-content">
+            <div class="row card-content" id="project-include-content">
             <!-- 내 업무 -->
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hover mywork">
