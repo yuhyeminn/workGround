@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@page import="java.util.Date"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
@@ -163,29 +164,29 @@ function goTabMenu(){
 		location.href = "${pageContext.request.contextPath}/project/projectAnalysis.do";	
 	});
 	
-	btnAttach.addEventListener('click', e=>{
+	/* btnAttach.addEventListener('click', e=>{
 		location.href = "${pageContext.request.contextPath}/project/projectAttachment.do";	
-	});
+	}); */
 	
 	
 	//파일 탭
-	/* btnAttach.addEventListener('click', e=>{
+	btnAttach.addEventListener('click', e=>{
 		$.ajax({
-			url: "${pageContext.request.contextPath}/project/projectAttachment",
+			url: "${pageContext.request.contextPath}/project/projectAttachment.do",
 			type: "get",
 			dataType: "html",
 			success: data => {
 				console.log(data);
 				
 				$(contentWrapper).html("");
-				$(contentWrapper).html(data);
+				$(contentWrapper).html(data); 
 				
 			},
 			error: (x,s,e) => {
 				console.log(x,s,e);
 			}
 		});
-	}); */
+	}); 
 }
 
 function setting(){
@@ -315,7 +316,7 @@ function setting(){
     </li>
     <li id="project-name" class="nav-item">
         <button type="button" id="btn-star"><i class="fas fa-star"></i></button>
-        기획
+        ${project.projectTitle}
     </li>
     </ul>
 
@@ -339,61 +340,19 @@ function setting(){
         <!-- 프로젝트 멤버 -->
         <li id="nav-member" class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="far fa-user"></i> 6
+                <i class="far fa-user"></i> ${fn:length(pMemList)}
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <c:forEach items="${pMemList}" var="m">
             <a href="#" class="dropdown-item">
-                <!-- Message Start -->
                 <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
+	                <img src="${pageContext.request.contextPath}/resources/img/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">
+	                <div class="media-body">
+	                    <p class="memberName">${m.memberName}</p>
+	                </div>
                 </div>
-                </div>
-                <!-- Message End -->
             </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                    </div>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
+            </c:forEach>
             </div>
         </li>
 
@@ -409,141 +368,7 @@ function setting(){
 
 <!-- 프로젝트 설정 사이드 바-->
 <aside class="control-sidebar project-setting" style="display: block;">
-    <div class="p-3">
-	    <i class="fas fa-star"></i>
-	    <span class="setting-side-title">기획</span>
-	    <p class="setting-contents-inform">
-	        <span>#2</span>
-	        <span>작성자 이단비</span>
-	        <span class="setting-contents-date">작성일 2020-01-27</span>
-	    </p>
-    </div>
     
-    <ul class="nav project-setting-tabs" id="custom-content-above-tab" role="tablist">
-        <li class="nav-item setting-navbar-tab">
-        	<button type="button" id="custom-content-above-home-tab" data-toggle="pill" href="#custom-content-above-home" role="tab" aria-controls="custom-content-above-home" aria-selected="true">설정</button>
-        </li>
-    </ul>
-    <div class="tab-content" id="custom-content-above-tabContent">
-        <div class="tab-pane fade show active p-setting-container" id="custom-content-above-home" role="tabpanel" aria-labelledby="custom-content-above-home-tab">
-            <div class="row setting-row add-description">
-            	<span>설명 추가</span>
-            </div>
-            <hr/>
-            <div class="row setting-row">
-            <label class="setting-content-label col-md-4">프로젝트 상태</label>
-            <div class="dropdown status-dropdown">
-                <button>
-                계획됨 
-                <span class="status-dot bg-warning"></span>
-                </button>
-                <div class="icon-box"  data-toggle="dropdown">
-                <i class="fa fa-angle-down"></i>
-                </div>
-                <div class="dropdown-menu">
-                <a class="dropdown-item" tabindex="-1" href="#">계획됨 <span class="status-dot bg-warning"></span></a>
-                <a class="dropdown-item" tabindex="-1" href="#">진행중 <span class="status-dot bg-success"></span></a>
-                <a class="dropdown-item" tabindex="-1" href="#">완료됨 <span class="status-dot bg-info"></span></a>
-                <a class="dropdown-item" tabindex="-1" href="#">상태없음 <span class="status-dot bg-secondary"></span></a>
-                </div>
-            </div>
-            </div>
-            <hr/>
-            <div class="setting-row">
-            <div class="row">
-                <label class="setting-content-label">시작일</label>
-
-                <div class="dropdown">
-                    <div class="setting-icon" data-toggle="dropdown">
-                    <i class="fas fa-cog"></i>
-                    </div>
-                    <div class="dropdown-menu setting-date-dropdown">
-                        <div class="form-group">
-                        <div class="input-group" >
-                            <input type="text" class="form-control float-right" id="projectStartDate" name="projectStartDate" data-provide='datepicker'> 
-                        </div>
-                        </div>
-                        <button class="btn bg-info date-update">수정</button>
-                        <button class="btn bg-secondary date-cancel">취소</button>
-                </div>
-                </div>
-                <p class="setting-content-inform">
-                <i class="far fa-calendar-alt"></i>
-                <span>2020/01/28</span>
-                </p>
-            </div>
-                
-            <div class="row">
-                <label class="setting-content-label">마감일</label>
-                <div class="dropdown">
-                    <div class="setting-icon" data-toggle="dropdown">
-                    <i class="fas fa-cog"></i>
-                    </div>
-                    <div class="dropdown-menu setting-date-dropdown">
-                        <div class="form-group">
-                        <div class="input-group" >
-                            <input type="text" class="form-control float-right" id="projectEndDate" name="projectEndDate" data-provide='datepicker'> 
-                        </div>
-                        </div>
-                        <button class="btn bg-info date-update">수정</button>
-                        <button class="btn bg-secondary date-cancel">취소</button>
-                </div>
-                </div>
-                <p class="setting-content-inform">
-                    <i class="far fa-calendar-alt"></i>
-                    <span>2020/01/30</span>
-                </p>
-            </div>
-            <div class="row">
-                <label class="setting-content-label">실제 완료일</label>
-                <div class="dropdown">
-                    <div class="setting-icon" data-toggle="dropdown">
-                    <i class="fas fa-cog"></i>
-                    </div>
-                    <div class="dropdown-menu setting-date-dropdown">
-                        <div class="form-group">
-                        <div class="input-group" >
-                            <input type="text" class="form-control float-right" id="projectRealEndDate" name="projectRealEndtDate" data-provide='datepicker'> 
-                        </div>
-                        </div>
-                        <button class="btn bg-info date-update">수정</button>
-                        <button class="btn bg-secondary date-cancel">취소</button>
-                </div>
-                </div>
-                <p class="setting-content-inform">
-                    <i class="far fa-calendar-alt"></i>
-                    <span>2020/02/01</span>
-                </p>
-            </div>
-            </div>
-            <hr/>
-            <div class="row setting-row">
-                <label class="setting-content-label">프로젝트 관리자</label>
-                <div class='control-wrapper pv-multiselect-box'>
-                <div class="control-styles">
-                    <input type="text" tabindex="1" id='projectManager' name="projectManager"/>
-                </div>
-                </div>
-            </div>
-            <hr/>
-            <div class="row setting-row">
-                <label class="setting-content-label">프로젝트 팀원</label>
-                <div class='control-wrapper pv-multiselect-box'>
-                <div class="control-styles">
-                    <input type="text" tabindex="1" id='projectMember' name="projectMember"/>
-                </div>
-            </div>
-            </div>
-            <hr/>
-            <div class="row setting-row">
-                <label class="setting-content-label">프로젝트 나가기</label>
-                <div>
-                <button type="button" class="sign-out-project">프로젝트 나가기</button>
-                <p>더 이상 이 프로젝트의 팀원이 아닙니다.</p>
-            </div>
-            </div>
-        </div>
-        </div>
 </aside> 
 
 <!-- 업무 설정 사이드 바-->
@@ -865,7 +690,7 @@ function setting(){
     <h2 class="sr-only">프로젝트 일정 상세보기</h2>
     <!-- Main content -->
     <div class="content view">
-    <h3 class="sr-only">기획</h3>
+    <h3 class="sr-only">${project.projectTitle}</h3>
     <div class="container-fluid">
         <h4 class="sr-only">업무</h4>
         <!-- SEARCH FORM -->
@@ -880,11 +705,12 @@ function setting(){
 	        </div>
         </form>
         
-        <!-- 업무리스트: 해야할 일 -->
+        <!-- 업무리스트 -->
+        <c:forEach items="${wlList}" var="wl" varStatus="wlVs">
         <section class="worklist">
             <!-- 업무리스트 타이틀 -->
             <div class="worklist-title">
-                <h5>해야할 일</h5>
+                <h5>${wl.worklistTitle}</h5>
                 <div class="worklist-title-btn">
 	                <button type="button" class="btn-addWork" onclick=""><i class="fas fa-plus"></i></button>
 	                <button type="button" class="btn-removeWorklist" data-toggle="modal" data-target="#modal-wroklist-remove"><i class="fas fa-times"></i></button>
@@ -991,418 +817,165 @@ function setting(){
 
                 <!-- 진행 중인 업무 -->
                 <div class="worklist-titleInfo">
-                	<p>진행 중인 업무 7개</p>
-                </div>
-            </div><!-- /.worklist-title -->
-            
-            <!-- 업무리스트 컨텐츠 -->
-            <!-- <div class="wl-contents-wrapper"> -->
-            <div class="worklist-contents">
-                <!-- 업무 -->
-                <section class="work-item" role="button" tabindex="0">
-                <!-- 태그 -->
-                <div class="work-tag">
-                    <span class="btn btn-xs bg-danger">priority</span>
-                    <span class="btn btn-xs bg-primary">important</span>
-                    <span class="btn btn-xs bg-warning">review</span>
-                </div>
-
-                <!-- 업무 타이틀 -->
-                <div class="work-title">
-                    <!-- <h6><i class="far fa-check-circle title-icon"></i>업무1</h6> -->
-                    <h6>업무1</h6>
-                    <div class="work-importances">
-                    <span class="importance-dot checked"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    </div>
-                </div>
-
-                <!-- 체크리스트 -->
-                <div class="work-checklist">
-                    <table class="tbl-checklist">
-                    <tbody>
-                        <tr>
-                        <th><button type="button" class="btn-check"><i class="far fa-square"></i></button></th>
-                        <td>
-                            <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                            체크리스트1
-                        </td>
-                        </tr>
-                        <tr>
-                        <th><button type="button" class="btn-check"><i class="far fa-square"></i></button></th>
-                        <td>체크리스트2</td>
-                        </tr>
-                    </tbody>
-                    </table>                
-                </div>
-
-                <!-- 날짜 설정 -->
-                <div class="work-deadline">
-                    <p>1월 23일 - 1월 29일</p>
-                    <!-- <p class="over">마감일 3일 지남</p> -->
-                    <!-- <p class="complete">1월 22일에 완료</p> -->
-                </div>
-
-                <!-- 기타 아이콘 모음 -->
-                <div class="work-etc">
-                    <span class="ico"><i class="far fa-list-alt"></i> 1/3</span>
-                    <span class="ico"><i class="far fa-comment"></i> 0</span>
-                    <span class="ico"><i class="fas fa-paperclip"></i> 0</span>
-                    <div class="chared-member text-right">
-                    <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                    <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                    </div>
-                </div>
-
-                <!-- 커버 이미지 -->
-                <div class="work-coverImage">
-                    <img src="${pageContext.request.contextPath}/resources/img/test.jpg" class="img-cover" alt="test image">
-                </div>
-                </section><!-- /.work-item -->
-
-                <!-- 업무 -->
-                <section class="work-item" role="button" tabindex="0">
-                <!-- 태그 -->
-                <div class="work-tag">
-                    <span class="btn btn-xs bg-danger">priority</span>
-                    <span class="btn btn-xs bg-primary">important</span>
-                    <span class="btn btn-xs bg-warning">review</span>
-                </div>
-
-                <!-- 업무 타이틀 -->
-                <div class="work-title">
-                    <h6>업무1</h6>
-                    <div class="work-importances">
-                    <span class="importance-dot checked"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    </div>
-                </div>
-
-                <!-- 기타 아이콘 모음 -->
-                <div class="work-etc">
-                    <span class="ico"><i class="far fa-list-alt"></i> 1/3</span>
-                    <span class="ico"><i class="far fa-comment"></i> 0</span>
-                    <span class="ico"><i class="fas fa-paperclip"></i> 0</span>
-                    <div class="chared-member text-right">
-                    <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile ml-auto">
-                    </div>
-                </div>
-                </section><!-- /.work-item -->
-
-                <!-- 업무 -->
-                <section class="work-item" role="button" tabindex="0">
-                <!-- 업무 타이틀 -->
-                <div class="work-title">
-                    <h6>업무1</h6>
-                    <div class="work-importances">
-                    <span class="importance-dot checked"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    </div>
-                </div>
-
-                <!-- 기타 아이콘 모음 -->
-                <div class="work-etc">
-                    <div class="chared-member text-right">
-                    <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile ml-auto">
-                    </div>
-                </div>
-                </section><!-- /.work-item -->
-            </div><!-- /.worklist-contents -->
-            <!-- </div> -->
-        </section><!-- /.worklist -->
-
-        <!-- 업무리스트: 진행중 -->
-        <section class="worklist">
-            <!-- 업무리스트 타이틀 -->
-            <div class="worklist-title">
-                <h5>진행중</h5>
-                <div class="worklist-title-btn">
-                <button type="button" class="btn-addWork"><i class="fas fa-plus"></i></button>
-                <button type="button" class="btn-removeWorklist" data-toggle="modal" data-target="#modal-wroklist-remove"><i class="fas fa-times"></i></button>
-                </div>
-
-                <!-- 새 업무 만들기 -->
-                <div class="addWork-wrapper">
-                <form action="" class="addWorkFrm">
-                    <!-- 업무 타이틀 작성 -->
-                    <textarea name="workTitle" class="addWork-textarea" placeholder="새 업무 만들기"></textarea>
-
-                    <!-- 하단부 버튼 모음 -->
-                    <div class="addWork-btnWrapper">
-                    <!-- 업무 설정 -->
-                    <div class="addWork-btnLeft">
-                        <!-- 업무 배정 -->
-                        <div class="add-tag dropdown">
-                        <a class="nav-link" data-toggle="dropdown" href="#">
-                            <i class="fas fa-user-plus"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                            <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-                                <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    Brad Diesel
-                                </h3>
-                                <p class="text-sm">Call me whenever you can...</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-                                <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    John Pierce
-                                </h3>
-                                <p class="text-sm">I got your message bro</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                            </a>
-                        </div>
-                        </div>
-
-                        <!-- 태그 설정 -->
-                        <div class="add-tag dropdown">
-                        <a class="nav-link" data-toggle="dropdown" href="#">
-                            <i class="fas fa-tag"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                            <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-                                <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    Brad Diesel
-                                </h3>
-                                <p class="text-sm">Call me whenever you can...</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-                                <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    John Pierce
-                                </h3>
-                                <p class="text-sm">I got your message bro</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                            </a>
-                        </div>
-                        </div>
-
-                        <!-- 날짜 설정 -->
-                        <button type="button" class="btn-setWorkDate"><i class="far fa-calendar-alt"></i></button>
-                    </div>
-
-                    <!-- 취소/만들기 버튼 -->
-                    <div class="addWork-btnRight">
-                        <button type="button" class="btn-addWork-cancel">취소</button>
-                        <button type="submit" class="btn-addWork-submit">만들기</button>
-                    </div>
-                    </div>
-                </form>
-                </div>
-
-                <!-- 진행 중인 업무 -->
-                <div class="worklist-titleInfo">
-                <p>진행 중인 업무 7개</p>
+                	<!-- 완료된 업무가 아닐 때 -->
+                	<c:if test="${wlVs.index!=2}">
+                	<p>진행 중인 업무 ${wl.totalWorkCompletYn}개</p>
+                	</c:if>
+                	<c:if test="${wlVs.index==2}">
+                	<p>완료된 업무 ${wl.totalWorkCompletYn}개</p>
+                	</c:if> 
                 </div>
             </div><!-- /.worklist-title -->
             
             <!-- 업무리스트 컨텐츠 -->
             <div class="worklist-contents">
+            	<c:set var="workList" value="${wl.workList}"/>
+            	
+            	<c:forEach items="${workList}" var="w" varStatus="wVs">
+            	<c:if test="${(wlVs.index!=2 && w.workCompleteYn=='N') || (wlVs.index==2 && w.workCompleteYn=='Y')}">
                 <!-- 업무 -->
                 <section class="work-item" role="button" tabindex="0">
-                <!-- 업무 타이틀 -->
-                <div class="work-title">
-                    <!-- <h6><i class="far fa-check-circle title-icon"></i>업무1</h6> -->
-                    <h6>업무1</h6>
-                    <div class="work-importances">
-                    <span class="importance-dot checked"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    </div>
-                </div>
+	                <!-- 태그 -->
+	                <c:if test="${w.workTagCode!=null}">
+	                <div class="work-tag">
+	                	<span class="btn btn-xs bg-${w.workTagColor}">${w.workTagTitle}</span>
+	                </div>
+	                </c:if>
 
-                <!-- 기타 아이콘 모음 -->
-                <div class="work-etc">
-                    <div class="chared-member text-right">
-                    <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile ml-auto">
-                    </div>
-                </div>
+	                <!-- 업무 타이틀 -->
+	                <div class="work-title">
+	                    <h6>${w.workTitle}</h6>
+	                    <div class="work-importances">
+	                    <c:set var="point" value="${w.workPoint}" />
+	                    <c:if test="${point>0}">
+		                    <c:forEach var="i" begin="1" end="${point}">
+		                    <span class="importance-dot checked"></span>
+		                    </c:forEach>
+		                    <c:forEach var="i" begin="1" end="${5-point}">
+		                    <span class="importance-dot"></span>
+		                    </c:forEach>
+	                    </c:if>
+	                    <c:if test="${point==0}">
+	                    	<c:forEach var="i" begin="1" end="5">
+		                    <span class="importance-dot"></span>
+		                    </c:forEach>
+	                    </c:if>
+	                    </div>
+	                </div>
+
+	                <!-- 체크리스트 -->
+	                <c:if test="${w.checklistList!=null && !empty w.checklistList}">
+	                <c:set var="clList" value="${w.checklistList}" />
+	                <div class="work-checklist">
+	                    <table class="tbl-checklist">
+		                    <tbody>
+			                	<c:forEach items="${clList}" var="chk">
+				                	<c:set var="m" value="${chk.checklistChargedMember}"></c:set>
+				                	<c:if test="${chk.completeYn=='Y'}">
+			                        <tr class="completed">
+				                		<th><button type="button" class="btn-check"><i class="fas fa-check-square"></i></button></th>
+				                        <td style="text-decoration:line-through;">
+				                        	<c:if test="${chk.checklistChargedMemberId!=null}">
+				                            <img src="${pageContext.request.contextPath}/resources/img/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+				                            </c:if>
+				                            ${chk.checklistContent}
+				                        </td>
+			                        </tr>
+			                        </c:if>
+			                        <c:if test="${chk.completeYn=='N'}">
+			                        <tr>
+			                        	<th><button type="button" class="btn-check"><i class="far fa-square"></i></button></th>
+				                        <td>
+				                        	<c:if test="${chk.checklistChargedMemberId!=null}">
+				                            <img src="${pageContext.request.contextPath}/resources/img/default.jpg" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+				                            </c:if>
+				                            ${chk.checklistContent}
+				                        </td>
+			                        </tr>
+			                        </c:if>
+		                        </c:forEach>
+		                    </tbody>
+	                    </table>                
+                	</div><!-- /.work-checklist -->
+					</c:if>
+					
+	                <!-- 날짜 설정 -->
+	                <c:if test="${w.workStartDate!=null}">
+	                <div class="work-deadline">
+	                    <p>
+	                    	<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
+	                    	<c:if test="${w.workEndDate!=null}">
+	                    		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />
+	                    	</c:if>
+	                    	<c:if test="${w.workEndDate==null}">
+	                    		마감일 없음
+	                    	</c:if>
+	                    </p>
+	                    <!-- 업무리스트 완료됨이 아닐 경우 -->
+	                    <c:if test="${wlVs.index!=2 && w.workEndDate!=null}">
+	                    	<c:set var="now" value="<%= new Date() %>"/>
+	                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	<fmt:parseDate var="enddate" value="${w.workEndDate}" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	
+							<c:if test="${today_D > enddate_D}">
+								<p class="over">마감일 ${today_D - enddate_D}일 지남</p>
+							</c:if>               	
+	                    </c:if>
+	                    <!-- 업무리스트 완료됨일 경우 -->
+	                    <c:if test="${wlVs.index==2}">
+	                    	<p class="complete"><fmt:formatDate value="${w.workRealEndDate}" type="date" pattern="MM월dd일"/>에 완료</p>
+	                    </c:if>
+	                </div><!-- /.work-deadline -->
+					</c:if>
+					
+					<!-- 완료 체크리스트 수 구하기 -->
+					<c:set var="chkCnt" value="0"/>
+					<c:forEach items="${w.checklistList}" var="chk">
+						<c:if test="${chk.completeYn=='Y'}">
+							<c:set var="chkCnt" value="${chkCnt+1}"/>
+						</c:if>
+					</c:forEach>
+					
+	                <!-- 기타 아이콘 모음 -->
+	                <div class="work-etc">
+	                	<!-- 체크리스트/코멘트/첨부파일 수 -->
+	                	<c:if test="${fn:length(w.checklistList)==0}">
+	                    	<span class="ico"><i class="far fa-list-alt"></i> 0</span>
+	                    </c:if>
+	                    <c:if test="${fn:length(w.checklistList)>0}">
+	                    	<span class="ico"><i class="far fa-list-alt"></i> ${chkCnt}/${fn:length(w.checklistList)}</span>
+	                    </c:if>
+	                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
+	                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+	                    
+	                    <!-- 업무 배정된 멤버 -->
+	                    <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">
+	                    <div class="chared-member text-right">
+	                    <c:forEach items="${w.workChargedMemberList}" var="m">
+		                    <img src="${pageContext.request.contextPath}/resources/img/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+	                    </c:forEach>
+	                    </div>
+	                    </c:if>
+	                </div>
+
+	                <!-- 커버 이미지 -->
+	                <c:if test="${w.attachmentList!=null && !empty w.attachmentList}">
+	                <div class="work-coverImage">
+	                    <img src="${pageContext.request.contextPath}/resources/img/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="test image">
+	                </div>
+	                </c:if>
                 </section><!-- /.work-item -->
+            	</c:if>	
+                </c:forEach>
+                
             </div><!-- /.worklist-contents -->
         </section><!-- /.worklist -->
+        </c:forEach>
         
-        <!-- 업무리스트: 완료 -->
-        <section class="worklist">
-            <!-- 업무리스트 타이틀 -->
-            <div class="worklist-title">
-                <h5>완료</h5>
-                <div class="worklist-title-btn">
-                <button type="button" class="btn-addWork"><i class="fas fa-plus"></i></button>
-                <button type="button" class="btn-removeWorklist" data-toggle="modal" data-target="#modal-wroklist-remove"><i class="fas fa-times"></i></button>
-                </div>
-
-                <!-- 새 업무 만들기 -->
-                <div class="addWork-wrapper">
-                <form action="" class="addWorkFrm">
-                    <!-- 업무 타이틀 작성 -->
-                    <textarea name="workTitle" class="addWork-textarea" placeholder="새 업무 만들기"></textarea>
-
-                    <!-- 하단부 버튼 모음 -->
-                    <div class="addWork-btnWrapper">
-                    <!-- 업무 설정 -->
-                    <div class="addWork-btnLeft">
-                        <!-- 업무 배정 -->
-                        <div class="add-tag dropdown">
-                        <a class="nav-link" data-toggle="dropdown" href="#">
-                            <i class="fas fa-user-plus"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                            <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-                                <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    Brad Diesel
-                                </h3>
-                                <p class="text-sm">Call me whenever you can...</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-                                <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    John Pierce
-                                </h3>
-                                <p class="text-sm">I got your message bro</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                            </a>
-                        </div>
-                        </div>
-
-                        <!-- 태그 설정 -->
-                        <div class="add-tag dropdown">
-                        <a class="nav-link" data-toggle="dropdown" href="#">
-                            <i class="fas fa-tag"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                            <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-                                <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    Brad Diesel
-                                </h3>
-                                <p class="text-sm">Call me whenever you can...</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-                                <div class="media-body">
-                                <h3 class="dropdown-item-title">
-                                    John Pierce
-                                </h3>
-                                <p class="text-sm">I got your message bro</p>
-                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                            </a>
-                        </div>
-                        </div>
-
-                        <!-- 날짜 설정 -->
-                        <button type="button" class="btn-setWorkDate"><i class="far fa-calendar-alt"></i></button>
-                    </div>
-
-                    <!-- 취소/만들기 버튼 -->
-                    <div class="addWork-btnRight">
-                        <button type="button" class="btn-addWork-cancel">취소</button>
-                        <button type="submit" class="btn-addWork-submit">만들기</button>
-                    </div>
-                    </div>
-                </form>
-                </div>
-
-                <!-- 진행 중인 업무 -->
-                <div class="worklist-titleInfo">
-                	<p>완료된 업무 7개</p>
-                </div>
-            </div><!-- /.worklist-title -->
-            
-            <!-- 업무리스트 컨텐츠 -->
-            <div class="worklist-contents">
-                <!-- 업무 -->
-                <section class="work-item" role="button" tabindex="0">
-                <!-- 업무 타이틀 -->
-                <div class="work-title">
-                    <h6>업무1</h6>
-                    <div class="work-importances">
-                    <span class="importance-dot checked"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    <span class="importance-dot"></span>
-                    </div>
-                </div>
-
-                <!-- 기타 아이콘 모음 -->
-                <div class="work-etc">
-                    <div class="chared-member text-right">
-                    <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile ml-auto">
-                    </div>
-                </div>
-                </section><!-- /.work-item -->
-            </div><!-- /.worklist-contents -->
-        </section><!-- /.worklist --> 
-
+        
         <!-- 업무리스트 추가 -->
         <section id="add-wklt-wrapper" class="worklist add-worklist" role="button" tabindex="0">
             <!-- 타이틀 -->
