@@ -1,4 +1,3 @@
-
 package com.kh.workground.club.model.vo;
 
 import java.io.Serializable;
@@ -15,21 +14,18 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Club implements Serializable {
+public class ClubPlanAttendee implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private int clubNo;
-	private String clubName;
-	private Date clubEnrollDate;
-	private String clubIntroduce;
-	private String clubMeetingCycle;
-	private String clubMeetingDate;
-	private String clubCategory;
-	private String clubManagerId;
+	private int clubPlanAttendeeNo;
+	private int clubPlanNo;
+	private int clubMemberNo;
+	private Date clubPlanAttendeeDate;
 	
-	
+	//가상컬럼
+	private String memberId;
 }

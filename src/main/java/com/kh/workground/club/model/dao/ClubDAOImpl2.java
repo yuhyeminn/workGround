@@ -12,6 +12,7 @@ import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
+import com.kh.workground.club.model.vo.ClubPlanAttendee;
 
 @Repository
 public class ClubDAOImpl2 implements ClubDAO2 {
@@ -85,15 +86,14 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 	}
 
 	@Override
-	public int selectClubPlanCount(int clubNo) {
-		return sqlSession.selectOne("club.selectClubPlanCount", clubNo);
+	public List<ClubPlanAttendee> selectClubPlanAttendeeList(int clubPlanNo) {
+		return sqlSession.selectList("club.selectClubPlanAttendeeList", clubPlanNo);
 	}
 
 	@Override
-	public int selectClubNoticeCount(int clubNo) {
-		return sqlSession.selectOne("club.selectClubNoticeCount", clubNo);
+	public int insertClubPlanAttendee(ClubPlanAttendee clubPlanAttendee) {
+		return sqlSession.insert("club.insertClubPlanAttendee", clubPlanAttendee);
 	}
-
 
 
 

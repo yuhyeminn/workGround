@@ -107,6 +107,8 @@ $(function(){
  */	
 	sidebarActive(); //사이드바 활성화
 	tabActive(); //서브헤더 탭 활성화
+	
+	
 });
 
 //사이드바 활성화
@@ -283,16 +285,16 @@ function validate() {
 				<c:if test="${not empty clubPhotoList }">
 				  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
 				    <div class="carousel-inner">
-				    <c:forEach var="i" begin="1" end="${Math.ceil(clubPhotoListSize/4) }" step="1">
+				    <c:forEach var="i" begin="1" end="${Math.ceil(clubPhotoCount/4) }" step="1">
 				    <c:if test="${i == 1 }">
 				      <div class="carousel-item active">
 				        <div class="row card-content">
-				        <c:if test="${clubPhotoListSize<4 }">
+				        <c:if test="${clubPhotoCount<4 }">
 				        <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
 				        <c:if test="${vs.index<4 }">
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -302,18 +304,18 @@ function validate() {
 				          <div class="col-12 col-sm-6 col-md-3">
 				              <div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
 				                <div class="card-body">
-				  	            <i class="fas fa-plus"></i>
-				  	            <h6>새 사진</h6>
+				  	              <i class="fas fa-plus"></i>
+				  	              <h6>새 사진</h6>
 				                </div>
 				              </div>
 				            </div>
 				        </c:if>
 				        <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
-				        <c:if test="${clubPhotoListSize>=4 }">
+				        <c:if test="${clubPhotoCount>=4 }">
 				        <c:if test="${vs.index<4 }">
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -327,12 +329,12 @@ function validate() {
 				    <c:if test="${i != 1 }">
 				      <div class="carousel-item">
 				        <div class="row card-content">
-				        <c:if test="${i != Math.ceil(clubPhotoListSize/4) }">
+				        <c:if test="${i != Math.ceil(clubPhotoCount/4) }">
 					    <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
 				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<i*4 }">
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -340,19 +342,19 @@ function validate() {
 				  		</c:if>
 					    </c:forEach>
 				        </c:if>
-				        <c:if test="${i == Math.ceil(clubPhotoListSize/4) }"> <!-- 마지막 슬라이드라면 조건 -->
+				        <c:if test="${i == Math.ceil(clubPhotoCount/4) }"> <!-- 마지막 슬라이드라면 조건 -->
 					    <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
-				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<clubPhotoListSize }"> <!-- 4개씩 반복 조건 -->
+				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<clubPhotoCount }"> <!-- 4개씩 반복 조건 -->
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
 					  	  </div>
 				  		</c:if> <!-- 4개씩 반복 조건 끝 -->
 					    </c:forEach>
-				  		<c:if test="${clubPhotoListSize%4 != 0 }"> <!-- 플러스버튼 조건 -->
+				  		<c:if test="${clubPhotoCount%4 != 0 }"> <!-- 플러스버튼 조건 -->
 				  		  <div class="col-12 col-sm-6 col-md-3">
 							<div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
 							  <div class="card-body">
@@ -367,7 +369,7 @@ function validate() {
 				      </div>
 				    </c:if>
 				    </c:forEach>
-				    <c:if test="${clubPhotoListSize%4 == 0 }"> <!-- 플러스버튼 조건 -->
+				    <c:if test="${clubPhotoCount%4 == 0 }"> <!-- 플러스버튼 조건 -->
 				      <div class="carousel-item">
 				        <div class="row card-content">
 				          <div class="col-12 col-sm-6 col-md-3">
@@ -426,7 +428,7 @@ function validate() {
 						  </button>
 						</div>
 						<div class="modal-body">
-						  <img src="${pageContext.request.contextPath}/resources/upload/club/${clubPhoto.clubPhotoRenamed }"
+						  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 							   alt="..." class="img-thumbnail" data-toggle="modal"
 							   data-target="#clubPhoto${vs.index }">
 						</div>
@@ -435,6 +437,7 @@ function validate() {
 						  <form name="deleteClubPhotoFrm" action="${pageContext.request.contextPath }/club/deleteClubPhoto.do" method="POST">
 							<input type="hidden" name="clubNo" value="${club.clubNo }" />
 							<input type="hidden" name="clubPhotoNo" value=${clubPhoto.clubPhotoNo } />
+							<input type="hidden" name="clubPhotoRenamed" value=${clubPhoto.clubPhotoRenamed } />
 							<button type="submit" class="btn btn-danger">삭제</button>
 						  </form>
 						</c:if>
@@ -479,7 +482,7 @@ function validate() {
 				<div class="card-header" role="button" onclick="toggleList(this);">
 					<h3>
 						<i class="fas fa-chevron-down"></i> <i class="fas fa-calendar-alt"></i>
-						2월 일정 <span class="header-count">(${clubPlanCount })</span>
+						이번달 일정 <span class="header-count">(${clubPlanCount })</span>
 					</h3>
 				</div>
 				<!-- /.card-header -->
@@ -488,7 +491,7 @@ function validate() {
 					<c:if test="${not empty clubPlanList }">
 						<c:forEach items="${clubPlanList }" var="clubPlan" varStatus="vs">
 							<div class="col-12 col-sm-6 col-md-3">
-								<div class="card mywork" data-toggle="modal"
+								<div class="card mywork clubPlanCard" data-toggle="modal" 
 									data-target="#clubPlanView${vs.index }">
 									<div class="card-body">
 										<!-- 타이틀 -->
@@ -565,9 +568,14 @@ function validate() {
 											</div>
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-info float-right">
+										  <form name="insertClubPlanAttendanceFrm" action="${pageContext.request.contextPath }/club/insertClubPlanAttendee.do" method="POST">
+										    <input type="hidden" name="clubPlanNo" value=${clubPlan.clubPlanNo } />
+										    <input type="hidden" name="memberId" value=${memberLoggedIn.memberId } />
+										    <input type="hidden" name="clubNo" value=${club.clubNo } />
+											<button type="submit" class="btn btn-info float-right">
 												<i class="fas fa-plus"></i>
 											</button>
+										  </form>
 											<button type="button" class="btn btn-info"
 													data-target="#plan-modify${vs.index }" 
 													data-dismiss="modal"

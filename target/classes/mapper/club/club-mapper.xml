@@ -126,7 +126,8 @@
 	</insert>
 	
 	<select id="selectClubPhotoList" resultType="clubPhoto">
-		select * from club_photo P
+		select * 
+		from club_photo P
 			left join club_member C on P.club_member_no = C.club_member_no 
 			left join member M on C.emp_id = M.member_id 
 		where club_no = #{clubNo} 
@@ -138,14 +139,16 @@
 		where club_photo_no = #{clubPhotoNo}
 	</delete>
 	
-	<select id="selectClubPlanCount" resultType="_int">
-		select count(*) from club_plan 
-		where club_no = #{clubNo} and extract(month from club_plan_start) = extract(month from sysdate)
+	<select id="selectClubPlanAttendeeList" resultType="clubPlanAttendee">
+		select * 
+		from club_plan_attendee  
+		where club_plan_no = #{clubPlanNo} 
+		order by club_plan_attendee_date desc
 	</select>
 	
-	<select id="selectClubNoticeCount" resultType="_int">
-		select count(*) from club_notice 
-		where club_no = #{clubNo}
-	</select>
+	<insert id="insertClubPlanAttendee">
+		insert into club_plan_attendee 
+		values(seq_club_plan_attendee_no.nextval, #{clubPlanNo}, #{clubMemberNo}, default)
+	</insert>
 	<!-- br end -->
 </mapper>

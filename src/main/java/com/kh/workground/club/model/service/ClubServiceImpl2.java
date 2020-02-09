@@ -13,6 +13,7 @@ import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
+import com.kh.workground.club.model.vo.ClubPlanAttendee;
 
 @Service
 public class ClubServiceImpl2 implements ClubService2 {
@@ -92,13 +93,13 @@ public class ClubServiceImpl2 implements ClubService2 {
 	}
 
 	@Override
-	public int selectClubPlanCount(int clubNo) {
-		return clubDAO2.selectClubPlanCount(clubNo);
+	public List<ClubPlanAttendee> selectClubPlanAttendeeList(int clubPlanNo) {
+		return clubDAO2.selectClubPlanAttendeeList(clubPlanNo);
 	}
 
 	@Override
-	public int selectClubNoticeCount(int clubNo) {
-		return clubDAO2.selectClubNoticeCount(clubNo);
+	public int insertClubPlanAttendee(ClubPlanAttendee clubPlanAttendee) {
+		return clubDAO2.insertClubPlanAttendee(clubPlanAttendee);
 	}
 
 

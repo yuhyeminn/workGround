@@ -8,6 +8,7 @@ import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
+import com.kh.workground.club.model.vo.ClubPlanAttendee;
 
 public interface ClubDAO2 {
 
@@ -37,8 +38,8 @@ public interface ClubDAO2 {
 
 	int deleteClubPhoto(ClubPhoto clubPhoto);
 
-	int selectClubPlanCount(int clubNo);
+	List<ClubPlanAttendee> selectClubPlanAttendeeList(int clubPlanNo);
 
-	int selectClubNoticeCount(int clubNo);
+	int insertClubPlanAttendee(ClubPlanAttendee clubPlanAttendee);
 
 }

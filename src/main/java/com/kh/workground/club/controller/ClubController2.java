@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
+import com.kh.workground.club.model.vo.ClubPlanAttendee;
 
 @Controller
 public class ClubController2 {
@@ -54,16 +56,13 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
 //		logger.debug("clubPhotoList={}", clubPhotoList);
 		
-		int clubPlanCount = clubService2.selectClubPlanCount(clubNo);
-		int clubNoticeCount = clubService2.selectClubNoticeCount(clubNo);
-		
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
 		mav.addObject("clubNoticeList", clubNoticeList);
 		mav.addObject("clubPhotoList", clubPhotoList);
-		mav.addObject("clubPhotoListSize", clubPhotoList.size());
-		mav.addObject("clubPlanCount", clubPlanCount);
-		mav.addObject("clubNoticeCount", clubNoticeCount);
+		mav.addObject("clubPhotoCount", clubPhotoList.size());
+		mav.addObject("clubPlanCount", clubPlanList.size());
+		mav.addObject("clubNoticeCount", clubNoticeList.size());
 		mav.setViewName("/club/clubView");
 		
 		return mav;
@@ -216,7 +215,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		clubPhoto.setClubMemberNo(clubMember.getClubMemberNo());
 		
-		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club");
+		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/"+clubPhoto.getClubNo());
 		
 		//동적으로 directory 생성하기
 		File dir = new File(saveDirectory);
@@ -253,14 +252,69 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@PostMapping("/club/deleteClubPhoto.do")
 	public ModelAndView deleteClubPhoto(ModelAndView mav, 
-										ClubPhoto clubPhoto) {
+										ClubPhoto clubPhoto, 
+										HttpServletRequest request) {
 //		logger.debug("clubPhoto={}", clubPhoto);
 		
 		int result = clubService2.deleteClubPhoto(clubPhoto);
 		
+		if(result>0 && !"".equals(clubPhoto.getClubPhotoRenamed())) {
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/"+clubPhoto.getClubNo());
+			
+			//1. 파일 삭제처리
+			File delFile = new File(saveDirectory, clubPhoto.getClubPhotoRenamed());
+			boolean bool = delFile.delete();
+//			logger.debug("bool={}", bool?"파일삭제처리성공":"파일삭제처리실패");
+			
+			//2.파일 이동처리
+//			String delDirectory = request.getSession().getServletContext().getRealPath("/resources/delete/club/"+clubPhoto.getClubNo());
+//			File delFileTo = new File(delDirectory,  clubPhoto.getClubPhotoRenamed());
+//			boolean bool = delFile.renameTo(delFileTo);
+//			logger.debug("bool={}", bool?"파일삭제이동처리성공":"파일삭제이동처리실패");
+		}
+		
 		mav.addObject("msg", result>0?"사진을 성공적으로 삭제하였습니다.":"사진을 삭제하지 못했습니다.");
 		mav.addObject("loc", "/club/clubView.do?clubNo="+clubPhoto.getClubNo());
 		mav.setViewName("common/msg");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/insertClubPlanAttendee.do")
+	public ModelAndView insertClubPlanAttendee(ModelAndView mav, 
+											   ClubPlanAttendee clubPlanAttendee, 
+											   int clubNo) {
+//		logger.debug("clubPlanAttendee={}", clubPlanAttendee);
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("clubNo", clubNo+"");
+		param.put("memberId", clubPlanAttendee.getMemberId());
+		
+		ClubMember clubMember = clubService2.selectOneClubMember(param);
+		
+		clubPlanAttendee.setClubMemberNo(clubMember.getClubMemberNo());
+//		logger.debug("clubPlanAttendee={}", clubPlanAttendee);
+		
+		List<ClubPlanAttendee> clubPlanAttendeeList = clubService2.selectClubPlanAttendeeList(clubPlanAttendee.getClubPlanNo());
+//		logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
+		
+		List<Integer> clubMemberNoList = new ArrayList<>();
+		for(ClubPlanAttendee a : clubPlanAttendeeList) {
+			clubMemberNoList.add(a.getClubMemberNo());			
+		}
+		logger.debug("clubPlanNoList={}", clubMemberNoList);
+		
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNo);
+		mav.setViewName("common/msg");
+		
+		if(clubMemberNoList.contains(clubPlanAttendee.getClubMemberNo())) {
+			mav.addObject("msg", "이미 참석 예약 되어있습니다.");
+			return mav;
+		}
+		else {
+			int result = clubService2.insertClubPlanAttendee(clubPlanAttendee);
+			mav.addObject("msg", result>0?"참석 예약 되었습니다.":"참석예약이 되지 않았습니다.");
+		}
 		
 		return mav;
 	}
