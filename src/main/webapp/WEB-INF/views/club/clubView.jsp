@@ -108,7 +108,6 @@ $(function(){
 	sidebarActive(); //사이드바 활성화
 	tabActive(); //서브헤더 탭 활성화
 	
-	
 });
 
 //사이드바 활성화
@@ -166,6 +165,27 @@ function validate() {
 	}
 	return true;
 }
+
+$(()=> {
+	var clubPlanNo = $("#clubPlanNo").val();
+	//console.log(clubPlanNo);
+
+	$("#clubPlanCard").on("click", ()=> {
+		
+		$.ajax({
+			url: "${pageContext.request.contextPath}/club/selectClubPlanList.do", 
+			data: {clubPlanNo: clubPlanNo}, 
+			dataType: "json", 
+			success: data=> {
+				console.log(data);
+				
+			}, 
+			error: (x, s, e)=> {
+				console.log("ajax처리 실패!!", x, s, e);
+			}
+		});
+	});
+});
 
 </script>
 
@@ -490,8 +510,9 @@ function validate() {
 					<!-- 일정 -->
 					<c:if test="${not empty clubPlanList }">
 						<c:forEach items="${clubPlanList }" var="clubPlan" varStatus="vs">
+						  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" id="clubPlanNo" />
 							<div class="col-12 col-sm-6 col-md-3">
-								<div class="card mywork clubPlanCard" data-toggle="modal" 
+								<div class="card mywork" data-toggle="modal" id="clubPlanCard"
 									data-target="#clubPlanView${vs.index }">
 									<div class="card-body">
 										<!-- 타이틀 -->
@@ -576,12 +597,8 @@ function validate() {
 												<i class="fas fa-plus"></i>
 											</button>
 										  </form>
-											<button type="button" class="btn btn-info"
-													data-target="#plan-modify${vs.index }" 
-													data-dismiss="modal"
-													data-toggle="modal">수정</button>
-											<button type="button" class="btn btn-secondary"
-												data-dismiss="modal">닫기</button>
+											<button type="button" class="btn btn-info" data-target="#plan-modify${vs.index }" data-dismiss="modal" data-toggle="modal">수정</button>
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
 										</div>
 									</div>
 								</div>

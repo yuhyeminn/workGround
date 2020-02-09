@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.kh.workground.club.model.service.ClubService2;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
@@ -302,7 +305,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		for(ClubPlanAttendee a : clubPlanAttendeeList) {
 			clubMemberNoList.add(a.getClubMemberNo());			
 		}
-		logger.debug("clubPlanNoList={}", clubMemberNoList);
+//		logger.debug("clubPlanNoList={}", clubMemberNoList);
 		
 		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNo);
 		mav.setViewName("common/msg");
@@ -317,6 +320,19 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		}
 		
 		return mav;
+	}
+	
+	@RequestMapping("/club/selectClubPlanList.do")
+	public void selectClubPlanList(ModelAndView mav, 
+										   @RequestParam("clubPlanNo") int clubPlanNo, 
+										   HttpServletResponse response) throws JsonIOException, IOException {
+		logger.debug("clubPlanNo={}", clubPlanNo);
+		
+		List<ClubPlanAttendee> clubPlanAttendeeList = clubService2.selectClubPlanAttendeeList(clubPlanNo);
+		logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
+		
+		new Gson().toJson(clubPlanAttendeeList, response.getWriter());
+		
 	}
 
 }
