@@ -304,6 +304,11 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
 .work-setting-tabs .nav-item button{width:100%}
 /* .work-setting{width: 475px;display: block;top: 92px!important;overflow: hidden;background-color: #fff;box-shadow: -1px 6px 10px 0 rgba(0,0,0,.2);color: #696f7a;} */
 
+ /* Middle navbar links */
+ .setting-navbar-tab button{display: inline-block; height: 46px; padding: 0 .8rem; border: 0; color: #696f7a; font-size: .85rem; background: transparent;}
+ .setting-navbar-tab button:hover{color: #007bff;}
+ .setting-navbar-tab button:active, .navbar-tab button:focus{outline: none; border-bottom: 2px solid #007bff; color: #007bff;}
+  
 .work-setting {
     position: fixed;
     background-color: #fff;

@@ -112,7 +112,6 @@ public class MemberController {
 		try {
 			// 1. 업무로직
 			Member m = memberSerivce.selectOneMember(memberId);
-			logger.debug("m@controller={}", m);
 
 			String msg = "";
 			String loc = "/";
