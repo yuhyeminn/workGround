@@ -1,9 +1,6 @@
 
 package com.kh.workground.member.controller;
 
-import java.util.Arrays;
-
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -108,7 +106,7 @@ public class MemberController {
 
 		return mav;
 	}*/
-	@PostMapping("/member/memberLogin.do")
+	@RequestMapping("/member/memberLogin.do")
 	public ModelAndView memberLogin(@RequestParam String memberId, ModelAndView mav,
 			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -123,15 +121,16 @@ public class MemberController {
 			// 로그인
 			if (m == null) {
 				msg = "존재하지 않는 아이디 입니다.";
+				mav.addObject("msg", msg);
+				mav.addObject("loc", loc);
 			} else {
 				//로그인 한 경우
 				mav.addObject("memberLoggedIn", m);
-				viewName="notice/noticeList";
+				viewName="redirect:/notice/noticeList.do";
 			}
 
 			// 2. view모델 처리
-			mav.addObject("msg", msg);
-			mav.addObject("loc", loc);
+			
 
 			// viewName 지정
 			mav.setViewName(viewName);
