@@ -1,4 +1,4 @@
-﻿--================================================
+--================================================
 --workground계정 생성
 --================================================
 create user workground identified by workground
@@ -566,29 +566,8 @@ select V.*, M.password, M.member_name, M.email, M.phone, M.date_of_birth, M.dept
 from (select P.*, PM.member_id
       from view_project P left join project_members PM on P.project_no = PM.project_no
       order by P.project_no desc) V 
-<<<<<<< HEAD
-      join view_member M on V.member_id = M.member_id;
-      
---================================================
---뷰: notice+member
---================================================
-create or replace view view_noticeMember as 
-select N.*, M.member_name, M.renamed_filename
-from notice N left join member M on N.notice_writer = M.member_id; 
---drop view view_noticeMember;
---select * from view_noticeMember;
-
---================================================
---뷰: community+member
---================================================
-create or replace view view_communityMember as 
-select C.*, M.member_name, M.renamed_filename
-from community C left join member M on C.commu_writer = M.member_id; 
---drop view view_communityMember;
---select * from view_communityMember;
-=======
       left join view_member M on V.member_id = M.member_id;
->>>>>>> master
+
 
 --================================================
 --뷰: work + work_tag
