@@ -93,6 +93,7 @@ function sidebarActive(){
 @ - **부서별공지, 자유게시판 작성자 이름으로
 @ - 슬라이드 바 개수 맞추기!!
 - 공지 수정 창 추가: #updateDeptNoticeModal${deptnvs.count}
+- 바가 헤더 앞으로 나옴
  -->
 
 <!-- Navbar NoticeList -->
@@ -173,7 +174,7 @@ function sidebarActive(){
    	              </div>
    	            </div>
    	            <div class="card-body" data-toggle="modal" data-target="#noticeViewModal${nvs.count}">
-   	              <img src="${pageContext.request.contextPath}/resources/img/${n.noticeRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
+   	              <img src="${pageContext.request.contextPath}/resources/upload/notice/${n.noticeRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
 	   	              <h5 class="card-title">${n.noticeTitle }</h5>
 	   	              <p class="card-text">${n.noticeContent }</p>
    	            </div>
@@ -237,7 +238,7 @@ function sidebarActive(){
 	   	              </div>
 	   	            </div>
 	   	            <div class="card-body" data-toggle="modal" data-target="#myDeptNoticeViewModal${deptnvs.count}">
-	   	              <img src="${pageContext.request.contextPath}/resources/img/${deptn.noticeRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
+	   	              <img src="${pageContext.request.contextPath}/resources/upload/notice/${deptn.noticeRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
 	   	              <h5 class="card-title">${deptn.noticeTitle }</h5>
 	   	              <p class="card-text">${deptn.noticeContent }</p>
 	   	            </div>
@@ -298,7 +299,7 @@ function sidebarActive(){
 	   	              </div>
 	   	            </div>
 	   	            <div class="card-body" data-toggle="modal" data-target="#boardViewModal${cvs.count}">
-	   	              <img src="${pageContext.request.contextPath}/resources/img/${c.commuRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
+	   	              <img src="${pageContext.request.contextPath}/resources/upload/community/${c.commuRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
 	   	              <h5 class="card-title">${c.commuTitle }</h5>
 	   	              <p class="card-text">${c.commuContent }</p>
 	   	            </div>
@@ -339,7 +340,7 @@ function sidebarActive(){
 	          <p class="view-title">${n.noticeTitle}</p>
 	          <div style="font-size: .8rem; color: gray; margin-bottom: .5rem;">게시일 ${n.noticeDate}</div>
 	            <div class="view-body">
-	              <img class="view-img" src="${pageContext.request.contextPath}/resources/img/${n.noticeRenamedFileName}" alt="noticeViewPhoto" onerror="this.style.display='none'">
+	              <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/notice/${n.noticeRenamedFileName}" alt="noticeViewPhoto" onerror="this.style.display='none'">
 	              <p class="view-content">${n.noticeContent}</p>
 	            </div>
 	            <!-- /.view-body -->
@@ -359,6 +360,67 @@ function sidebarActive(){
 	                <div class="comment-text">
 	                  <span class="username">유혜민<span class="text-muted float-right">2020-01-26</span></span>
 	                  <span>넵! 알겠습니당</span>
+	                  <button class="comment-delete float-right">삭제</button>
+	                  <button class="comment-reply float-right">답글</button>
+	                </div>
+	              </div>
+	            </div>
+	            <div class="card-footer">
+	              <form action="#" method="post">
+	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName == null?'기본프로필.jpg':memberLoggedIn.renamedFileName}">
+	                <div class="img-push">
+	                  <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
+	                  <input class="comment-submit" type="submit" value="등록">
+	                </div>
+	              </form>
+	            </div> <!-- /.card-footer -->
+	          </div> <!-- /.card -->
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</c:forEach>
+
+<!-- 부서별 공지 상세보기 모달 -->
+<c:forEach items="${deptNoticeList}" var="deptn" varStatus="deptnvs">
+	<div class="modal fade" id="myDeptNoticeViewModal${deptnvs.count}" tabindex="-1" role="dialog" aria-labelledby="myDeptNoticeViewModalLabel${deptnvs.count}" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title"><span id="myDept"><i class="fas fa-user"></i> &nbsp;${memberLoggedIn.deptCode=='D1'?"기획":memberLoggedIn.deptCode=='D2'?"디자인":"개발" }</span>&nbsp; 부서별 공지</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <div class="deptNoticeView">
+	          <p class="view-title">${deptn.noticeTitle}</p>
+	          <div class="user-block" style="margin-bottom: .5rem;">
+	            <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/${deptn.renamedFileName == null?'기본프로필.jpg':deptn.renamedFileName}" alt="User Image">
+	            <span class="username"><a href="#" style="color: black;">작성자 ${deptn.memberName}</a></span>
+	            <span class="description">게시일 ${deptn.noticeDate}</span>
+	          </div>
+	            <div class="view-body">
+	              <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/notice/${deptn.noticeRenamedFileName}" onerror="this.style.display='none'" alt="Photo">
+	              <p class="view-content">${deptn.noticeContent}</p>
+	            </div>
+	            <!-- /.view-body -->
+	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
+	            <div class="card-footer card-comments">
+	              <div class="card-comment">
+	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/재현01.jpg" alt="User Image">
+	                <div class="comment-text">
+	                  <span class="username">이주현<span class="text-muted float-right">2020-01-25</span></span>
+	                  <span>네넵! 확인 완료!</span>
+	                  <button class="comment-delete float-right">삭제</button>
+	                  <button class="comment-reply float-right">답글</button>
+	                </div>
+	              </div>
+	              <div class="card-comment">
+	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/우식01.jpeg" alt="User Image">
+	                <div class="comment-text">
+	                  <span class="username">김효정<span class="text-muted float-right">2020-01-26</span></span>
+	                  <span>넵 확인했습니다!</span>
 	                  <button class="comment-delete float-right">삭제</button>
 	                  <button class="comment-reply float-right">답글</button>
 	                </div>
@@ -401,7 +463,7 @@ function sidebarActive(){
 	            <span class="description">게시일 ${c.commuDate }</span>
 	          </div>
 	            <div class="view-body">
-	              <img class="view-img" src="${pageContext.request.contextPath}/resources/img/${c.commuRenamedFileName}" alt="Photo" onerror="this.style.display='none'">
+	              <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/community/${c.commuRenamedFileName}" alt="Photo" onerror="this.style.display='none'">
 	              <p class="view-content">${c.commuContent }</p>
 	            </div>
 	            <!-- /.view-body -->
@@ -463,13 +525,15 @@ function sidebarActive(){
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="">
+      <form action="${pageContext.request.contextPath}/notice/noticeFormEnd.do"
+      		method="post"
+      		enctype="multipart/form-data">
         <div class="modal-body">
           <div class="addNotice" style="padding: 1rem;">
             <div class="form-group">
               <label for="inputDept">부서</label>
-              <select class="form-control custom-select">
-                <option selected>전체</option>
+              <select class="form-control custom-select" name="deptCode">
+                 <option value="all" selected>전체</option>
 				<option value="D1">기획부</option>
                 <option value="D2">디자인부</option>
                 <option value="D3">개발부</option>
@@ -477,7 +541,7 @@ function sidebarActive(){
             </div>
             <div class="form-group">
               <label for="inputName">공지 제목</label>
-              <input type="text" id="inputName" class="form-control">
+              <input type="text" id="inputName" name="noticeTitle" class="form-control" required>
             </div>
             <!-- <div class="form-group">
               <label for="inputDescription">공지 카드 내용</label>
@@ -485,11 +549,11 @@ function sidebarActive(){
             </div> -->
             <div class="form-group">
               <label for="inputDescription">공지 내용</label>
-              <textarea class="textarea"></textarea>
+              <textarea class="textarea" name="noticeContent" required></textarea>
             </div>
             <div class="form-group">
               <label for="exampleFormControlFile1">파일 첨부</label>
-              <input type="file" class="form-control-file" id="exampleFormControlFile1">
+              <input type="file" class="form-control-file" id="exampleFormControlFile1" name="upFile">
             </div>
           </div><!-- /.card-body -->
         </div> <!--/.modal-body-->
@@ -633,66 +697,6 @@ function sidebarActive(){
   </div>
 </div>
 
-<!-- 부서별 공지 상세보기 모달 -->
-<c:forEach items="${deptNoticeList}" var="deptn" varStatus="deptnvs">
-	<div class="modal fade" id="myDeptNoticeViewModal${deptnvs.count}" tabindex="-1" role="dialog" aria-labelledby="myDeptNoticeViewModalLabel${deptnvs.count}" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title"><span id="myDept"><i class="fas fa-user"></i> &nbsp;${memberLoggedIn.deptCode=='D1'?"기획":memberLoggedIn.deptCode=='D2'?"디자인":"개발" }</span>&nbsp; 부서별 공지</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body">
-	        <div class="deptNoticeView">
-	          <p class="view-title">${deptn.noticeTitle}</p>
-	          <div class="user-block" style="margin-bottom: .5rem;">
-	            <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/${deptn.renamedFileName == null?'기본프로필.jpg':deptn.renamedFileName}" alt="User Image">
-	            <span class="username"><a href="#" style="color: black;">작성자 ${deptn.memberName}</a></span>
-	            <span class="description">게시일 ${deptn.noticeDate}</span>
-	          </div>
-	            <div class="view-body">
-	              <img class="view-img" src="${pageContext.request.contextPath}/resources/img/${deptn.noticeRenamedFileName}" onerror="this.style.display='none'" alt="Photo">
-	              <p class="view-content">${deptn.noticeContent}</p>
-	            </div>
-	            <!-- /.view-body -->
-	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
-	            <div class="card-footer card-comments">
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/재현01.jpg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">이주현<span class="text-muted float-right">2020-01-25</span></span>
-	                  <span>네넵! 확인 완료!</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/우식01.jpeg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">김효정<span class="text-muted float-right">2020-01-26</span></span>
-	                  <span>넵 확인했습니다!</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	            </div>
-	            <div class="card-footer">
-	              <form action="#" method="post">
-	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName == null?'기본프로필.jpg':memberLoggedIn.renamedFileName}">
-	                <div class="img-push">
-	                  <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
-	                  <input class="comment-submit" type="submit" value="등록">
-	                </div>
-	              </form>
-	            </div> <!-- /.card-footer -->
-	          </div> <!-- /.card -->
-	      </div>
-	    </div>
-	  </div>
-	</div>
-</c:forEach>
 
 
 

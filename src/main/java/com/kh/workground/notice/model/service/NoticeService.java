@@ -16,5 +16,7 @@ public interface NoticeService {
 	List<Notice> selectDevelopmentDeptNoticeList();
 
 	List<Community> selectCommunityList();
+	
+	int insertNotice(Notice notice);
 
 }

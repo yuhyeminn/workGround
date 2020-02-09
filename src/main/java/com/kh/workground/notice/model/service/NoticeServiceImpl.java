@@ -43,6 +43,11 @@ public class NoticeServiceImpl implements NoticeService {
 	public List<Community> selectCommunityList() {
 		return noticeDAO.selectCommunityList();
 	}
+	
+	@Override
+	public int insertNotice(Notice notice) {
+		return noticeDAO.insertNotice(notice);
+	}
 
 
 }

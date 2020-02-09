@@ -40,5 +40,9 @@ public class NoticeDAOImpl implements NoticeDAO {
 		return sqlSession.selectList("notice.selectCommunityList");
 	}
 
+	@Override
+	public int insertNotice(Notice notice) {
+		return sqlSession.insert("notice.insertNotice", notice);
+	}
 
 }

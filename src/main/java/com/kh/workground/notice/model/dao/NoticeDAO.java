@@ -17,5 +17,7 @@ public interface NoticeDAO {
 
 	List<Community> selectCommunityList();
 	
+	int insertNotice(Notice notice);
+	
 	
 }
