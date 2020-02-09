@@ -5,9 +5,28 @@
 <mapper namespace="notice">
 	<resultMap type="notice" id="noticeMap">
 	</resultMap>
+
+	<resultMap type="community" id="communityMap">
+	</resultMap>
 	
 	<select id="selectNoticeList" resultMap="noticeMap">
-		select * from notice
+		select * from notice where dept_code is null order by notice_no
+	</select>
+
+	<select id="selectPlanningDeptNoticeList" resultMap="noticeMap">
+		select * from view_noticeMember where dept_code = 'D1' order by notice_no
+	</select>
+
+	<select id="selectDesignDeptNoticeList" resultMap="noticeMap">
+		select * from view_noticeMember where dept_code = 'D2' order by notice_no
+	</select>
+
+	<select id="selectDevelopmentDeptNoticeList" resultMap="noticeMap">
+		select * from view_noticeMember where dept_code  = 'D3' order by notice_no
+	</select>
+	
+	<select id="selectCommunityList" resultMap="communityMap">
+		select * from view_communityMember order by commu_no
 	</select>
 	
 	<insert id="insertNotice">
@@ -17,8 +36,9 @@
 		 	   #{noticeTitle},
 		 	   default,
 		 	   #{noticeContent},
-		 	   #{noticeOriginalFilename},
-		 	   #{noticeRenamedFilename},
-		 	   null)
+		 	   #{noticeOriginalFileName},
+		 	   #{noticeRenamedFileName},
+		 	   #{deptCode})
 	</insert>
+
 </mapper>

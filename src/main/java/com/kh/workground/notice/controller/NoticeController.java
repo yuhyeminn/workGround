@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.notice.model.service.NoticeService;
+import com.kh.workground.notice.model.vo.Community;
 import com.kh.workground.notice.model.vo.Notice;
 
 //Exception 던지기!!!!!
@@ -33,33 +34,53 @@ public class NoticeController {
 	@RequestMapping("/notice/noticeList.do")
 	public ModelAndView noticeList(ModelAndView mav) {
 		
-		List<Notice> list = noticeService.selectNoticeList();
-		logger.debug("NoticeList={}", list);
+		//전체 공지
+		List<Notice> noticeList = noticeService.selectNoticeList();
+		//logger.debug("noticeList={}", noticeList);
 		
-		mav.addObject("list", list);
+		//D1: 기획부 공지
+		List<Notice> planningDeptNoticeList = noticeService.selectPlanningDeptNoticeList();
+		//logger.debug("planningDeptNoticeList={}", planningDeptNoticeList);
+		
+		//D2: 디자인부 공지
+		List<Notice> designDeptNoticeList = noticeService.selectDesignDeptNoticeList();
+		//logger.debug("designDeptNoticeList={}", designDeptNoticeList);
+		
+		//D3: 개발부 공지
+		List<Notice> developmentDeptNoticeList = noticeService.selectDevelopmentDeptNoticeList();
+		//logger.debug("developmentDeptNoticeList={}", developmentDeptNoticeList);	
+		
+		//자유게시판
+		List<Community> communityList = noticeService.selectCommunityList();
+		//logger.debug("communityList={}", communityList);	
+		
+		mav.addObject("noticeList", noticeList);
+		mav.addObject("planningDeptNoticeList", planningDeptNoticeList);
+		mav.addObject("designDeptNoticeList", designDeptNoticeList);
+		mav.addObject("developmentDeptNoticeList", developmentDeptNoticeList);
+		mav.addObject("communityList", communityList);
+		
 		mav.setViewName("/notice/noticeList");
 		
 		return mav;
 	}
 	
+	
 	@RequestMapping("/notice/noticeFormEnd.do")
 	public ModelAndView boardFormEnd(ModelAndView mav,
-									 Notice notice, 
+									 Notice notice,
 									 @RequestParam(value="upFile", required=false) MultipartFile upFile,
 									 HttpServletRequest request) {
 		//logger.debug("Notice={}", notice);
 		//logger.debug("사용자입력 name={}", upFile.getName());
 		//logger.debug("fileName={}", upFile.getOriginalFilename());
 		//logger.debug("size={}", upFile.getSize());
-		
 		String saveDirectory = request.getSession()
 									  .getServletContext()
 									  .getRealPath("/resources/upload/notice");
-			
 	    File dir = new File(saveDirectory);
 		if(dir.exists() == false)
 			dir.mkdir();
-			
 		MultipartFile f = upFile;
 		if(!f.isEmpty()) {
 			String originalFileName = f.getOriginalFilename();
@@ -67,7 +88,6 @@ public class NoticeController {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
 			int rndNum = (int)(Math.random()*1000);
 			String renamedFileName = sdf.format(new Date())+"_"+rndNum+ext;
-			
 			try {
 				f.transferTo(new File(saveDirectory+"/"+renamedFileName));
 			} catch (IllegalStateException e) {
@@ -75,21 +95,18 @@ public class NoticeController {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
-			notice.setNoticeWriter("admin");
-			notice.setNoticeOriginalFilename(originalFileName);
-			notice.setNoticeRenamedFilename(renamedFileName);
-	
+			notice.setNoticeOriginalFileName(originalFileName);
+			notice.setNoticeRenamedFileName(renamedFileName);
 		}
 		//logger.debug("Notice={}", notice);	
-		
+		if(notice.getDeptCode().equals("all"))notice.setDeptCode(null);
+		notice.setNoticeWriter("admin");
 		int result = noticeService.insertNotice(notice);
-		
 		mav.addObject("msg", result>0?"게시물이 등록되었습니다.":"게시물 등록 실패! 깔깔깔");
 		mav.addObject("loc", "/notice/noticeList.do");
 		mav.setViewName("common/msg");
-		
 		return mav;
 	}
+	
 	
 }
