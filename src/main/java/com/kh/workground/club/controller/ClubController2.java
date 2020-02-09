@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -286,8 +287,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	@RequestMapping("/club/insertClubPlanAttendee.do")
 	public ModelAndView insertClubPlanAttendee(ModelAndView mav, 
 											   ClubPlanAttendee clubPlanAttendee, 
-											   int clubNo) {
-//		logger.debug("clubPlanAttendee={}", clubPlanAttendee);
+											   @RequestParam("clubNo") int clubNo) {
+		logger.debug("clubPlanAttendee={}", clubPlanAttendee);
 		
 		Map<String, String> param = new HashMap<>();
 		param.put("clubNo", clubNo+"");
@@ -322,15 +323,17 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		return mav;
 	}
 	
-	@RequestMapping("/club/selectClubPlanList.do")
+	@RequestMapping(value="/club/selectClubPlanList.do", method=RequestMethod.GET, produces="text/plain;charset=UTF-8")
 	public void selectClubPlanList(ModelAndView mav, 
 										   @RequestParam("clubPlanNo") int clubPlanNo, 
 										   HttpServletResponse response) throws JsonIOException, IOException {
-		logger.debug("clubPlanNo={}", clubPlanNo);
+//		logger.debug("clubPlanNo={}", clubPlanNo);
 		
 		List<ClubPlanAttendee> clubPlanAttendeeList = clubService2.selectClubPlanAttendeeList(clubPlanNo);
-		logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
+//		logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
 		
+		response.setContentType("text/html;charset=UTF-8"); 
+
 		new Gson().toJson(clubPlanAttendeeList, response.getWriter());
 		
 	}

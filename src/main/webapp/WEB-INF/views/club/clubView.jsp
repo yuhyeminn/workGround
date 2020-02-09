@@ -179,6 +179,20 @@ $(()=> {
 			success: data=> {
 				console.log(data);
 				
+				let $p = $("<p></p>");
+				
+				$(data).each((idx, a)=>{
+					let html = "<div style='width: 50px; display: inline-block; margin-left:15px;'>"
+					html += "<img src='${pageContext.request.contextPath}/resources/img/profile/"+a.renamedFileName+"'";
+					html += "class='img-fluid img-circle' style='width: 50px; margin: 5px' />";
+					html += "<p class='profile-username text-center' style='font-size: 18px;'>"+a.memberName+"</p></div>"
+					
+					$p.append(html);
+				});
+				
+				$("#attendeeList").html($p);
+				
+				console.log($("#attendeeList"));
 			}, 
 			error: (x, s, e)=> {
 				console.log("ajax처리 실패!!", x, s, e);
@@ -538,7 +552,7 @@ $(()=> {
 								<div class="modal-dialog modal-dialog-centered modal-lg"
 									role="document">
 									<div class="modal-content card card-outline card-info"
-										style="min-height: 650px">
+										style="min-height: 700px">
 										<div class="modal-header">
 											<h5 class="modal-title" id="exampleModalLongTitle">일정확인하기</h5>
 											<button type="button" class="close" data-dismiss="modal"
@@ -580,12 +594,12 @@ $(()=> {
 											</div>
 											<div class="form-group">
 												<label for="inputProjectLeader">참석자</label>
-												<p>
+												  <div id="attendeeList" id="attendeeList">
+												  </div>
 													<!-- 프로필 사진 -->
-													<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-														 alt="User Avatar" class="img-circle img-profile"
-														 style="width: 50px; margin-left: 10px;">
-												</p>
+													<%-- <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg"
+														 alt="User Avatar" class="img-circle elevation-2"
+														 style="width: 50px; margin: 5px" /> --%>
 											</div>
 										</div>
 										<div class="modal-footer">

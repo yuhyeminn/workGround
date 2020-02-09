@@ -28,4 +28,6 @@ public class ClubPlanAttendee implements Serializable {
 	
 	//가상컬럼
 	private String memberId;
+	private String renamedFileName;
+	private String memberName;
 }

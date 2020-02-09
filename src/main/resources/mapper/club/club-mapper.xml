@@ -140,10 +140,12 @@
 	</delete>
 	
 	<select id="selectClubPlanAttendeeList" resultType="clubPlanAttendee">
-		select * 
-		from club_plan_attendee  
-		where club_plan_no = #{clubPlanNo} 
-		order by club_plan_attendee_date desc
+		select A.* , M.member_id, M.renamed_filename, M.member_name 
+		from club_plan_attendee A 
+			left join club_member C on A.club_member_no = C.club_member_no
+    		left join member M on C.emp_id = M.member_id
+		where A.club_plan_no = #{clubPlanNo} 
+		order by A.club_plan_attendee_date desc
 	</select>
 	
 	<insert id="insertClubPlanAttendee">
