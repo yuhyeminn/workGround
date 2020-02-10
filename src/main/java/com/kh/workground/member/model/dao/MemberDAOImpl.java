@@ -1,5 +1,7 @@
 package com.kh.workground.member.model.dao;
 
+import java.util.List;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,5 +21,10 @@ public class MemberDAOImpl implements MemberDAO {
 	@Override
 	public int updateRegister(Member member) {
 		return sqlSession.update("member.updateRegister", member);
+	}
+
+	@Override
+	public List<Member> selectMemberListAll() {
+		return sqlSession.selectList("member.selectMemberListAll");
 	}
 }
