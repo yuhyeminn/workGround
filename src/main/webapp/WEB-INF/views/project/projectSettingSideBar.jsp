@@ -4,13 +4,22 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
+
+<style>
+.e-input-group:not(.e-float-icon-left), .e-input-group.e-success:not(.e-float-icon-left), .e-input-group.e-warning:not(.e-float-icon-left), .e-input-group.e-error:not(.e-float-icon-left), .e-input-group.e-control-wrapper:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-success:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-warning:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-error:not(.e-float-icon-left) {
+    border: none;
+}
+</style>
+<div class="div-close" role="button" tabindex="0">
+    <i class="fas fa-times close-sidebar"></i>
+</div>
 <div class="p-3">
 	    <i class="fas fa-star"></i>
-	    <span class="setting-side-title">기획</span>
+	    <span class="setting-side-title">${project.projectTitle}</span>
 	    <p class="setting-contents-inform">
-	        <span>#2</span>
-	        <span>작성자 이단비</span>
-	        <span class="setting-contents-date">작성일 2020-01-27</span>
+	        <span>#${project.projectNo}</span>
+	        <span>작성자 ${projectManager.memberName }</span>
+	        <span class="setting-contents-date">시작일 ${project.projectStartDate }</span>
 	    </p>
     </div>
     
@@ -21,17 +30,30 @@
     </ul>
     <div class="tab-content" id="custom-content-above-tabContent">
         <div class="tab-pane fade show active p-setting-container" id="custom-content-above-home" role="tabpanel" aria-labelledby="custom-content-above-home-tab">
-            <div class="row setting-row add-description">
-            	<span>설명 추가</span>
-            </div>
+            <c:if test="${project.projectDesc == null or project.projectDesc == ''}">
+	            <div class="row setting-row add-description">
+	            	<span>설명 추가</span>
+	            </div>
+            </c:if>
+            <c:if test="${project.projectDesc != null and project.projectDesc != '' }">
+	            <div class="row setting-row project-description">
+	            	<span>${project.projectDesc }</span>
+	            </div>
+            </c:if>
             <hr/>
             <div class="row setting-row">
             <label class="setting-content-label col-md-4">프로젝트 상태</label>
             <div class="dropdown status-dropdown">
+            <c:if test="${project.projectStatusTitle !=null and project.projectStatusTitle != ''}">
                 <button>
-                계획됨 
-                <span class="status-dot bg-warning"></span>
+                	${project.projectStatusTitle }<span class="status-dot bg-${project.projectStatusColor }"></span>
                 </button>
+            </c:if>
+            <c:if  test="${project.projectStatusTitle ==null or project.projectStatusTitle == ''}">
+             	<button>
+                	상태없음 <span class="status-dot bg-secondary"></span>
+                </button>
+            </c:if>
                 <div class="icon-box"  data-toggle="dropdown">
                 <i class="fa fa-angle-down"></i>
                 </div>
@@ -49,9 +71,11 @@
                 <label class="setting-content-label">시작일</label>
 
                 <div class="dropdown">
+                  <c:if test="${project.projectWriter eq memberLoggedIn.memberId }">
                     <div class="setting-icon" data-toggle="dropdown">
                     <i class="fas fa-cog"></i>
                     </div>
+                  </c:if>
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
                         <div class="input-group" >
@@ -62,18 +86,27 @@
                         <button class="btn bg-secondary date-cancel">취소</button>
                 </div>
                 </div>
-                <p class="setting-content-inform">
-                <i class="far fa-calendar-alt"></i>
-                <span>2020/01/28</span>
-                </p>
+                <c:if test="${project.projectStartDate != null and project.projectStartDate != '' }">
+	                <p class="setting-content-inform">
+	                <i class="far fa-calendar-alt"></i>
+	                <span>${project.projectStartDate }</span>
+	                </p>
+                </c:if>
+                <c:if test="${project.projectStartDate == null or project.projectStartDate == '' }">
+	                <p class="setting-content-inform">
+	                <span>시작일 없음</span>
+	                </p>
+                </c:if>
             </div>
                 
             <div class="row">
                 <label class="setting-content-label">마감일</label>
                 <div class="dropdown">
+                  <c:if test="${project.projectWriter eq memberLoggedIn.memberId }">
                     <div class="setting-icon" data-toggle="dropdown">
                     <i class="fas fa-cog"></i>
                     </div>
+                  </c:if>
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
                         <div class="input-group" >
@@ -84,17 +117,26 @@
                         <button class="btn bg-secondary date-cancel">취소</button>
                 </div>
                 </div>
-                <p class="setting-content-inform">
+                <c:if test="${project.projectEndDate != null and project.projectEndDate != '' }">
+	               <p class="setting-content-inform">
                     <i class="far fa-calendar-alt"></i>
-                    <span>2020/01/30</span>
+                    <span>${project.projectEndDate }</span>
                 </p>
+                </c:if>
+                <c:if test="${project.projectEndDate == null or project.projectEndDate == '' }">
+	                <p class="setting-content-inform">
+	                <span>마감일 없음</span>
+	                </p>
+                </c:if>
             </div>
             <div class="row">
                 <label class="setting-content-label">실제 완료일</label>
                 <div class="dropdown">
+                  <c:if test="${project.projectWriter eq memberLoggedIn.memberId }">
                     <div class="setting-icon" data-toggle="dropdown">
                     <i class="fas fa-cog"></i>
                     </div>
+                  </c:if>
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
                         <div class="input-group" >
@@ -105,10 +147,17 @@
                         <button class="btn bg-secondary date-cancel">취소</button>
                 </div>
                 </div>
-                <p class="setting-content-inform">
+                <c:if test="${project.projectRealEndDate != null and project.projectRealEndDate != '' }">
+	               <p class="setting-content-inform">
                     <i class="far fa-calendar-alt"></i>
-                    <span>2020/02/01</span>
-                </p>
+                    <span>${project.projectRealEndDate }</span>
+                   </p>
+                </c:if>
+                <c:if test="${project.projectRealEndDate == null or project.projectRealEndDate == '' }">
+	                <p class="setting-content-inform">
+	                 <span>완료일 없음</span>
+	                </p>
+                </c:if>
             </div>
             </div>
             <hr/>
@@ -129,13 +178,57 @@
                 </div>
             </div>
             </div>
-            <hr/>
-            <div class="row setting-row">
-                <label class="setting-content-label">프로젝트 나가기</label>
-                <div>
-                <button type="button" class="sign-out-project">프로젝트 나가기</button>
-                <p>더 이상 이 프로젝트의 팀원이 아닙니다.</p>
-            </div>
-            </div>
+            <c:if test="${!empty project.projectMemberList}">
+            	<c:forEach var="member" items="${project.projectMemberList}" varStatus="vs">
+            		<c:if test="${member.memberId eq memberLoggedIn.memberId }">
+            		<hr/>
+		            <div class="row setting-row">
+		                <label class="setting-content-label">프로젝트 나가기</label>
+		              <div>
+		                <button type="button" class="sign-out-project">프로젝트 나가기</button>
+		                <p>더 이상 이 프로젝트의 팀원이 아닙니다.</p>
+		              </div>
+		            </div>
+            		</c:if>
+            	</c:forEach>
+            </c:if>
+            
         </div>
         </div>
+        
+<script>
+$(()=>{
+	var projectNo = '${project.projectNo}';
+	var projectWriter = '${project.projectWriter}';
+	projectManager(projectWriter);
+	projectMember(projectNo);
+});
+
+//업무 사이드바 닫기
+$(".div-close").on('click',()=>{
+    var $side = $("#setting-sidebar");
+    if($side.hasClass('open')) {
+        $side.stop(true).animate({right:'-520px'});
+        $side.removeClass('open');
+    }
+});
+
+$("#projectStartDate").datepicker({
+    todayHighlight: true,
+    format: 'yyyy/mm/dd',
+    uiLibrary: 'bootstrap4'
+    
+    });
+$("#projectEndDate").datepicker({
+    todayHighlight: true,
+    format: 'yyyy/mm/dd',
+    uiLibrary: 'bootstrap4'
+    });
+$("#projectRealEndDate").datepicker({
+    todayHighlight: true,
+    format: 'yyyy/mm/dd',
+    uiLibrary: 'bootstrap4'
+});
+
+</script>
+<script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

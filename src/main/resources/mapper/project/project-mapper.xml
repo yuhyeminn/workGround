@@ -240,7 +240,7 @@
 	
 	
 	<!-- ########################혜민############################# -->
-	<!-- 프로젝트 생성 -->
+	<!-- addProject.do : 프로젝트 생성 -->
 	<insert id="insertProject" parameterType="project">
 		insert into project
 		values(seq_project.nextval,#{projectWriter},#{projectTitle},default,#{projectDesc},default,null,null,null)
@@ -249,19 +249,19 @@
 		</selectKey>
 	</insert>
 	
-	<!-- 프로젝트팀원 테이블에 팀장 추가 -->
+	<!-- addProject.do : 프로젝트팀원 테이블에 팀장 추가 -->
 	<insert id="insertProjectManager" parameterType="project">
 		insert into project_members
 		values(seq_project_members.nextval,#{projectNo},#{projectWriter},'Y')
 	</insert>
 	
-	<!-- 프로젝트팀원 테이블에 팀원 추가 -->
+	<!-- addProject.do : 프로젝트팀원 테이블에 팀원 추가 -->
 	<insert id="insertProjectMember">
 		insert into project_members
 		values(seq_project_members.nextval,to_number(#{projectNo}),#{projectMember},default)
 	</insert>
 	
-	<!-- 프로젝트 생성 시 기본 3개 업무리스트 추가 -->
+	<!-- addProject.do : 프로젝트 생성 시 기본 3개 업무리스트 추가 -->
 	<insert id="insertDefaultWorkList" parameterType="java.util.Map">
 		insert into worklist(worklist_no,project_no,worklist_title)
 		select seq_worklist.nextval, A.* from(
@@ -299,4 +299,21 @@
 		</if>
 	</select>
 	
+	<!-- projectSetting.do : 프로젝트 설정 사이드바에서 조회할 프로젝트 정보 조회 . 프로젝트멤버는 팀장 제외하고 조회-->
+	<select id="selectProjectOneForSetting" resultMap="viewProjectMemberCollectionMap">
+		select * from view_projectMember where project_no = #{projectNo}
+	</select>
+	
+	<!-- projectManagerSetting.do : 프로젝트 관리 위임을 위한 프로젝트 관리자와 같은 부서 내 팀장 리스트 조회 -->
+	<select id="selectProjectManagerByDept" resultType="member">
+		select * from view_member where dept_code = (select dept_code from view_member where member_id=#{projectWriter}) and job_title='팀장'
+	</select>
+	
+	<!-- workSetting.do : workNo로 work조회 -->
+	<select id="selectOneWorkForSetting" resultMap="workListCollectionMap">
+		select V.*, WCM.work_charged_members_no, VM.*
+		from view_workTag V left join work_charged_members WCM on V.work_no = WCM.work_no
+                            left join view_member VM on WCM.charged_member_id = VM.member_id
+		where V.work_no = #{workNo}
+	</select>
 </mapper>
