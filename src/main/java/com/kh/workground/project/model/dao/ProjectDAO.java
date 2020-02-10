@@ -36,5 +36,7 @@ public interface ProjectDAO {
 
 	int selectTotalWorkCompleteYn(int worklistNo);
 
+	List<Integer> selectListByImportantProjectNo(String memberId);
+
 
 }

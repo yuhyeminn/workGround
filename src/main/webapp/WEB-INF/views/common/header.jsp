@@ -179,10 +179,10 @@
 
       <!-- 프로필 -->
       <li id="user-panel" class="nav-item dropdown">
-        <a href="" class="d-block image" data-toggle="dropdown"><img src="${pageContext.request.contextPath }/resources/img/${memberLoggedIn.renamedFileName}" alt="User Image"></a>
+        <a href="" class="d-block image" data-toggle="dropdown"><img src="${pageContext.request.contextPath }/resources/img/profile/${memberLoggedIn.renamedFileName}" alt="User Image"></a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <a href="#" id="user-profile" class="dropdown-item">
-            <img src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName}" alt="User Image">
+            <img src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}" alt="User Image">
             <div id="user-info">
               <p>${memberLoggedIn.memberName}</p>
               <p>${memberLoggedIn.email}</p>
