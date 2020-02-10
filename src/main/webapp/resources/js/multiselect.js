@@ -68,7 +68,7 @@
 				      valueTemplate: '<div style="width:100%;height:100%;">' +
 				          '<img class="value" src="'+contextPath+'/resources/img/${renamedFileName}" height="26px" width="26px"/>' +
 				          '<div class="name">${memberName}</div></div>',
-				      mode: 'Box',
+				      mode: 'Box', 
 				      value: memberArr
 				  });
 				  listObj.appendTo('#projectMember');
