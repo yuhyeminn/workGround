@@ -48,27 +48,14 @@ public class ClubServiceImpl implements ClubService {
 	}
 
 	@Override
-	public List<Club> selectAllMyClubList(String memberId) {
-		return clubDAO.selectAllMyClubList(memberId);
+	public List<Club> selectAllMyClubList(Map param) {
+		return clubDAO.selectAllMyClubList(param);
 	}
 
 	@Override
-	public List<Club> selectAllStandByClubList(String memberId) {
-		return clubDAO.selectAllStandByClubList(memberId);
+	public List<Club> selectAllStandByClubList(Map param) {
+		return clubDAO.selectAllStandByClubList(param);
 	}
-
-	@Override
-	public List<Club> selectAllMyAndStandClubList(String memberId) {
-		return clubDAO.selectAllMyAndStandClubList(memberId);
-	}
-
-	@Override
-	public int selectCountMyClub(String memberId) {
-		return clubDAO.selectCountMyClub(memberId);
-	}
-
-
-
 
 
 }

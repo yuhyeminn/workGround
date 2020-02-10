@@ -20,13 +20,10 @@ public interface ClubDAO {
 
 	int insertClubMember(Map map);
 
-	List<Club> selectAllMyClubList(String memberId);
+	List<Club> selectAllMyClubList(Map param);
 
-	List<Club> selectAllStandByClubList(String memberId);
+	List<Club> selectAllStandByClubList(Map param);
 
-	List<Club> selectAllMyAndStandClubList(String memberId);
-
-	int selectCountMyClub(String memberId);
 
 
 }

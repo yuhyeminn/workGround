@@ -7,12 +7,12 @@
 	<!-- sh start -->
 
 	<select id="selectAllClubList" resultMap="clubCollectionMap">
-		select C.*, 
-			   (select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn, 
-			   P.* 
-			   from (select * from club order by #{sort} asc) C 
-			   left join club_photo P 
-			   on C.club_no = P.club_no
+		
+	select C.*, P.*,(select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn
+	from (select * from club order by ${sort} asc) C
+	left join club_photo P 
+	on C.club_no = P.club_no
+		
 	</select>
 	
 	<insert id="insertNewClub">
@@ -34,35 +34,24 @@
 		where club_no = #{clubNo}
 	</update>
 	
-	<select id="selectCountClub" resultType="_int">
-		select count(*)
-		from club
-	</select>
-	
 	<insert id="insertClubMember">
 		insert into club_member
 		values(seq_club_member_no.nextval,#{memberId},#{clubNo},'N','N')
 	</insert>
 	
-	<select id="selectAllMyClubList" resultType="club">
-		select * 
-		from club
-		where club_no in (select club_code from club_member where club_approve_yn='Y' and emp_id = #{memberId})
+	<select id="selectAllMyClubList" resultMap="clubCollectionMap">
+		select C.*, P.*
+		from (select * from club where club_no in 
+			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'Y') order by ${sort} asc) C 
+		left join club_photo P on C.club_no = P.club_no
 	</select>
 	
-	<select id="selectAllStandByClubList" resultType="club">
-		select *
-		from club
-		where club_no in (select club_code from club_member where club_approve_yn='N' and emp_id = #{memberId})
+	<select id="selectAllStandByClubList" resultMap="clubCollectionMap">
+		select C.*, P.*
+		from (select * from club where club_no in 
+			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'N') order by ${sort} asc) C 
+		left join club_photo P on C.club_no = P.club_no
 	</select>
-	
-	<select id="selectAllMyAndStandClubList" resultType="club">
-		select *
-		from club
-		where club_no in (select club_code from club_member where emp_id = #{memberId})
-	</select>
-	
-		
 	
 	
 	<resultMap type="club" id="clubCollectionMap">

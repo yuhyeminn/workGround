@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,42 +31,16 @@ public class ClubController {
 	@RequestMapping("/club/clubList.do")
 	public ModelAndView clubList(ModelAndView mav, HttpSession session) {
 		
-		/*Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		String memberId = memberLoggedIn.getMemberId();
-
-		//List<Club> clubList = clubService.selectAllClubList(memberId); //전체 동호회
-		logger.info("clubList{}=",clubList);
-		List<Club> myClub = null; //내가 가입한 동호회
-		List<Club> standByClub = null; //승인대기 동호회
+		Map map = new HashMap<>();
+		map.put("memberId", memberId);
+		map.put("sort", "club_enroll_date");
 		
-		// 가입하기 버튼을 띄어줄지 말지 여부를 결정하기 위한 List
-		List<Club> myAndStandClub = null; //승인대기&&가입
+		// 모달창을 띄우기 위해 정보를 보낸다.
+		List<Club> clubList = clubService.selectAllClubList(map); //전체 동호회
 		
-		int clubCount = clubService.selectCountClub(); //총 동호회 수
-		int myClubCount = 0; //가입한 동호회 수
-		
-		if(memberLoggedIn != null)
-			myClubCount = clubService.selectCountMyClub(memberLoggedIn.getMemberId());
-		
-		if(memberLoggedIn != null)
-			myClub = clubService.selectAllMyClubList(memberLoggedIn.getMemberId());
-		
-		if(memberLoggedIn != null)
-			standByClub = clubService.selectAllStandByClubList(memberLoggedIn.getMemberId());
-	
-		if(memberLoggedIn != null)
-			myAndStandClub = clubService.selectAllMyAndStandClubList(memberLoggedIn.getMemberId());
-		
-		//clubNo 관련 사진 가져오기
-		
-		
-		logger.info("myClub={}",myClub);
-		
-		//mav.addObject("clubList", clubList);
-		mav.addObject("clubCount", clubCount);
-		mav.addObject("myClub", myClub);
-		mav.addObject("standByClub", standByClub);
-		mav.addObject("myAndStandClub", myAndStandClub);*/
+		mav.addObject("clubList", clubList);
 		mav.setViewName("/club/clubList");
 
 		return mav;
@@ -81,13 +54,20 @@ public class ClubController {
 		
 		Map param = new HashMap<>();
 		param.put("memberId", memberId);
-		param.put("sort", sort);
+		
+		if(sort.equals("이름순")) {
+			param.put("sort", "club_name");
+		}else {
+			param.put("sort", "club_enroll_date");
+		}
 		
 		List<Club> clubList = clubService.selectAllClubList(param); //전체 동호회
+		List<Club> myClubList = clubService.selectAllMyClubList(param); //가입한 동호회
+		List<Club> standByClubList = clubService.selectAllStandByClubList(param); //승인 대기중인 동호회
 		
 		map.put("clubList", clubList);
-		logger.info("sort={}",sort);
-		
+		map.put("myClubList", myClubList);
+		map.put("standByClubList", standByClubList);
 		
 		return map;
 		
@@ -109,7 +89,7 @@ public class ClubController {
 
 	}
 
-	@RequestMapping(value="/club/deleteClub.do",method= {RequestMethod.POST,RequestMethod.GET})
+	@RequestMapping(value="/club/deleteClub.do")
 	public ModelAndView deleteClub(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo) {
 
 		//logger.info("clubNo={}", clubNo);

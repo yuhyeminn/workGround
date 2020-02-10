@@ -48,27 +48,15 @@ public class ClubDAOImpl implements ClubDAO {
 	}
 
 	@Override
-	public List<Club> selectAllMyClubList(String memberId) {
-		return sqlSession.selectList("club.selectAllMyClubList",memberId);
+	public List<Club> selectAllMyClubList(Map param) {
+		return sqlSession.selectList("club.selectAllMyClubList",param);
 	}
 
 	@Override
-	public List<Club> selectAllStandByClubList(String memberId) {
+	public List<Club> selectAllStandByClubList(Map param) {
 
-		return sqlSession.selectList("club.selectAllStandByClubList",memberId);
+		return sqlSession.selectList("club.selectAllStandByClubList",param);
 	}
-
-	@Override
-	public List<Club> selectAllMyAndStandClubList(String memberId) {
-		return sqlSession.selectList("club.selectAllMyAndStandClubList",memberId);
-	}
-
-	@Override
-	public int selectCountMyClub(String memberId) {
-
-		return sqlSession.selectOne("club.selectCountMyClub",memberId);
-	}
-
 
 
 }
