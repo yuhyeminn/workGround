@@ -25,5 +25,6 @@ public class ClubMember implements Serializable {
 	private int clubCode;
 	private String clubManagerYN;
 	private String clubApproveYN;
+	
 }
 

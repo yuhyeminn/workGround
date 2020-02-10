@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.kh.workground.club.model.vo.Club;
+import com.kh.workground.club.model.vo.ClubMember;
 
 public interface ClubDAO {
 
-	List<Club> selectAllClubList();
+	List<Club> selectAllClubList(Map param);
 
 	int insertNewClub(Club club);
 
@@ -18,5 +19,14 @@ public interface ClubDAO {
 	int selectCountClub();
 
 	int insertClubMember(Map map);
+
+	List<Club> selectAllMyClubList(String memberId);
+
+	List<Club> selectAllStandByClubList(String memberId);
+
+	List<Club> selectAllMyAndStandClubList(String memberId);
+
+	int selectCountMyClub(String memberId);
+
 
 }
