@@ -87,8 +87,11 @@ function goMemberProfile(memberId){
                 	<c:forEach items="${list}" var="m">
                     <tr>
                         <td>
+                            <c:if test="${m.jobTitle == '대표'}">
+                            <button type="button" class="btn btn-block btn-outline-warning btn-xs btn-admin">대표</button>
+                            </c:if>
                             <c:if test="${m.jobTitle == '팀장'}">
-                            <button type="button" class="btn btn-block btn-outline-info btn-xs btn-admin">관리자</button>
+                            <button type="button" class="btn btn-block btn-outline-info btn-xs btn-admin">팀장</button>
                             </c:if>
                         </td>
                         <td onclick="goMemberProfile('${m.memberId}');">
