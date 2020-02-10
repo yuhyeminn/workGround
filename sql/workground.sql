@@ -553,7 +553,5 @@ create or replace view view_workTag as
 select W.*, WT.work_tag_title, WT.work_tag_color
 from work W left join work_tag WT on W.work_tag_code = WT.work_tag_code;
 
-select V.*, WCM.work_charged_members_no, VM.*
-		from (select * from view_workTag where worklist_no = 4 
-         		order by work_no desc) V left join work_charged_members WCM on V.work_no = WCM.work_no
-                                         left join view_member VM on WCM.charged_member_id = VM.member_id;
+
+

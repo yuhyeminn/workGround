@@ -86,14 +86,15 @@ button:active, button:focus{outline: none;}
 .card-body{padding: 1.25rem; color: #464c59; font-size: 0.85rem;}
 #project-recent .card-body{height: 60px;}
 .card-title h5{margin-bottom: 0; font-size: 0.9rem; font-weight: bold;}
-#project-recent .card-title, #project-in .card-title{float: none; display: inline-block;}
-#project-in .card-title{display: block;}
-#project-recent .card-star, #project-in .card-star{float: right;}
+#project-recent .card-title, #project-in .card-title{display: inline-block;}
+#project-in .mywork .card-title{display: block;}
+#project-in .card-star{display: block;}
 .fas.fa-star{color: #f9a50f;} 
 .far.fa-star{color: rgba(50,55,66,.5);} 
 .card-header .fa-star{margin: 0 5px;}
 /* 프로젝트 상태 / 마감일 */
-.card-status{margin-top: 7.5rem;}
+.card-status{margin-top: 9.1rem;}
+.star-body .card-status{margin-top: 7.5rem;}
 .card-status .btn-block, .card-status .end-date{display: inline-block; width: 5rem;}
 .card-status .btn-group-sm>.btn, .btn-sm {padding: .1rem .1rem;}
 .card-status .bg-success.btn:hover{border-color:#28a745;}
@@ -104,7 +105,7 @@ button:active, button:focus{outline: none;}
 .card-progress{margin-top: .5rem;}
 /* 내 업무 */
 .img-profile{display: block; width: 70px; margin: 0 auto;}
-.mywork .card-title{float: none; margin: .8rem 0 5rem;}
+.mywork .card-title{float: none; margin: .8rem 0 6.5rem;}
 
 
 
