@@ -818,25 +818,55 @@ function deleteClubPlanAttendee() {
 									<!-- NoticeModalComment -->
 									<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
 						            <div class="card-footer card-comments">
-						              <div class="card-comment">
-						                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/고양이.jpg" alt="User Image">
-						                <div class="comment-text">
-						                  <span class="username">이단비<span class="text-muted float-right">2020-01-25</span></span>
-						                  <span>네! 알겠습니다!</span>
-						                  <button class="comment-delete float-right">삭제</button>
-						                  <button class="comment-reply float-right">답글</button>
+									
+									<c:if test="${not empty clubNoticeCommentList }">
+									<c:forEach items="${clubNoticeCommentList }" var="clubNoticeComment">
+									<c:if test="${clubNoticeComment.clubNoticeNo == clubNotice.clubNoticeNo }">
+									<c:if test="${clubNoticeComment.clubNoticeCommentLevel == 1 }">
+						                <div class="card-comment">
+						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${clubNoticeComment.renamedFileName }" alt="User Image">
+						                  <div class="comment-text">
+						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">2020-01-25</span></span>
+						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
+						                    <button class="comment-delete float-right">삭제</button>
+						                    <button class="comment-reply float-right">답글</button>
+						                  </div>
 						                </div>
-						              </div>
-						              <div class="card-comment comment-level2">
-						                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/차은우.jpg" alt="User Image">
-						                <div class="comment-text">
-						                  <span class="username">유혜민<span class="text-muted float-right">2020-01-26</span></span>
-						                  <span>넵! 알겠습니당</span>
-						                  <button class="comment-delete float-right">삭제</button>
-						                  <button class="comment-reply float-right">답글</button>
+									</c:if>
+									<c:if test="${clubNoticeComment.clubNoticeCommentLevel == 2 }">
+						                <div class="card-comment comment-level2">
+						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/차은우.jpg" alt="User Image">
+						                  <div class="comment-text">
+						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">2020-01-26</span></span>
+						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
+						                    <button class="comment-delete float-right">삭제</button>
+						                    <button class="comment-reply float-right">답글</button>
+						                  </div>
 						                </div>
-						              </div>
+									</c:if>
+									</c:if>
+									</c:forEach>
+									</c:if>
 						            </div>
+						            <!-- 댓글 작성 -->
+						            <div class="card-footer">
+						            <form name="insertClubNoticeCommentFrm" action="${pageContext.request.contextPath }/club/insertClubNoticeComment.do" method="post">
+						                <c:if test="${not empty memberLoggedIn }">
+						                  <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}">
+						                </c:if>
+						                <c:if test="${empty memberLoggedIn }">
+						                  <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">
+						                </c:if>
+						                <div class="img-push">
+						                <input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />
+						                <input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
+						                <input type="hidden" name="clubNoticeCommentLevel" value="1" />
+						                <input type="hidden" name="clubMemberNo" value="${clubNotice.clubMemberNo }" />
+						                <input type="text" class="form-control form-control-sm comment-text-area" name="clubNoticeCommentContent" placeholder="댓글을 입력하세요.">
+						                <input type="submit" class="comment-submit" value="등록">
+						                </div>
+						            </form>
+						            </div> 
 								</div>
 								<div class="modal-footer">
 									<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubNotice.memberId }">

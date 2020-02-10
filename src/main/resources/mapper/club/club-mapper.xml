@@ -157,5 +157,25 @@
 		delete from club_plan_attendee 
 		where club_plan_attendee_no = #{clubPlanAttendeeNo}
 	</delete>
+	
+	<select id="selectClubNoticeCommentList" resultType="clubNoticeComment">
+		select N.*, M.member_name, M.renamed_filename
+		from club_notice_comment N 
+			left join club_member C on N.club_member_no = C.club_member_no 
+			left join member M on C.emp_id = M.member_id
+		where club_no = #{clubNo}
+	</select>
+	
+	<insert id="insertClubNoticeComment">
+		insert into club_notice_comment 
+		values(seq_club_notice_comment_no.nextval, 
+			   #{clubNoticeNo}, 
+			   #{clubNoticeCommentLevel}, 
+			   #{clubMemberNo}, 
+			   #{clubNoticeCommentContent}, 
+			   default, 
+			   #{clubNoticeCommentRef}, 
+			   #{clubNo})
+	</insert>
 	<!-- br end -->
 </mapper>

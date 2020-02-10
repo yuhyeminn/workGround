@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kh.workground.club.controller.ClubNoticeComment;
 import com.kh.workground.club.model.dao.ClubDAO2;
 import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.vo.Club;
@@ -105,6 +106,16 @@ public class ClubServiceImpl2 implements ClubService2 {
 	@Override
 	public int deleteClubPlanAttendee(ClubPlanAttendee clubPlanAttendee) {
 		return clubDAO2.deleteClubPlanAttendee(clubPlanAttendee);
+	}
+
+	@Override
+	public List<ClubNoticeComment> selectClubNoticeCommentList(int clubNo) {
+		return clubDAO2.selectClubNoticeCommentList(clubNo);
+	}
+
+	@Override
+	public int insertClubNoticeComment(ClubNoticeComment clubNoticeComment) {
+		return clubDAO2.insertClubNoticeComment(clubNoticeComment);
 	}
 
 

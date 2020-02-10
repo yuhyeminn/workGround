@@ -60,11 +60,13 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 //		logger.debug("clubNoticeList={}", clubNoticeList);
 		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
 //		logger.debug("clubPhotoList={}", clubPhotoList);
-		
+		List<ClubNoticeComment> clubNoticeCommentList = clubService2.selectClubNoticeCommentList(clubNo);
+		logger.debug("clubNoticeCommentList={}", clubNoticeCommentList);
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
 		mav.addObject("clubNoticeList", clubNoticeList);
 		mav.addObject("clubPhotoList", clubPhotoList);
+		mav.addObject("clubNoticeCommentList", clubNoticeCommentList);
 		mav.addObject("clubPhotoCount", clubPhotoList.size());
 		mav.addObject("clubPlanCount", clubPlanList.size());
 		mav.addObject("clubNoticeCount", clubNoticeList.size());
@@ -361,6 +363,18 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		}
 		
 		mav.setViewName("common/msg");
+		
+		return mav;
+	}
+	
+	@PostMapping("/club/insertClubNoticeComment.do")
+	public ModelAndView insertClubNoticeComment(ModelAndView mav, 
+												ClubNoticeComment clubNoticeComment) {
+		logger.debug("clubNoticeComment={}", clubNoticeComment);
+		
+		int result = clubService2.insertClubNoticeComment(clubNoticeComment);
+		
+		mav.setViewName("redirect:/club/clubView.do?clubNo="+clubNoticeComment.getClubNo());
 		
 		return mav;
 	}

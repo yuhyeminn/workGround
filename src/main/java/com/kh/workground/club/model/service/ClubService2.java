@@ -3,6 +3,7 @@ package com.kh.workground.club.model.service;
 import java.util.List;
 import java.util.Map;
 
+import com.kh.workground.club.controller.ClubNoticeComment;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
@@ -43,6 +44,10 @@ public interface ClubService2 {
 	int insertClubPlanAttendee(ClubPlanAttendee clubPlanAttendee);
 
 	int deleteClubPlanAttendee(ClubPlanAttendee clubPlanAttendee);
+
+	List<ClubNoticeComment> selectClubNoticeCommentList(int clubNo);
+
+	int insertClubNoticeComment(ClubNoticeComment clubNoticeComment);
 
 
 

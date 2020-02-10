@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.kh.workground.club.controller.ClubNoticeComment;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
@@ -98,6 +99,16 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 	@Override
 	public int deleteClubPlanAttendee(ClubPlanAttendee clubPlanAttendee) {
 		return sqlSession.delete("club.deleteClubPlanAttendee", clubPlanAttendee);
+	}
+
+	@Override
+	public List<ClubNoticeComment> selectClubNoticeCommentList(int clubNo) {
+		return sqlSession.selectList("club.selectClubNoticeCommentList", clubNo);
+	}
+
+	@Override
+	public int insertClubNoticeComment(ClubNoticeComment clubNoticeComment) {
+		return sqlSession.insert("club.insertClubNoticeComment", clubNoticeComment);
 	}
 
 
