@@ -10,15 +10,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
 import com.kh.workground.project.model.vo.Project;
-import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
 public class ProjectController {
@@ -64,7 +65,6 @@ public class ProjectController {
 			statusCntMap.put("완료됨", ps3);
 			statusCntMap.put("상태없음", ps4);
 			
-			
 			//2.뷰모델 처리
 			mav.addObject("projectMap", projectMap);
 			mav.addObject("statusCntMap", statusCntMap);
@@ -80,11 +80,12 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/projectView.do")
-	public ModelAndView projectView(ModelAndView mav, @RequestParam int projectNo) {
+	public ModelAndView projectView(ModelAndView mav, HttpSession session, @RequestParam int projectNo) {
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		
 		try {
 			//1. 업무로직
-			Project p = projectService.selectProjectWorklistAll(projectNo);
+			Project p = projectService.selectProjectWorklistAll(projectNo, memberLoggedIn.getMemberId());
 			
 			//2. 뷰모델 처리
 			mav.addObject("project", p);
@@ -97,10 +98,88 @@ public class ProjectController {
 			throw new ProjectException("프로젝트 상세 조회 오류!");
 		}
 		
-		
-		
 		return mav;
 	}
+	
+	@PostMapping("/project/projectStarCheck.do")
+	@ResponseBody
+	public Map<String, String> projectStartCheck(@RequestParam("memberId") String memberId, @RequestParam("projectNo") int projectNo){
+		Map<String, String> map = new HashMap<>();
+		String resultStr = "";
+		int result = 0;
+		
+		try {
+			//1.업무로직
+			//1-1. 중요 프로젝트 테이블에 존재하는지 조회
+			Map<String, Object> param = new HashMap<>();
+			param.put("memberId", memberId);
+			param.put("projectNo", projectNo);
+			
+			Map<String, Object> starMap = projectService.selectProjectImportantOne(param);
+			
+			//1-2. 존재하지 않으면 추가
+			if(starMap==null) {
+				result = projectService.insertProjectImportant(param);
+				resultStr = "insert";
+				map.put("result", resultStr);
+			}
+			//1-3. 존재하면 삭제
+			else {
+				int projectImportantNo = Integer.parseInt(String.valueOf(starMap.get("projectImportantNo")));
+				result = projectService.deleteProjectImportant(projectImportantNo);
+				resultStr = "delete";
+				map.put("result", resultStr);
+			}
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 중요표시 오류!");
+		}
+		
+		return map;
+	}
+	
+	@PostMapping("/project/addWorklist.do")
+	@ResponseBody
+	public Map<String, Integer> insertWorklist(@RequestParam int projectNo, @RequestParam String worklistTitle) {
+		Map<String, Integer> map = new HashMap<>();
+		
+		try {
+			//1.업무로직
+			Map<String, Object> param = new HashMap<>();
+			param.put("projectNo", projectNo);
+			param.put("worklistTitle", worklistTitle);
+			
+			int result = projectService.insertWorklist(param);
+			map.put("result", result);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무리스트 생성 오류!");
+		}
+		
+		return map;
+	}
+	
+	@PostMapping("/project/deleteWorklist.do")
+	@ResponseBody
+	public Map<String, Integer> deleteWorklist(@RequestParam int worklistNo) {
+		Map<String, Integer> map = new HashMap<>();
+		logger.debug("worklistNo={}", worklistNo);
+		
+		try {
+			//1.업무로직
+			int result = projectService.deleteWorklist(worklistNo);
+			map.put("result", result);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무리스트 삭제 오류!");
+		}
+		
+		return map;
+	}
+	
 	
 	@RequestMapping("/project/projectAttachment.do")
 	public ModelAndView projectAttachment(ModelAndView mav) {

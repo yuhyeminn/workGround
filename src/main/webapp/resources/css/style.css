@@ -164,10 +164,15 @@ button:active, button:focus{outline: none;}
 .addWork-textarea{min-height: 65px; max-height: 35vh; width: 100%; padding: .3rem .5rem; border: 0; color: #464c59; font-size: .85rem; resize: none; outline: none;}
 .addWork-btnWrapper>div, .addWork-btnWrapper>div>div, .addWork-btnWrapper>div>button{display: inline-block;}
 .addWork-btnWrapper{font-size: .8rem;}
+/* 업무 설정 */
 .addWork-btnLeft .nav-link, .addWork-btnLeft button{padding: .3rem .4rem .5rem; color: #696f7a;}
 .addWork-btnLeft .nav-link:hover, .addWork-btnLeft button:hover{color: #17a2b8;}
 .addWork-btnLeft>div:first-of-type .nav-link{padding-left: .7rem;}
 .addWork-btnLeft>div:not(:first-of-type), .addWork-btnLeft button{margin-left: -3px;}
+/* 태그 */
+.add-tag .dropdown-menu{padding: .5rem; margin: 7rem 5.5rem 0;}
+.add-tag i{float: right; margin-top: 5px; color: #696f7a; font-size: .9rem;}
+/* 취소/만들기 버튼 */
 .addWork-btnRight{float: right;}
 .addWork-btnRight button{padding: .2rem .5rem; margin-right: .3rem; border-radius: 2px; background: #e6e8ec; color: #696f7a; font-weight: bold;}
 .btn-addWork-cancel:hover{background: #d4d6db;}

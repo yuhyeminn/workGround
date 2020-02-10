@@ -110,7 +110,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public Project selectProjectWorklistAll(int projectNo) {
+	public Project selectProjectWorklistAll(int projectNo, String loggedInMemberId) {
 		
 		//1-1. 프로젝트 객체 가져오기
 		Project p = projectDAO.selectProjectOne(projectNo);
@@ -226,8 +226,68 @@ public class ProjectServiceImpl implements ProjectService {
 		//1-2. 프로젝트에 업무리스트의 리스트 담기
 		p.setWorklistList(worklistList);
 		
+		//1-3. 프로젝트 중요표시 여부 담기
+		Map<String, Object> param = new HashMap<>();
+		param.put("memberId", loggedInMemberId);
+		param.put("projectNo", projectNo);
+		
+		Map<String, Object> starMap = projectDAO.selectProjectImportantOne(param);
+		
+		if(starMap==null) {
+			p.setProjectStarYn("N");
+		}
+		else {
+			if(projectNo == Integer.parseInt(String.valueOf(starMap.get("projectNo")))) 
+				p.setProjectStarYn("Y");
+		}
+		
 		return p;
 		
 	} //end of selectProjectWorklistAll()
+
+	@Override
+	public Map<String, Object> selectProjectImportantOne(Map<String, Object> param) {
+		return projectDAO.selectProjectImportantOne(param);
+	}
+
+	@Override
+	public int insertProjectImportant(Map<String, Object> param) {
+		int result = projectDAO.insertProjectImportant(param);
+		
+		if(result==0)
+			throw new ProjectException("중요 프로젝트 추가 오류!");
+		
+		return result;
+	}
+
+	@Override
+	public int deleteProjectImportant(int projectImportantNo) {
+		int result = projectDAO.deleteProjectImportant(projectImportantNo);
+		
+		if(result==0)
+			throw new ProjectException("중요 프로젝트 삭제 오류!");
+		
+		return result;
+	}
+
+	@Override
+	public int insertWorklist(Map<String, Object> param) {
+		int result = projectDAO.insertWorklist(param);
+		
+		if(result==0)
+			throw new ProjectException("업무리스트 추가 오류!");
+		
+		return result;
+	}
+
+	@Override
+	public int deleteWorklist(int worklistNo) {
+		int result = projectDAO.deleteWorklist(worklistNo);
+		
+		if(result==0)
+			throw new ProjectException("업무리스트 삭제 오류!");
+		
+		return result;
+	}
 
 }

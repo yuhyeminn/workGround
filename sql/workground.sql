@@ -1,4 +1,4 @@
-﻿--================================================
+--================================================
 --workground계정 생성
 --================================================
 create user workground identified by workground
@@ -497,7 +497,7 @@ select * from member;
 select * from project_status;
 select * from project;
 select * from project_members;
-select * from project_important;
+select * from project_important where member_id = 'kh2020122';
     
 --------------------------------------------------
 --worklist/work 테이블 관련 select문
@@ -509,7 +509,6 @@ select * from work_charged_members;
 select * from checklist;
 select * from work_comment;
 select * from attachment;
-
 
 --------------------------------------------------
 --notice테이블 관련 select문
@@ -552,6 +551,5 @@ from (select P.*, PM.member_id
 create or replace view view_workTag as
 select W.*, WT.work_tag_title, WT.work_tag_color
 from work W left join work_tag WT on W.work_tag_code = WT.work_tag_code;
-
 
 

@@ -1,6 +1,7 @@
 package com.kh.workground.project.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,32 @@ public class ProjectDAOImpl implements ProjectDAO {
 	public List<Integer> selectListByImportantProjectNo(String memberId) {
 		return sqlSession.selectList("project.selectListByImportantProjectNo", memberId);
 	}
+
+	@Override
+	public Map<String, Object> selectProjectImportantOne(Map<String, Object> param) {
+		return sqlSession.selectOne("project.selectProjectImportantOne", param);
+	}
+
+	@Override
+	public int insertProjectImportant(Map<String, Object> param) {
+		return sqlSession.insert("project.insertProjectImportant", param);
+	}
+
+	@Override
+	public int deleteProjectImportant(int projectImportantNo) {
+		return sqlSession.delete("project.deleteProjectImportant", projectImportantNo);
+	}
+
+	@Override
+	public int insertWorklist(Map<String, Object> param) {
+		return sqlSession.insert("project.insertWorklist", param);
+	}
+
+	@Override
+	public int deleteWorklist(int worklistNo) {
+		return sqlSession.delete("project.deleteWorklist", worklistNo);
+	}
+
 
 
 }

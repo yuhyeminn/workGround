@@ -12,5 +12,15 @@ public interface ProjectService {
 
 	List<Member> selectMemberListByDept(String deptCode);
 
-	Project selectProjectWorklistAll(int projectNo);
+	Project selectProjectWorklistAll(int projectNo, String memberId);
+
+	Map<String, Object> selectProjectImportantOne(Map<String, Object> param);
+
+	int insertProjectImportant(Map<String, Object> param);
+
+	int deleteProjectImportant(int projectImportantNo);
+
+	int insertWorklist(Map<String, Object> param);
+
+	int deleteWorklist(int worklistNo);
 }

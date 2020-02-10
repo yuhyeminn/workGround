@@ -12,10 +12,15 @@
 <script>
 $(()=>{
 	sidebarActive(); //사이드바 활성화
+	
 	projectStar(); //프로젝트 별 해제/등록
+	
+    addWorklist(); //새 업무리스트 만들기
+    deleteWorklist(); //업무리스트 삭제하기
+    
     addWork(); //새 업무 만들기
     checklist(); //체크리스트 체크
-    addWorklist(); //새 업무리스트 만들기
+    
     tabActive(); //서브헤더 탭 활성화
     goTabMenu(); //서브헤더 탭 링크 이동
     
@@ -38,35 +43,213 @@ function sidebarActive(){
 //프로젝트 별 해제/등록
 function projectStar(){
     let btnStar = document.querySelector("#btn-star .fa-star");
-
+    let projectNo = document.querySelector("#project-name #hiddenProjectNo").value;
+    
     btnStar.addEventListener('click', (e)=>{
         let $this = $(e.target);
 
-        //프로젝트 중요표시 되어있는 경우
-        if($this.hasClass('fas')){
-            $this.removeClass('fas').addClass('far');
-        }
-        //프로젝트 중요표시 안되어있는 경우 
-        else{
-            $this.removeClass('far').addClass('fas');
-        }
+        $.ajax({
+        	url: '${pageContext.request.contextPath}/project/projectStarCheck.do',
+        	data: {memberId: '${memberLoggedIn.memberId}',
+        		   projectNo: projectNo},
+        	dataType: 'json',
+        	type: 'POST',
+        	success: data=>{
+        		console.log(data);
+        		
+        		//중요표시 해제한 경우
+        		if(data.result === 'delete')
+        			$this.removeClass('fas').addClass('far');
+        		//중요표시 한 경우
+        		else
+        			$this.removeClass('far').addClass('fas');
+        	},
+        	error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+        });
+        
     });
+}
+
+//새 업무리스트 만들기
+function addWorklist(){
+    let addWklt = document.querySelector("#add-wklt-wrapper");
+    let addWkltFrm = document.querySelector("#add-wkltfrm-wrapper");
+    
+    let inputTitle = document.querySelector("input[name=worklistTitle]");
+    let frm = document.querySelector("#addWorklistFrm");
+    
+    let btnAdd = document.querySelector("#btn-addWorklist");
+    let btnCancel = document.querySelector("#btn-cancel-addWorklist");
+
+    //업무리스트 추가 클릭시 입력폼 보이기
+    addWklt.addEventListener('click', ()=>{
+        $(addWklt).hide();
+        $(addWkltFrm).show();
+        $(inputTitle).focus();
+    });
+
+    //x버튼 클릭시 다시 업무리스트 추가 보이기
+    btnCancel.addEventListener('click', ()=>{
+        $(addWkltFrm).hide();
+        $(inputTitle).val("");
+        $(addWklt).show();
+    });
+
+    //+버튼 클릭시 업무리스트 추가
+    btnAdd.addEventListener('click', ()=>{
+        let formData = $(frm).serialize();
+
+        $.ajax({
+        	url: '${pageContext.request.contextPath}/project/addWorklist.do',
+        	data: formData,
+        	dataType: 'json',
+        	type: 'POST',
+        	success: data=>{
+        		console.log(data);
+        		
+        		if(data.result===1){
+        			
+        			//초기화
+        			$(inputTitle).val("");
+        			$(addWkltFrm).hide();
+        			$(addWklt).show();
+        		}
+        	},
+        	error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+      
+        }); 
+    });
+}
+
+//업무리스트 삭제하기
+function deleteWorklist(){
+	let btnDelModal = document.querySelectorAll(".btn-removeWorklist-modal");
+	let modal = document.querySelector("#modal-worklist-remove");
+	let modalTitle = document.querySelector("#modal-worklist-title");
+	let btnDel = document.querySelector("#btn-removeWorklist");
+	
+	//업무리스트 x버튼 클릭시 모달창: 모달창에 업무리스트 정보 뿌리기
+	btnDelModal.forEach((obj, idx)=>{
+		let val = obj.value;
+		let valArr = val.split(',');
+		
+		obj.addEventListener('click', ()=>{
+			$(modalTitle).text(valArr[1]); //업무리스트 타이틀 
+			$(btnDel).val(valArr[0]); //업무리스트 번호
+		});
+	});
+	
+	//삭제버튼 클릭시
+	btnDel.addEventListener('click', e=>{
+		let worklistNo = e.target.value;
+		
+		$.ajax({
+        	url: '${pageContext.request.contextPath}/project/deleteWorklist.do',
+        	data: {worklistNo: worklistNo},
+        	dataType: 'json',
+        	type: 'POST',
+        	success: data=>{
+        		console.log(data);
+        		
+        		if(data.result===1){
+        			$(modal).modal('hide');
+        		}
+        	},
+        	error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+        }); 
+		
+	}); //end of btnDel click 
 }
 
 //새 업무 만들기
 function addWork(){
-    //새 업무 만들기: +버튼 클릭
-    $(".btn-addWork").on('click', e=>{
-        let worklistTitle = e.target.parentNode.parentNode.parentNode;
-        let $addWork = $(worklistTitle).find(".addWork-wrapper");
-        $addWork.toggleClass("show");
-    });
-
-    //새 업무 만들기: 취소버튼 클릭
-    $(".btn-addWork-cancel").on('click', ()=>{
-        $(".addWork-wrapper").toggleClass("show");
-    });
-
+	let btnAdd = document.querySelectorAll('.btn-addWork');
+	let btnCancel = document.querySelectorAll('.btn-addWork-cancel');
+	let btnSubmit = document.querySelectorAll('.btn-addWork-submit');
+	
+	let addTag;
+	let addMemberArr = [];
+	let addDate = [];
+	
+	//+버튼 제어
+    btnAdd.forEach((obj, idx)=>{
+    	let worklistNo = obj.value;
+    	
+   		let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
+   		let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
+   		
+   		//설정 버튼: 멤버, 태그, 날짜 
+   		let dropWorkTag = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
+   		
+   		
+   		//+버튼 클릭
+    	obj.addEventListener('click', ()=>{
+	    	//취소, 만들기버튼 value에 worklistNo 담기
+	    	$(btnSubmit).val(worklistNo);
+	    	$(btnCancel).val(worklistNo);
+    		
+    		$('.addWork-wrapper').removeClass('show');
+    		$(addWorkWrapper).toggleClass("show");
+    		$(workTitle).focus();
+    		
+    		//드롭다운 업무태그 클릭
+    		dropWorkTag.forEach((obj, idx)=>{
+    			obj.addEventListener('click', e=>{
+    				let $this = $(e.target);
+    				let $check = $('.drop-workTag .fa-check');
+		    		let html = '<i class="fas fa-check"></i>';
+		    		
+		    		/////////////////////////////////선택 해제는!!?!!!!! 
+		    		//addTag변수에 선택한 태그코드 담기
+    				if($this.hasClass('WT1')) addTag = "WT1";
+    				else if($this.hasClass('WT2')) addTag = "WT2";
+    				else if($this.hasClass('WT3')) addTag = "WT3";
+    				
+		    		//선택한 업무태그에 체크 아이콘 추가
+    				if(addTag==="WT1") {
+    					$check.remove();
+    					$('#worklist-'+worklistNo+' .drop-workTag.WT1').append(html);
+    				}
+    				if(addTag==="WT2") {
+    					$check.remove();
+    					$('#worklist-'+worklistNo+' .drop-workTag.WT2').append(html);
+    				}
+    				if(addTag==="WT3") {
+    					$check.remove();
+    					$('#worklist-'+worklistNo+' .drop-workTag.WT3').append(html);
+    				}
+    					
+    			});
+    		}); //end of dropWorkTag.forEach
+    		
+    	}); //end of +버튼 클릭
+   		
+    }); // end of btnAdd.forEach
+    
+	
+	//태그버튼 클릭
+	
+	
+	
+    
+    //취소버튼 클릭
+	btnCancel.forEach((obj, idx)=>{
+		obj.addEventListener('click', ()=>{
+			let worklistNo = obj.value;
+			let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
+			let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
+			
+			$(workTitle).val("");
+			$(addWorkWrapper).toggleClass("show");
+		});
+	});
+	    
     //새업무 만들기: 날짜 설정
     $('.btn-setWorkDate').daterangepicker();
 }
@@ -106,32 +289,6 @@ function checklist(){
         }
 
     }); //end of .btn-check click
-}
-
-//새 업무리스트 만들기
-function addWorklist(){
-    let addWklt = document.querySelector("#add-wklt-wrapper");
-    let addWkltFrm = document.querySelector("#add-wkltfrm-wrapper");
-    let btnAdd = document.querySelector("#btn-addWorklist");
-    let btnCancel = document.querySelector("#btn-cancel-addWorklist");
-
-    //업무리스트 추가 클릭시 입력폼 보이기
-    addWklt.addEventListener('click', ()=>{
-        $(addWklt).hide();
-        $(addWkltFrm).show();
-    });
-
-    //x버튼 클릭시 다시 업무리스트 추가 보이기
-    btnCancel.addEventListener('click', ()=>{
-        $(addWklt).show();
-        $(addWkltFrm).hide();
-    });
-
-    //+버튼 클릭시 업무리스트 추가
-    btnAdd.addEventListener('click', ()=>{
-        console.log(111111);
-        //에이작스!? 
-    });
 }
 
 //서브헤더 탭 active
@@ -312,10 +469,18 @@ function setting(){
     <!-- Left navbar links -->
     <ul class="navbar-nav">
     <li id="go-back" class="nav-item text-center">
-        <a class="nav-link" href=""><i class="fas fa-chevron-left"></i></a>
+        <a class="nav-link" href="${pageContext.request.contextPath}/project/projectList.do"><i class="fas fa-chevron-left"></i></a>
     </li>
     <li id="project-name" class="nav-item">
-        <button type="button" id="btn-star"><i class="fas fa-star"></i></button>
+		<input type="hidden" id="hiddenProjectNo" value="${project.projectNo}"/>
+        <button type="button" id="btn-star">
+        	<c:if test="${project.projectStarYn=='Y'}">
+        	<i class="fas fa-star"></i>
+        	</c:if>
+        	<c:if test="${project.projectStarYn=='N'}">
+        	<i class="far fa-star"></i>
+        	</c:if>
+        </button>
         ${project.projectTitle}
     </li>
     </ul>
@@ -707,14 +872,18 @@ function setting(){
         
         <!-- 업무리스트 -->
         <c:forEach items="${wlList}" var="wl" varStatus="wlVs">
-        <section class="worklist">
+        <section class="worklist" id="worklist-${wl.worklistNo}">
             <!-- 업무리스트 타이틀 -->
             <div class="worklist-title">
                 <h5>${wl.worklistTitle}</h5>
+                
+                <!-- 업무 생성/업무리스트 삭제: admin, 대표, 프로젝트 팀장에게만 보임 -->
+                <c:if test="${'admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || project.projectWriter==memberLoggedIn.memberId}">
                 <div class="worklist-title-btn">
-	                <button type="button" class="btn-addWork" onclick=""><i class="fas fa-plus"></i></button>
-	                <button type="button" class="btn-removeWorklist" data-toggle="modal" data-target="#modal-wroklist-remove"><i class="fas fa-times"></i></button>
+	                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
+	                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
                 </div>
+                </c:if>
 
                 <!-- 새 업무 만들기 -->
                 <div class="addWork-wrapper">
@@ -724,93 +893,71 @@ function setting(){
 	
 	                    <!-- 하단부 버튼 모음 -->
 	                    <div class="addWork-btnWrapper">
-	                    <!-- 업무 설정 -->
-	                    <div class="addWork-btnLeft">
-	                        <!-- 업무 배정 -->
-	                        <div class="add-tag dropdown">
-	                        <a class="nav-link" data-toggle="dropdown" href="#">
-	                            <i class="fas fa-user-plus"></i>
-	                        </a>
-	                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-	                            <a href="#" class="dropdown-item">
-	                            <!-- Message Start -->
-	                            <div class="media">
-	                                <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-	                                <div class="media-body">
-	                                <h3 class="dropdown-item-title">
-	                                    Brad Diesel
-	                                </h3>
-	                                <p class="text-sm">Call me whenever you can...</p>
-	                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-	                                </div>
-	                            </div>
-	                            <!-- Message End -->
-	                            </a>
-	                            <div class="dropdown-divider"></div>
-	                            <a href="#" class="dropdown-item">
-	                            <!-- Message Start -->
-	                            <div class="media">
-	                                <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-	                                <div class="media-body">
-	                                <h3 class="dropdown-item-title">
-	                                    John Pierce
-	                                </h3>
-	                                <p class="text-sm">I got your message bro</p>
-	                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-	                                </div>
-	                            </div>
-	                            <!-- Message End -->
-	                            </a>
-	                        </div>
-	                        </div>
+		                    <!-- 업무 설정 -->
+		                    <div class="addWork-btnLeft">
+		                        <!-- 업무 배정 -->
+		                        <div class="add-tag dropdown">
+		                        <a class="nav-link" data-toggle="dropdown" href="#">
+		                            <i class="fas fa-user-plus"></i>
+		                        </a>
+		                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+		                            <a href="#" class="dropdown-item">
+		                            <!-- Message Start -->
+		                            <div class="media">
+		                                <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+		                                <div class="media-body">
+		                                <h3 class="dropdown-item-title">
+		                                    Brad Diesel
+		                                </h3>
+		                                <p class="text-sm">Call me whenever you can...</p>
+		                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
+		                                </div>
+		                            </div>
+		                            <!-- Message End -->
+		                            </a>
+		                            <div class="dropdown-divider"></div>
+		                            <a href="#" class="dropdown-item">
+		                            <!-- Message Start -->
+		                            <div class="media">
+		                                <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+		                                <div class="media-body">
+		                                <h3 class="dropdown-item-title">
+		                                    John Pierce
+		                                </h3>
+		                                <p class="text-sm">I got your message bro</p>
+		                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
+		                                </div>
+		                            </div>
+		                            <!-- Message End -->
+		                            </a>
+		                        </div>
+		                        </div>
+		
+		                        <!-- 태그 설정 -->
+		                        <div class="add-tag dropdown">
+			                        <button class="nav-link" data-toggle="dropdown"><i class="fas fa-tag"></i></button>
+			                        <div class="dropdown-menu dropdown-menu-right">
+			                            <a href="javascript:void(0)" class="dropdown-item work-tag drop-workTag WT1">
+			                            	<span class="btn btn-xs bg-danger WT1">priority</span>
+			                            </a>
+			                            <a href="javascript:void(0)" class="dropdown-item work-tag drop-workTag WT2">
+			                            	<span class="btn btn-xs bg-primary WT2">important</span>
+			                            </a>
+			                            <a href="javascript:void(0)" class="dropdown-item work-tag drop-workTag WT3">
+			                            	<span class="btn btn-xs bg-warning WT3">review</span>
+			                            </a>
+			                        </div>
+		                        </div>
+		
+		                        <!-- 날짜 설정 -->
+		                        <button type="button" class="btn-setWorkDate"><i class="far fa-calendar-alt"></i></button>
+		                    </div>
 	
-	                        <!-- 태그 설정 -->
-	                        <div class="add-tag dropdown">
-	                        <a class="nav-link" data-toggle="dropdown" href="#">
-	                            <i class="fas fa-tag"></i>
-	                        </a>
-	                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-	                            <a href="#" class="dropdown-item">
-	                            <!-- Message Start -->
-	                            <div class="media">
-	                                <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-	                                <div class="media-body">
-	                                <h3 class="dropdown-item-title">
-	                                    Brad Diesel
-	                                </h3>
-	                                <p class="text-sm">Call me whenever you can...</p>
-	                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-	                                </div>
-	                            </div>
-	                            <!-- Message End -->
-	                            </a>
-	                            <div class="dropdown-divider"></div>
-	                            <a href="#" class="dropdown-item">
-	                            <!-- Message Start -->
-	                            <div class="media">
-	                                <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-	                                <div class="media-body">
-	                                <h3 class="dropdown-item-title">
-	                                    John Pierce
-	                                </h3>
-	                                <p class="text-sm">I got your message bro</p>
-	                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-	                                </div>
-	                            </div>
-	                            <!-- Message End -->
-	                            </a>
-	                        </div>
-	                        </div>
-	
-	                        <!-- 날짜 설정 -->
-	                        <button type="button" class="btn-setWorkDate"><i class="far fa-calendar-alt"></i></button>
-	                    </div>
-	
-	                    <!-- 취소/만들기 버튼 -->
-	                    <div class="addWork-btnRight">
-	                        <button type="button" class="btn-addWork-cancel">취소</button>
-	                        <button type="submit" class="btn-addWork-submit">만들기</button>
-	                    </div>
+		                    <!-- 취소/만들기 버튼 -->
+		                    <div class="addWork-btnRight">
+		                        <button type="button" class="btn-addWork-cancel">취소</button>
+		                        <button type="button" class="btn-addWork-submit">만들기</button>
+		                    </div>
 	                    </div>
 	                </form>
                 </div>
@@ -976,7 +1123,8 @@ function setting(){
         </c:forEach>
         
         
-        <!-- 업무리스트 추가 -->
+        <!-- 업무리스트 추가: admin, 대표, 프로젝트 팀장에게만 보임 -->
+        <c:if test="${'admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || project.projectWriter==memberLoggedIn.memberId}">
         <section id="add-wklt-wrapper" class="worklist add-worklist" role="button" tabindex="0">
             <!-- 타이틀 -->
             <div class="worklist-title">
@@ -984,15 +1132,17 @@ function setting(){
                 <div class="clear"></div>
             </div><!-- /.worklist-title -->
         </section><!-- /.worklist -->
-
+		</c:if>
+		
         <!-- 업무리스트 추가 폼 -->
         <section id="add-wkltfrm-wrapper" class="worklist add-worklist" role="button" tabindex="0">
             <!-- 타이틀 -->
             <div class="worklist-title">
-                <form action="" id="addWorklistFrm">
-                    <input type="text" name="worklistTitle" placeholder="업무리스트 이름">
+                <form id="addWorklistFrm">
+                	<input type="hidden" name="projectNo" value="${project.projectNo}" required/>
+                    <input type="text" name="worklistTitle" placeholder="업무리스트 이름" required/>
                     <div class="worklist-title-btn">
-                        <button type="submit" id="btn-addWorklist" class="btn-addWork">
+                        <button type="button" id="btn-addWorklist" class="btn-addWork">
                             <i class="fas fa-plus"></i>
                         </button>
                         <button type="button" id="btn-cancel-addWorklist" class="btn-removeWorklist">
@@ -1012,7 +1162,7 @@ function setting(){
 <!-- /.content-wrapper -->
 
 <!-- 업무리스트 삭제 모달 -->
-<div class="modal fade" id="modal-wroklist-remove">
+<div class="modal fade" id="modal-worklist-remove">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -1022,11 +1172,11 @@ function setting(){
             </button>
             </div>
             <div class="modal-body">
-            <p>정말 삭제하시겠습니까? [] 업무리스트는 영구 삭제됩니다.</p>
+            <p>정말 삭제하시겠습니까? [<span id="modal-worklist-title"></span>] 업무리스트는 영구 삭제됩니다.</p>
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">아니오, 업무리스트를 유지합니다.</button>
-            <button type="button" class="btn btn-danger">네</button>
+            <button type="button" id="btn-removeWorklist" class="btn btn-danger">네</button>
             </div>
         </div>
         <!-- /.modal-content -->
