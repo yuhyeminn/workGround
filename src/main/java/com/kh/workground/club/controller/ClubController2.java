@@ -34,6 +34,7 @@ import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;
+import com.kh.workground.member.model.vo.Member;
 
 @Controller
 public class ClubController2 {
@@ -336,6 +337,32 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 
 		new Gson().toJson(clubPlanAttendeeList, response.getWriter());
 		
+	}
+	
+	@PostMapping("/club/deleteClubPlanAttendee.do")
+	public ModelAndView deleteClubPlanAttendee(ModelAndView mav, 
+											   ClubPlanAttendee clubPlanAttendee, 
+											   @RequestParam("clubNo") int clubNo, 
+											   HttpServletRequest request) {
+//		logger.debug("clubPlanAttendee={}", clubPlanAttendee);
+//		logger.debug("clubNo={}", clubNo);
+		Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
+//		logger.debug("memberLoggedIn={}", memberLoggedIn);
+		
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNo);
+		
+		if(memberLoggedIn==null || !clubPlanAttendee.getMemberId().equals(memberLoggedIn.getMemberId())) {
+			mav.addObject("msg", "본인의 일정만 취소할 수 있습니다.");
+		}
+		else {
+			int result = clubService2.deleteClubPlanAttendee(clubPlanAttendee);
+			
+			mav.addObject("msg", result>0?"일정을 취소하였습니다.":"일정을 취소하지 못했습니다.");
+		}
+		
+		mav.setViewName("common/msg");
+		
+		return mav;
 	}
 
 }

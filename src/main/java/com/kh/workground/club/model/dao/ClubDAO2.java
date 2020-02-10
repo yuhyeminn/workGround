@@ -42,4 +42,6 @@ public interface ClubDAO2 {
 
 	int insertClubPlanAttendee(ClubPlanAttendee clubPlanAttendee);
 
+	int deleteClubPlanAttendee(ClubPlanAttendee clubPlanAttendee);
+
 }

@@ -152,5 +152,10 @@
 		insert into club_plan_attendee 
 		values(seq_club_plan_attendee_no.nextval, #{clubPlanNo}, #{clubMemberNo}, default)
 	</insert>
+	
+	<delete id="deleteClubPlanAttendee">
+		delete from club_plan_attendee 
+		where club_plan_attendee_no = #{clubPlanAttendeeNo}
+	</delete>
 	<!-- br end -->
 </mapper>

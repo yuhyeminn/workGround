@@ -102,6 +102,11 @@ public class ClubServiceImpl2 implements ClubService2 {
 		return clubDAO2.insertClubPlanAttendee(clubPlanAttendee);
 	}
 
+	@Override
+	public int deleteClubPlanAttendee(ClubPlanAttendee clubPlanAttendee) {
+		return clubDAO2.deleteClubPlanAttendee(clubPlanAttendee);
+	}
+
 
 
 }

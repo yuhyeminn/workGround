@@ -63,7 +63,11 @@
 #new-club-card:hover .card-body {
 	color: #fff;
 }
-
+.h6{
+position: relative; 
+top:.5rem; 
+left: .5rem;
+}
 .comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93);}
 .comment-text-area{display: inline-block; width: 90%; height: 2rem; margin-right: .3rem;}
 .comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
@@ -179,20 +183,28 @@ $(()=> {
 			success: data=> {
 				console.log(data);
 				
-				let $p = $("<p></p>");
-				
+				let html = '';
 				$(data).each((idx, a)=>{
-					let html = "<div style='width: 50px; display: inline-block; margin-left:15px;'>"
-					html += "<img src='${pageContext.request.contextPath}/resources/img/profile/"+a.renamedFileName+"'";
-					html += "class='img-fluid img-circle' style='width: 50px; margin: 5px' />";
-					html += "<p class='profile-username text-center' style='font-size: 18px;'>"+a.memberName+"</p></div>"
-					
-					$p.append(html);
+                    html += '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">';
+                    html += '<div class="col-12">';
+					html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+a.renamedFileName+'" alt="Message User Image">';
+					html += '<h6 class="h6">'+a.memberName+'</h6>';
+                    html += '<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">';
+                    html += '<form name="deleteClubPlanAttendeeFrm" action="${pageContext.request.contextPath}/club/deleteClubPlanAttendee.do" method="POST">';
+                    html += '<input type="hidden" name="memberId" value="'+a.memberId+'">';
+                    html += '<input type="hidden" name="clubPlanAttendeeNo" value="'+a.clubPlanAttendeeNo+'">';
+                    html += '<input type="hidden" name="clubNo" value="${club.clubNo}">';
+                    html += '<button type="submit" class="btn btn-tool" onclick="return deleteClubPlanAttendee();">';
+                    html += '<i class="fas fa-times" style="color: black;"></i></button>';
+                    html += '</form>';
+                    html += '</div></div></div>'; 
+                  	
+                    //console.log(a.memberId);
 				});
 				
-				$("#attendeeList").html($p);
+				$("#attendeeList").html(html);
 				
-				console.log($("#attendeeList"));
+				//console.log($("#attendeeList"));
 			}, 
 			error: (x, s, e)=> {
 				console.log("ajax처리 실패!!", x, s, e);
@@ -201,6 +213,13 @@ $(()=> {
 	});
 });
 
+function deleteClubPlanAttendee() {
+		console.log($(this));
+	if(!confirm("참여를 취소하시겠습니까?")) return false;
+	else {
+		$("[name=deleteClubPlanAttendeeFrm]").submit();
+	}
+}
 </script>
 
 <!-- Navbar ClubView -->
@@ -596,6 +615,15 @@ $(()=> {
 												<label for="inputProjectLeader">참석자</label>
 												  <div id="attendeeList" id="attendeeList">
 												  </div>
+												  <%-- <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">
+							                        <div class="col-12"> 
+							                            <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+							                            <h6 class="h6">이주현</h6>
+							                            <div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">
+							                              <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button>
+							                            </div>
+							                        </div> 
+							                      </div> --%>
 													<!-- 프로필 사진 -->
 													<%-- <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg"
 														 alt="User Avatar" class="img-circle elevation-2"

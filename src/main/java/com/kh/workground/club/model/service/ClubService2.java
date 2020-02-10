@@ -42,6 +42,8 @@ public interface ClubService2 {
 
 	int insertClubPlanAttendee(ClubPlanAttendee clubPlanAttendee);
 
+	int deleteClubPlanAttendee(ClubPlanAttendee clubPlanAttendee);
+
 
 
 
