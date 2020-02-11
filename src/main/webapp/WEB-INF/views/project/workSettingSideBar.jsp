@@ -16,6 +16,13 @@
 		<c:set var="isChargedMember" value="true" />
 	</c:if>
 </c:forEach>
+<!-- 현재 로그인 한 회원이 프로젝트 멤버인지 확인 -->
+<c:set var="isProjectMember" value="false" />
+<c:forEach var="pm" items="${project.projectMemberList}">
+	<c:if test="${memberLoggedIn.memberId eq pm.memberId}">
+		<c:set var="isProjectMember" value="true" />
+	</c:if>
+</c:forEach>
 	
 	<div class="div-close" role="button" tabindex="0">
     	<i class="fas fa-times close-sidebar"></i>
@@ -119,7 +126,6 @@
                         <button class="btn bg-secondary date-cancel">취소</button>
                 </div>
                 </div>
-                    
                     <p class="setting-content-inform">
                         <fmt:formatDate value="${work.workStartDate}" type="date" pattern="MM월dd일" /> - 
                         <c:if test="${work.workEndDate == null or work.workEndDate ==''}">마감일 없음</c:if>
@@ -129,9 +135,6 @@
             <!-- 배정된 멤버-->
             <div class="row">
                 <label class="setting-content-label"><span><i class='fas fa-user-plus' style="width:20px;"></i></span> 배정된 멤버</label>
-                <c:if test="${memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin'}">
-                <button class="plusBtn" id="add-work-member"><i class="fa fa-plus"></i></button>
-                </c:if>
                 <div class='control-wrapper pv-multiselect-box'>
                     <div class="control-styles">
                         <input type="text" tabindex="1" id='workMember' name="workMember"/>
@@ -203,7 +206,7 @@
             <div class="row setting-row checklist-box-row">
             
               <div class="work-checklist">
-                <table class="tbl-checklist">
+                <table class="tbl-checklist" style="border:none;">
                 <tbody>
                 <c:if test="${work.checklistList!=null && !empty work.checklistList}">
                  <c:forEach items="${work.checklistList}" var="chk">
@@ -249,53 +252,45 @@
             </div>
         </div><!--/end 업무 속성 탭-->
 
-        <!-- 코멘트 탭-->
+        <!-- #####################################################코멘트 탭-->
         <div class="tab-pane fade" id="custom-content-above-comment" role="tabpanel" aria-labelledby="custom-content-above-comment-tab">
         <div class="comment-wrapper">
             <div class="comment-box">
+            <c:if test="${work.workCommentList!=null && !empty work.workCommentList}">
             <div class="card-footer card-comments">
-                <div class="card-comment">
-                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Image">
+            
+              <c:forEach items="${work.workCommentList}" var="wc">
+              <c:set var="writer" value="${wc.workCommentWriterMember}" />
+              
+                <div class="card-comment <c:if test="${wc.workCommentLevel == 2 }">comment-level2</c:if>">
+                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${writer.renamedFileName}" alt="User Image">
                 <div class="comment-text">
-                    <span class="username">김효정<span class="text-muted float-right">2020-01-26</span></span>
-                    <span>오오 감사합니당</span>
+                    <span class="username">${writer.memberName}<span class="text-muted float-right">${wc.workCommentEnrollDate }</span></span>
+                    <span>${wc.workCommentContent}</span>
+                    <c:if test="${memberLoggedIn.memberId eq writer.memberId || memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin'}">
                     <button class="comment-delete float-right">삭제</button>
+                    </c:if>
+                    <c:if test="${memberLoggedIn.memberId eq 'adim' || isProjectMember}">
                     <button class="comment-reply float-right">답글</button>
+                    </c:if>
                 </div>
                 </div>
-                <div class="card-comment">
-                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Image">
-                <div class="comment-text">
-                    <span class="username">주보라<span class="text-muted float-right">2020-01-27</span></span>
-                    <span>괜찮은데요??</span>
-                    <button class="comment-delete float-right">삭제</button>
-                    <button class="comment-reply float-right">답글</button>
-                </div>
-                </div>
-                <div class="card-comment comment-level2">
-                    <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Image">
-                    <div class="comment-text">
-                    <span class="username">유혜민<span class="text-muted float-right">2020-01-26</span></span>
-                    <span>넵! 알겠습니당</span>
-                    <button class="comment-delete float-right">삭제</button>
-                    </div>
-                </div>
-                <div class="card-comment comment-level2">
-                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Image">
-                <div class="comment-text">
-                    <span class="username">이소현<span class="text-muted float-right">2020-01-27</span></span>
-                    <span>훨씬 편하네요~</span>
-                    <button class="comment-delete float-right">삭제</button>
-                </div>
-                </div>
+              </c:forEach>
             </div>
+            </c:if>
+            <c:if test="${work.workCommentList==null || empty work.workCommentList}">
+           		<div style="text-align:center;margin-top: 106px;">
+           		<img src="https://d30795irbdecem.cloudfront.net/assets/comment-empty-state@2x-d1554722.png" style="width:20rem;">
+           		<p style="font-size:10px; color:lightgray;">Comments are great for focusing conversation on the task at hand.</p>
+           		</div>
+            </c:if>
             </div>
             <!-- 댓글 작성 -->
             <div class="card-footer">
             <form action="#" method="post">
                 <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">
                 <div class="img-push">
-                <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
+                <input type="text" class="form-control form-control-sm comment-text-area" placeholder="코멘트를 입력하세요.">
                 <input class="comment-submit" type="submit" value="등록">
                 </div>
             </form>
@@ -305,7 +300,7 @@
         </div>
         <!--/. end 코멘트 tab-->
 
-        <!-- 파일 탭 -->
+        <!-- #########################################################파일 탭 -->
         <div class="tab-pane fade file-tab-pane " id="custom-content-above-file" role="tabpanel" aria-labelledby="custom-content-above-file-tab">
             <div class="file-wrapper">
             <div class="container-fluid"> 
@@ -317,7 +312,7 @@
                     <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
                     </div>
                     <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04">Button</button>
+                    <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04" style="font-size:12px;">파일 첨부</button>
                     </div>
                 </div>
                 </form>
@@ -333,59 +328,38 @@
                         </tr>
                     </thead>
                     <tbody>
+                    <c:if test="${work.attachmentList!=null && !empty work.attachmentList}">
+                      <c:forEach items="${work.attachmentList}" var="atm">
                         <tr>
                         <td>
-                            <a href="">
                             <div class="img-wrapper">
-                            <img src="${pageContext.request.contextPath}/resources/img/test.jpg" alt="첨부파일 미리보기 이미지">
+                            <img src="${pageContext.request.contextPath}/resources/img/${atm.renamedFilename}" alt="첨부파일 미리보기 이미지">
                             </div>
                             <div class="imgInfo-wrapper">
-                            <p class="filename">file.png</p>
+                            <p class="filename">${atm.originalFilename}</p>
                             <p class="filedir">33.8KB</p>
                             </div>
-                            </a>
                         </td>
-                        <td>2020년 1월 28일</td>
+                        <td><fmt:formatDate value="${atm.attachmentEnrollDate}" type="date" pattern="yyyy년 MM월 dd일" /></td>
                         <td>
-                            이단비
+                            <span>${atm.attachmentWriterMember.memberName }</span>
                             <!-- 첨부파일 옵션 버튼 -->
                             <div class="dropdown ">
                             <button type="button" class="btn-file" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a href="#" class="dropdown-item">
-                                다운로드
+                                	다운로드
                                 </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item dropdown-file-remove">삭제</a>
+                                <c:if test="${memberLoggedIn.memberId eq atm.attachmentWriterMember.memberId || memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin' }">
+                                	<div class="dropdown-divider"></div>
+                                	<a href="#" class="dropdown-item dropdown-file-remove">삭제</a>
+                                </c:if>
                             </div>
                             </div>
                         </td>
                         </tr>
-                        <tr>
-                        <td>
-                            <a href="#">
-                            	<div class="img-wrapper">
-                            		<img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="첨부파일 미리보기 이미지">
-                            	</div>
-                            <span class="filename">file.png</span>
-                            </a>
-                        </td>
-                        <td>2020년 1월 28일</td>
-                        <td>
-                            이단비
-                            <!-- 첨부파일 옵션 버튼 -->
-                            <div class="dropdown ">
-                            <button type="button" class="btn-file" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a href="#" class="dropdown-item">
-                                다운로드
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item dropdown-file-remove">삭제</a>
-                            </div>
-                            </div>
-                        </td>
-                        </tr>
+                        </c:forEach>
+                        </c:if>
                     </tbody>
                     </table>
                 </div>

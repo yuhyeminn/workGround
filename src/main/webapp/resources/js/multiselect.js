@@ -1,5 +1,6 @@
   	//프로젝트 멤버 추가
 	function addMember(){
+		  //프로젝트 추가는 팀장만 가능. 팀장의 아이디를 managerId로 갖고있는 멤버들 조회.
 		  $.ajax({
 				url:"../project/projectDeptMember.do",
 				dataType: "json",

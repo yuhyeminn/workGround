@@ -97,6 +97,7 @@
                 </c:if>
                 <c:if test="${project.projectStartDate == null or project.projectStartDate == '' }">
 	                <p class="setting-content-inform">
+	                <i class="far fa-calendar-alt"></i>
 	                <span>시작일 없음</span>
 	                </p>
                 </c:if>
@@ -129,6 +130,7 @@
                 </c:if>
                 <c:if test="${project.projectEndDate == null or project.projectEndDate == '' }">
 	                <p class="setting-content-inform">
+	                <i class="far fa-calendar-alt"></i>
 	                <span id="endDate">마감일 없음</span>
 	                </p>
                 </c:if>
@@ -144,7 +146,7 @@
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
                         <div class="input-group" >
-                            <input type="text" class="form-control float-right" id="project_realenddate" data-provide='datepicker'> 
+                            <input type="text" class="form-control float-right update-date-input" id="project_realenddate" data-provide='datepicker'> 
                             <input type="hidden" id="projectRealEndDate" value="${project.projectRealEndDate }"> 
                         </div>
                         </div>
@@ -160,7 +162,8 @@
                 </c:if>
                 <c:if test="${project.projectRealEndDate == null or project.projectRealEndDate == '' }">
 	                <p class="setting-content-inform">
-	                 <span>완료일 없음</span>
+	                <i class="far fa-calendar-alt"></i>
+	                 <span>실제 완료일 없음</span>
 	                </p>
                 </c:if>
             </div>
@@ -245,7 +248,6 @@ $(".update-status-code").on('click',function(){
 		success: data =>{
 			if(data.isUpdated){
 				var currentStatus = $(this).html();
-				console.log(currentStatus);
 				$("#current-status-code").html(currentStatus);
 			}else{
 				alert('상태코드 수정 실패')
@@ -258,19 +260,36 @@ $(".update-status-code").on('click',function(){
 });
 
 $(".date-update").on('click',function(){
+	var $this = $(this);
 	var projectNo = '${project.projectNo}';
-	var input = $(this).parent(".setting-date-dropdown").find("input");
+	var input = $this.parent(".setting-date-dropdown").find("input");
 	var date = input.val();	//수정할 날짜
 	var dateType = input.attr('id');  //수정할 날짜 종류(startDate,endDate,realEndDate)
-
-	var bool = dateValidation(date,dateType);
+	
+	var bool = dateValidation(date,dateType); //유효성 검사
 	if(bool){
-		console.log("성공!")
+		$.ajax({
+			url: "${pageContext.request.contextPath}/project/updateProjectDate.do",
+			data: {projectNo:projectNo, date:date, dateType:dateType},
+			dataType:"json",
+			success: data =>{
+				var dateArr = date.split('/');
+				var dateView = $this.closest(".row").find(".setting-content-inform span");
+				if(date == null || date ==''){
+					var dateTypeName = $this.closest(".row").find("label").text();
+					dateView.text(dateTypeName+" 없음");
+				}else{
+					dateView.text(dateArr[0]+'-'+dateArr[1]+'-'+dateArr[2]);
+				}
+			},
+			error:(jqxhr, textStatus, errorThrown) =>{
+				console.log(jqxhr, textStatus, errorThrown);
+			}
+		});
 	}
-	//에이쟉스로 수정하기~
 })
 function dateValidation(date,dateType){
-	if(date==null || date=='') {alert("날짜를 입력하세요.");return;}
+	/* if(date==null || date=='') {alert("날짜를 입력하세요.");return;}  날짜 null로 변경할수도 있기 때문*/
 	
 	if(dateType == 'project_startdate'){
 		var startDateArr = date.split('/');

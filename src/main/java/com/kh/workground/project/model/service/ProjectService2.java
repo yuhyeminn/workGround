@@ -25,4 +25,6 @@ public interface ProjectService2 {
 
 	int updateStatusCode(Map<String, Object> param);
 
+	int updateProjectDate(Map<String, String> param);
+
 }

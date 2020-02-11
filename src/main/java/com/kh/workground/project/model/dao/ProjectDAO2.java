@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.kh.workground.member.model.vo.Member;
+import com.kh.workground.project.model.vo.Attachment;
 import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 
 public interface ProjectDAO2 {
@@ -40,5 +42,11 @@ public interface ProjectDAO2 {
 	List<Worklist> selectWorklistListByProjectNo(int projectNo);
 
 	int updateStatusCode(Map<String, Object> param);
+
+	List<Attachment> selectAttachmentListByWorkNo(int workNo);
+
+	List<WorkComment> selectWorkCommentListByWorkNo(int workNo);
+
+	int updateProjectDate(Map<String, String> param);
 
 }

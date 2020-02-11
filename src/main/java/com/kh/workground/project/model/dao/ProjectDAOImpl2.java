@@ -11,9 +11,11 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.controller.ProjectController2;
+import com.kh.workground.project.model.vo.Attachment;
 import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 
 @Repository
@@ -104,6 +106,21 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	@Override
 	public int updateStatusCode(Map<String, Object> param) {
 		return sqlSession.update("project.updateStatusCode", param);
+	}
+
+	@Override
+	public List<Attachment> selectAttachmentListByWorkNo(int workNo) {
+		return sqlSession.selectList("project.selectAttachmentListByWorkNo",workNo);
+	}
+
+	@Override
+	public List<WorkComment> selectWorkCommentListByWorkNo(int workNo) {
+		return sqlSession.selectList("project.selectWorkCommentListByWorkNo",workNo);
+	}
+
+	@Override
+	public int updateProjectDate(Map<String, String> param) {
+		return sqlSession.update("project.updateProjectDate", param);
 	}
 	
 

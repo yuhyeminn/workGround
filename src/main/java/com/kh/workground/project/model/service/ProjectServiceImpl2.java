@@ -14,9 +14,11 @@ import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.controller.ProjectController2;
 import com.kh.workground.project.model.dao.ProjectDAO2;
 import com.kh.workground.project.model.exception.ProjectException;
+import com.kh.workground.project.model.vo.Attachment;
 import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 @Service
 public class ProjectServiceImpl2 implements ProjectService2 {
@@ -174,7 +176,15 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 			chklst.setChecklistChargedMember(chargedMember); //체크리스트에 배정된 멤버
 		}
 		
+		//업무 번호로 파일리스트 가져오기
+		List<Attachment> attachList = projectDAO.selectAttachmentListByWorkNo(work.getWorkNo());
+		
+		//업무번호로 comment가져오기
+		List<WorkComment> commentList = projectDAO.selectWorkCommentListByWorkNo(work.getWorkNo());
+		
 		work.setChecklistList(chklstList);
+		work.setAttachmentList(attachList);
+		work.setWorkCommentList(commentList);
 		
 		return work;
 	}
@@ -193,6 +203,15 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		int result = projectDAO.updateStatusCode(param);
 		if(result==0) {
 			throw new ProjectException("프로젝트 상태 코드 수정 오류!");
+		}
+		return result; 
+	}
+
+	@Override
+	public int updateProjectDate(Map<String, String> param) {
+		int result = projectDAO.updateProjectDate(param);
+		if(result==0) {
+			throw new ProjectException("프로젝트 날짜 관련 수정 오류!");
 		}
 		return result; 
 	}

@@ -326,6 +326,43 @@
                             left join view_member VM on WCM.charged_member_id = VM.member_id
 		where V.work_no = #{workNo}
 	</select>
+	
+	<!-- workSetting.do : 업무별 attachmentList조회 (작성자 멤버 객체 까지)-->
+	<select id="selectAttachmentListByWorkNo" resultMap="attachmentMemberMap">
+		select A.*, VM.*
+		from attachment A join project_members PM on A.attachment_writer_no = PM.project_members_no left join view_member VM on PM.member_id = VM.member_id
+		where A.work_no = #{workNo}
+		order by A.attachment_no desc
+	</select>
+	<resultMap type="attachment" id="attachmentMemberMap">
+		<id column="attachment_no" property="attachmentNo"></id>
+		<result column="attachment_writer_no" property="attachmentWriterNo"></result>
+		<result column="original_filename" property="originalFilename"></result>
+		<result column="renamed_filename" property="renamedFilename"></result>
+		<result column="attachment_enrolldate" property="attachmentEnrollDate"></result>
+		<collection property="attachmentWriterMember" resultMap="memberResultMap"/>
+	</resultMap>
+	
+	<!--  workSetting.do : 업무별 workCommentList조회(작성자 멤버 객체까지) =>계층형 쿼리-->
+	<select id="selectWorkCommentListByWorkNo" resultMap="workCommentMemberMap">
+		select WC.*, M.*
+		from work_comment WC join project_members PM on WC.work_comment_writer_no = PM.project_members_no left join member M on PM.member_id = M.member_id
+		where 1=1 and WC.work_no = #{workNo}
+		start with work_comment_level = 1
+		connect by work_comment_ref = prior work_comment_no
+		order siblings by work_comment_no asc
+	</select>
+	<resultMap type="workComment" id="workCommentMemberMap">
+		<id column="work_comment_no" property="workCommentNo"></id>
+		<result column="work_comment_writer_no" property="workCommentWriterNo"></result>
+		<result column="work_comment_level" property="workCommentLevel"></result>
+		<result column="work_comment_content" property="workCommentContent"></result>
+		<result column="work_comment_enrolldate" property="workCommentEnrollDate"></result>
+		<result column="work_comment_ref" property="workCommentRef"></result>
+		<collection property="workCommentWriterMember" resultMap="memberResultMap"/>
+	</resultMap>
+	
+	<!-- updateStatusCode.do : 프로젝트 상태코드 변경 -->
 	<update id="updateStatusCode">
 		<if test="statusCode !='' and statusCode != null">
 			update project set project_status_code = to_char(#{statusCode}) where project_no = to_number(#{projectNo})
@@ -334,4 +371,32 @@
 			update project set project_status_code = null where project_no = to_number(#{projectNo})
 		</if>
 	</update>
+	
+	<!-- updateProjectDate.do : 프로젝트 날짜관련 수정(시작,마감,완료) -->
+	<update id="updateProjectDate">
+		<if test="date != null and date != ''">
+		update project set ${dateType} = to_date(#{date},'YYYY/MM/DD') where project_no = to_number(#{projectNo})
+		</if>
+		<if test="date == null or date ==''">
+		update project set ${dateType} = null where project_no = to_number(#{projectNo})
+		</if>
+	</update>
+	
+	
+	<resultMap id="memberResultMap" type="member">
+		<id column="member_id" property="memberId"></id>
+			<result column="password" property="password"></result>
+			<result column="member_name" property="memberName"></result>
+			<result column="email" property="email"></result>
+			<result column="phone" property="phone"></result>
+			<result column="date_of_birth" property="dateOfBirth"></result>
+			<result column="dept_code" property="deptCode"></result>
+			<result column="dept_title" property="deptTitle"></result>
+			<result column="job_code" property="jobCode"></result>
+			<result column="job_title" property="jobTitle"></result>
+			<result column="quit_yn" property="quitYn"></result>
+			<result column="manager_id" property="managerId"></result>
+			<result column="original_filename" property="originalFileName"></result>
+			<result column="renamed_filename" property="renamedFileName"></result>
+	</resultMap>
 </mapper>

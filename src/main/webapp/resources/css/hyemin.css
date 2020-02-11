@@ -342,10 +342,10 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .setting-navbar-tab button:active, .navbar-tab button:focus{outline: none; border-bottom: 2px solid #007bff; color: #007bff;}
    
   /*업무 코멘트 탭*/
-  .comment-box{height:500px;overflow-y: scroll;border:1px solid #e7e7e7;font-size:14px;}
+  .comment-box{height:500px;overflow-y: scroll;/* border:1px solid #e7e7e7; */font-size:14px;}
   .comment-level2{margin-left: 3rem;}
   .comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93);}
-  .comment-text-area{display: inline-block; width: 85%; height: 2rem; margin-right: .3rem;}
+  .comment-text-area{display: inline-block; width: 83%; height: 2rem; margin-right: .3rem;}
   .comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
   .comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
   .comment-submit{border: 0; background: darkgray; border-radius: 3px; width: 3rem; height: 2rem; color: white;}

@@ -182,7 +182,7 @@ public class ProjectController2 {
 		
 		try {
 			//프로젝트 팀원 리스트에 팀장 포함이면 true, 제외하면 false
-			boolean isIncludeManager = false;
+			boolean isIncludeManager = true;
 			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
 			
 			Work work = projectService.selectOneWorkForSetting(workNo);
@@ -250,13 +250,38 @@ public class ProjectController2 {
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
-			throw new ProjectException("프로젝트 팀원 조회 오류!");
+			throw new ProjectException("프로젝트 상태코드 수정 오류!");
 		}
 		
 		return map;
 	}
 	
-	
+	@RequestMapping("/project/updateProjectDate.do")
+	@ResponseBody
+	public Map<String, Object> updateProjectDate(@RequestParam String date, @RequestParam String dateType,@RequestParam String projectNo){
+			Map<String, Object> map = new HashMap<>();
+		
+		try {
+			logger.debug("date={}",date);
+			logger.debug("dateType={}",dateType);
+			logger.debug("projectNo={}",projectNo);
+			Map<String, String> param = new HashMap<>();
+			param.put("date", date);
+			param.put("dateType", dateType);
+			param.put("projectNo", projectNo);
+			
+			int result = projectService.updateProjectDate(param);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated );
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 팀원 조회 오류!");
+		}
+		
+		return map;
+	}
 	
 	
 }
