@@ -2,7 +2,7 @@
 # Edit at https://www.gitignore.io/?templates=eclipse
 
 ### Eclipse ##
-target/
+*/target
 .metadata
 bin/
 tmp/
@@ -74,3 +74,4 @@ MANIFEST.MF
 .sts4-cache/
 
 # End of https://www.gitignore.io/api/eclipse
+target/

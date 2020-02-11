@@ -4,7 +4,24 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="member">
 
-	<select id="selectOneMember" resultType="member">
-	select * from member where member_id = #{memberId}
+	<select id="selectOneMember" resultMap="memberMap">
+		select * from view_member
+		where member_id = #{memberId}
+	</select>
+
+	<resultMap type="member" id="memberMap">
+	
+	</resultMap>
+	
+	<update id="updateRegister">
+		update member set password= #{password},
+						  email= #{email},
+						  phone= #{phone},
+						  date_of_birth= #{dateOfBirth}
+	    where member_id = #{memberId}
+	</update>
+	
+	<select id="selectMemberListAll" resultType="member">
+		select * from view_member where member_id != 'admin' order by dept_code, job_code, member_id
 	</select>
 </mapper>
