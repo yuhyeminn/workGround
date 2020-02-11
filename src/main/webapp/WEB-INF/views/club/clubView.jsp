@@ -89,6 +89,7 @@ $(function(){
 		    format: 'YYYY-MM-DD'
 	    }
 	  });
+
 /* 	//Date range as a button
 	$('#daterange-btn').daterangepicker(
 	    {
@@ -112,6 +113,10 @@ $(function(){
 	tabActive(); //서브헤더 탭 활성화
 	
 });
+
+function memberList(clubNo){
+	location.href = "${pageContext.request.contextPath}/club/clubMemberList.do?clubNo="+clubNo;
+}
 
 //사이드바 활성화
 function sidebarActive(){
@@ -242,7 +247,10 @@ function deleteClubPlanAttendee() {
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
 		<li id="tab-calendar" class="nav-item"><button type="button">일정</button></li>
-		<li id="tab-member" class="nav-item"><button type="button">멤버</button></li>
+		<c:if test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
+			<li id="tab-member" class="nav-item">
+			<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button></li>
+		</c:if>
 		<li id="tab-attachment" class="nav-item"><button type="button">파일</button></li>
 	</ul>
 

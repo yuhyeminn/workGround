@@ -24,4 +24,6 @@ public interface ClubService {
 
 	List<Club> selectAllStandByClubList(Map param);
 
+	List<ClubMember> selectClubMemberList(int clubNo);
+
 }
