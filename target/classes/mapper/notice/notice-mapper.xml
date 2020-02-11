@@ -40,5 +40,40 @@
 		 	   #{noticeRenamedFileName},
 		 	   #{deptCode})
 	</insert>
+	
+	<delete id="deleteNotice">
+		delete from notice where notice_no = #{noticeNo}
+	</delete>
+	
+	<insert id="insertCommunity">
+		insert into community
+		values(seq_community.nextval, 
+			  #{commuWriter},
+			  #{commuTitle},
+			  #{commuContent},
+			  default,
+			  #{commuOriginalFileName},
+			  #{commuRenamedFileName})
+	</insert>
+	
+	<delete id="deleteCommunity">
+		delete from community where commu_no = #{commuNo}
+	</delete>
 
+	<update id="updateNotice">
+		update notice set notice_title = #{noticeTitle},
+		                  notice_content = #{noticeContent},
+		                  notice_original_filename = #{noticeOriginalFileName},
+		                  notice_renamed_filename = #{noticeRenamedFileName},
+		                  dept_code = #{deptCode}
+		where notice_no = #{noticeNo}
+	</update>
+	
+	<update id="updateCommunity">
+		update community set commu_title = #{commuTitle},
+							 commu_content = #{commuContent},
+							 commu_original_filename = #{commuOriginalFileName},
+							 commu_renamed_filename = #{commuRenamedFileName}
+		where commu_no = #{commuNo}
+	</update>
 </mapper>

@@ -49,5 +49,30 @@ public class NoticeServiceImpl implements NoticeService {
 		return noticeDAO.insertNotice(notice);
 	}
 
+	@Override
+	public int deleteNotice(int noticeNo) {
+		return noticeDAO.deleteNotice(noticeNo);
+	}
+
+	@Override
+	public int insertCommunity(Community commu) {
+		return noticeDAO.insertCommunity(commu);
+	}
+
+	@Override
+	public int deleteCommunity(int commuNo) {
+		return noticeDAO.deleteCommunity(commuNo);
+	}
+
+	@Override
+	public int updateNotice(Notice notice) {
+		return noticeDAO.updateNotice(notice);
+	}
+
+	@Override
+	public int updateCommunity(Community commu) {
+		return noticeDAO.updateCommunity(commu);
+	}
+
 
 }
