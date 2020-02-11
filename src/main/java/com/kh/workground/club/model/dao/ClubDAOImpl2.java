@@ -1,6 +1,7 @@
 package com.kh.workground.club.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Repository;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
+import com.kh.workground.club.model.vo.ClubNoticeComment;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
+import com.kh.workground.club.model.vo.ClubPlanAttendee;
 
 @Repository
 public class ClubDAOImpl2 implements ClubDAO2 {
@@ -64,10 +67,49 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 	}
 
 	@Override
-	public ClubMember selectOneClubMember(ClubNotice clubNotice) {
-		return sqlSession.selectOne("club.selectOneClubMember", clubNotice);
+	public ClubMember selectOneClubMember(Map<String, String> param) {
+		return sqlSession.selectOne("club.selectOneClubMember", param);
 	}
 
+	@Override
+	public int deleteClubNotice(int clubNoticeNo) {
+		return sqlSession.delete("club.deleteClubNotice", clubNoticeNo);
+	}
+
+	@Override
+	public List<ClubPhoto> selectClubPhotoList(int clubNo) {
+		return sqlSession.selectList("club.selectClubPhotoList", clubNo);
+	}
+
+	@Override
+	public int deleteClubPhoto(ClubPhoto clubPhoto) {
+		return sqlSession.delete("club.deleteClubPhoto", clubPhoto);
+	}
+
+	@Override
+	public List<ClubPlanAttendee> selectClubPlanAttendeeList(int clubPlanNo) {
+		return sqlSession.selectList("club.selectClubPlanAttendeeList", clubPlanNo);
+	}
+
+	@Override
+	public int insertClubPlanAttendee(ClubPlanAttendee clubPlanAttendee) {
+		return sqlSession.insert("club.insertClubPlanAttendee", clubPlanAttendee);
+	}
+
+	@Override
+	public int deleteClubPlanAttendee(ClubPlanAttendee clubPlanAttendee) {
+		return sqlSession.delete("club.deleteClubPlanAttendee", clubPlanAttendee);
+	}
+
+	@Override
+	public List<ClubNoticeComment> selectClubNoticeCommentList(int clubNo) {
+		return sqlSession.selectList("club.selectClubNoticeCommentList", clubNo);
+	}
+
+	@Override
+	public int insertClubNoticeComment(ClubNoticeComment clubNoticeComment) {
+		return sqlSession.insert("club.insertClubNoticeComment", clubNoticeComment);
+	}
 
 
 

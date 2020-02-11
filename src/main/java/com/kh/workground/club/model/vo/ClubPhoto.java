@@ -26,7 +26,11 @@ public class ClubPhoto implements Serializable {
 	private String clubPhotoOriginal;
 	private String clubPhotoRenamed;
 	private int clubNo;
+	private int clubMemberNo;
 	private Date clubPhotoDate;
 	
+	//가상컬럼
+	private String memberName;
+	private String memberId;
 	
 }

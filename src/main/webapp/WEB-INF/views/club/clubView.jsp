@@ -62,7 +62,11 @@
 #new-club-card:hover .card-body {
 	color: #fff;
 }
-
+.h6{
+position: relative; 
+top:.5rem; 
+left: .5rem;
+}
 .comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93);}
 .comment-text-area{display: inline-block; width: 90%; height: 2rem; margin-right: .3rem;}
 .comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
@@ -106,6 +110,7 @@ $(function(){
  */	
 	sidebarActive(); //사이드바 활성화
 	tabActive(); //서브헤더 탭 활성화
+	
 });
 
 //사이드바 활성화
@@ -163,6 +168,57 @@ function validate() {
 	}
 	return true;
 }
+
+$(()=> {
+	var clubPlanNo = $("#clubPlanNo").val();
+	//console.log(clubPlanNo);
+
+	$("#clubPlanCard").on("click", ()=> {
+		
+		$.ajax({
+			url: "${pageContext.request.contextPath}/club/selectClubPlanList.do", 
+			data: {clubPlanNo: clubPlanNo}, 
+			dataType: "json", 
+			success: data=> {
+				console.log(data);
+				
+				let html = '';
+				$(data).each((idx, a)=>{
+                    html += '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">';
+                    html += '<div class="col-12">';
+					html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+a.renamedFileName+'" alt="Message User Image">';
+					html += '<h6 class="h6">'+a.memberName+'</h6>';
+                    html += '<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">';
+                    html += '<form name="deleteClubPlanAttendeeFrm" action="${pageContext.request.contextPath}/club/deleteClubPlanAttendee.do" method="POST">';
+                    html += '<input type="hidden" name="memberId" value="'+a.memberId+'">';
+                    html += '<input type="hidden" name="clubPlanAttendeeNo" value="'+a.clubPlanAttendeeNo+'">';
+                    html += '<input type="hidden" name="clubNo" value="${club.clubNo}">';
+                    html += '<button type="submit" class="btn btn-tool" onclick="return deleteClubPlanAttendee();">';
+                    html += '<i class="fas fa-times" style="color: black;"></i></button>';
+                    html += '</form>';
+                    html += '</div></div></div>'; 
+                  	
+                    //console.log(a.memberId);
+				});
+				
+				$("#attendeeList").html(html);
+				
+				//console.log($("#attendeeList"));
+			}, 
+			error: (x, s, e)=> {
+				console.log("ajax처리 실패!!", x, s, e);
+			}
+		});
+	});
+});
+
+function deleteClubPlanAttendee() {
+		console.log($(this));
+	if(!confirm("참여를 취소하시겠습니까?")) return false;
+	else {
+		$("[name=deleteClubPlanAttendeeFrm]").submit();
+	}
+}
 </script>
 
 <!-- Navbar ClubView -->
@@ -194,49 +250,48 @@ function validate() {
 	<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
 		<!-- 동호회 대화 -->
 		<li class="nav-item">
-			<button type="button"
-				class="btn btn-block btn-default btn-xs nav-link">
+			<button type="button" class="btn btn-block btn-default btn-xs nav-link">
 				<i class="far fa-comments"></i> 동호회 대화
 			</button>
 		</li>
 
 		<!-- 동호회 멤버 -->
-		<li id="nav-member" class="nav-item dropdown"><a class="nav-link"
-			data-toggle="dropdown" href="#"> <i class="far fa-user"></i> 6
+		<li id="nav-member" class="nav-item dropdown">
+		<a class="nav-link" data-toggle="dropdown" href="#"> 
+			<i class="far fa-user"></i> 6
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 				<a href="#" class="dropdown-item"> <!-- Message Start -->
 					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile">
+						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							 alt="User Avatar" class="img-circle img-profile ico-profile" />
 						<div class="media-body">
 							<p class="memberName">Brad Diesel</p>
 						</div>
 					</div> <!-- Message End -->
-				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
+				</a> 
+				<a href="#" class="dropdown-item"> <!-- Message Start -->
 					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile">
+						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							 alt="User Avatar" class="img-circle img-profile ico-profile">
 						<div class="media-body">
 							<p class="memberName">Brad Diesel</p>
 						</div>
 					</div> <!-- Message End -->
-				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
+				</a> 
+				<a href="#" class="dropdown-item"> <!-- Message Start -->
 					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile">
+						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							 alt="User Avatar" class="img-circle img-profile ico-profile">
 						<div class="media-body">
 							<p class="memberName">Brad Diesel</p>
 						</div>
 					</div> <!-- Message End -->
-				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
+				</a> 
+				<a href="#" class="dropdown-item"> <!-- Message Start -->
 					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile">
+						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							 alt="User Avatar" class="img-circle img-profile ico-profile">
 						<div class="media-body">
 							<div class="media-body">
 								<p class="memberName">Brad Diesel</p>
@@ -246,20 +301,19 @@ function validate() {
 				</a> 
 				<a href="#" class="dropdown-item"> <!-- Message Start -->
 					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile">
+						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							 alt="User Avatar" class="img-circle img-profile ico-profile">
 						<div class="media-body">
 							<p class="memberName">Brad Diesel</p>
 						</div>
 					</div> <!-- Message End -->
 				</a>
-			</div></li>
+			</div>
+		</li>
 
 		<!-- 동호회 설정 -->
 		<li class="nav-item">
-			<button type="button"
-				class="btn btn-block btn-default btn-xs nav-link">
+			<button type="button" class="btn btn-block btn-default btn-xs nav-link">
 				<i class="fas fa-cog"></i>
 			</button>
 		</li>
@@ -277,160 +331,174 @@ function validate() {
 			<section class="project-recent">
 				<div class="card-header" role="button" onclick="toggleList(this);">
 					<h3>
-						<i class="fas fa-chevron-down"></i> <i class="fas fa-images"></i>
-						활동사진
+						<i class="fas fa-chevron-down"></i> <i class="fas fa-images"></i> 활동사진
 					</h3>
 				</div>
-				<!-- /.card-header -->
-				<div id="carouselExampleControls" class="carousel slide"
-					data-ride="carousel">
-					<div class="carousel-inner">
-						<div class="carousel-item active">
-							<div class="row card-content">
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/club/volunteer1.jpg"
-												alt="..." class="img-thumbnail" data-toggle="modal"
-												data-target="#exampleModalCenter">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/photo2.png"
-												alt="..." class="img-thumbnail">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/photo3.jpg"
-												alt="..." class="img-thumbnail">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/photo4.jpg"
-												alt="..." class="img-thumbnail">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
+				<c:if test="${not empty clubPhotoList }">
+				  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+				    <div class="carousel-inner">
+				    <c:forEach var="i" begin="1" end="${Math.ceil(clubPhotoCount/4) }" step="1">
+				    <c:if test="${i == 1 }">
+				      <div class="carousel-item active">
+				        <div class="row card-content">
+				        <c:if test="${clubPhotoCount<4 }">
+				        <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				        <c:if test="${vs.index<4 }">
+				  	  	  <div class="col-12 col-sm-6 col-md-3">
+					  	    <div class="card">
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  			   alt="..." class="img-thumbnail" data-toggle="modal"
+					  			   data-target="#clubPhoto${vs.index }">
+					  		</div>
+					  	  </div>
+				        </c:if>
+				        </c:forEach>
+				          <div class="col-12 col-sm-6 col-md-3">
+				              <div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
+				                <div class="card-body">
+				  	              <i class="fas fa-plus"></i>
+				  	              <h6>새 사진</h6>
+				                </div>
+				              </div>
+				            </div>
+				        </c:if>
+				        <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				        <c:if test="${clubPhotoCount>=4 }">
+				        <c:if test="${vs.index<4 }">
+				  	  	  <div class="col-12 col-sm-6 col-md-3">
+					  	    <div class="card">
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  			   alt="..." class="img-thumbnail" data-toggle="modal"
+					  			   data-target="#clubPhoto${vs.index }">
+					  		</div>
+					  	  </div>
+				        </c:if>
+				        </c:if>
+				        </c:forEach>
+				        </div>
+				      </div>
+				    </c:if>
+				    <c:if test="${i != 1 }">
+				      <div class="carousel-item">
+				        <div class="row card-content">
+				        <c:if test="${i != Math.ceil(clubPhotoCount/4) }">
+					    <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<i*4 }">
+				  	  	  <div class="col-12 col-sm-6 col-md-3">
+					  	    <div class="card">
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  			   alt="..." class="img-thumbnail" data-toggle="modal"
+					  			   data-target="#clubPhoto${vs.index }">
+					  		</div>
+					  	  </div>
+				  		</c:if>
+					    </c:forEach>
+				        </c:if>
+				        <c:if test="${i == Math.ceil(clubPhotoCount/4) }"> <!-- 마지막 슬라이드라면 조건 -->
+					    <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<clubPhotoCount }"> <!-- 4개씩 반복 조건 -->
+				  	  	  <div class="col-12 col-sm-6 col-md-3">
+					  	    <div class="card">
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  			   alt="..." class="img-thumbnail" data-toggle="modal"
+					  			   data-target="#clubPhoto${vs.index }">
+					  		</div>
+					  	  </div>
+				  		</c:if> <!-- 4개씩 반복 조건 끝 -->
+					    </c:forEach>
+				  		<c:if test="${clubPhotoCount%4 != 0 }"> <!-- 플러스버튼 조건 -->
+				  		  <div class="col-12 col-sm-6 col-md-3">
+							<div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
+							  <div class="card-body">
+								<i class="fas fa-plus"></i>
+								<h6>새 사진</h6>
+							  </div>
 							</div>
+						  </div>
+				  		</c:if> <!-- 플러스버튼 조건 끝 -->
+				        </c:if> <!-- 마지막 슬라이드라면 조건 끝 -->
+	              	    </div>
+				      </div>
+				    </c:if>
+				    </c:forEach>
+				    <c:if test="${clubPhotoCount%4 == 0 }"> <!-- 플러스버튼 조건 -->
+				      <div class="carousel-item">
+				        <div class="row card-content">
+				          <div class="col-12 col-sm-6 col-md-3">
+				  		     <div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
+				  		       <div class="card-body">
+				  			     <i class="fas fa-plus"></i>
+				  			     <h6>새 사진</h6>
+				  		       </div>
+				  		     </div>
+				  	       </div>
+				  	     </div>
+				  	   </div>
+				    </c:if> <!-- 플러스버튼 조건 끝 -->
+				    </div>
+				    <!-- 화살표 -->
+				    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+				      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				      <span class="sr-only">Previous</span>
+				    </a>
+				    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+				      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+				      <span class="sr-only">Next</span>
+				    </a>
+				  </div>
+				</c:if>
+				<c:if test="${empty clubPhotoList }">
+				  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+				    <div class="carousel-inner">
+				      <div class="carousel-item active">
+				        <div class="row card-content">
+				          <div class="col-12 col-sm-6 col-md-3">
+				            <div class="card new" id="new-club-card" data-toggle="modal" data-target="#insertPhoto">
+				              <div class="card-body">
+					            <i class="fas fa-plus"></i>
+					            <h6>새 사진</h6>
+				              </div>
+				            </div>
+				          </div>
+				        </div>
+				      </div>
+				    </div>
+				  </div>
+				</c:if>
+				  
+				  <c:forEach items="${clubPhotoList }" var="clubPhoto" varStatus="vs">
+				  <!-- clubPhotoModal -->
+				  <div class="modal fade cd-example-modal-lg" id="clubPhoto${vs.index }"
+					   tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+					  <div class="modal-content card card-outline card-info">
+						<div class="modal-header">
+						  <h5 class="modal-title" id="exampleModalLongTitle">${clubPhoto.clubPhotoTitle }</h5>
+						  <button type="button" class="close" data-dismiss="modal"
+								  aria-label="Close">
+						    <span aria-hidden="true">&times;</span>
+						  </button>
 						</div>
-						<div class="carousel-item">
-							<div class="row card-content">
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/club/volunteer1.jpg"
-												alt="..." class="img-thumbnail" data-toggle="modal"
-												data-target="#exampleModalCenter">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/club/volunteer2.jpg"
-												alt="..." class="img-thumbnail">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/club/volunteer3.jpg"
-												class="img-thumbnail">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/club/volunteer4.jfif"
-												alt="..." class="img-thumbnail">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-							</div>
+						<div class="modal-body">
+						  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+							   alt="..." class="img-thumbnail" data-toggle="modal"
+							   data-target="#clubPhoto${vs.index }">
 						</div>
-						<div class="carousel-item">
-							<div class="row card-content">
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/photo1.png"
-												alt="..." class="img-thumbnail">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/photo2.png"
-												alt="..." class="img-thumbnail">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card">
-										<div class="card-body">
-											<img
-												src="${pageContext.request.contextPath}/resources/img/photo3.jpg"
-												alt="..." class="img-thumbnail">
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-								<div class="col-12 col-sm-6 col-md-3">
-									<div class="card new" id="new-club-card" data-toggle="modal"
-										data-target="#insertPhoto">
-										<div class="card-body">
-											<i class="fas fa-plus"></i>
-											<h6>새 사진</h6>
-										</div>
-									</div>
-									<!-- /.card -->
-								</div>
-							</div>
+						<div class="modal-footer">
+						<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubPhoto.memberId }">
+						  <form name="deleteClubPhotoFrm" action="${pageContext.request.contextPath }/club/deleteClubPhoto.do" method="POST">
+							<input type="hidden" name="clubNo" value="${club.clubNo }" />
+							<input type="hidden" name="clubPhotoNo" value=${clubPhoto.clubPhotoNo } />
+							<input type="hidden" name="clubPhotoRenamed" value=${clubPhoto.clubPhotoRenamed } />
+							<button type="submit" class="btn btn-danger">삭제</button>
+						  </form>
+						</c:if>
+						  <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
 						</div>
+					  </div>
 					</div>
-
-					<a class="carousel-control-prev" href="#carouselExampleControls"
-						role="button" data-slide="prev"> <span
-						class="carousel-control-prev-icon" aria-hidden="true"></span> <span
-						class="sr-only">Previous</span>
-					</a> <a class="carousel-control-next" href="#carouselExampleControls"
-						role="button" data-slide="next"> <span
-						class="carousel-control-next-icon" aria-hidden="true"></span> <span
-						class="sr-only">Next</span>
-					</a>
 				</div>
+				</c:forEach>
 			</section>
 			<!-- /.card-content -->
 
@@ -466,7 +534,7 @@ function validate() {
 				<div class="card-header" role="button" onclick="toggleList(this);">
 					<h3>
 						<i class="fas fa-chevron-down"></i> <i class="fas fa-calendar-alt"></i>
-						2월 일정 <span class="header-count">(2)</span>
+						이번달 일정 <span class="header-count">(${clubPlanCount })</span>
 					</h3>
 				</div>
 				<!-- /.card-header -->
@@ -474,8 +542,9 @@ function validate() {
 					<!-- 일정 -->
 					<c:if test="${not empty clubPlanList }">
 						<c:forEach items="${clubPlanList }" var="clubPlan" varStatus="vs">
+						  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" id="clubPlanNo" />
 							<div class="col-12 col-sm-6 col-md-3">
-								<div class="card mywork" data-toggle="modal"
+								<div class="card mywork" data-toggle="modal" id="clubPlanCard"
 									data-target="#clubPlanView${vs.index }">
 									<div class="card-body">
 										<!-- 타이틀 -->
@@ -501,7 +570,7 @@ function validate() {
 								<div class="modal-dialog modal-dialog-centered modal-lg"
 									role="document">
 									<div class="modal-content card card-outline card-info"
-										style="min-height: 650px">
+										style="min-height: 700px">
 										<div class="modal-header">
 											<h5 class="modal-title" id="exampleModalLongTitle">일정확인하기</h5>
 											<button type="button" class="close" data-dismiss="modal"
@@ -543,28 +612,34 @@ function validate() {
 											</div>
 											<div class="form-group">
 												<label for="inputProjectLeader">참석자</label>
-												<p>
+												  <div id="attendeeList" id="attendeeList">
+												  </div>
+												  <%-- <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">
+							                        <div class="col-12"> 
+							                            <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+							                            <h6 class="h6">이주현</h6>
+							                            <div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">
+							                              <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button>
+							                            </div>
+							                        </div> 
+							                      </div> --%>
 													<!-- 프로필 사진 -->
-													<img
-														src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-														alt="User Avatar" class="img-circle img-profile"
-														style="width: 50px; margin-left: 10px;">
-												</p>
+													<%-- <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg"
+														 alt="User Avatar" class="img-circle elevation-2"
+														 style="width: 50px; margin: 5px" /> --%>
 											</div>
 										</div>
 										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary"
-												data-dismiss="modal">닫기</button>
-											<button type="button" class="btn btn-primary"
-													data-target="#plan-modify${vs.index }" 
-													data-dismiss="modal"
-													data-toggle="modal"
-													style="background-color: #17a2b8; border-color: #17a2b8;">
-												수정
-											</button>
-											<button type="button" class="btn btn-info float-right">
+										  <form name="insertClubPlanAttendanceFrm" action="${pageContext.request.contextPath }/club/insertClubPlanAttendee.do" method="POST">
+										    <input type="hidden" name="clubPlanNo" value=${clubPlan.clubPlanNo } />
+										    <input type="hidden" name="memberId" value=${memberLoggedIn.memberId } />
+										    <input type="hidden" name="clubNo" value=${club.clubNo } />
+											<button type="submit" class="btn btn-info float-right">
 												<i class="fas fa-plus"></i>
 											</button>
+										  </form>
+											<button type="button" class="btn btn-info" data-target="#plan-modify${vs.index }" data-dismiss="modal" data-toggle="modal">수정</button>
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
 										</div>
 									</div>
 								</div>
@@ -649,10 +724,9 @@ function validate() {
 												</div>
 											</div>
 											<div class="modal-footer">
+												<button type="submit" class="btn btn-info">수정</button>
 												<button type="button" class="btn btn-secondary"
 													data-dismiss="modal">닫기</button>
-												<button type="submit" class="btn btn-primary" 
-													style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
 											</div>
 										</form>
 									</div>
@@ -684,7 +758,7 @@ function validate() {
 					<h3>
 						<i class="fas fa-chevron-down"></i> <i
 							class="fas fa-exclamation-circle"></i> 공지사항 <span
-							class="header-count">(1)</span>
+							class="header-count">(${clubNoticeCount })</span>
 					</h3>
 				</div>
 				<!-- /.card-header -->
@@ -743,36 +817,68 @@ function validate() {
 									<!-- NoticeModalComment -->
 									<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
 						            <div class="card-footer card-comments">
-						              <div class="card-comment">
-						                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/고양이.jpg" alt="User Image">
-						                <div class="comment-text">
-						                  <span class="username">이단비<span class="text-muted float-right">2020-01-25</span></span>
-						                  <span>네! 알겠습니다!</span>
-						                  <button class="comment-delete float-right">삭제</button>
-						                  <button class="comment-reply float-right">답글</button>
+									
+									<c:if test="${not empty clubNoticeCommentList }">
+									<c:forEach items="${clubNoticeCommentList }" var="clubNoticeComment">
+									<c:if test="${clubNoticeComment.clubNoticeNo == clubNotice.clubNoticeNo }">
+									<c:if test="${clubNoticeComment.clubNoticeCommentLevel == 1 }">
+						                <div class="card-comment">
+						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${clubNoticeComment.renamedFileName }" alt="User Image">
+						                  <div class="comment-text">
+						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">2020-01-25</span></span>
+						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
+						                    <button class="comment-delete float-right">삭제</button>
+						                    <button class="comment-reply float-right">답글</button>
+						                  </div>
 						                </div>
-						              </div>
-						              <div class="card-comment comment-level2">
-						                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/차은우.jpg" alt="User Image">
-						                <div class="comment-text">
-						                  <span class="username">유혜민<span class="text-muted float-right">2020-01-26</span></span>
-						                  <span>넵! 알겠습니당</span>
-						                  <button class="comment-delete float-right">삭제</button>
-						                  <button class="comment-reply float-right">답글</button>
+									</c:if>
+									<c:if test="${clubNoticeComment.clubNoticeCommentLevel == 2 }">
+						                <div class="card-comment comment-level2">
+						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/차은우.jpg" alt="User Image">
+						                  <div class="comment-text">
+						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">2020-01-26</span></span>
+						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
+						                    <button class="comment-delete float-right">삭제</button>
+						                    <button class="comment-reply float-right">답글</button>
+						                  </div>
 						                </div>
-						              </div>
+									</c:if>
+									</c:if>
+									</c:forEach>
+									</c:if>
 						            </div>
+						            <!-- 댓글 작성 -->
+						            <div class="card-footer">
+						            <form name="insertClubNoticeCommentFrm" action="${pageContext.request.contextPath }/club/insertClubNoticeComment.do" method="post">
+						                <c:if test="${not empty memberLoggedIn }">
+						                  <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}">
+						                </c:if>
+						                <c:if test="${empty memberLoggedIn }">
+						                  <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">
+						                </c:if>
+						                <div class="img-push">
+						                <input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />
+						                <input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
+						                <input type="hidden" name="clubNoticeCommentLevel" value="1" />
+						                <input type="hidden" name="clubMemberNo" value="${clubNotice.clubMemberNo }" />
+						                <input type="text" class="form-control form-control-sm comment-text-area" name="clubNoticeCommentContent" placeholder="댓글을 입력하세요.">
+						                <input type="submit" class="comment-submit" value="등록">
+						                </div>
+						            </form>
+						            </div> 
 								</div>
 								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-dismiss="modal">닫기</button>
 									<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubNotice.memberId }">
+									<form name="deleteClubNoticeFrm" action="${pageContext.request.contextPath}/club/deleteClubNotice.do" method="POST">
+										<input type="hidden" name="clubNo" value="${club.clubNo }" />
+										<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
+										<button type="submit" class="btn btn-danger" >삭제</button>
+									</form>
 									<button type="button" class="btn btn-info"
 										data-dismiss="modal" data-toggle="modal"
 										data-target="#notice-modify${vs.index }">수정</button>
-									<button type="button" class="btn btn-danger"
-										data-dismiss="modal" data-toggle="modal">삭제</button>
 									</c:if>
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
 								</div>
 							</div>
 						</div>
@@ -809,10 +915,9 @@ function validate() {
 										</div>
 									</div>
 									<div class="modal-footer">
+										<button type="submit" class="btn btn-info">수정</button>
 										<button type="button" class="btn btn-secondary"
 											data-dismiss="modal">닫기</button>
-										<button type="submit" class="btn btn-primary"
-											style="background-color: #17a2b8; border-color: #17a2b8;">수정</button>
 									</div>
 								</form>
 							</div>

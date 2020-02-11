@@ -1,12 +1,15 @@
 package com.kh.workground.club.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
+import com.kh.workground.club.model.vo.ClubNoticeComment;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
+import com.kh.workground.club.model.vo.ClubPlanAttendee;
 
 public interface ClubDAO2 {
 
@@ -28,6 +31,22 @@ public interface ClubDAO2 {
 
 	int clubNoticeInsert(ClubNotice clubNotice);
 
-	ClubMember selectOneClubMember(ClubNotice clubNotice);
+	ClubMember selectOneClubMember(Map<String, String> param);
+
+	int deleteClubNotice(int clubNoticeNo);
+
+	List<ClubPhoto> selectClubPhotoList(int clubNo);
+
+	int deleteClubPhoto(ClubPhoto clubPhoto);
+
+	List<ClubPlanAttendee> selectClubPlanAttendeeList(int clubPlanNo);
+
+	int insertClubPlanAttendee(ClubPlanAttendee clubPlanAttendee);
+
+	int deleteClubPlanAttendee(ClubPlanAttendee clubPlanAttendee);
+
+	List<ClubNoticeComment> selectClubNoticeCommentList(int clubNo);
+
+	int insertClubNoticeComment(ClubNoticeComment clubNoticeComment);
 
 }
