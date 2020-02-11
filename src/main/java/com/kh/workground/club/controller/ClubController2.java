@@ -112,6 +112,10 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		clubPlan.setClubPlanStart(clubPlanStart);
 //		logger.debug("clubPlan={}", clubPlan);
 		
+		if("예정".equals(clubPlan.getClubPlanState())) clubPlan.setClubPlanColor("success");
+		else if("완료".equals(clubPlan.getClubPlanState())) clubPlan.setClubPlanColor("warning");
+		else if("취소".equals(clubPlan.getClubPlanState())) clubPlan.setClubPlanColor("danger");
+		
 		int result = clubService2.updateClubPlan(clubPlan);
 		
 		mav.addObject("msg", result>0?"일정 수정을 성공적으로 완료하였습니다.":"일정 수정을 하지 못했습니다.");
@@ -140,6 +144,10 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		clubPlan.setClubPlanStart(clubPlanStart);
 //		logger.debug("clubPlan={}", clubPlan);
+		
+		if("예정".equals(clubPlan.getClubPlanState())) clubPlan.setClubPlanColor("success");
+		else if("완료".equals(clubPlan.getClubPlanState())) clubPlan.setClubPlanColor("warning");
+		else if("취소".equals(clubPlan.getClubPlanState())) clubPlan.setClubPlanColor("danger");
 		
 		int result = clubService2.clubPlanInsert(clubPlan);
 		
