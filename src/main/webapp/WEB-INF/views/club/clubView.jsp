@@ -573,7 +573,7 @@ function loginAlert() {
 										</div>
 										<!-- 날짜정보 -->
 										<div class="card-status">
-											<span class="btn btn-block btn-sm bg-success">${clubPlan.clubPlanState }</span>
+											<span class="btn btn-block btn-sm bg-${clubPlan.clubPlanColor }">${clubPlan.clubPlanState }</span>
 											<span class="end-date"><i class="far fa-calendar-alt"></i>
 												${clubPlan.clubPlanStart }</span>
 										</div>
@@ -617,7 +617,7 @@ function loginAlert() {
 											</div>
 											<div class="form-group">
 												<label for="inputStatus">상태</label> 
-												<span class="btn btn-block btn-sm bg-success"
+												<span class="btn btn-block btn-sm bg-${clubPlan.clubPlanColor }"
 													style="margin-left: 10px; width: 70px;">
 													${clubPlan.clubPlanState }
 												</span>
