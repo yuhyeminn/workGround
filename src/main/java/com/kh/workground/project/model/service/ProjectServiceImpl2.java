@@ -187,6 +187,15 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		}
 		return m;
 	}
+
+	@Override
+	public int updateStatusCode(Map<String, Object> param) {
+		int result = projectDAO.updateStatusCode(param);
+		if(result==0) {
+			throw new ProjectException("프로젝트 상태 코드 수정 오류!");
+		}
+		return result; 
+	}
 	
 
 }

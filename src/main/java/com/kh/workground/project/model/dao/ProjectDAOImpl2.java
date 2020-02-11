@@ -100,6 +100,11 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	public List<Worklist> selectWorklistListByProjectNo(int projectNo) {
 		return sqlSession.selectList("project.selectWorklistListbyProjectNo", projectNo);
 	}
+
+	@Override
+	public int updateStatusCode(Map<String, Object> param) {
+		return sqlSession.update("project.updateStatusCode", param);
+	}
 	
 
 }

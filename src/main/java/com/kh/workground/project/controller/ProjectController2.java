@@ -231,4 +231,32 @@ public class ProjectController2 {
 			}
 		return map;
 	}
+	
+	@RequestMapping("/project/updateStatusCode.do")
+	@ResponseBody
+	public Map<String, Object> updateStatusCode(@RequestParam String statusCode, @RequestParam int projectNo){
+		Map<String, Object> map = new HashMap<>();
+		
+		try {
+			
+			Map<String, Object> param = new HashMap<>();
+			param.put("projectNo", projectNo);
+			param.put("statusCode", statusCode);
+			
+			int result = projectService.updateStatusCode(param);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated );
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 팀원 조회 오류!");
+		}
+		
+		return map;
+	}
+	
+	
+	
+	
 }

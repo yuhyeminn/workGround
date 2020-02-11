@@ -326,4 +326,12 @@
                             left join view_member VM on WCM.charged_member_id = VM.member_id
 		where V.work_no = #{workNo}
 	</select>
+	<update id="updateStatusCode">
+		<if test="statusCode !='' and statusCode != null">
+			update project set project_status_code = to_char(#{statusCode}) where project_no = to_number(#{projectNo})
+		</if>
+		<if test="statusCode =='' or statusCode == null">
+			update project set project_status_code = null where project_no = to_number(#{projectNo})
+		</if>
+	</update>
 </mapper>

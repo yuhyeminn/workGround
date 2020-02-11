@@ -213,7 +213,7 @@
 				             <th><button type="button" class="btn-check"><i class="fas fa-check-square"></i></button></th>
 				                <td style="text-decoration:line-through;">
 				                   <c:if test="${chk.checklistChargedMemberId!=null}">
-				                      <img src="${pageContext.request.contextPath}/resources/img/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+				                      <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
 				                   </c:if>
 				          		   ${chk.checklistContent}
 				                </td>
@@ -224,7 +224,7 @@
 			             <th><button type="button" class="btn-check"><i class="far fa-square"></i></button></th>
 				            <td>
 				               <c:if test="${chk.checklistChargedMemberId!=null}">
-				                 <img src="${pageContext.request.contextPath}/resources/img/default.jpg" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+				                 <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
 				               </c:if>
 				               ${chk.checklistContent}
 				         	</td>
@@ -255,7 +255,7 @@
             <div class="comment-box">
             <div class="card-footer card-comments">
                 <div class="card-comment">
-                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Image">
+                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Image">
                 <div class="comment-text">
                     <span class="username">김효정<span class="text-muted float-right">2020-01-26</span></span>
                     <span>오오 감사합니당</span>
@@ -264,7 +264,7 @@
                 </div>
                 </div>
                 <div class="card-comment">
-                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/default.jpg" alt="User Image">
+                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Image">
                 <div class="comment-text">
                     <span class="username">주보라<span class="text-muted float-right">2020-01-27</span></span>
                     <span>괜찮은데요??</span>
@@ -273,7 +273,7 @@
                 </div>
                 </div>
                 <div class="card-comment comment-level2">
-                    <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/default.jpg" alt="User Image">
+                    <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Image">
                     <div class="comment-text">
                     <span class="username">유혜민<span class="text-muted float-right">2020-01-26</span></span>
                     <span>넵! 알겠습니당</span>
@@ -281,7 +281,7 @@
                     </div>
                 </div>
                 <div class="card-comment comment-level2">
-                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/default.jpg" alt="User Image">
+                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Image">
                 <div class="comment-text">
                     <span class="username">이소현<span class="text-muted float-right">2020-01-27</span></span>
                     <span>훨씬 편하네요~</span>
@@ -293,7 +293,7 @@
             <!-- 댓글 작성 -->
             <div class="card-footer">
             <form action="#" method="post">
-                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/default.jpg">
+                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">
                 <div class="img-push">
                 <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
                 <input class="comment-submit" type="submit" value="등록">
@@ -365,7 +365,7 @@
                         <td>
                             <a href="#">
                             	<div class="img-wrapper">
-                            		<img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="첨부파일 미리보기 이미지">
+                            		<img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="첨부파일 미리보기 이미지">
                             	</div>
                             <span class="filename">file.png</span>
                             </a>

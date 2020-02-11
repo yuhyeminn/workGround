@@ -39,4 +39,6 @@ public interface ProjectDAO2 {
 
 	List<Worklist> selectWorklistListByProjectNo(int projectNo);
 
+	int updateStatusCode(Map<String, Object> param);
+
 }

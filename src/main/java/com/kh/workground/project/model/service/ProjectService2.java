@@ -23,4 +23,6 @@ public interface ProjectService2 {
 
 	Member selectMemberOneByMemberId(String memberId);
 
+	int updateStatusCode(Map<String, Object> param);
+
 }
