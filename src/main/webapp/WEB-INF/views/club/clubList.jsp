@@ -44,8 +44,10 @@ function modal(){
 
 //delete함수
 function delClubFunc(clubNo){
-	
-	location.href = "${pageContext.request.contextPath}/club/deleteClub.do?clubNo="+clubNo;
+	if(!confirm("동호회를 삭제하시겠습니까?")) return false;
+	else {
+		location.href = "${pageContext.request.contextPath}/club/deleteClub.do?clubNo="+clubNo;
+	}
 }
 
 //동호회 소개 모달
@@ -66,7 +68,18 @@ function clubView(clubNo){
 
 
 
-
+//사이드바 활성화
+function sidebarActive(){
+	let navLinkArr = document.querySelectorAll(".sidebar .nav-link");
+	
+	navLinkArr.forEach((obj, idx)=>{
+		let $obj = $(obj);
+		if($obj.hasClass('active'))
+			$obj.removeClass('active');
+	});
+	
+	$("#sidebar-club").addClass("active");
+}
 function clubFunc(){
 	$("#all-club-intro").html(''); //데이터 없을 경우 비우기 위함.
 	$("#my-club-list").html(''); //데이터 없을 경우 비우기 위함.
@@ -101,16 +114,34 @@ function clubFunc(){
 		    	
 		    	allClubHtml+='<div class="card-club-image">';		
 		    	//이미지
-		    	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
-		    			allClubHtml+='<img src="'
-		    						+'${pageContext.request.contextPath}/resources/upload/club/21/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
-		    						+'onclick="clubModalView('+list.clubNo+')">';
+		    	if('${memberLoggedIn.memberId}' == 'admin'){
+	
+		    	   	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
+		    	   		allClubHtml+='<img src="'
+			    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+			    						+'onclick="clubView('+list.clubNo+')">';
+			    	}
+			    	else{
+			    		allClubHtml+='<img src="'
+			    					+'${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"'
+			    					+'onclick="clubView('+list.clubNo+')">';
+		    			}
 		    	}
+		    	
 		    	else{
-		    		allClubHtml+='<img src="'
-		    					+'${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"'
-		    					+'onclick="clubModalView('+list.clubNo+')">';
+		    	   	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
+		    			allClubHtml+='<img src="'
+		    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+		    						+'onclick="clubModalView('+list.clubNo+')">';
+			    	}
+			    	else{
+			    		allClubHtml+='<img src="'
+			    					+'${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"'
+			    					+'onclick="clubModalView('+list.clubNo+')">';
+		    		}    	
+		    	 	
 		    	}
+		 
 		    	allClubHtml+='</div>';
 		    	//동호회 수정
 		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
@@ -136,8 +167,8 @@ function clubFunc(){
 			$.each(data.myClubList,(idx,list)=>{
 				
 				myClubHtml+='<div class="col-12 col-sm-6 col-md-3"><div class="card club card-hover"><div class="card-body">'
-						  +'<div class="card-title"><h5>'+list.clubName+'</h5></div>';
-				
+						  +'<div class="card-title">'+list.clubName+'</div>';
+						
 				//삭제버튼 부분
 				if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin'){
 
@@ -150,7 +181,7 @@ function clubFunc(){
 		    	//이미지
 		    	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
 		    		myClubHtml+='<img src="'
-		    						+'${pageContext.request.contextPath}/resources/upload/club/21/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+		    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
 		    						+'onclick="clubView('+list.clubNo+')">';
 		    	}
 		    	else{
@@ -197,7 +228,7 @@ function clubFunc(){
 		    	//이미지
 		    	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
 		    		standByClubHtml+='<img src="'
-		    						+'${pageContext.request.contextPath}/resources/upload/club/21/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+		    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
 		    						+'onclick="clubModalView('+list.clubNo+')">';
 		    	}
 		    	else{
@@ -243,18 +274,6 @@ function clubFunc(){
 
 
 
-//사이드바 활성화
-function sidebarActive(){
-	let navLinkArr = document.querySelectorAll(".sidebar .nav-link");
-	
-	navLinkArr.forEach((obj, idx)=>{
-		let $obj = $(obj);
-		if($obj.hasClass('active'))
-			$obj.removeClass('active');
-	});
-	
-	$("#sidebar-club").addClass("active");
-}
 </script>
 
 <style>
@@ -805,12 +824,8 @@ function sidebarActive(){
 				</div>
 
 				<!-- /.card-header -->
-				<div class="row card-content" id="my-club-list">
-
-
-
-				</div>
-			</section> 
+				<div class="row card-content" id="my-club-list"></div>
+			</section>
 
 			<!-- 승인 대기중인 동아리 목록 -->
 			<section class="stand-by-club">
@@ -822,9 +837,7 @@ function sidebarActive(){
 				</div>
 				<!-- /.card-header -->
 
-				<div class="row card-content" id="stand-by-club-list">
-
-				</div>
+				<div class="row card-content" id="stand-by-club-list"></div>
 			</section>
 
 		</div>

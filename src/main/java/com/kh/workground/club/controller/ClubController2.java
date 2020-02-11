@@ -62,7 +62,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
 //		logger.debug("clubPhotoList={}", clubPhotoList);
 		List<ClubNoticeComment> clubNoticeCommentList = clubService2.selectClubNoticeCommentList(clubNo);
-		logger.debug("clubNoticeCommentList={}", clubNoticeCommentList);
+//		logger.debug("clubNoticeCommentList={}", clubNoticeCommentList);
+		
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
 		mav.addObject("clubNoticeList", clubNoticeList);

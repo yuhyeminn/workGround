@@ -5,6 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/club/clubViewModal.jsp"></jsp:include>
 
 <style>
 .note-editing-area {
@@ -89,6 +90,7 @@ $(function(){
 		    format: 'YYYY-MM-DD'
 	    }
 	  });
+
 /* 	//Date range as a button
 	$('#daterange-btn').daterangepicker(
 	    {
@@ -112,6 +114,10 @@ $(function(){
 	tabActive(); //서브헤더 탭 활성화
 	
 });
+
+function memberList(clubNo){
+	location.href = "${pageContext.request.contextPath}/club/clubMemberList.do?clubNo="+clubNo;
+}
 
 //사이드바 활성화
 function sidebarActive(){
@@ -219,6 +225,10 @@ function deleteClubPlanAttendee() {
 		$("[name=deleteClubPlanAttendeeFrm]").submit();
 	}
 }
+
+function loginAlert() {
+	alert("로그인 후 이용하실 수 있습니다.");
+}
 </script>
 
 <!-- Navbar ClubView -->
@@ -242,7 +252,10 @@ function deleteClubPlanAttendee() {
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
 		<li id="tab-calendar" class="nav-item"><button type="button">일정</button></li>
-		<li id="tab-member" class="nav-item"><button type="button">멤버</button></li>
+		<c:if test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
+			<li id="tab-member" class="nav-item">
+			<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button></li>
+		</c:if>
 		<li id="tab-attachment" class="nav-item"><button type="button">파일</button></li>
 	</ul>
 
@@ -480,9 +493,16 @@ function deleteClubPlanAttendee() {
 						  </button>
 						</div>
 						<div class="modal-body">
-						  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
-							   alt="..." class="img-thumbnail" data-toggle="modal"
-							   data-target="#clubPhoto${vs.index }">
+							<div class="form-group">
+							  <span class="text-muted float-right">${clubPhoto.memberName }/${clubPhoto.memberId }</span>
+							  <br />
+							  <span class="text-muted float-right">${clubPhoto.clubPhotoDate }</span>
+							</div>
+							<div class="form-group">
+							  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+								   alt="..." class="img-thumbnail" data-toggle="modal"
+								   data-target="#clubPhoto${vs.index }">
+							</div>
 						</div>
 						<div class="modal-footer">
 						<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubPhoto.memberId }">
@@ -570,7 +590,7 @@ function deleteClubPlanAttendee() {
 								<div class="modal-dialog modal-dialog-centered modal-lg"
 									role="document">
 									<div class="modal-content card card-outline card-info"
-										style="min-height: 700px">
+										 style="max-heigth: 100%; height: auto;">
 										<div class="modal-header">
 											<h5 class="modal-title" id="exampleModalLongTitle">일정확인하기</h5>
 											<button type="button" class="close" data-dismiss="modal"
@@ -653,7 +673,7 @@ function deleteClubPlanAttendee() {
 								data-backdrop="static" style="overflow-y: auto;">
 								<div class="modal-dialog modal-dialog-centered modal-lg"
 									role="document">
-									<div class="modal-content card card-outline card-info" style="min-height: 750px;">
+									<div class="modal-content card card-outline card-info" style="max-heigth: 100%; height: auto;">
 										<div class="modal-header">
 											<h5 class="modal-title" id="exampleModalLongTitle">일정수정하기</h5>
 											<button type="button" class="close" data-dismiss="modal"
@@ -775,11 +795,11 @@ function deleteClubPlanAttendee() {
 									</div>
 									<!-- 프로필 사진 -->
 									<img
-										src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+										src="${pageContext.request.contextPath}/resources/img/profile/${clubNotice.renamedFileName }"
 										alt="User Avatar" class="img-circle img-profile">
 									<!-- 타이틀 -->
 									<div class="card-title text-center">
-										<h5>${clubNotice.memberName }</h5>
+										<h5>${clubNotice.memberName }/${clubNotice.memberId }</h5>
 									</div>
 								</div>
 							</div>
@@ -792,7 +812,7 @@ function deleteClubPlanAttendee() {
 						aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered modal-lg"
 							role="document">
-							<div class="modal-content card card-outline card-info" style="min-height: 500px;">
+							<div class="modal-content card card-outline card-info" style="max-heigth: 100%; height: auto;">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal"
 										aria-label="Close">
@@ -804,6 +824,7 @@ function deleteClubPlanAttendee() {
 										<h5 class="modal-title" id="exampleModalLongTitle">
 											${clubNotice.clubNoticeTitle }
 										</h5>
+										<span class="text-muted float-right">${clubNotice.clubNoticeDate }</span>
 									</div>
 									<div class="form-group">
 										<br />
@@ -825,21 +846,11 @@ function deleteClubPlanAttendee() {
 						                <div class="card-comment">
 						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${clubNoticeComment.renamedFileName }" alt="User Image">
 						                  <div class="comment-text">
-						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">2020-01-25</span></span>
+						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">${clubNoticeComment.clubNoticeCommentDate }</span></span>
 						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
-						                    <button class="comment-delete float-right">삭제</button>
-						                    <button class="comment-reply float-right">답글</button>
-						                  </div>
-						                </div>
-									</c:if>
-									<c:if test="${clubNoticeComment.clubNoticeCommentLevel == 2 }">
-						                <div class="card-comment comment-level2">
-						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/차은우.jpg" alt="User Image">
-						                  <div class="comment-text">
-						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">2020-01-26</span></span>
-						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
-						                    <button class="comment-delete float-right">삭제</button>
-						                    <button class="comment-reply float-right">답글</button>
+						                    <c:if test="${not empty memberLoggedIn and clubNoticeComment.memberId==memberLoggedIn.memberId }">
+						                      <button class="comment-delete float-right">삭제</button>
+						                    </c:if>
 						                  </div>
 						                </div>
 									</c:if>
@@ -857,12 +868,12 @@ function deleteClubPlanAttendee() {
 						                  <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">
 						                </c:if>
 						                <div class="img-push">
-						                <input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />
-						                <input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
-						                <input type="hidden" name="clubNoticeCommentLevel" value="1" />
-						                <input type="hidden" name="clubMemberNo" value="${clubNotice.clubMemberNo }" />
-						                <input type="text" class="form-control form-control-sm comment-text-area" name="clubNoticeCommentContent" placeholder="댓글을 입력하세요.">
-						                <input type="submit" class="comment-submit" value="등록">
+						                  <input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />
+						                  <input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
+						                  <input type="hidden" name="clubNoticeCommentLevel" value="1" />
+						                  <input type="hidden" name="clubMemberNo" value="${clubNotice.clubMemberNo }" />
+						                  <input type="text" class="form-control form-control-sm comment-text-area" name="clubNoticeCommentContent" placeholder="댓글을 입력하세요.">
+						                  <input type="submit" class="comment-submit" value="등록">
 						                </div>
 						            </form>
 						            </div> 
@@ -889,7 +900,7 @@ function deleteClubPlanAttendee() {
 						tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
 						aria-hidden="true" data-backdrop="static">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
-							<div class="modal-content card card-outline card-info" style="min-height: 500px;">
+							<div class="modal-content card card-outline card-info" style="max-heigth: 100%; height: auto;"">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 										<span aria-hidden="true">&times;</span>
