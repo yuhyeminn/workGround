@@ -5,6 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/club/clubViewModal.jsp"></jsp:include>
 
 <style>
 .note-editing-area {
@@ -484,9 +485,16 @@ function loginAlert() {
 						  </button>
 						</div>
 						<div class="modal-body">
-						  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
-							   alt="..." class="img-thumbnail" data-toggle="modal"
-							   data-target="#clubPhoto${vs.index }">
+							<div class="form-group">
+							  <span class="text-muted float-right">${clubPhoto.memberName }/${clubPhoto.memberId }</span>
+							  <br />
+							  <span class="text-muted float-right">${clubPhoto.clubPhotoDate }</span>
+							</div>
+							<div class="form-group">
+							  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+								   alt="..." class="img-thumbnail" data-toggle="modal"
+								   data-target="#clubPhoto${vs.index }">
+							</div>
 						</div>
 						<div class="modal-footer">
 						<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubPhoto.memberId }">
@@ -574,7 +582,7 @@ function loginAlert() {
 								<div class="modal-dialog modal-dialog-centered modal-lg"
 									role="document">
 									<div class="modal-content card card-outline card-info"
-										style="min-height: 700px">
+										 style="max-heigth: 100%; height: auto;">
 										<div class="modal-header">
 											<h5 class="modal-title" id="exampleModalLongTitle">일정확인하기</h5>
 											<button type="button" class="close" data-dismiss="modal"
@@ -657,7 +665,7 @@ function loginAlert() {
 								data-backdrop="static" style="overflow-y: auto;">
 								<div class="modal-dialog modal-dialog-centered modal-lg"
 									role="document">
-									<div class="modal-content card card-outline card-info" style="min-height: 750px;">
+									<div class="modal-content card card-outline card-info" style="max-heigth: 100%; height: auto;">
 										<div class="modal-header">
 											<h5 class="modal-title" id="exampleModalLongTitle">일정수정하기</h5>
 											<button type="button" class="close" data-dismiss="modal"
@@ -783,7 +791,7 @@ function loginAlert() {
 										alt="User Avatar" class="img-circle img-profile">
 									<!-- 타이틀 -->
 									<div class="card-title text-center">
-										<h5>${clubNotice.memberName }</h5>
+										<h5>${clubNotice.memberName }/${clubNotice.memberId }</h5>
 									</div>
 								</div>
 							</div>
@@ -796,7 +804,7 @@ function loginAlert() {
 						aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered modal-lg"
 							role="document">
-							<div class="modal-content card card-outline card-info" style="min-height: 600px;">
+							<div class="modal-content card card-outline card-info" style="max-heigth: 100%; height: auto;">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal"
 										aria-label="Close">
@@ -884,7 +892,7 @@ function loginAlert() {
 						tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
 						aria-hidden="true" data-backdrop="static">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
-							<div class="modal-content card card-outline card-info" style="min-height: 500px;">
+							<div class="modal-content card card-outline card-info" style="max-heigth: 100%; height: auto;"">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 										<span aria-hidden="true">&times;</span>

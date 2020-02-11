@@ -7,10 +7,10 @@
 	<!-- sh start -->
 
 	<select id="selectAllClubList" resultMap="clubCollectionMap">
-	select C.*, P.*,(select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn
-	from (select * from club order by ${sort} asc) C
-	left join club_photo P
-	on C.club_no = P.club_no
+		select C.*, P.*,(select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn
+		from (select * from club order by ${sort} asc) C
+			left join club_photo P
+				on C.club_no = P.club_no
 	</select>
 	<insert id="insertNewClub">
 		insert into club
@@ -61,6 +61,33 @@
 			<result column="club_photo_renamed" property="clubPhotoRenamed"></result>
 			<result column="club_no" property="clubNo"></result>
 			<result column="club_photo_date" property="clubPhotoDate"></result>
+		</collection>
+	</resultMap>
+	<select id="selectClubMemberList" resultMap="clubMemberCollectionMap">
+		select C.*, M.*, (select dept_title from department where dept_code = M.dept_code) dept_title, (select job_title from job where M.job_code = job_code) job_title
+		from (select * from club_member where club_code = #{clubNo}) C
+		left join member M on C.emp_id = M.member_id
+	</select>
+	<resultMap type="clubMember" id="clubMemberCollectionMap">
+		<id column="club_member_no" property="clubMemberNo"></id>
+		<result column="emp_id" property="empId"></result>
+		<result column="club_code" property="clubCode"></result>
+		<result column="club_manager_YN" property="clubManagerYN"></result>
+		<result column="club_approve_YN" property="clubApproveYN"></result>
+		<result column="job_title" property="jobTitle"></result>
+		<result column="dept_title" property="deptTitle"></result>
+		<collection property="clubMemberList" ofType="member">
+			<id column="member_id" property="memberId"></id>
+			<result column="member_name" property="memberName"></result>
+			<result column="email" property="email"></result>
+			<result column="phone" property="phone"></result>
+			<result column="date_of_birth" property="dateOfBirth"></result>
+			<result column="dept_code" property="deptCode"></result>
+			<result column="job_code" property="jobCode"></result>
+			<result column="quit_yn" property="quitYn"></result>
+			<result column="manager_id" property="managerId"></result>
+			<result column="original_filename" property="originalFileName"></result>
+			<result column="renamed_filename" property="renamedFileName"></result>
 		</collection>
 	</resultMap>
 
