@@ -71,7 +71,7 @@ public class NoticeController {
 									 Notice notice,
 									 @RequestParam(value="upFile", required=false) MultipartFile upFile,
 									 HttpServletRequest request) {
-		//logger.debug("Notice={}", notice);
+		logger.debug("Notice={}", notice);
 		//logger.debug("사용자입력 name={}", upFile.getName());
 		//logger.debug("fileName={}", upFile.getOriginalFilename());
 		//logger.debug("size={}", upFile.getSize());
@@ -98,15 +98,211 @@ public class NoticeController {
 			notice.setNoticeOriginalFileName(originalFileName);
 			notice.setNoticeRenamedFileName(renamedFileName);
 		}
-//		logger.debug("Notice={}", notice);	
+		
 		if(notice.getDeptCode().equals("all"))notice.setDeptCode(null);
-		notice.setNoticeWriter("admin");
 		int result = noticeService.insertNotice(notice);
-		mav.addObject("msg", result>0?"게시물이 등록되었습니다.":"게시물 등록 실패! 깔깔깔");
+		mav.addObject("msg", result>0?"게시글이 등록되었습니다.":"게시글 등록 실패! 깔깔깔");
 		mav.addObject("loc", "/notice/noticeList.do");
 		mav.setViewName("common/msg");
 		return mav;
 	}
 	
+	@RequestMapping("/notice/deleteNotice.do")
+	public ModelAndView deleteNotice(ModelAndView mav, @RequestParam int noticeNo) {
+		//logger.debug("noticeNo={}", noticeNo);
+		
+		int result = noticeService.deleteNotice(noticeNo);
+		mav.addObject("msg", result>0?"게시글이 삭제되었습니다.":"게시글 삭제 실패! 깔깔깔");
+		mav.addObject("loc", "/notice/noticeList.do");
+		mav.setViewName("common/msg");
+		return mav;
+	}
+	
+	@RequestMapping("/notice/communityFormEnd.do")
+	public ModelAndView communityFormEnd(ModelAndView mav,
+									 	 Community commu,
+									     @RequestParam(value="upFile", required=false) MultipartFile upFile,
+									     HttpServletRequest request) {
+		logger.debug("Community={}", commu);
+		//logger.debug("사용자입력 name={}", upFile.getName());
+		//logger.debug("fileName={}", upFile.getOriginalFilename());
+		//logger.debug("size={}", upFile.getSize());
+		String saveDirectory = request.getSession()
+									  .getServletContext()
+									  .getRealPath("/resources/upload/community");
+	    File dir = new File(saveDirectory);
+		if(dir.exists() == false)
+			dir.mkdir();
+		MultipartFile f = upFile;
+		if(!f.isEmpty()) {
+			String originalFileName = f.getOriginalFilename();
+			String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+			int rndNum = (int)(Math.random()*1000);
+			String renamedFileName = sdf.format(new Date())+"_"+rndNum+ext;
+			try {
+				f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			commu.setCommuOriginalFileName(originalFileName);
+			commu.setCommuRenamedFileName(renamedFileName);
+		}
+		
+		int result = noticeService.insertCommunity(commu);
+		mav.addObject("msg", result>0?"게시글이 등록되었습니다.":"게시글 등록 실패! 깔깔깔");
+		mav.addObject("loc", "/notice/noticeList.do");
+		mav.setViewName("common/msg");
+		return mav;
+	}
+	
+	@RequestMapping("/notice/deleteCommunity.do")
+	public ModelAndView deleteCommunity(ModelAndView mav, int commuNo) {
+		logger.debug("commuNo={}", commuNo);
+		
+		int result = noticeService.deleteCommunity(commuNo);
+		mav.addObject("msg", result>0?"게시글이 삭제되었습니다.":"게시글 삭제 실패! 깔깔깔");
+		mav.addObject("loc", "/notice/noticeList.do");
+		mav.setViewName("common/msg");
+		return mav;
+	}
+	
+	@RequestMapping("/notice/updateNotice.do")
+	public ModelAndView updateNotice(ModelAndView mav, 
+									 Notice notice,
+									 @RequestParam(value="delFileChk", required=false)  Boolean delFileChk,
+									 @RequestParam(value="updateFile", required=false) MultipartFile updateFile,
+								     HttpServletRequest request) {
+		
+//		logger.debug("delFileChk={}", delFileChk);
+//		logger.debug("Notice={}", notice);
+//		logger.debug("사용자입력 name={}", updateFile.getName());
+//		logger.debug("fileName={}", updateFile.getOriginalFilename());
+//		logger.debug("size={}", updateFile.getSize());
+		
+		String saveDirectory = request.getSession()
+				  					  .getServletContext()
+				  					  .getRealPath("/resources/upload/notice");
+		String originalFileName = null;
+		String renamedFileName = null;
+		File dir = new File(saveDirectory);
+		if(dir.exists() == false)
+			dir.mkdir();
+		MultipartFile f = updateFile;
+		if(!f.isEmpty()) {
+			originalFileName = f.getOriginalFilename();
+			String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+			int rndNum = (int)(Math.random()*1000);
+			renamedFileName = sdf.format(new Date())+"_"+rndNum+ext;
+			try {
+				f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			/*notice.setNoticeOriginalFileName(originalFileName);
+			notice.setNoticeRenamedFileName(renamedFileName);*/
+		}
+		
+		//신규첨부파일이 있는 경우, 기존첨부파일 삭제
+		if(updateFile.getSize() != 0){
+			File delFile = new File(saveDirectory, notice.getNoticeRenamedFileName());
+			boolean result = delFile.delete();
+			logger.debug("기존첨부파일삭제={}",result?"성공!":"실패!");
+		}
+		//신규첨부파일이 없는 경우: 기존 파일 삭제
+		else if(delFileChk!=null) {
+			File delFile = new File(saveDirectory, notice.getNoticeRenamedFileName());
+			boolean result = delFile.delete();
+			logger.debug("기존첨부파일삭제={}",result?"성공!":"실패!");
+		}
+		//신규첨부파일이 없는 경우: 기존파일 유지
+		else {
+			originalFileName = notice.getNoticeOriginalFileName();
+			renamedFileName = notice.getNoticeRenamedFileName();
+		}
+		
+		notice.setNoticeOriginalFileName(originalFileName);
+		notice.setNoticeRenamedFileName(renamedFileName);
+		
+		if(notice.getDeptCode().equals("all"))notice.setDeptCode(null);
+		int result = noticeService.updateNotice(notice);
+		mav.addObject("msg", result>0?"게시글이 수정되었습니다.":"게시글 수정 실패! 깔깔깔");
+		mav.addObject("loc", "/notice/noticeList.do");
+		mav.setViewName("common/msg");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/notice/updateCommunity.do")
+	public ModelAndView updateCommunity(ModelAndView mav, 
+									    Community commu,
+									    @RequestParam(value="delFileChk", required=false)  Boolean delFileChk,
+									    @RequestParam(value="updateFile", required=false) MultipartFile updateFile,
+								        HttpServletRequest request) {
+		
+		logger.debug("delFileChk={}", delFileChk);
+		logger.debug("Community={}", commu);
+		logger.debug("사용자입력 name={}", updateFile.getName());
+		logger.debug("fileName={}", updateFile.getOriginalFilename());
+		logger.debug("size={}", updateFile.getSize());
+		
+		String saveDirectory = request.getSession()
+				  					  .getServletContext()
+				                      .getRealPath("/resources/upload/community");
+        String originalFileName = null;
+        String renamedFileName = null;
+        File dir = new File(saveDirectory);
+        if(dir.exists() == false)
+        	dir.mkdir();
+        MultipartFile f = updateFile;
+        if(!f.isEmpty()) {
+        	originalFileName = f.getOriginalFilename();
+        	String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+        	int rndNum = (int)(Math.random()*1000);
+        	renamedFileName = sdf.format(new Date())+"_"+rndNum+ext;
+        	try {
+        		f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+        	} catch (IllegalStateException e) {
+        		e.printStackTrace();
+        	} catch (IOException e) {
+        		e.printStackTrace();
+        	}
+
+        }
+
+        //신규첨부파일이 있는 경우, 기존첨부파일 삭제
+        if(updateFile.getSize() != 0){
+        	File delFile = new File(saveDirectory, commu.getCommuRenamedFileName());
+        	boolean result = delFile.delete();
+        	logger.debug("기존첨부파일삭제={}",result?"성공!":"실패!");
+        }
+        //신규첨부파일이 없는 경우: 기존 파일 삭제
+        else if(delFileChk!=null) {
+        	File delFile = new File(saveDirectory, commu.getCommuRenamedFileName());
+        	boolean result = delFile.delete();
+        	logger.debug("기존첨부파일삭제={}",result?"성공!":"실패!");
+        }
+        //신규첨부파일이 없는 경우: 기존파일 유지
+        else {
+        	originalFileName = commu.getCommuOriginalFileName();
+        	renamedFileName = commu.getCommuRenamedFileName();
+        }
+        
+        commu.setCommuOriginalFileName(originalFileName);
+        commu.setCommuRenamedFileName(renamedFileName);
+       
+        int result = noticeService.updateCommunity(commu);
+        mav.addObject("msg", result>0?"게시글이 수정되었습니다.":"게시글 수정 실패! 깔깔깔");
+        mav.addObject("loc", "/notice/noticeList.do");
+        mav.setViewName("common/msg");
+		
+		return mav;
+	}
 	
 }

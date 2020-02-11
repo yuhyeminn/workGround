@@ -19,4 +19,14 @@ public interface NoticeService {
 	
 	int insertNotice(Notice notice);
 
+	int deleteNotice(int noticeNo);
+
+	int insertCommunity(Community commu);
+
+	int deleteCommunity(int commuNo);
+
+	int updateNotice(Notice notice);
+
+	int updateCommunity(Community commu);
+
 }
