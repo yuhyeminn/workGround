@@ -1,6 +1,7 @@
 package com.kh.workground.club.model.vo;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class ClubNotice implements Serializable {
 	private String clubNoticeContent;
 	private int clubNo;
 	private int clubMemberNo;
+	private Date clubNoticeDate;
 	
 	//가상컬럼
 	private String memberName;

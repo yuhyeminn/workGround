@@ -220,38 +220,6 @@ function deleteClubPlanAttendee() {
 	}
 }
 
-$(()=> {
-	$("button.comment-reply").on("click", function(e) {
-		if(${empty memberLoggedIn}) loginAlert();
-		else {
-			var $div = $("<div></div>");
-			var html = '<form name="insertClubNoticeComment2" action="${pageContext.request.contextPath}/club/insertClubNoticeComment.do" method="POST">'
-			html += '<input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />';
-            html += '<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />';
-            html += '<input type="hidden" name="clubNoticeCommentLevel" value="2" />';
-            html += '<input type="hidden" name="clubMemberNo" value="${clubNotice.clubMemberNo }" />';
-            html += '<input type="hidden" name="clubNoticeCommentRef" value="${clubNotice.clubNoticeCommentNo }" />';
-            html += '<input type="text" class="form-control form-control-sm comment-text-area" name="clubNoticeCommentContent" placeholder="댓글을 입력하세요.">';
-            html += '<input type="submit" class="comment-submit" value="등록">';
-            html += '</form>'
-            
-            $div.html(html);
-            
-            $div.insertAfter($(this).parent().parent())
-            	.children('$div')
-            	.slideDown(800)
-            	.children('form')
-            	.submit(function(e) {
-            		var $text =$(this).children('input:text');
-            		
-            		if($text.val().trim().length == 0)
-            			e.preventDefault();
-            	});
-            
-		}
-	});
-});
-
 function loginAlert() {
 	alert("로그인 후 이용하실 수 있습니다.");
 }
@@ -840,6 +808,7 @@ function loginAlert() {
 										<h5 class="modal-title" id="exampleModalLongTitle">
 											${clubNotice.clubNoticeTitle }
 										</h5>
+										<span class="text-muted float-right">${clubNotice.clubNoticeDate }</span>
 									</div>
 									<div class="form-group">
 										<br />
@@ -866,20 +835,6 @@ function loginAlert() {
 						                    <c:if test="${not empty memberLoggedIn and clubNoticeComment.memberId==memberLoggedIn.memberId }">
 						                      <button class="comment-delete float-right">삭제</button>
 						                    </c:if>
-						                    <button class="comment-reply float-right">답글</button>
-						                  </div>
-						                </div>
-									</c:if>
-									<c:if test="${clubNoticeComment.clubNoticeCommentLevel == 2 }">
-						                <div class="card-comment comment-level2">
-						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${clubNoticeComment.renamedFileName }" alt="User Image">
-						                  <div class="comment-text">
-						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">${clubNoticeComment.clubNoticeCommentDate }</span></span>
-						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
-						                    <c:if test="${not empty memberLoggedIn and clubNoticeComment.memberId==memberLoggedIn.memberId }">
-						                      <button class="comment-delete float-right">삭제</button>
-						                    </c:if>
-						                    <button class="comment-reply float-right">답글</button>
 						                  </div>
 						                </div>
 									</c:if>
