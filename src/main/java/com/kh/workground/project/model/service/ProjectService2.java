@@ -8,4 +8,10 @@ import com.kh.workground.project.model.vo.Project;
 
 public interface ProjectService2 {
 
+	int insertProject(Project p, List<String> projectMemberList);
+
+	List<Member> selectMemberListByDeptCode(Member memberLoggedIn);
+
+	Map<String, List<Project>> selectProjectListByStatusCode(Map<String, Object> param);
+
 }

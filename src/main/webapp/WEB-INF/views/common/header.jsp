@@ -1,5 +1,11 @@
+<%@page import="com.kh.workground.member.model.vo.Member"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	/* Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+	System.out.println("memberLoggedIn="+memberLoggedIn); */
+	//application.setAttribute("memberLoggedIn", memberLoggedIn);
+%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -16,6 +22,8 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/fontawesome-free/css/all.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
   <!-- summernote -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/summernote/summernote-bs4.css">
   <!-- iCheck for checkboxes and radio inputs -->
@@ -52,6 +60,11 @@
   <script src="${pageContext.request.contextPath}/resources/js/adminlte.min.js"></script>
   <!-- AdminLTE for demo purposes -->
   <script src="${pageContext.request.contextPath}/resources/js/demo.js"></script>
+  <!-- bs-custom-file-input -->
+  <script src="${pageContext.request.contextPath}/resources/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+  <!-- DataTables -->
+  <script src="${pageContext.request.contextPath}/resources/plugins/datatables/jquery.dataTables.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
   <!-- Summernote -->
   <script src="${pageContext.request.contextPath}/resources/plugins/summernote/summernote-bs4.min.js"></script>
   <!-- Select2 -->
@@ -173,17 +186,17 @@
 
       <!-- 프로필 -->
       <li id="user-panel" class="nav-item dropdown">
-        <a href="" class="d-block image" data-toggle="dropdown"><img src="${pageContext.request.contextPath }/resources/img/profile.jfif" alt="User Image"></a>
+        <a href="" class="d-block image" data-toggle="dropdown"><img src="${pageContext.request.contextPath }/resources/img/profile/${memberLoggedIn.renamedFileName}" alt="User Image"></a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <a href="#" id="user-profile" class="dropdown-item">
-            <img src="${pageContext.request.contextPath }/resources/img/profile.jfif" alt="User Image">
+          <a href="${pageContext.request.contextPath}/member/memberView.do?memberId=${memberLoggedIn.memberId}" id="user-profile" class="dropdown-item">
+            <img src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}" alt="User Image">
             <div id="user-info">
-              <p>이단비</p>
-              <p>danbi.db@gmail.com</p>
+              <p>${memberLoggedIn.memberName}</p>
+              <p>${memberLoggedIn.email}</p>
             </div>
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" id="user-settings" class="dropdown-item ">
+          <a href="${pageContext.request.contextPath}/member/memberView.do?memberId=${memberLoggedIn.memberId}&active=setting" id="user-settings" class="dropdown-item ">
             <span>계정설정</span>
             프로필, 이메일, 비밀번호, 그 외 더보기... 
           </a>
