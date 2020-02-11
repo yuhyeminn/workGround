@@ -160,7 +160,7 @@ public class ClubController {
 
 			int result = clubService.insertClubMember(map);
 
-			mav.addObject("msg", result > 0 ? "동호회 가입 성공" : "동호회 가입 실패");
+			mav.addObject("msg", result > 0 ? "동호회 가입 요청" : "동호회 가입요청 실패");
 			mav.addObject("loc", "/club/clubList.do");
 			mav.setViewName("common/msg");
 		} catch (Exception e) {
