@@ -112,7 +112,8 @@
 			club_plan_start = #{clubPlanStart},
 			club_plan_state = #{clubPlanState},
 			club_plan_place = #{clubPlanPlace},
-			club_plan_manager = #{clubPlanManager}
+			club_plan_manager = #{clubPlanManager}, 
+			club_plan_color = #{clubPlanColor}
 		where club_plan_no = #{clubPlanNo}
 	</update>
 
@@ -132,7 +133,8 @@
 			   #{clubPlanState},
 			   #{clubPlanPlace},
 			   #{clubPlanManager},
-			   #{clubNo})
+			   #{clubNo}, 
+			   #{clubPlanColor})
 	</insert>
 	
 	<select id="selectClubNoticeList" resultType="clubNotice">
