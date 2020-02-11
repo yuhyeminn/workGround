@@ -111,7 +111,7 @@ public class ClubController {
 
 	@RequestMapping("/club/deleteClub.do")
 	public ModelAndView deleteClub(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo) {
-		
+
 		try {
 			// logger.info("clubNo={}", clubNo);
 			int result = clubService.deleteClub(clubNo);
@@ -119,7 +119,7 @@ public class ClubController {
 			mav.addObject("msg", result > 0 ? "동호회 삭제 성공!" : "동호회 삭제 실패");
 			mav.addObject("loc", "/club/clubList.do");
 			mav.setViewName("common/msg");
-			
+
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ClubException("동호회 삭제 오류!");
@@ -175,9 +175,11 @@ public class ClubController {
 
 		try {
 			List<ClubMember> memberList = clubService.selectClubMemberList(clubNo);
-			logger.info("memberList{}",memberList);
-			
-			mav.addObject("memberList",memberList);
+			logger.info("memberList{}", memberList);
+
+			mav.addObject("memberList", memberList);
+			mav.addObject("clubNo", clubNo);
+			mav.addObject("searchKeyword", "no");
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -187,4 +189,91 @@ public class ClubController {
 		return mav;
 	}
 
+	@RequestMapping("/club/deleteClubMember.do")
+	public ModelAndView deleteClubMEmber(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo,
+			@RequestParam(value = "clubMemberNo") int clubMemberNo) {
+		try {
+
+			logger.info("clubMemberNo{}", clubMemberNo);
+			int result = clubService.deleteClubMember(clubMemberNo);
+
+			mav.addObject("msg", result > 0 ? "회원 탈퇴 성공" : "회원 탈퇴 실패");
+			mav.addObject("loc", "/club/clubMemberList.do?clubNo=" + clubNo);
+			mav.setViewName("common/msg");
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ClubException("동호회 멤버 탈퇴 오류!");
+		}
+
+		return mav;
+	}
+
+	@RequestMapping("/club/updateClubManager.do")
+	public ModelAndView updateClubManager(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo,
+			@RequestParam(value = "memberId") String memberId) {
+
+		try {
+			Map param = new HashMap<>();
+			param.put("clubNo", clubNo);
+			param.put("memberId", memberId);
+
+			int result = clubService.updateClubManager(param);
+			logger.info("result{}", result);
+			mav.addObject("msg", result > 0 ? "관리자 변경 성공" : "관리자 변경 실패");
+			mav.addObject("loc", "/club/clubMemberList.do?clubNo=" + clubNo);
+			mav.setViewName("common/msg");
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ClubException("동호회 관리자 추가 오류!");
+		}
+		return mav;
+	}
+
+	@RequestMapping("/club/approveClubMember.do")
+	public ModelAndView approveClubMember(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo,
+			@RequestParam(value = "memberId") String memberId) {
+
+		try {
+			Map param = new HashMap<>();
+			param.put("clubNo", clubNo);
+			param.put("memberId", memberId);
+
+			int result = clubService.approveClubMember(param);
+			logger.info("result{}", result);
+			mav.addObject("msg", result > 0 ? "회원 승인" : "회원 승인 실패");
+			mav.addObject("loc", "/club/clubMemberList.do?clubNo=" + clubNo);
+			mav.setViewName("common/msg");
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ClubException("회원 승인 오류!");
+		}
+
+		return mav;
+	}
+
+	@RequestMapping("/club/searchClubMember.do")
+	public ModelAndView searchClubMember(ModelAndView mav, @RequestParam(value = "keyword") String keyword,
+										 @RequestParam(value = "clubNo") int clubNo) {
+
+		try {
+			Map param = new HashMap<>();
+			param.put("keyword", keyword);
+			param.put("clubNo", clubNo);
+			List<ClubMember> memberList = clubService.searchClubMember(param);
+			logger.info("memberList{}", memberList);
+
+			mav.addObject("memberList", memberList);
+			mav.addObject("clubNo", clubNo);
+			mav.addObject("searchKeyword", "no");
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ClubException("동호회 멤버 검색 오류!");
+		}
+
+		return mav;
+	}
 }

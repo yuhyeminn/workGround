@@ -90,6 +90,29 @@
 			<result column="renamed_filename" property="renamedFileName"></result>
 		</collection>
 	</resultMap>
+	
+	<delete id="deleteClubMember">
+		delete from club_member
+		where club_member_no = #{clubMemberNo}
+	</delete>
+	
+	<update id="updateClubManager">
+		update club_member
+		set club_manager_yn = 'Y'
+		where club_code = #{clubNo} and emp_id = #{memberId}
+	
+	</update>
+	
+	<update id="approveClubMember">
+		update club_member
+		set club_approve_yn = 'Y'
+		where club_code = #{clubNo} and emp_id = #{memberId}
+	</update>
+	
+	<select id="searchClubMember" resultMap="clubMemberCollectionMap">
+		select *
+	
+	</select>
 
 	<!-- sh end -->
 
@@ -237,5 +260,6 @@
 			   #{clubNoticeCommentRef}, 
 			   #{clubNo})
 	</insert>
+	
 	<!-- br end -->
 </mapper>

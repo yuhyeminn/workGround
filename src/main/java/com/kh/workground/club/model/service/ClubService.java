@@ -26,4 +26,12 @@ public interface ClubService {
 
 	List<ClubMember> selectClubMemberList(int clubNo);
 
+	int deleteClubMember(int clubMemberNo);
+
+	int updateClubManager(Map param);
+
+	int approveClubMember(Map param);
+
+	List<ClubMember> searchClubMember(Map param);
+
 }

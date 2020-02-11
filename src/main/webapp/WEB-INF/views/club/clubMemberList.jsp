@@ -87,6 +87,30 @@ function sidebarActive(){
 function goMemberProfile(memberId){
     location.href = '${pageContext.request.contextPath}/member/memberView.do?memberId='+memberId;
 }
+
+//멤버 삭제
+function deleteClubMem(clubMemberNo){
+	
+	var clubNo ='${clubNo}';
+	if(!confirm("회원을 탈퇴시키겠니까?")) return false;
+	else {
+		location.href = "${pageContext.request.contextPath}/club/deleteClubMember.do?clubMemberNo="+clubMemberNo+"&&clubNo="+clubNo;
+	}
+}
+
+//관리자변경
+function addManager(memberId){
+	
+	var clubNo ='${clubNo}';
+	location.href = "${pageContext.request.contextPath}/club/updateClubManager.do?clubNo="+clubNo+"&&memberId="+memberId;
+	
+}
+
+//가입승인
+function approveJoin(memberId){
+	var clubNo ='${clubNo}';
+	location.href = "${pageContext.request.contextPath}/club/approveClubMember.do?clubNo="+clubNo+"&&memberId="+memberId;
+}
 </script>
 
 
@@ -99,10 +123,12 @@ function goMemberProfile(memberId){
 		<div id="member-inner" class="table-responsive p-0">
 			<!-- SEARCH FORM -->
 			<div class="navbar-light">
-				<form id="memberSearchFrm" class="form-inline">
+				<form id="clubMemberSearchFrm" class="form-inline"
+				action="${pageContext.request.contextPath}/club/searchClubMember.do"
+				method="post" enctype="multipart/form-data">
 					<div class="input-group input-group-sm">
 						<input class="form-control form-control-navbar" type="search"
-							placeholder="멤버 검색하기" aria-label="Search">
+							placeholder="멤버 검색하기" aria-label="Search" name="keyword">
 						<div class="input-group-append">
 							<button class="btn btn-navbar" type="submit">
 								<i class="fas fa-search"></i>
@@ -111,6 +137,7 @@ function goMemberProfile(memberId){
 					</div>
 				</form>
 			</div>
+			<br />
 
 			<!-- 멤버리스트 -->
 			<table id="tbl-projectAttach"
@@ -125,7 +152,7 @@ function goMemberProfile(memberId){
 						<th style="width: 16%"></th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="member-body">
 					<c:forEach items="${memberList}" var="m">
 						<tr>
 							<td>
@@ -148,7 +175,7 @@ function goMemberProfile(memberId){
 
 							<td><c:if
 									test="${fn:contains(m.clubApproveYN,'N')}">
-									<button type="button" class="btn btn-primary btn-sm allow-btn">Allow</button>
+									<button type="button" class="btn btn-primary btn-sm allow-btn" onclick="approveJoin('${m.empId}')">Allow</button>
 								</c:if>
 
 								<div class="dropdown">
@@ -158,9 +185,12 @@ function goMemberProfile(memberId){
 										<i class="fas fa-ellipsis-v"></i>
 									</button>
 									<div class="dropdown-menu dropdown-menu-right">
-										<a href="#" class="dropdown-item" id="delMem"><i
+										<a href="#" class="dropdown-item" onclick="deleteClubMem('${m.clubMemberNo}')"><i
 											class="far fa-trash-alt"></i> 탈퇴</a>
-										<a href="#" class="dropdown-item" id="manage-change"><i class="fas fa-star"></i>관리자변경</a>
+											
+										<c:if test="${fn:contains(m.clubManagerYN,'N') and fn:contains(m.clubApproveYN,'Y')}">
+											<a href="#" class="dropdown-item" onclick="addManager('${m.empId}')"><i class="fas fa-star"></i>관리자변경</a>
+										</c:if>
 									</div>
 								</div></td>
 						</tr>

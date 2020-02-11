@@ -62,5 +62,28 @@ public class ClubServiceImpl implements ClubService {
 		return clubDAO.selectClubMemberList(clubNo);
 	}
 
+	@Override
+	public int deleteClubMember(int clubMemberNo) {
+		return clubDAO.deleteClubMember(clubMemberNo);
+	}
+
+	@Override
+	public int updateClubManager(Map param) {
+
+		return clubDAO.updateClubManager(param);
+	}
+
+	@Override
+	public int approveClubMember(Map param) {
+
+		return clubDAO.approveClubMember(param);
+	}
+
+	@Override
+	public List<ClubMember> searchClubMember(Map param) {
+
+		return clubDAO.searchClubMember(param);
+	}
+
 
 }
