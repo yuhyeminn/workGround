@@ -57,5 +57,10 @@ public class ClubServiceImpl implements ClubService {
 		return clubDAO.selectAllStandByClubList(param);
 	}
 
+	@Override
+	public List<ClubMember> selectClubMemberList(int clubNo) {
+		return clubDAO.selectClubMemberList(clubNo);
+	}
+
 
 }

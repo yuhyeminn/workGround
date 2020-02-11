@@ -24,6 +24,8 @@ public interface ClubDAO {
 
 	List<Club> selectAllStandByClubList(Map param);
 
+	List<ClubMember> selectClubMemberList(int clubNo);
+
 
 
 }

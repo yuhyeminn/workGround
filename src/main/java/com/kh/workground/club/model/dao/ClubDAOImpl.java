@@ -58,5 +58,11 @@ public class ClubDAOImpl implements ClubDAO {
 		return sqlSession.selectList("club.selectAllStandByClubList",param);
 	}
 
+	@Override
+	public List<ClubMember> selectClubMemberList(int clubNo) {
+
+		return sqlSession.selectList("club.selectClubMemberList",clubNo);
+	}
+
 
 }
