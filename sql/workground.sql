@@ -253,11 +253,11 @@ create table attachment(
 CREATE SEQUENCE seq_attachment;
 
 --================================================
---notice 관련 테이블/시퀀스
+--notice/community 관련 테이블/시퀀스
 --================================================
 --notice테이블
 --------------------------------------------------
-create table notice (
+create table notice(
 	notice_no	number not null,
 	notice_writer varchar2(30) not null,
 	notice_title varchar2(100) not null,
@@ -273,6 +273,25 @@ create table notice (
 --notice 테이블 시퀀스 생성
 --------------------------------------------------
 create sequence seq_notice;
+
+--------------------------------------------------
+--community 테이블 생성
+--------------------------------------------------
+create table community(
+	commu_no number not null,
+	commu_writer varchar2(30) not null,
+	commu_title	varchar2(100) not null,
+	commu_content varchar2(4000)	not null,
+    commu_date date default sysdate not null,
+	commu_original_filename varchar2(100) null,
+	commu_renamed_filename varchar2(100) null,
+    constraint pk_community primary key(commu_no),
+    constraint fk_commu_writer foreign key(commu_writer) references member(member_id) on delete set null  
+);
+--------------------------------------------------
+--community 테이블 시퀀스 생성
+--------------------------------------------------
+create sequence seq_community;
 
 
 --================================================
@@ -316,10 +335,12 @@ drop sequence seq_attachment;
 
 
 --------------------------------------------------
---project테이블 관련 drop문
+--notice/community테이블 관련 drop문
 --------------------------------------------------
-drop table notice;
-drop sequence seq_notice;
+--drop table notice;
+--drop sequence seq_notice;
+--drop table community;
+--drop sequence seq_community;
 
 */
 
@@ -480,9 +501,10 @@ select * from work_comment;
 select * from attachment;
 
 --------------------------------------------------
---notice테이블 관련 select문
+--notice/community테이블 관련 select문
 --------------------------------------------------
 select * from notice;
+select * from community;
 
 
 --================================================
@@ -513,4 +535,22 @@ from (select P.*, PM.member_id
       from view_project P left join project_members PM on P.project_no = PM.project_no
       order by P.project_no desc) V 
       join view_member M on V.member_id = M.member_id;
+      
+--================================================
+--뷰: notice+member
+--================================================
+create or replace view view_noticeMember as 
+select N.*, M.member_name, M.renamed_filename
+from notice N left join member M on N.notice_writer = M.member_id; 
+--drop view view_noticeMember;
+--select * from view_noticeMember;
+
+--================================================
+--뷰: community+member
+--================================================
+create or replace view view_communityMember as 
+select C.*, M.member_name, M.renamed_filename
+from community C left join member M on C.commu_writer = M.member_id; 
+--drop view view_communityMember;
+--select * from view_communityMember;
 

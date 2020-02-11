@@ -98,7 +98,7 @@ public class NoticeController {
 			notice.setNoticeOriginalFileName(originalFileName);
 			notice.setNoticeRenamedFileName(renamedFileName);
 		}
-		//logger.debug("Notice={}", notice);	
+//		logger.debug("Notice={}", notice);	
 		if(notice.getDeptCode().equals("all"))notice.setDeptCode(null);
 		notice.setNoticeWriter("admin");
 		int result = noticeService.insertNotice(notice);

@@ -46,3 +46,4 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 }
+

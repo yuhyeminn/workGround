@@ -32,3 +32,4 @@ public class Community implements Serializable{
 	private String renamedFileName; //프로필사진: view_communityMember 이용해서 조회
 
 }
+
