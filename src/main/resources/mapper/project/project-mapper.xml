@@ -183,9 +183,18 @@
 		delete from worklist where worklist_no = #{worklistNo}
 	</delete>
 	
+	<!-- insertWork.do: 업무 추가  -->
+	<insert id="insertWork">
+		insert into work values(seq_work.nextval, #{worklistNo}, #{workTitle}, null, default, null, null, null, default, null, null)
+		<selectKey keyProperty="workNo" resultType="_int" order="AFTER">
+			select seq_work.currval from dual
+		</selectKey>
+	</insert>
 	
-	
-	
+	<!-- insertWork.do: 업무 배정된 멤버 추가  -->
+	<insert id="insertWorkChargedMember" parameterType="hashMap">
+		insert into work_charged_members values(seq_work_charged_members.nextval, #{workNo}, #{memberId})
+	</insert>
 	
 	
 	

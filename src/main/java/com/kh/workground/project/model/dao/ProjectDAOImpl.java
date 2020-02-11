@@ -117,6 +117,16 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.delete("project.deleteWorklist", worklistNo);
 	}
 
+	@Override
+	public int insertWork(Work work) {
+		return sqlSession.insert("project.insertWork", work);
+	}
+
+	@Override
+	public int insertWorkChargedMember(Map<String, Object> chargedParam) {
+		return sqlSession.insert("project.insertWorkChargedMember", chargedParam);
+	}
+
 
 
 }

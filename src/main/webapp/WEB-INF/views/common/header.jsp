@@ -1,11 +1,6 @@
 <%@page import="com.kh.workground.member.model.vo.Member"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%
-	/* Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-	System.out.println("memberLoggedIn="+memberLoggedIn); */
-	//application.setAttribute("memberLoggedIn", memberLoggedIn);
-%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>

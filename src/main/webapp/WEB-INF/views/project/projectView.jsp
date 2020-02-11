@@ -170,99 +170,229 @@ function deleteWorklist(){
 //새 업무 만들기
 function addWork(){
 	//날짜 설정
-    $('.btn-setWorkDate').daterangepicker();
-    
-	let btnAdd = document.querySelectorAll('.btn-addWork');
-	let btnCancel = document.querySelectorAll('.btn-addWork-cancel');
-	let btnSubmit = document.querySelectorAll('.btn-addWork-submit');
+    $('.btn-addWorkDate').daterangepicker();
 	
-   	let addTagStr;
-	let addMemberStr;
-	let addDateStr;
+	let $btnAddArr = $('.btn-addWork').not('#btn-addWorklist');
+    let chkHtml = '<i class="fas fa-check"></i>'; //체크 아이콘 
+	
+	let addTag;
+	let addDateArr = [];
+	let addMemberArr = [];
 	
 	//+버튼 제어
-    btnAdd.forEach((obj, idx)=>{
-		
+    $btnAddArr.each((idx, obj)=>{
     	let worklistNo = obj.value;
-    	
+    	let btnCancel = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-cancel');
+    	let btnSubmit = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-submit');
    		let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
    		let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
    		
    		//설정 버튼: 멤버, 태그, 날짜 
-   		let chkHtml = '<i class="fas fa-check"></i>'; //체크 아이콘 
-   		let dropMemTag = document.querySelectorAll('#worklist-'+worklistNo+' .drop-memTag');
-   		let dropWorkTag = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
-   		let dropDate = document.querySelectorAll('.btn-setWorkDate');
-   		let dPicker = document.querySelectorAll('.daterangepicker');
+   		let btnAddMem = document.querySelector('#worklist-'+worklistNo+' .btn-addWorkMember');
+   		let btnAddTag = document.querySelector('#worklist-'+worklistNo+' .btn-addWorkTag');
+   		let btnAddDate = document.querySelector('#worklist-'+worklistNo+' .btn-addWorkDate'); 
    		
-    		let addTag;
-    		let addMemberArr = [];
-    		let addDateArr = [];
+   		let memTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-memTag');
+		let workTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
+		let dPickerArr = document.querySelectorAll('.daterangepicker');
+   		
+    	//버튼 value에 worklistNo 담기
+    	/* $(btnAddMem).val(worklistNo); //멤버배정
+    	$(btnCancel).val(worklistNo); //취소
+    	$(btnSu bmit).val(worklistNo); //만들기 */
+    	
    		//+버튼 클릭
     	obj.addEventListener('click', ()=>{
-    		
-	    	//취소, 만들기버튼 value에 worklistNo 담기
-	    	$(btnSubmit).val(worklistNo);
-	    	$(btnCancel).val(worklistNo);
-    		
+    		//let worklistNo = obj.value;
+   			/* let memTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-memTag');
+   			let workTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
+   			let dPicker = document.querySelectorAll('.daterangepicker'); */
+   			
+    		//입력창 열기
     		$('.addWork-wrapper').removeClass('show');
-    		$(addWorkWrapper).toggleClass("show");
+    		$(addWorkWrapper).addClass("show");
     		$(workTitle).focus();
     		
-    		//업무배정멤버 클릭
-    		dropMemTag.forEach((obj, idx)=>{
-    			console.log(obj);
-    			console.log("addMemberArr="+addMemberArr);
-    			
+   			
+    		//멤버버튼 클릭
+   			memTagArr.forEach((obj, idx)=>{
+   				obj.addEventListener('click', e=>{
+   					let className = obj.className;
+   					let classArr = className.split(" ");
+   					let memberId = classArr[2];
+   					
+   					let idx = addMemberArr.indexOf(memberId);
+   					let $hasCheck = $(obj).find('.media-body'); //체크아이콘 들어갈 태그
+   					
+   					//addMemberArr에 선택한 memberId 담기
+   					//배열에 아이디가 존재하지 않는 경우
+   					if(idx === -1) {
+   						$(obj).addClass('checked');
+   						$hasCheck.append(chkHtml);
+   						addMemberArr.push(memberId);
+   					}
+   					//배열에 이미 존재하는 경우
+   					else {
+   						$(obj).removeClass('checked');
+   						let $check = $hasCheck.find('.fa-check'); 
+   						$check.remove();
+   						addMemberArr.splice(idx, 1);
+   					}
+   				}); 
+   			}); //end of memTagArr
+   			
+   			
+   			//업무상태태그 클릭
+   			workTagArr.forEach((obj, idx)=>{
     			obj.addEventListener('click', e=>{
-    				let className = obj.className;
-    				let classArr = className.split(" ");
-    				let memberId = classArr[2];
-    				
-    				let idx = addMemberArr.indexOf(memberId);
-    				let $hasCheck = $(obj).find('.media-body'); //체크아이콘 들어갈 태그
-    				
-    				//addMemberArr에 선택한 memberId 담기
-    				//배열에 존재하지 않는 경우
-    				if(idx === -1) {
-    					$(obj).addClass('checked');
-    					$hasCheck.append(chkHtml);
-	    				addMemberArr.push(memberId);
+    				let $this = $(e.target);
+    				let $check = $('.drop-workTag .fa-check');
+		    		
+		    		//addTag변수에 선택한 태그코드 담기
+    				if($this.hasClass('WT1')) {
+    					//이미 선택된 태그가 아닌 경우에는 체크
+    					if(!$this.hasClass('checked')){
+	    					$this.addClass('checked');
+	    					$check.remove(); //다른 태그에 체크 아이콘 더해져있으면 지우기
+	    					$this.append(chkHtml); //체크 아이콘 추가 
+	    					addTag = "WT1";
+    					}
+    					//이미 선택된 태그는 체크 해제
+    					else{
+    						$this.removeClass('checked');
+    						$this.find('.fa-check').remove();
+    						addTag = "";
+    					}
     				}
-    				else {
-	    				let $check = $hasCheck.find('.fa-check'); 
-	    				$check.remove();
-    					addMemberArr.splice(idx, 1);
+    				else if($this.hasClass('WT2')) {
+    					if(!$this.hasClass('checked')){
+	    					$this.addClass('checked');
+	    					$check.remove();
+	    					$this.append(chkHtml);
+	    					addTag = "WT2";
+    					}
+    					else{
+    						$this.removeClass('checked');
+    						$this.find('.fa-check').remove();
+    						addTag = "";
+    					}
     				}
-    				console.log(addMemberArr);
-    				addMemberStr = addMemberArr.join(',');
-    				console.log(addMemberStr);
+    				else if($this.hasClass('WT3')) {
+    					if(!$this.hasClass('checked')){
+	    					$this.addClass('checked');
+	    					$check.remove();
+	    					$this.append(chkHtml);
+	    					addTag = "WT3";
+    					}
+    					else{
+    						$this.removeClass('checked');
+    						$this.find('.fa-check').remove();
+    						addTag = "";
+    					}
+    				} //end of else if
     				
-    			});
-    		}); //업무배정멤버 끝
-    		
-    		
+    			}); //end of 업무태그 click
+    		}); //업무태그 끝
+   			
+   			
+    		//날짜버튼 클릭
+   			btnAddDate.addEventListener('click', e=>{
+   				let btnAddDate = e.target.parentNode;
+   				let dp; //선택된 데이트피커
+   				
+   				dPickerArr.forEach((obj, idx)=>{
+   					if(obj.style.display==='block'){
+   						dp = obj;
+   					}
+   				});
+   				
+   				//데이트피커 요소들
+   				let $btnApply = $(dp).find('.applyBtn');
+   				let selectedVal;
+   				let addDate = e.target.parentNode.parentNode; //추가될 버튼 담길 요소
+   				
+   				//적용버튼 클릭 시
+   				$btnApply.on('click', ()=>{
+   					//날짜 뽑아내기
+   					selectedVal = $(dp).find('.drp-selected').text();
+   					let start = selectedVal.split(' - ')[0];
+   					let end = selectedVal.split(' - ')[1];
+   					let startArr = start.split('/');
+   					let endArr = end.split('/');
+   					
+   					let startDate = startArr[0]+"월 "+startArr[1]+"일";
+   					let endDate = endArr[0]+"월 "+endArr[1]+"일";
+   					
+   					//배열에 담기
+   					addDateArr.push(start);
+   					addDateArr.push(end);
+   					
+    				//추가될 버튼 요소
+    				let dateHtml = '<button type="button" class="btn-cancelDate">'+start+' - '+end+'<i class="fas fa-times"></i></button>';
+    				
+    				//데이트피커버튼 지우고  
+    				$(btnAddDate).remove();
+    				$(addDate).append(dateHtml);
+    				
+    				let $btnCancelDate = $(addDate).find('.btn-cancelDate');
+    				
+    				//날짜 지우기
+    				$btnCancelDate.on('click', ()=>{
+    					addDateArr.length = 0; //배열 초기화
+    					$btnCancelDate.remove();
+    					$(addDate).append(btnAddDate);
+    				});
+    				
+   				}); //end of click $btnApply
+   				
+   			}); //날짜 버튼끝
+   			
+   			
+   			//만들기버튼 클릭
+   			btnSubmit.addEventListener('click', e=>{
+   				let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]').value;
+   				console.log(addMemberArr);
+   				console.log(addDateArr);
+   				let data = {
+   						worklistNo: worklistNo,
+   						workTitle: workTitle,
+   						workChargedMember: addMemberArr,
+   						workTag: addTag,
+   						workDate: addDateArr
+   				};
+   				
+   				$.ajax({
+   					url: '${pageContext.request.contextPath}/project/insertWork',
+   					data: data,
+   					dataType: 'json',
+   					type: 'POST',
+   					success: data=>{
+   						console.log(data);
+   						
+   						//성공한 경우
+   						if(data.result===addMemberArr.length){
+   							
+   						}
+   						//실패한 경우
+   						else{
+   							
+   						}
+   					},
+   					error: (x,s,e) => {
+   						console.log(x,s,e);
+   					}
+   				});
+   			}) //end of 만들기 버튼
+   			
+   			
+   			//취소버튼 클릭
+   			btnCancel.addEventListener('click', e=>{
+   				$(workTitle).val("");
+   				$(addWorkWrapper).removeClass("show");
+   			});
+   			
     	}); //end of +버튼 클릭
     }); // end of +버튼 제어 끝
-    
-	
-    
-    //만들기버튼 클릭
-	
-	
-    
-    //취소버튼 클릭
-	btnCancel.forEach((obj, idx)=>{
-		obj.addEventListener('click', ()=>{
-			let worklistNo = obj.value;
-			let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
-			let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
-			
-			$(workTitle).val("");
-			$(addWorkWrapper).toggleClass("show");
-		});
-	});
-	    
 }
 
 //체크리스트 체크
@@ -324,23 +454,20 @@ function goTabMenu(){
 	let btnAnalysis = document.querySelector("#btn-tab-analysis");
 	let btnAttach = document.querySelector("#btn-tab-attach");
 	
+	//업무 탭 클릭
 	btnWork.addEventListener('click', e=>{
-		location.href = "${pageContext.request.contextPath}/project/projectView.do";	
+		location.href = "${pageContext.request.contextPath}/project/projectView.do?projectNo=${project.projectNo}";	
 	});
 	
+	//분석 탭 클릭
 	btnAnalysis.addEventListener('click', e=>{
-		location.href = "${pageContext.request.contextPath}/project/projectAnalysis.do";	
+		location.href = "${pageContext.request.contextPath}/project/projectAnalysis.do?projectNo=${project.projectNo}";	
 	});
 	
-	/* btnAttach.addEventListener('click', e=>{
-		location.href = "${pageContext.request.contextPath}/project/projectAttachment.do";	
-	}); */
-	
-	
-	//파일 탭
+	//파일 탭 클릭
 	btnAttach.addEventListener('click', e=>{
 		$.ajax({
-			url: "${pageContext.request.contextPath}/project/projectAttachment.do",
+			url: "${pageContext.request.contextPath}/project/projectView.do?projectNo=${project.projectNo}&tab=attach",
 			type: "get",
 			dataType: "html",
 			success: data => {
@@ -348,6 +475,8 @@ function goTabMenu(){
 				
 				$(contentWrapper).html("");
 				$(contentWrapper).html(data); 
+				$(contentWrapper).removeAttr('id');
+				$(contentWrapper).attr('class', 'content-wrapper navbar-light');
 				
 			},
 			error: (x,s,e) => {
@@ -898,7 +1027,7 @@ function setting(){
 
                 <!-- 새 업무 만들기 -->
                 <div class="addWork-wrapper">
-	                <form action="" class="addWorkFrm">
+	                <form class="addWorkFrm">
 	                    <!-- 업무 타이틀 작성 -->
 	                    <textarea name="workTitle" class="addWork-textarea" placeholder="새 업무 만들기"></textarea>
 	
@@ -908,7 +1037,7 @@ function setting(){
 		                    <div class="addWork-btnLeft">
 		                        <!-- 업무 멤버 배정 -->
 		                        <div class="add-member dropdown">
-			                        <button type="button" class="nav-link" data-toggle="dropdown"><i class="fas fa-user-plus"></i></button>
+			                        <button type="button" class="nav-link btn-addWorkMember" data-toggle="dropdown"><i class="fas fa-user-plus"></i></button>
 			                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 			                            <c:forEach items="${pMemList}" var="m">
 							            <a href="javascript:void(0)" class="dropdown-item drop-memTag ${m.memberId}">
@@ -925,7 +1054,7 @@ function setting(){
 		
 		                        <!-- 태그 설정 -->
 		                        <div class="add-tag dropdown">
-			                        <button type="button" class="nav-link" data-toggle="dropdown"><i class="fas fa-tag"></i></button>
+			                        <button type="button" class="nav-link btn-addWorkTag" data-toggle="dropdown"><i class="fas fa-tag"></i></button>
 			                        <div class="dropdown-menu dropdown-menu-right">
 			                            <a href="javascript:void(0)" class="dropdown-item work-tag drop-workTag WT1">
 			                            	<span class="btn btn-xs bg-danger WT1">priority</span>
@@ -941,7 +1070,7 @@ function setting(){
 		
 		                        <!-- 날짜 설정 -->
 		                        <div class="add-date">
-			                        <button type="button" class="btn-setWorkDate"><i class="far fa-calendar-alt"></i></button>
+			                        <button type="button" class="btn-addWorkDate"><i class="far fa-calendar-alt"></i></button>
 			                        <!-- <button type="button" class="btn-cancelDate">2월 12일 - 2월 14일 <i class="fas fa-times"></i></button> -->
 		                        </div>
 		                    </div>

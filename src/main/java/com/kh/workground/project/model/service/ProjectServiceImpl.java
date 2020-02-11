@@ -1,6 +1,7 @@
 package com.kh.workground.project.model.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		//2. 중요 표시된 프로젝트 조회(프로젝트 번호만)
 		List<Project> listByImportant = new ArrayList<>();
-		logger.debug("ServiceImpl1111111111111111111111111");
 		List<Integer> pNoListByImportant = projectDAO.selectListByImportantProjectNo(memberId);
-		logger.debug("ServiceImp33333333333333333333333333");
 		if(pNoListByImportant==null)
 			throw new ProjectException("중요 표시된 프로젝트 조회 오류!");
 		
@@ -287,6 +286,50 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		if(result==0)
 			throw new ProjectException("업무리스트 삭제 오류!");
+		
+		return result;
+	}
+
+	@Override
+	public int insertWork(Map<String, Object> param) {
+		int result = 0;
+		
+		//1.업무 객체 생성
+		Work work = new Work();
+		work.setWorklistNo((int)param.get("worklistNo"));
+		work.setWorkTitle(String.valueOf(param.get("workTitle")));
+		work.setWorkTagCode(String.valueOf(param.get("workTag")));
+		//to_date('02/12/2020', 'mm/dd/yyyy')
+		//날짜 넣기
+		List<String> dateList = (List<String>)param.get("workDate");
+		if(dateList!=null && !dateList.isEmpty()) {
+			//시작일을 지정한 경우
+			if(dateList.get(0)!=null) {
+				//work.setWorkStartDate(dateList.get(0));
+			}
+		}
+		
+		//2.업무 insert
+		/*result = projectDAO.insertWork(work);
+		
+		if(result==0)
+			throw new ProjectException("새 업무 만들기 오류!");
+		
+		
+		//3.위에서 가져온 workNo로 업무 배정된 멤버 insert
+		result = 0;
+		List<String> memberList = (List<String>)param.get("workChargedMember");
+		Map<String, Object> chargedParam = new HashMap<>(); 
+		chargedParam.put("workNo", work.getWorkNo());
+		
+		for(String memberId: memberList) {
+			chargedParam.put("memberId", memberId);
+			result += projectDAO.insertWorkChargedMember(chargedParam);
+		}
+		
+		if(result != memberList.size())
+			throw new ProjectException("업무 배정된 멤버 추가 오류!");*/
+		
 		
 		return result;
 	}

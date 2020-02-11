@@ -1,5 +1,6 @@
 package com.kh.workground.project.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,8 @@ import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
 import com.kh.workground.project.model.vo.Project;
+import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
 public class ProjectController {
@@ -80,8 +83,10 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/projectView.do")
-	public ModelAndView projectView(ModelAndView mav, HttpSession session, @RequestParam int projectNo) {
+	public ModelAndView projectView(ModelAndView mav, HttpSession session, @RequestParam int projectNo, 
+									@RequestParam(defaultValue="work", required=false) String tab) {
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		logger.debug("tab={}", tab);
 		
 		try {
 			//1. 업무로직
@@ -91,7 +96,13 @@ public class ProjectController {
 			mav.addObject("project", p);
 			mav.addObject("pMemList", p.getProjectMemberList());
 			mav.addObject("wlList", p.getWorklistList());
-			mav.setViewName("/project/projectView");
+			
+			//서브헤더 탭에 따라 분기
+			if("work".equals(tab))
+				mav.setViewName("/project/projectView");
+			else if("attach".equals(tab))
+				mav.setViewName("/project/projectAttachmentAjax");
+			
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -180,14 +191,65 @@ public class ProjectController {
 		return map;
 	}
 	
+	@PostMapping("/project/insertWork")
+	@ResponseBody
+	public Map<String, Integer> insertWork(@RequestParam(value="worklistNo") int worklistNo, 
+										   @RequestParam(value="workTitle") String workTitle,
+										   @RequestParam(value="workChargedMember[]", required=false) List<String> workChargedMember,
+										   @RequestParam(value="workTag", required=false) String workTag,
+										   @RequestParam(value="workDate[]", required=false) List<String> workDate){
+		
+		Map<String, Integer> map = new HashMap<>();
+		logger.debug("worklistNo={}", worklistNo);
+		logger.debug("workTitle={}", workTitle);
+		logger.debug("workChargedMember={}", workChargedMember);
+		logger.debug("workTag={}", workTag);
+		logger.debug("workDate={}", workDate);
+		
+		try {
+			//1.업무로직
+			//1-1.파라미터 map에 담기
+			Map<String, Object> param = new HashMap<>();
+			param.put("worklistNo", worklistNo);
+			param.put("workTitle", workTitle);
+			
+			if(workChargedMember.size()==0) param.put("workChargedMember", null);
+			else param.put("workChargedMember", workChargedMember);
+			
+			if(workTag==null) param.put("workTag", null);
+			else param.put("workTag", workTag);
+			
+			if(workDate.size()==0) param.put("workDate", null);
+			else param.put("workDate", workDate);
+			
+			//1-2.추가
+			int result = projectService.insertWork(param);
+			map.put("result", result);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("새 업무 만들기 오류!");
+		}
+		
+		return map;
+	}
 	
-	@RequestMapping("/project/projectAttachment.do")
+	/*@RequestMapping("/project/projectAttachment.do")
 	public ModelAndView projectAttachment(ModelAndView mav) {
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		
+		try {
+			//1. 업무로직
+			Project p = projectService.selectProjectWorklistAll(projectNo, memberLoggedIn.getMemberId());
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 파일탭 조회 오류!");
+		}
 		
 		mav.setViewName("/project/projectAttachmentAjax");
 		
 		return mav;
-	}
+	}*/
 	
 	@RequestMapping("/project/projectAnalysis.do")
 	public ModelAndView projectAnalysis(ModelAndView mav) {

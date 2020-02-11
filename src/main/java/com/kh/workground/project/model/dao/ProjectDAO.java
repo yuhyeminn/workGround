@@ -49,4 +49,9 @@ public interface ProjectDAO {
 
 	int deleteWorklist(int worklistNo);
 
+	int insertWork(Work work);
+
+	int insertWorkChargedMember(Map<String, Object> chargedParam);
+
+
 }

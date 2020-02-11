@@ -33,4 +33,5 @@ public class Attachment implements Serializable {
 	private Date attachmentEnrollDate;
 	
 	private Member attachmentWriterMember; //attachmentWriterId로 가져온 멤버 객체
+	private double attachmentSize; //파일 크기!?! 
 }

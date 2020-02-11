@@ -23,4 +23,6 @@ public interface ProjectService {
 	int insertWorklist(Map<String, Object> param);
 
 	int deleteWorklist(int worklistNo);
+
+	int insertWork(Map<String, Object> param);
 }
