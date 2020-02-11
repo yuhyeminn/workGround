@@ -29,4 +29,5 @@ public class ClubNotice implements Serializable {
 	//가상컬럼
 	private String memberName;
 	private String memberId;
+	private String renamedFileName;
 }

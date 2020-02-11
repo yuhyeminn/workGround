@@ -109,7 +109,8 @@
 	</insert>
 	
 	<select id="selectClubNoticeList" resultType="clubNotice">
-		select * from club_notice N
+		select * 
+		from club_notice N
 			left join club_member C on N.club_member_no = C.club_member_no 
 			left join member M on C.emp_id = M.member_id 
 		where club_no = #{clubNo} 
@@ -188,11 +189,12 @@
 	</delete>
 	
 	<select id="selectClubNoticeCommentList" resultType="clubNoticeComment">
-		select N.*, M.member_name, M.renamed_filename
+		select N.*, M.member_name, M.renamed_filename, M.member_id 
 		from club_notice_comment N 
 			left join club_member C on N.club_member_no = C.club_member_no 
 			left join member M on C.emp_id = M.member_id
-		where club_no = #{clubNo}
+		where club_no = #{clubNo} 
+		order by club_notice_comment_date asc
 	</select>
 	
 	<insert id="insertClubNoticeComment">

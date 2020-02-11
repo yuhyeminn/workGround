@@ -33,4 +33,5 @@ public class ClubNoticeComment implements Serializable {
 	//가상컬럼
 	private String memberName;
 	private String renamedFileName;
+	private String memberId;
 }

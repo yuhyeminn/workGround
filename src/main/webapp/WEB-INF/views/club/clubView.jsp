@@ -219,6 +219,42 @@ function deleteClubPlanAttendee() {
 		$("[name=deleteClubPlanAttendeeFrm]").submit();
 	}
 }
+
+$(()=> {
+	$("button.comment-reply").on("click", function(e) {
+		if(${empty memberLoggedIn}) loginAlert();
+		else {
+			var $div = $("<div></div>");
+			var html = '<form name="insertClubNoticeComment2" action="${pageContext.request.contextPath}/club/insertClubNoticeComment.do" method="POST">'
+			html += '<input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />';
+            html += '<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />';
+            html += '<input type="hidden" name="clubNoticeCommentLevel" value="2" />';
+            html += '<input type="hidden" name="clubMemberNo" value="${clubNotice.clubMemberNo }" />';
+            html += '<input type="hidden" name="clubNoticeCommentRef" value="${clubNotice.clubNoticeCommentNo }" />';
+            html += '<input type="text" class="form-control form-control-sm comment-text-area" name="clubNoticeCommentContent" placeholder="댓글을 입력하세요.">';
+            html += '<input type="submit" class="comment-submit" value="등록">';
+            html += '</form>'
+            
+            $div.html(html);
+            
+            $div.insertAfter($(this).parent().parent())
+            	.children('$div')
+            	.slideDown(800)
+            	.children('form')
+            	.submit(function(e) {
+            		var $text =$(this).children('input:text');
+            		
+            		if($text.val().trim().length == 0)
+            			e.preventDefault();
+            	});
+            
+		}
+	});
+});
+
+function loginAlert() {
+	alert("로그인 후 이용하실 수 있습니다.");
+}
 </script>
 
 <!-- Navbar ClubView -->
@@ -775,7 +811,7 @@ function deleteClubPlanAttendee() {
 									</div>
 									<!-- 프로필 사진 -->
 									<img
-										src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+										src="${pageContext.request.contextPath}/resources/img/profile/${clubNotice.renamedFileName }"
 										alt="User Avatar" class="img-circle img-profile">
 									<!-- 타이틀 -->
 									<div class="card-title text-center">
@@ -792,7 +828,7 @@ function deleteClubPlanAttendee() {
 						aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered modal-lg"
 							role="document">
-							<div class="modal-content card card-outline card-info" style="min-height: 500px;">
+							<div class="modal-content card card-outline card-info" style="min-height: 600px;">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal"
 										aria-label="Close">
@@ -825,20 +861,24 @@ function deleteClubPlanAttendee() {
 						                <div class="card-comment">
 						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${clubNoticeComment.renamedFileName }" alt="User Image">
 						                  <div class="comment-text">
-						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">2020-01-25</span></span>
+						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">${clubNoticeComment.clubNoticeCommentDate }</span></span>
 						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
-						                    <button class="comment-delete float-right">삭제</button>
+						                    <c:if test="${not empty memberLoggedIn and clubNoticeComment.memberId==memberLoggedIn.memberId }">
+						                      <button class="comment-delete float-right">삭제</button>
+						                    </c:if>
 						                    <button class="comment-reply float-right">답글</button>
 						                  </div>
 						                </div>
 									</c:if>
 									<c:if test="${clubNoticeComment.clubNoticeCommentLevel == 2 }">
 						                <div class="card-comment comment-level2">
-						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/차은우.jpg" alt="User Image">
+						                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${clubNoticeComment.renamedFileName }" alt="User Image">
 						                  <div class="comment-text">
-						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">2020-01-26</span></span>
+						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">${clubNoticeComment.clubNoticeCommentDate }</span></span>
 						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
-						                    <button class="comment-delete float-right">삭제</button>
+						                    <c:if test="${not empty memberLoggedIn and clubNoticeComment.memberId==memberLoggedIn.memberId }">
+						                      <button class="comment-delete float-right">삭제</button>
+						                    </c:if>
 						                    <button class="comment-reply float-right">답글</button>
 						                  </div>
 						                </div>
@@ -857,12 +897,12 @@ function deleteClubPlanAttendee() {
 						                  <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">
 						                </c:if>
 						                <div class="img-push">
-						                <input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />
-						                <input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
-						                <input type="hidden" name="clubNoticeCommentLevel" value="1" />
-						                <input type="hidden" name="clubMemberNo" value="${clubNotice.clubMemberNo }" />
-						                <input type="text" class="form-control form-control-sm comment-text-area" name="clubNoticeCommentContent" placeholder="댓글을 입력하세요.">
-						                <input type="submit" class="comment-submit" value="등록">
+						                  <input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />
+						                  <input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
+						                  <input type="hidden" name="clubNoticeCommentLevel" value="1" />
+						                  <input type="hidden" name="clubMemberNo" value="${clubNotice.clubMemberNo }" />
+						                  <input type="text" class="form-control form-control-sm comment-text-area" name="clubNoticeCommentContent" placeholder="댓글을 입력하세요.">
+						                  <input type="submit" class="comment-submit" value="등록">
 						                </div>
 						            </form>
 						            </div> 
