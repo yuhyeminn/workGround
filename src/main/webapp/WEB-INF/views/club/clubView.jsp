@@ -175,20 +175,21 @@ function validate() {
 	return true;
 }
 
-$(()=> {
+/* $(()=> {
 	var clubPlanNo = $("#clubPlanNo").val();
 	//console.log(clubPlanNo);
 
-	$("#clubPlanCard").on("click", ()=> {
+	$(".clubPlanCard").on("click", ()=> {
 		
 		$.ajax({
-			url: "${pageContext.request.contextPath}/club/selectClubPlanList.do", 
+			url: "${pageContext.request.contextPath}/club/selectClubPlanAttendeeList.do", 
 			data: {clubPlanNo: clubPlanNo}, 
 			dataType: "json", 
 			success: data=> {
 				console.log(data);
 				
 				let html = '';
+				let clubPlanNo = '';
 				$(data).each((idx, a)=>{
                     html += '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">';
                     html += '<div class="col-12">';
@@ -204,10 +205,14 @@ $(()=> {
                     html += '</form>';
                     html += '</div></div></div>'; 
                   	
+                    clubPlanNo = a.clubPlanNo;
                     //console.log(a.memberId);
 				});
 				
-				$("#attendeeList").html(html);
+				console.log(clubPlanNo);
+				console.log("#attendeeList"+clubPlanNo);
+				
+				$("#attendeeList"+clubPlanNo).html(html);
 				
 				//console.log($("#attendeeList"));
 			}, 
@@ -216,7 +221,7 @@ $(()=> {
 			}
 		});
 	});
-});
+}); */
 
 function deleteClubPlanAttendee() {
 		console.log($(this));
@@ -564,7 +569,7 @@ function loginAlert() {
 						<c:forEach items="${clubPlanList }" var="clubPlan" varStatus="vs">
 						  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" id="clubPlanNo" />
 							<div class="col-12 col-sm-6 col-md-3">
-								<div class="card mywork" data-toggle="modal" id="clubPlanCard"
+								<div class="card mywork clubPlanCard" data-toggle="modal" id="clubPlanCard${clubPlan.clubPlanNo }"
 									data-target="#clubPlanView${vs.index }">
 									<div class="card-body">
 										<!-- 타이틀 -->
@@ -632,17 +637,28 @@ function loginAlert() {
 											</div>
 											<div class="form-group">
 												<label for="inputProjectLeader">참석자</label>
-												  <div id="attendeeList" id="attendeeList">
+												  <div class="attendeeList" id="attendeeList${clubPlan.clubPlanNo }">
 												  </div>
-												  <%-- <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">
+												  <c:if test="${not empty clubPlanAttendeeList }">
+												  <c:forEach items="${clubPlanAttendeeList }" var="clubPlanAttendee">
+												  <c:if test="${clubPlanAttendee.clubPlanNo == clubPlan.clubPlanNo }">
+												  <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">
 							                        <div class="col-12"> 
-							                            <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-							                            <h6 class="h6">이주현</h6>
+							                            <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/${clubPlanAttendee.renamedFileName}" alt="Message User Image">
+							                            <h6 class="h6">${clubPlanAttendee.memberName }</h6>
 							                            <div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">
-							                              <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button>
+							                              <form name="deleteClubPlanAttendeeFrm" action="${pageContext.request.contextPath}/club/deleteClubPlanAttendee.do" method="POST">
+														    <input type="hidden" name="memberId" value="${clubPlanAttendee.memberId }">
+                    									    <input type="hidden" name="clubPlanAttendeeNo" value="${clubPlanAttendee.clubPlanAttendeeNo }">
+                    									    <input type="hidden" name="clubNo" value="${club.clubNo}">
+							                                <button type="submit" class="btn btn-tool"><i class="fas fa-times" style="color: black;"></i></button>
+							                              </form>
 							                            </div>
 							                        </div> 
-							                      </div> --%>
+							                      </div>
+												  </c:if>
+												  </c:forEach>
+												  </c:if>
 													<!-- 프로필 사진 -->
 													<%-- <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg"
 														 alt="User Avatar" class="img-circle elevation-2"
@@ -658,7 +674,14 @@ function loginAlert() {
 												<i class="fas fa-plus"></i>
 											</button>
 										  </form>
+										  <c:if test="${not empty memberLoggedIn and clubPlan.memberId == memberLoggedIn.memberId}">
 											<button type="button" class="btn btn-info" data-target="#plan-modify${vs.index }" data-dismiss="modal" data-toggle="modal">수정</button>
+											<form name="deleteClubPlanFrm" action="${pageContext.request.contextPath }/club/deleteClubPlan.do" method="POST">
+											  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
+											  <input type="hidden" name="clubNo" value="${club.clubNo }" />
+											  <button type="submit" class="btn btn-danger">삭제</button>
+											</form>
+										  </c:if>
 											<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
 										</div>
 									</div>

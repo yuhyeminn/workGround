@@ -130,6 +130,7 @@
 			</div>
 			<form name="clubPlanInsertFrm" action="${pageContext.request.contextPath }/club/clubPlanInsert.do" method="post">
 				<input type="hidden" name="clubNo" value="${club.clubNo }" />
+				<input type="hidden" name="memberId" value="${memberLoggedIn.memberId }" />
 				<div class="modal-body">
 					<div class="form-group">
 						<label for="inputName">일정</label> 

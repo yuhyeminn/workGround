@@ -100,9 +100,11 @@
 	</select>
 
 	<select id="selectClubPlanList" resultType="clubPlan">
-		select * from club_plan
-		where club_no = #{clubNo} and extract(month from club_plan_start) = extract(month from sysdate)
-		order by club_plan_start, club_plan_no asc
+		select * 
+		from club_plan P 
+    		left join club_member M on P.club_no = M.club_code and P.member_id = M.emp_id 
+		where P.club_no = #{clubNo} and extract(month from club_plan_start) = extract(month from sysdate)
+		order by club_plan_start asc
 	</select>
 
 	<update id="updateClubPlan">
@@ -131,10 +133,11 @@
 			   #{clubPlanContent},
 			   #{clubPlanStart},
 			   #{clubPlanState},
+			   #{clubPlanColor}, 
 			   #{clubPlanPlace},
 			   #{clubPlanManager},
 			   #{clubNo}, 
-			   #{clubPlanColor})
+			   #{memberId})
 	</insert>
 	
 	<select id="selectClubNoticeList" resultType="clubNotice">
@@ -237,5 +240,18 @@
 			   #{clubNoticeCommentRef}, 
 			   #{clubNo})
 	</insert>
+	
+	<select id="selectAllClubPlanAttendeeList" resultType="clubPlanAttendee">
+		select A.* , M.member_id, M.renamed_filename, M.member_name 
+		from club_plan_attendee A 
+			left join club_member C on A.club_member_no = C.club_member_no
+    		left join member M on C.emp_id = M.member_id
+		order by A.club_plan_attendee_date desc
+	</select>
+	
+	<delete id="deleteClubPlan">
+		delete from club_plan 
+		where club_plan_no = #{clubPlanNo}
+	</delete>
 	<!-- br end -->
 </mapper>

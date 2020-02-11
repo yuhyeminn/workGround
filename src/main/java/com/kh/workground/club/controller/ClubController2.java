@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
+import com.kh.workground.club.model.service.ClubService;
 import com.kh.workground.club.model.service.ClubService2;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
@@ -45,7 +46,6 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	@Autowired
 	ClubService2 clubService2;
 	
-	
 	@RequestMapping("/club/clubView.do")
 	public ModelAndView clubView(ModelAndView mav,
 								 @RequestParam("clubNo") int clubNo) {
@@ -56,19 +56,22 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 //		logger.info("club={}", club);
 		
 		List<ClubPlan> clubPlanList = clubService2.selectClubPlanList(clubNo);
-//		logger.debug("clubPlanList={}", clubPlanList);
+		logger.debug("clubPlanList={}", clubPlanList);
 		List<ClubNotice> clubNoticeList = clubService2.selectClubNoticeList(clubNo);
 //		logger.debug("clubNoticeList={}", clubNoticeList);
 		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
 //		logger.debug("clubPhotoList={}", clubPhotoList);
 		List<ClubNoticeComment> clubNoticeCommentList = clubService2.selectClubNoticeCommentList(clubNo);
 //		logger.debug("clubNoticeCommentList={}", clubNoticeCommentList);
+		List<ClubPlanAttendee> clubPlanAttendeeList = clubService2.selectAllClubPlanAttendeeList(clubNo);
+//		logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
 		
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
 		mav.addObject("clubNoticeList", clubNoticeList);
 		mav.addObject("clubPhotoList", clubPhotoList);
 		mav.addObject("clubNoticeCommentList", clubNoticeCommentList);
+		mav.addObject("clubPlanAttendeeList", clubPlanAttendeeList);
 		mav.addObject("clubPhotoCount", clubPhotoList.size());
 		mav.addObject("clubPlanCount", clubPlanList.size());
 		mav.addObject("clubNoticeCount", clubNoticeList.size());
@@ -336,21 +339,6 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		return mav;
 	}
 	
-	@RequestMapping(value="/club/selectClubPlanList.do", method=RequestMethod.GET, produces="text/plain;charset=UTF-8")
-	public void selectClubPlanList(ModelAndView mav, 
-										   @RequestParam("clubPlanNo") int clubPlanNo, 
-										   HttpServletResponse response) throws JsonIOException, IOException {
-//		logger.debug("clubPlanNo={}", clubPlanNo);
-		
-		List<ClubPlanAttendee> clubPlanAttendeeList = clubService2.selectClubPlanAttendeeList(clubPlanNo);
-//		logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
-		
-		response.setContentType("text/html;charset=UTF-8"); 
-
-		new Gson().toJson(clubPlanAttendeeList, response.getWriter());
-		
-	}
-	
 	@PostMapping("/club/deleteClubPlanAttendee.do")
 	public ModelAndView deleteClubPlanAttendee(ModelAndView mav, 
 											   ClubPlanAttendee clubPlanAttendee, 
@@ -380,11 +368,27 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	@PostMapping("/club/insertClubNoticeComment.do")
 	public ModelAndView insertClubNoticeComment(ModelAndView mav, 
 												ClubNoticeComment clubNoticeComment) {
-		logger.debug("clubNoticeComment={}", clubNoticeComment);
+//		logger.debug("clubNoticeComment={}", clubNoticeComment);
 		
 		int result = clubService2.insertClubNoticeComment(clubNoticeComment);
 		
 		mav.setViewName("redirect:/club/clubView.do?clubNo="+clubNoticeComment.getClubNo());
+		
+		return mav;
+	}
+	
+	@PostMapping("/club/deleteClubPlan.do")
+	public ModelAndView deleteClubPlan(ModelAndView mav, 
+									   @RequestParam("clubPlanNo") int clubPlanNo, 
+									   @RequestParam("clubNo") int clubNo) {
+		logger.debug("clubPlanNo={}", clubPlanNo);
+		logger.debug("clubNo={}", clubNo);
+		
+		int result = clubService2.deleteClubPlanAttendee(clubPlanNo);
+		
+		mav.addObject("msg", result>0?"일정을 성공적으로 삭제했습니다.":"일정을 삭제하지 못했습니다.");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNo);
+		mav.setViewName("common/msg");
 		
 		return mav;
 	}

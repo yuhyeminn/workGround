@@ -118,6 +118,16 @@ public class ClubServiceImpl2 implements ClubService2 {
 		return clubDAO2.insertClubNoticeComment(clubNoticeComment);
 	}
 
+	@Override
+	public List<ClubPlanAttendee> selectAllClubPlanAttendeeList(int clubNo) {
+		return clubDAO2.selectAllClubPlanAttendeeList(clubNo);
+	}
+
+	@Override
+	public int deleteClubPlanAttendee(int clubPlanNo) {
+		return clubDAO2.deleteClubPlanAttendee(clubPlanNo);
+	}
+
 
 
 }

@@ -30,4 +30,9 @@ public class ClubPlan implements Serializable {
 	private String clubPlanManager;
 	private int clubNo;
 	private String clubPlanColor;
+	private String memberId;
+	
+	//가상컬럼
+	private String clubManagerYN;
+	private String memberName;
 }
