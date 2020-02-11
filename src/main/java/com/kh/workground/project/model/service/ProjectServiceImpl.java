@@ -39,16 +39,13 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		if(listByDept==null)
 			throw new ProjectException("최근 프로젝트 조회 오류!");
-		else
-			map.put("listByDept", listByDept);
 		
-		//2. 중요 표시된 프로젝트 조회
-		List<Project> listByImportant = projectDAO.selectListByImportant(memberId);
+		//2. 중요 표시된 프로젝트 조회(프로젝트 번호만)
+		List<Project> listByImportant = new ArrayList<>();
+		List<Integer> pNoListByImportant = projectDAO.selectListByImportantProjectNo(memberId);
 		
-		if(listByImportant==null)
+		if(pNoListByImportant==null)
 			throw new ProjectException("중요 표시된 프로젝트 조회 오류!");
-		else 
-			map.put("listByImportant", listByImportant);
 		
 		//3. 내가 속한 프로젝트(내 워크패드 포함) 조회	
 		List<Project> listByInclude = new ArrayList<>();
@@ -61,24 +58,42 @@ public class ProjectServiceImpl implements ProjectService {
 		else 
 			listByInclude.add(myP);
 		
-		//3-2. 1번에서 구한 프로젝트 리스트에서 내가 포함된 리스트만 listByInclude에 추가
-		boolean bool = false; //내가 포함됐는지 여부
+		//3-2. 부서 전체 프로젝트에서 내가 포함된 프로젝트 판별
 		if(!listByDept.isEmpty()) {
 			for(Project p: listByDept) {
+				int projectNo = p.getProjectNo();
 				List<Member> memList = p.getProjectMemberList();
 				
+				boolean bool = false; //내가 포함됐는지 여부
 				for(Member m: memList) {
 					String pMemId = m.getMemberId();
 					if(memberId.equals(pMemId)) 
 						bool = true;
 				}
 				
-				//포함됐으면 list에 추가
-				if(bool) 
-					listByInclude.add(p);
-			}
-		}
+				//3-3. 내가 포함됐다면 중요 표시되어있는지 확인
+				if(bool) {
+					boolean important = pNoListByImportant.contains(projectNo);
+					
+					//중요 표시 되어있는 경우
+					if(important) {
+						p.setProjectStarYn("Y");
+						listByImportant.add(p); //중요 표시된 프로젝트에 추가
+						listByInclude.add(p); //내가 속한 프로젝트에 추가
+					}
+					//중요 표시 안되어있는 경우
+					else {
+						p.setProjectStarYn("N");
+						listByInclude.add(p); //내가 속한 프로젝트에만 추가
+					}
+				} //end of if(bool)
+				
+			} //end of for(listByDept)
+		} //end of if
 		
+		
+		map.put("listByDept", listByDept);
+		map.put("listByImportant", listByImportant);
 		map.put("listByInclude", listByInclude);
 		
 		return map;

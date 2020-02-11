@@ -80,5 +80,10 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.selectOne("project.selectTotalWorkCompleteYn", worklistNo);
 	}
 
+	@Override
+	public List<Integer> selectListByImportantProjectNo(String memberId) {
+		return sqlSession.selectList("project.selectListByImportantProjectNo", memberId);
+	}
+
 
 }

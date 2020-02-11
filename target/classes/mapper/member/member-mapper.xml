@@ -20,4 +20,11 @@
 						  date_of_birth= #{dateOfBirth}
 	    where member_id = #{memberId}
 	</update>
+<<<<<<< HEAD
+=======
+	
+	<select id="selectMemberListAll" resultType="member">
+		select * from view_member where member_id != 'admin' order by dept_code, job_code, member_id
+	</select>
+>>>>>>> master
 </mapper>
