@@ -1,4 +1,4 @@
-package com.kh.workground.club.controller;
+package com.kh.workground.club.model.vo;
 
 import java.io.Serializable;
 import java.sql.Date;

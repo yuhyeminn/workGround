@@ -3,10 +3,10 @@ package com.kh.workground.club.model.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.kh.workground.club.controller.ClubNoticeComment;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
+import com.kh.workground.club.model.vo.ClubNoticeComment;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;

@@ -6,12 +6,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.kh.workground.club.controller.ClubNoticeComment;
 import com.kh.workground.club.model.dao.ClubDAO2;
 import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
+import com.kh.workground.club.model.vo.ClubNoticeComment;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;

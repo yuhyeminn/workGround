@@ -31,6 +31,7 @@ import com.kh.workground.club.model.service.ClubService2;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
+import com.kh.workground.club.model.vo.ClubNoticeComment;
 import com.kh.workground.club.model.vo.ClubPhoto;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;
