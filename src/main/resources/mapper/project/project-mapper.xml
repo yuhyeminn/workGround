@@ -48,7 +48,7 @@
 	</select>
 	
 	<!-- projectList 뿌리기 : 중요 표시된 프로젝트 번호 조회 -->
-	<select id="selectListByImportantProjectNo" resultType="_int">
+	<select id="selectImportantProjectNo" resultType="_int">
 		select project_no from project_important where member_id=#{memberId} order by project_no desc
 	</select>
 	

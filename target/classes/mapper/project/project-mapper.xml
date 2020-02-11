@@ -35,40 +35,40 @@
 		</collection>
 	</resultMap>
 	
-	<!-- projectList.do : 부서 사람들 조회 -->
+	<!-- projectList 뿌리기 : 부서 사람들 조회 -->
 	<select id="selectMemberListByDept" resultType="member">
 		select * from view_member where dept_code = #{deptCode} order by member_id
 	</select>
 	
-	<!-- projectList.do : 부서 전체 프로젝트(최근 프로젝트) 조회 -->
+	<!-- projectList 뿌리기 : 부서 전체 프로젝트(최근 프로젝트) 조회 -->
 	<select id="selectListByDept" resultMap="viewProjectMemberCollectionMap">
-		select * from view_projectMember where private_yn = 'N' and dept_code = #{deptCode}
+		select * from view_projectMember 
+		where private_yn = 'N' and dept_code = #{deptCode}
+		order by project_no desc
 	</select>
 	
-	<!-- projectList.do : 중요 표시된 프로젝트 조회 -->
-	<select id="selectListByImportant" resultMap="viewProjectMemberCollectionMap">
-		select * 
-		from project_important PI join view_projectMember P on PI.project_no = P.project_no
-		where PI.member_id = #{memberId}
+	<!-- projectList 뿌리기 : 중요 표시된 프로젝트 번호 조회 -->
+	<select id="selectImportantProjectNo" resultType="_int">
+		select project_no from project_important where member_id=#{memberId} order by project_no desc
 	</select>
 	
-	<!-- projectList.do : 내 워크패드 조회 -->
+	<!-- projectList 뿌리기 : 내 워크패드 조회 -->
 	<select id="selectMyProject" resultType="project">
 		select * from view_projectMember
 		where private_yn = 'Y' and project_writer = #{memberId}
 	</select>
 	
-	<!-- projectView.do : 프로젝트 조회 -->
+	<!-- projectView 뿌리기 : 프로젝트 조회 -->
 	<select id="selectProjectOne" resultMap="viewProjectMemberCollectionMap">
 		select * from view_projectMember where project_no = #{projectNo}
 	</select>
 	
-	<!-- projectView.do : 프로젝트 번호로 업무리스트 조회 -->
+	<!-- projectView 뿌리기 : 프로젝트 번호로 업무리스트 조회 -->
 	<select id="selectWorklistListbyProjectNo" resultType="worklist">
 		select * from worklist where project_no = #{projectNo} order by worklist_no
 	</select>
 	
-	<!-- projectView.do : 업무리스트 번호로 업무 리스트 조회 -->
+	<!-- projectView 뿌리기 : 업무리스트 번호로 업무 리스트 조회 -->
 	<select id="selectWorkListByWorklistNo" resultMap="workListCollectionMap">
 		select V.*, WCM.work_charged_members_no, VM.*
 		from (select * from view_workTag where worklist_no = #{worklistNo} 
@@ -106,7 +106,7 @@
 		</collection>
 	</resultMap>
 	
-	<!-- projectView.do : 업무번호로 체크리스트 조회 -->
+	<!-- projectView 뿌리기 : 업무번호로 체크리스트 조회 -->
 	<select id="selectChklstListByWorkNo" resultMap="checklistMap">
 		select C.*, WM.charged_member_id
 		from checklist C join work_charged_members WM on C.checklist_charged_members_no = WM.work_charged_members_no
@@ -117,7 +117,7 @@
 		<result column="charged_member_id" property="checklistChargedMemberId"></result>
 	</resultMap>
 	
-	<!-- projectView.do : 업무번호로 첨부파일 조회 -->
+	<!-- projectView 뿌리기 : 업무번호로 첨부파일 조회 -->
 	<select id="selectAttachListByWorkNo" resultMap="attachmentMap">
 		select A.*, PM.member_id
 		from attachment A join project_members PM on A.attachment_writer_no = PM.project_members_no
@@ -128,7 +128,7 @@
 		<result column="member_id" property="attachmentWriterId"></result>
 	</resultMap>
 	
-	<!-- projectView.do : 업무번호로 코멘트 조회 -->
+	<!-- projectView 뿌리기 : 업무번호로 코멘트 조회 -->
 	<select id="selectCommentListByWorkNo" resultMap="workCommentMap">
 		select WC.*, PM.member_id
 		from work_comment WC join project_members PM on WC.work_comment_writer_no = PM.project_members_no
@@ -139,26 +139,49 @@
 		<result column="member_id" property="workCommentWriterId"></result>
 	</resultMap>
 	
-	<!-- projectView.do : 아이디로 멤버 조회 -->
+	<!-- projectView 뿌리기 : 아이디로 멤버 조회 -->
 	<select id="selectMemberOneByMemberId" resultType="member">
 		select * from view_member where member_id = #{memberId}
 	</select>
 	
-	<!-- projectView.do : 업무리스트번호로 진행 중인 업무 수 조회 -->
+	<!-- projectView 뿌리기 : 업무리스트번호로 진행 중인 업무 수 조회 -->
 	<select id="selectTotalWorkCompleteYn" resultType="_int">
 		select count(*) total_work_complete_yn
 		from worklist WL left join Work W on WL.worklist_no = W.worklist_no
 		where WL.worklist_no = #{worklistNo} and W.work_complete_yn = 'N'
 	</select>
 	
+	<!-- projectView 뿌리기 : 프로젝트 중요표시 여부 조회 -->
+	<select id="selectProjectImportantOne" parameterType="hashMap" resultMap="projectImportantMap">
+		select PI.* 
+		from project P join project_important PI on P.project_no = PI.project_no
+		where P.project_no = #{projectNo} and PI.member_id = #{memberId}
+	</select>
+	<resultMap type="HashMap" id="projectImportantMap">
+		<id column="project_important_no" property="projectImportantNo"></id>
+		<id column="member_id" property="memberId"></id>
+		<id column="project_no" property="projectNo"></id>
+	</resultMap>
 	
+	<!-- projectStarCheck.do : (서브헤더 별표시 클릭시 )중요 프로젝트에 추가 -->
+	<insert id="insertProjectImportant" parameterType="hashMap">
+		insert into project_important values (seq_project_important.nextval, #{memberId}, #{projectNo})
+	</insert>
 	
+	<!-- projectStarCheck.do : (서브헤더 별표시 클릭시)중요 프로젝트에서 삭제 -->
+	<delete id="deleteProjectImportant">
+		delete from project_important where project_important_no = #{projectImportantNo}
+	</delete>
 	
+	<!-- addWorklist.do: 업무리스트 추가-->
+	<insert id="insertWorklist" parameterType="hashMap">
+		insert into worklist values(seq_worklist.nextval, #{projectNo}, #{worklistTitle})
+	</insert>
 	
-	
-	
-	
-	
+	<!-- deleteWorklist.do: 업무리스트 삭제-->
+	<delete id="deleteWorklist">
+		delete from worklist where worklist_no = #{worklistNo}
+	</delete>
 	
 	
 	

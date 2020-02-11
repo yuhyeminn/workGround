@@ -169,27 +169,38 @@ function deleteWorklist(){
 
 //새 업무 만들기
 function addWork(){
+	//날짜 설정
+    $('.btn-setWorkDate').daterangepicker();
+    
 	let btnAdd = document.querySelectorAll('.btn-addWork');
 	let btnCancel = document.querySelectorAll('.btn-addWork-cancel');
 	let btnSubmit = document.querySelectorAll('.btn-addWork-submit');
 	
-	let addTag;
-	let addMemberArr = [];
-	let addDate = [];
+   	let addTagStr;
+	let addMemberStr;
+	let addDateStr;
 	
 	//+버튼 제어
     btnAdd.forEach((obj, idx)=>{
+		
     	let worklistNo = obj.value;
     	
    		let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
    		let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
    		
    		//설정 버튼: 멤버, 태그, 날짜 
+   		let chkHtml = '<i class="fas fa-check"></i>'; //체크 아이콘 
+   		let dropMemTag = document.querySelectorAll('#worklist-'+worklistNo+' .drop-memTag');
    		let dropWorkTag = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
+   		let dropDate = document.querySelectorAll('.btn-setWorkDate');
+   		let dPicker = document.querySelectorAll('.daterangepicker');
    		
-   		
+    		let addTag;
+    		let addMemberArr = [];
+    		let addDateArr = [];
    		//+버튼 클릭
     	obj.addEventListener('click', ()=>{
+    		
 	    	//취소, 만들기버튼 value에 worklistNo 담기
 	    	$(btnSubmit).val(worklistNo);
 	    	$(btnCancel).val(worklistNo);
@@ -198,43 +209,45 @@ function addWork(){
     		$(addWorkWrapper).toggleClass("show");
     		$(workTitle).focus();
     		
-    		//드롭다운 업무태그 클릭
-    		dropWorkTag.forEach((obj, idx)=>{
+    		//업무배정멤버 클릭
+    		dropMemTag.forEach((obj, idx)=>{
+    			console.log(obj);
+    			console.log("addMemberArr="+addMemberArr);
+    			
     			obj.addEventListener('click', e=>{
-    				let $this = $(e.target);
-    				let $check = $('.drop-workTag .fa-check');
-		    		let html = '<i class="fas fa-check"></i>';
-		    		
-		    		/////////////////////////////////선택 해제는!!?!!!!! 
-		    		//addTag변수에 선택한 태그코드 담기
-    				if($this.hasClass('WT1')) addTag = "WT1";
-    				else if($this.hasClass('WT2')) addTag = "WT2";
-    				else if($this.hasClass('WT3')) addTag = "WT3";
+    				let className = obj.className;
+    				let classArr = className.split(" ");
+    				let memberId = classArr[2];
     				
-		    		//선택한 업무태그에 체크 아이콘 추가
-    				if(addTag==="WT1") {
-    					$check.remove();
-    					$('#worklist-'+worklistNo+' .drop-workTag.WT1').append(html);
+    				let idx = addMemberArr.indexOf(memberId);
+    				let $hasCheck = $(obj).find('.media-body'); //체크아이콘 들어갈 태그
+    				
+    				//addMemberArr에 선택한 memberId 담기
+    				//배열에 존재하지 않는 경우
+    				if(idx === -1) {
+    					$(obj).addClass('checked');
+    					$hasCheck.append(chkHtml);
+	    				addMemberArr.push(memberId);
     				}
-    				if(addTag==="WT2") {
-    					$check.remove();
-    					$('#worklist-'+worklistNo+' .drop-workTag.WT2').append(html);
+    				else {
+	    				let $check = $hasCheck.find('.fa-check'); 
+	    				$check.remove();
+    					addMemberArr.splice(idx, 1);
     				}
-    				if(addTag==="WT3") {
-    					$check.remove();
-    					$('#worklist-'+worklistNo+' .drop-workTag.WT3').append(html);
-    				}
-    					
+    				console.log(addMemberArr);
+    				addMemberStr = addMemberArr.join(',');
+    				console.log(addMemberStr);
+    				
     			});
-    		}); //end of dropWorkTag.forEach
+    		}); //업무배정멤버 끝
+    		
     		
     	}); //end of +버튼 클릭
-   		
-    }); // end of btnAdd.forEach
+    }); // end of +버튼 제어 끝
     
 	
-	//태그버튼 클릭
-	
+    
+    //만들기버튼 클릭
 	
 	
     
@@ -250,8 +263,6 @@ function addWork(){
 		});
 	});
 	    
-    //새업무 만들기: 날짜 설정
-    $('.btn-setWorkDate').daterangepicker();
 }
 
 //체크리스트 체크
@@ -509,7 +520,7 @@ function setting(){
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
             <c:forEach items="${pMemList}" var="m">
-            <a href="#" class="dropdown-item">
+            <a href="${pageContext.request.contextPath}/member/memberView.do?memberId=${m.memberId}" class="dropdown-item">
                 <div class="media">
 	                <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">
 	                <div class="media-body">
@@ -895,47 +906,26 @@ function setting(){
 	                    <div class="addWork-btnWrapper">
 		                    <!-- 업무 설정 -->
 		                    <div class="addWork-btnLeft">
-		                        <!-- 업무 배정 -->
-		                        <div class="add-tag dropdown">
-		                        <a class="nav-link" data-toggle="dropdown" href="#">
-		                            <i class="fas fa-user-plus"></i>
-		                        </a>
-		                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-		                            <a href="#" class="dropdown-item">
-		                            <!-- Message Start -->
-		                            <div class="media">
-		                                <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-		                                <div class="media-body">
-		                                <h3 class="dropdown-item-title">
-		                                    Brad Diesel
-		                                </h3>
-		                                <p class="text-sm">Call me whenever you can...</p>
-		                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-		                                </div>
-		                            </div>
-		                            <!-- Message End -->
-		                            </a>
-		                            <div class="dropdown-divider"></div>
-		                            <a href="#" class="dropdown-item">
-		                            <!-- Message Start -->
-		                            <div class="media">
-		                                <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-		                                <div class="media-body">
-		                                <h3 class="dropdown-item-title">
-		                                    John Pierce
-		                                </h3>
-		                                <p class="text-sm">I got your message bro</p>
-		                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 1월 21일</p>
-		                                </div>
-		                            </div>
-		                            <!-- Message End -->
-		                            </a>
-		                        </div>
+		                        <!-- 업무 멤버 배정 -->
+		                        <div class="add-member dropdown">
+			                        <button type="button" class="nav-link" data-toggle="dropdown"><i class="fas fa-user-plus"></i></button>
+			                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+			                            <c:forEach items="${pMemList}" var="m">
+							            <a href="javascript:void(0)" class="dropdown-item drop-memTag ${m.memberId}">
+							                <div class="media">
+								                <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">
+								                <div class="media-body">
+								                    <p class="memberName">${m.memberName}</p>
+								                </div>
+							                </div>
+							            </a>
+							            </c:forEach>
+		                        	</div>
 		                        </div>
 		
 		                        <!-- 태그 설정 -->
 		                        <div class="add-tag dropdown">
-			                        <button class="nav-link" data-toggle="dropdown"><i class="fas fa-tag"></i></button>
+			                        <button type="button" class="nav-link" data-toggle="dropdown"><i class="fas fa-tag"></i></button>
 			                        <div class="dropdown-menu dropdown-menu-right">
 			                            <a href="javascript:void(0)" class="dropdown-item work-tag drop-workTag WT1">
 			                            	<span class="btn btn-xs bg-danger WT1">priority</span>
@@ -950,7 +940,10 @@ function setting(){
 		                        </div>
 		
 		                        <!-- 날짜 설정 -->
-		                        <button type="button" class="btn-setWorkDate"><i class="far fa-calendar-alt"></i></button>
+		                        <div class="add-date">
+			                        <button type="button" class="btn-setWorkDate"><i class="far fa-calendar-alt"></i></button>
+			                        <!-- <button type="button" class="btn-cancelDate">2월 12일 - 2월 14일 <i class="fas fa-times"></i></button> -->
+		                        </div>
 		                    </div>
 	
 		                    <!-- 취소/만들기 버튼 -->

@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kh.workground.member.model.vo.Member;
+import com.kh.workground.project.model.service.ProjectServiceImpl;
 import com.kh.workground.project.model.vo.Attachment;
 import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
@@ -18,6 +21,8 @@ import com.kh.workground.project.model.vo.Worklist;
 @Repository
 public class ProjectDAOImpl implements ProjectDAO {
 
+	private static final Logger logger = LoggerFactory.getLogger(ProjectDAOImpl.class);
+	
 	@Autowired
 	SqlSessionTemplate sqlSession;
 	
@@ -83,7 +88,8 @@ public class ProjectDAOImpl implements ProjectDAO {
 
 	@Override
 	public List<Integer> selectListByImportantProjectNo(String memberId) {
-		return sqlSession.selectList("project.selectListByImportantProjectNo", memberId);
+		logger.debug("DAOIMPLE22222222222222222222222222");
+		return sqlSession.selectList("project.selectImportantProjectNo", memberId);
 	}
 
 	@Override

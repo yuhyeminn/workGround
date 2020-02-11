@@ -42,8 +42,9 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		//2. 중요 표시된 프로젝트 조회(프로젝트 번호만)
 		List<Project> listByImportant = new ArrayList<>();
+		logger.debug("ServiceImpl1111111111111111111111111");
 		List<Integer> pNoListByImportant = projectDAO.selectListByImportantProjectNo(memberId);
-		
+		logger.debug("ServiceImp33333333333333333333333333");
 		if(pNoListByImportant==null)
 			throw new ProjectException("중요 표시된 프로젝트 조회 오류!");
 		
