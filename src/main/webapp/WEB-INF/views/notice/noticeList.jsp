@@ -1,3 +1,5 @@
+<%@page import="com.kh.workground.notice.model.vo.Notice"%>
+<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -52,6 +54,13 @@ p.view-content{margin: 1rem 1rem 2.5rem;}
 .btn-outline-success:hover{background: #007bff;}
 .note-editor.note-frame{border: 1px solid #ced4da; width: 100%; height: 100%;} /*텍스트 에디터*/
 .note-editable{height: 10rem;}
+/* 답글 텍스트 */
+form.comment-level2{margin: 1rem 0 1rem 7rem;}
+.comment-submit-level2{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white; height: 2rem; width: 2.5rem}
+.comment-submit-level2:hover{background: #007bff;}
+div.level-2-border{border-bottom: 1px solid #e9ecef;}
+
+
 
 </style>
 
@@ -81,23 +90,20 @@ function sidebarActive(){
 <!-- #############주현 할 일############
 [할 일]
 @ - 관리자: 모든 게시물 수정/삭제 가능?
-- 게시글 작성자 기본 프로필
-- 수정 모달창 forEach / 카드 안에 수정모달창 index주기
 - 카드 내용 ...
-- 댓글
-- 댓글 작성자  프로필 없을 경우 기본 이미지
-- 관리자 기획부가 맞는 건지?
 - 이미지 없을 때 내용 가운데로?
 - DB 내용 정리
 - 상세보기 작성자 클릭 시 프로필 이동?
 @ - **부서별공지, 자유게시판 작성자 이름으로
 @ - 슬라이드 바 개수 맞추기!!
-- 공지 수정 창 추가: #updateDeptNoticeModal${deptnvs.count}
-- 바가 헤더 앞으로 나옴
-- DB: 공지, 게시판 : on delete 확인
-- 기본 프로필 이미지 지우기
+- 바가 헤더 앞으로 나옴 / 카드 호버시 안 움직임
 @- 바 누르는 거 이상함
  -->
+ 
+ <!-- @@
+ 공지 이름 / 아이콘 바꾸기
+  -->
+
 
 <!-- Navbar NoticeList -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
@@ -177,7 +183,9 @@ function sidebarActive(){
    	              </div>
    	            </div>
    	            <div class="card-body" data-toggle="modal" data-target="#noticeViewModal${nvs.count}">
-   	              <img src="${pageContext.request.contextPath}/resources/upload/notice/${n.noticeRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
+   	            	<c:if test="${n.noticeRenamedFileName != null}">
+	   	              <img src="${pageContext.request.contextPath}/resources/upload/notice/${n.noticeRenamedFileName}" class="card-img-top">
+   	            	</c:if>
 	   	              <h5 class="card-title">${n.noticeTitle }</h5>
 	   	              <p class="card-text">${n.noticeContent }</p>
    	            </div>
@@ -241,7 +249,9 @@ function sidebarActive(){
 	   	              </div>
 	   	            </div>
 	   	            <div class="card-body" data-toggle="modal" data-target="#myDeptNoticeViewModal${deptnvs.count}">
-	   	              <img src="${pageContext.request.contextPath}/resources/upload/notice/${deptn.noticeRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
+	   	              <c:if test="${deptn.noticeRenamedFileName != null}">
+	   	              	<img src="${pageContext.request.contextPath}/resources/upload/notice/${deptn.noticeRenamedFileName}" class="card-img-top">
+	   	              </c:if>
 	   	              <h5 class="card-title">${deptn.noticeTitle }</h5>
 	   	              <p class="card-text">${deptn.noticeContent }</p>
 	   	            </div>
@@ -302,7 +312,9 @@ function sidebarActive(){
 	   	              </div>
 	   	            </div>
 	   	            <div class="card-body" data-toggle="modal" data-target="#boardViewModal${cvs.count}">
-	   	              <img src="${pageContext.request.contextPath}/resources/upload/community/${c.commuRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
+	   	              <c:if test="${c.commuRenamedFileName != null}">
+	   	              	<img src="${pageContext.request.contextPath}/resources/upload/community/${c.commuRenamedFileName}" class="card-img-top">
+	   	              </c:if>
 	   	              <h5 class="card-title">${c.commuTitle }</h5>
 	   	              <p class="card-text">${c.commuContent }</p>
 	   	            </div>
@@ -343,40 +355,79 @@ function sidebarActive(){
 	          <p class="view-title">${n.noticeTitle}</p>
 	          <div style="font-size: .8rem; color: gray; margin-bottom: .5rem;">게시일 ${n.noticeDate}</div>
 	            <div class="view-body">
-	              <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/notice/${n.noticeRenamedFileName}" alt="noticeViewPhoto" onerror="this.style.display='none'">
+	            	<c:if test="${n.noticeRenamedFileName != null}">
+	              		<img class="view-img" src="${pageContext.request.contextPath}/resources/upload/notice/${n.noticeRenamedFileName}" alt="noticeViewPhoto">
+	              	</c:if>
 	              <p class="view-content">${n.noticeContent}</p>
 	            </div>
 	            <!-- /.view-body -->
-	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
+	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(${fn:length(n.noticeCommentList)})</span></div>
 	            <div class="card-footer card-comments">
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/고양이.jpg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">이단비<span class="text-muted float-right">2020-01-25</span></span>
-	                  <span>네! 알겠습니다!</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	              <div class="card-comment comment-level2">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/차은우.jpg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">유혜민<span class="text-muted float-right">2020-01-26</span></span>
-	                  <span>넵! 알겠습니당</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
+ 	            	<c:forEach items="${n.noticeCommentList}" var="nc">
+	            		<c:if test="${nc.noticeCommentLevel == 1}">
+			              <div class="card-comment comment-level1">
+<%-- 			              <div class="card-comment comment-level1" id="level1area${nvs.count}"> --%>
+			                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${nc.commentWriterProfile}" alt="User Image">
+			                <div class="comment-text">
+			                  <span class="username">${nc.commentWriterName}<span class="text-muted float-right">${nc.noticeCommentDate}</span></span>
+			                  <span>${nc.noticeCommentContent}</span>
+			                  <c:if test="${memberLoggedIn.memberId == 'admin' || memberLoggedIn.memberId == nc.noticeCommentWriter}">
+				                  <button class="comment-delete float-right" onclick="deleteNoticeComment(${nc.noticeCommentNo});">삭제</button>
+			                  </c:if>
+			                  <%-- <button class="comment-reply float-right" onclick="addLevel2('level1area${nvs.count}');">답글</button> --%>
+			                </div>
+			              </div>
+			        
+<%-- 			      <div class="level-2-border">
+	   	              <form action="${pageContext.request.contextPath}/notice/noticeCommentInsert.do" 
+		              		method="post"
+		              		onsubmit="return insertNoticeComment(noticeCommentContent.value);"
+		              		class="comment-level2">
+				          <div class="img-push">
+				            <input type="hidden" name="noticeRef" value="${n.noticeNo}" />
+				            <input type="hidden" name="noticeCommentWriter" value="${memberLoggedIn.memberId }"/>
+				            <input type="hidden" name="noticeCommentLevel" value="1" />
+				            <input type="hidden" name="noticeCommentRef" value="0" />
+				            <input type="text" name="noticeCommentContent" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요."/>
+				            <input type="submit" value="등록" class="comment-submit-level2 float-right"/>
+				          </div>
+		              </form>
+			      </div>  --%>       
+			              
+			              <c:forEach items="${n.noticeCommentList}" var="nc2">
+			              	<c:if test="${nc2.noticeCommentLevel == 2 && nc2.noticeCommentRef == nc.noticeCommentNo}">
+				              <div class="card-comment comment-level2">
+				                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${nc2.commentWriterProfile}" alt="User Image">
+				                <div class="comment-text">
+				                  <span class="username">${nc2.commentWriterName}<span class="text-muted float-right">${nc2.noticeCommentDate}</span></span>
+				                  <span>${nc2.noticeCommentContent}</span>
+				                  <c:if test="${memberLoggedIn.memberId == 'admin' || memberLoggedIn.memberId == nc2.noticeCommentWriter}">
+					                  <button class="comment-delete float-right" onclick="deleteNoticeComment(${nc2.noticeCommentNo});">삭제</button>
+					              </c:if>
+				                  <!-- <button class="comment-reply float-right">답글</button> -->
+				                </div>
+				              </div>
+			              	</c:if>
+			              </c:forEach>
+	            		</c:if>
+	                </c:forEach>
 	            </div>
-	            <div class="card-footer">
-	              <form action="#" method="post">
-	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName == null?'기본프로필.jpg':memberLoggedIn.renamedFileName}">
+	             <div class="card-footer">
+ 	              <form action="${pageContext.request.contextPath}/notice/noticeCommentInsert.do" 
+	              		method="post"
+	              		onsubmit="return checkComment(noticeCommentContent.value);">
+	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}">
 	                <div class="img-push">
-	                  <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
-	                  <input class="comment-submit" type="submit" value="등록">
+	                  <input type="hidden" name="noticeRef" value="${n.noticeNo}" />
+	                  <input type="hidden" name="noticeCommentWriter" value="${memberLoggedIn.memberId }"/>
+	                  <input type="hidden" name="noticeCommentLevel" value="1" />
+	                  <input type="hidden" name="noticeCommentRef" value="0" />
+	                  <input type="text" name="noticeCommentContent" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요."/>
+	                  <input class="comment-submit" type="submit" value="등록" />
 	                </div>
 	              </form>
 	            </div> <!-- /.card-footer -->
+	            <!-- 에이젝스: 실패 -->
 	          </div> <!-- /.card -->
 	      </div>
 	    </div>
@@ -399,42 +450,63 @@ function sidebarActive(){
 	        <div class="deptNoticeView">
 	          <p class="view-title">${deptn.noticeTitle}</p>
 	          <div class="user-block" style="margin-bottom: .5rem;">
-	            <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/${deptn.renamedFileName == null?'기본프로필.jpg':deptn.renamedFileName}" alt="User Image">
+	            <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${deptn.renamedFileName}" alt="User Image">
 	            <span class="username"><a href="#" style="color: black;">작성자 ${deptn.memberName}</a></span>
 	            <span class="description">게시일 ${deptn.noticeDate}</span>
 	          </div>
 	            <div class="view-body">
-	              <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/notice/${deptn.noticeRenamedFileName}" onerror="this.style.display='none'" alt="Photo">
+	            	<c:if test="${deptn.noticeRenamedFileName != null}">
+	             	 <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/notice/${deptn.noticeRenamedFileName}" alt="Photo">
+	              	</c:if>
 	              <p class="view-content">${deptn.noticeContent}</p>
 	            </div>
 	            <!-- /.view-body -->
-	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
+	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(${fn:length(deptn.noticeCommentList)})</span></div>
 	            <div class="card-footer card-comments">
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/재현01.jpg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">이주현<span class="text-muted float-right">2020-01-25</span></span>
-	                  <span>네넵! 확인 완료!</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/우식01.jpeg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">김효정<span class="text-muted float-right">2020-01-26</span></span>
-	                  <span>넵 확인했습니다!</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
+	            	<c:forEach items="${deptn.noticeCommentList}" var="deptnc">
+	            		<c:if test="${deptnc.noticeCommentLevel == 1}">
+			              <div class="card-comment comment-level1">
+			                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${deptnc.commentWriterProfile}" alt="User Image">
+			                <div class="comment-text">
+			                  <span class="username">${deptnc.commentWriterName}<span class="text-muted float-right">${deptnc.noticeCommentDate}</span></span>
+			                  <span>${deptnc.noticeCommentContent}</span>
+			                  <c:if test="${memberLoggedIn.memberId == 'admin' || memberLoggedIn.memberId == deptnc.noticeCommentWriter}">
+				                  <button class="comment-delete float-right" onclick="deleteNoticeComment(${deptnc.noticeCommentNo});">삭제</button>
+			                  </c:if>
+			                  <!-- <button class="comment-reply float-right">답글</button> -->
+			                </div>
+			              </div>
+			              
+			              <c:forEach items="${deptn.noticeCommentList}" var="deptnc2">
+			              	<c:if test="${deptnc2.noticeCommentLevel == 2 && deptnc2.noticeCommentRef == deptnc.noticeCommentNo}">
+				              <div class="card-comment comment-level2">
+				                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${deptnc2.commentWriterProfile}" alt="User Image">
+				                <div class="comment-text">
+				                  <span class="username">${deptnc2.commentWriterName}<span class="text-muted float-right">${deptnc2.noticeCommentDate}</span></span>
+				                  <span>${deptnc2.noticeCommentContent}</span>
+				                  <c:if test="${memberLoggedIn.memberId == 'admin' || memberLoggedIn.memberId == deptnc2.noticeCommentWriter}">
+					                  <button class="comment-delete float-right" onclick="deleteNoticeComment(${deptnc2.noticeCommentNo});">삭제</button>
+					              </c:if>
+				                  <!-- <button class="comment-reply float-right">답글</button> -->
+				                </div>
+				              </div>
+							</c:if>
+						  </c:forEach>
+	            		</c:if>
+	            	</c:forEach>
 	            </div>
-	            <div class="card-footer">
-	              <form action="#" method="post">
-	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName == null?'기본프로필.jpg':memberLoggedIn.renamedFileName}">
+	             <div class="card-footer">
+ 	              <form action="${pageContext.request.contextPath}/notice/noticeCommentInsert.do" 
+	              		method="post"
+	              		onsubmit="return checkComment(noticeCommentContent.value);">
+	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}">
 	                <div class="img-push">
-	                  <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
-	                  <input class="comment-submit" type="submit" value="등록">
+	                  <input type="hidden" name="noticeRef" value="${deptn.noticeNo}" />
+	                  <input type="hidden" name="noticeCommentWriter" value="${memberLoggedIn.memberId }"/>
+	                  <input type="hidden" name="noticeCommentLevel" value="1" />
+	                  <input type="hidden" name="noticeCommentRef" value="0" />
+	                  <input type="text" name="noticeCommentContent" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요."/>
+	                  <input class="comment-submit" type="submit" value="등록" />
 	                </div>
 	              </form>
 	            </div> <!-- /.card-footer -->
@@ -461,51 +533,62 @@ function sidebarActive(){
 	        <div class="boardView">
 	          <p class="view-title">${c.commuTitle }</p>
 	          <div class="user-block" style="margin-bottom: .5rem;">
-	          	<img class="img-circle" src="${pageContext.request.contextPath}/resources/img/${c.renamedFileName == null?'기본프로필.jpg':c.renamedFileName}" alt="User Image">
+	          	<img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${c.renamedFileName}" alt="User Image">
 	            <span class="username"><a href="#" style="color: black;">작성자 ${c.memberName }</a></span>
 	            <span class="description">게시일 ${c.commuDate }</span>
 	          </div>
 	            <div class="view-body">
-	              <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/community/${c.commuRenamedFileName}" alt="Photo" onerror="this.style.display='none'">
+	            	<c:if test="${c.commuRenamedFileName != null}">
+	              		<img class="view-img" src="${pageContext.request.contextPath}/resources/upload/community/${c.commuRenamedFileName}" alt="Photo">
+	              	</c:if>
 	              <p class="view-content">${c.commuContent }</p>
 	            </div>
 	            <!-- /.view-body -->
-	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(3)</span></div>
+	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(${fn:length(c.communityCommentList)})</span></div>
 	            <div class="card-footer card-comments">
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/우식01.jpeg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">김효정<span class="text-muted float-right">2020-01-26</span></span>
-	                  <span>오오 감사합니당</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/박보검.png" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">주보라<span class="text-muted float-right">2020-01-27</span></span>
-	                  <span>괜찮은데요??</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	              <div class="card-comment comment-level2">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/재현.jpg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">이소현<span class="text-muted float-right">2020-01-27</span></span>
-	                  <span>훨씬 편하네요~</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
+ 	            	<c:forEach items="${c.communityCommentList}" var="cc">
+	            		<c:if test="${cc.commuCommentLevel == 1}">
+			              <div class="card-comment comment-level1">
+			                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${cc.commentWriterProfile}" alt="User Image">
+			                <div class="comment-text">
+			                  <span class="username">${cc.commentWriterName}<span class="text-muted float-right">${cc.commuCommentDate}</span></span>
+			                  <span>${cc.commuCommentContent}</span>
+			                  <c:if test="${memberLoggedIn.memberId == 'admin' || memberLoggedIn.memberId == cc.commuCommentWriter}">
+				                  <button class="comment-delete float-right" onclick="deleteCommunityComment(${cc.commuCommentNo});">삭제</button>
+			                  </c:if>
+			                  <!-- <button class="comment-reply float-right">답글</button> -->
+			                </div>
+			              </div>
+			              <c:forEach items="${c.communityCommentList}" var="cc2">
+			              	<c:if test="${cc2.commuCommentLevel == 2 && cc2.commuCommentRef == cc.commuCommentNo}">
+				              <div class="card-comment comment-level2">
+				                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${cc2.commentWriterProfile}" alt="User Image">
+				                <div class="comment-text">
+				                  <span class="username">${cc2.commentWriterName}<span class="text-muted float-right">${cc2.commuCommentDate}</span></span>
+				                  <span>${cc2.commuCommentContent}</span>
+				                  <c:if test="${memberLoggedIn.memberId == 'admin' || memberLoggedIn.memberId == cc2.commuCommentWriter}">
+					                  <button class="comment-delete float-right" onclick="deleteCommunityComment(${cc2.commuCommentNo});">삭제</button>
+					              </c:if>
+				                  <!-- <button class="comment-reply float-right">답글</button> -->
+				                </div>
+				              </div>
+			              	</c:if>
+			              </c:forEach>
+	            		</c:if>
+	            	</c:forEach>
 	            </div>
-	            <div class="card-footer">
-	              <form action="#" method="post">
-	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName == null?'기본프로필.jpg':memberLoggedIn.renamedFileName}">
+	             <div class="card-footer">
+ 	              <form action="${pageContext.request.contextPath}/community/communityCommentInsert.do" 
+	              		method="post"
+	              		onsubmit="return checkComment(commuCommentContent.value);">
+	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}">
 	                <div class="img-push">
-	                  <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
-	                  <input class="comment-submit" type="submit" value="등록">
+	                  <input type="hidden" name="commuRef" value="${c.commuNo}" />
+	                  <input type="hidden" name="commuCommentWriter" value="${memberLoggedIn.memberId }"/>
+	                  <input type="hidden" name="commuCommentLevel" value="1" />
+	                  <input type="hidden" name="commuCommentRef" value="0" />
+	                  <input type="text" name="commuCommentContent" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요."/>
+	                  <input class="comment-submit" type="submit" value="등록" />
 	                </div>
 	              </form>
 	            </div> <!-- /.card-footer -->
@@ -699,6 +782,85 @@ function sidebarActive(){
     </div>
   </div>
 </div>
+
+<script>
+//답글 클릭 시
+/* function addLevel2(level1_id){
+	var area_level1 = level1_id;
+	alert(area_level1);
+} */
+
+
+//공지 댓글 삭제
+function deleteNoticeComment(noticeCommentNo){
+	if(!confirm("정말 삭제하시겠습니까?"))
+		return;
+	
+	location.href = "${pageContext.request.contextPath}/notice/noticeCommentDelete.do?noticeCommentNo="+noticeCommentNo;
+}
+
+//게시판 댓글 삭제
+function deleteCommunityComment(communityCommentNo){
+	if(!confirm("정말 삭제하시겠습니까?"))
+		return;
+	
+	location.href = "${pageContext.request.contextPath}/community/communityCommentDelete.do?communityCommentNo="+communityCommentNo;
+
+}
+
+//댓글 유효성 검사
+function checkComment(commentContent){
+	
+	if(commentContent.trim() == 0){
+		alert("댓글을 입력하지 않으셨습니다!");
+
+		return false;
+	}
+	return true;
+} 
+
+/* 에이젝스: 실패 */
+/* 	function insertNoticeComment($noticeRef, $noticeCommentWriter, noticeCommentContent){
+		console.log("함수 호출" + $noticeRef + $noticeCommentWriter + noticeCommentContent);
+		var noticeCommentContent_ = $("#noticeCommentContent");
+		if(noticeCommentContent_.val().trim().length == 0){
+			alert("댓글을 입력하세요!");
+			noticeCommentContent_.focus();
+		}
+		else{
+			var param = {};
+			param.noticeRef = $noticeRef.val();
+			param.noticeCommentWriter = $noticeCommentWriter.val();
+			param.noticeCommentLevel = 1;
+			param.noticeCommentRef = 0;
+			param.noticeCommentContent = $noticeCommentContent.val();
+			
+			var jsonStr = JSON.stringify(param);
+			console.log(jsonStr);
+			
+			$.ajax({
+				url: "${pageContext.request.contextPath}/notice/noticeCommentInsert.do",
+				data: jsonStr,
+				dataType: "json",
+				type: "POST",
+				contentType: "application/json; charset=utf-8",
+				success:data => {
+					console.log(data);
+					alert(data.msg);
+					
+					$("input[name=noticeCommentContent]").reset();
+				},
+				error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+				
+			});
+		}
+		
+	} */
+	
+	
+</script>
 
 
 

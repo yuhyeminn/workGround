@@ -568,7 +568,6 @@ from (select P.*, PM.member_id
       order by P.project_no desc) V 
       left join view_member M on V.member_id = M.member_id;
 
-
 --================================================
 --뷰: work + work_tag
 --================================================
