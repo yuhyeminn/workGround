@@ -408,3 +408,6 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
         color: #464c59;
     }
 
+#chk-add-tr:hover{
+	background-color:white;
+}

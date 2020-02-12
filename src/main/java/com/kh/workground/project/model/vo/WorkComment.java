@@ -17,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class WorkComment implements Serializable {
+public class WorkComment extends Work implements Serializable {
 
 	/**
 	 * 
@@ -25,7 +25,6 @@ public class WorkComment implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int workCommentNo;
-	//업무 번호는 상속받아서!? 
 	private int workCommentWriterNo; //Projec의 projectMemberList에서 참조
 	private String workCommentWriterId;
 	private int workCommentLevel; //댓글(1), 대댓글(2) 

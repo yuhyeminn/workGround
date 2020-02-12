@@ -1,4 +1,4 @@
-﻿--================================================
+--================================================
 --workground계정 생성
 --================================================
 create user workground identified by workground
@@ -102,6 +102,7 @@ create table project_members(
     project_no number not null,
     member_id varchar2(30) not null,
     manager_yn char(1) default 'N' not null,
+    project_quit_yn char(1) default 'N' not null, 
     constraint pk_project_members primary key(project_members_no),
     constraint fk_project_members_member_id foreign key(member_id) references member(member_id) on delete cascade,
     constraint fk_project_members_project_no foreign key(project_no) references project(project_no) on delete cascade,
@@ -176,7 +177,9 @@ create table work(
     constraint ck_wokr_work_complete_yn check (work_complete_yn in ('Y','N')),
     constraint fk_work_work_no_ref foreign key(work_no_ref) references work(work_no) on delete cascade
 );
-
+select * from work;
+delete from work where work_no = 65;
+commit;
 -----------------------------------------------------------------------
 --work테이블 시퀀스 생성
 -----------------------------------------------------------------------
@@ -201,6 +204,7 @@ CREATE SEQUENCE seq_work_charged_members;
 -----------------------------------------------------------------------
 --checklist 테이블
 -----------------------------------------------------------------------
+--on delete set null 추가함 다시 만들기!!!
 create table checklist(
     checklist_no number not null,
     work_no number not null,
@@ -212,7 +216,7 @@ create table checklist(
     complete_yn char(1) default 'N' not null,
     constraint pk_checklist primary key(checklist_no),
     constraint fk_checklist_work_no foreign key(work_no) references work(work_no),
-    constraint fk_checklist_charged_mem_no foreign key(checklist_charged_members_no) references work_charged_members(work_charged_members_no),
+    constraint fk_checklist_charged_mem_no foreign key(checklist_charged_members_no) references work_charged_members(work_charged_members_no) on delete set null,
     constraint ck_checklist_complete_yn check (complete_yn in ('Y','N')) 
 );
 
@@ -419,26 +423,27 @@ insert into project values(seq_project.nextval, 'kh2020122', 'projectList', defa
 --내 프로젝트
 insert into project values(seq_project.nextval, 'kh2020122', '나의 워크패드', 'Y', null, null, null, null, null);
 insert into project values(seq_project.nextval, 'kh2020123', '나의 워크패드', 'Y', null, null, null, null, null);
+insert into project values(seq_project.nextval, 'kh2020127', '나의 워크패드', 'Y', null, null, null, null, null);
 -- 프로젝트 팀원
-insert into project_members values(seq_project_members.nextval, 1, 'kh2020115', 'Y');
-insert into project_members values(seq_project_members.nextval, 1, 'kh2020116', default);
-insert into project_members values(seq_project_members.nextval, 1, 'kh2020117', default);
-insert into project_members values(seq_project_members.nextval, 1, 'kh2020118', default);
-insert into project_members values(seq_project_members.nextval, 1, 'kh2020119', default);
-insert into project_members values(seq_project_members.nextval, 1, 'kh2020120', default);
-insert into project_members values(seq_project_members.nextval, 1, 'kh2020121', default);
-insert into project_members values(seq_project_members.nextval, 2, 'kh2020122', 'Y');
-insert into project_members values(seq_project_members.nextval, 2, 'kh2020123', default);
-insert into project_members values(seq_project_members.nextval, 2, 'kh2020124', default);
-insert into project_members values(seq_project_members.nextval, 2, 'kh2020125', default);
-insert into project_members values(seq_project_members.nextval, 2, 'kh2020126', default);
-insert into project_members values(seq_project_members.nextval, 2, 'kh2020127', default);
-insert into project_members values(seq_project_members.nextval, 3, 'kh2020108', 'Y');
-insert into project_members values(seq_project_members.nextval, 4, 'kh2020101', 'Y');
-insert into project_members values(seq_project_members.nextval, 5, 'kh2020122', 'Y');
-insert into project_members values(seq_project_members.nextval, 5, 'kh2020123', default);
-insert into project_members values(seq_project_members.nextval, 6, 'kh2020122', 'Y');
-insert into project_members values(seq_project_members.nextval, 7, 'kh2020123', default);
+insert into project_members values(seq_project_members.nextval, 1, 'kh2020115', 'Y', default);
+insert into project_members values(seq_project_members.nextval, 1, 'kh2020116', default, default);
+insert into project_members values(seq_project_members.nextval, 1, 'kh2020117', default, default);
+insert into project_members values(seq_project_members.nextval, 1, 'kh2020118', default, default);
+insert into project_members values(seq_project_members.nextval, 1, 'kh2020119', default, default);
+insert into project_members values(seq_project_members.nextval, 1, 'kh2020120', default, default);
+insert into project_members values(seq_project_members.nextval, 1, 'kh2020121', default, default);
+insert into project_members values(seq_project_members.nextval, 2, 'kh2020122', 'Y', default);
+insert into project_members values(seq_project_members.nextval, 2, 'kh2020123', default, default);
+insert into project_members values(seq_project_members.nextval, 2, 'kh2020124', default, default);
+insert into project_members values(seq_project_members.nextval, 2, 'kh2020125', default, default);
+insert into project_members values(seq_project_members.nextval, 2, 'kh2020126', default, default);
+insert into project_members values(seq_project_members.nextval, 2, 'kh2020127', default, default);
+insert into project_members values(seq_project_members.nextval, 3, 'kh2020108', 'Y', default);
+insert into project_members values(seq_project_members.nextval, 4, 'kh2020101', 'Y', default);
+insert into project_members values(seq_project_members.nextval, 5, 'kh2020122', 'Y', default);
+insert into project_members values(seq_project_members.nextval, 5, 'kh2020123', default, default);
+insert into project_members values(seq_project_members.nextval, 6, 'kh2020122', 'Y', default);
+insert into project_members values(seq_project_members.nextval, 7, 'kh2020123', default, default);
 --중요표시 프로젝트
 insert into project_important values (seq_project_important.nextval, 'kh2020122', 2);
 insert into project_important values (seq_project_important.nextval, 'kh2020122', 5);
@@ -479,12 +484,14 @@ insert into work_charged_members values(seq_work_charged_members.nextval, 4, 'kh
 insert into work_charged_members values(seq_work_charged_members.nextval, 5, 'kh2020126');
 insert into work_charged_members values(seq_work_charged_members.nextval, 6, 'kh2020127');
 insert into work_charged_members values(seq_work_charged_members.nextval, 7, 'kh2020124');
+insert into work_charged_members values(seq_work_charged_members.nextval, 7, 'kh2020127');
 insert into work_charged_members values(seq_work_charged_members.nextval, 8, 'kh2020127');
 --업무 체크리스트
 insert into checklist values(seq_checklist.nextval,1,'kh2020115',null,'회식 장소 답사하기',default,null,'N');
-insert into checklist values(seq_checklist.nextval,3,'kh2020122',6,'프로젝트 관리 기능 정리',default,null,'Y');
-insert into checklist values(seq_checklist.nextval,3,'kh2020122',6,'업무설정 기능 정리',default,null,'N');
+insert into checklist values(seq_checklist.nextval,3,'kh2020122',121,'프로젝트 관리 기능 정리',default,null,'Y');
+insert into checklist values(seq_checklist.nextval,3,'kh2020122',121,'업무설정 기능 정리',default,null,'N');
 insert into checklist values(seq_checklist.nextval,3,'kh2020122',5,'파일첨부 기능 정리',default,null,'N');
+insert into checklist values(seq_checklist.nextval,7,'kh2020122',101,'on delete null잘 되나!?',default,null,'N');
 --업무 코멘트
 insert into work_comment values(seq_work_comment.nextval, 2, 5,1,'뭐드시나요?',default,null);
 insert into work_comment values(seq_work_comment.nextval, 2, 6,2,'뭐드시나요?',default,2);
@@ -519,7 +526,7 @@ select * from project_status;
 select * from project;
 select * from project_members;
 select * from project_important;
-    
+
 --------------------------------------------------
 --worklist/work 테이블 관련 select문
 --------------------------------------------------
@@ -530,7 +537,6 @@ select * from work_charged_members;
 select * from checklist;
 select * from work_comment;
 select * from attachment;
-
 
 --------------------------------------------------
 --notice/community테이블 관련 select문
@@ -546,7 +552,6 @@ create or replace view view_member as
 select M.*, D.dept_title, J.job_title 
 from member M left join department D on M.dept_code = D.dept_code
                           left join job J on M.job_code = J.job_code;
---drop view view_member;
 --select * from view_member;
 
 --================================================
@@ -555,7 +560,6 @@ from member M left join department D on M.dept_code = D.dept_code
 create or replace view view_project as 
 select P.*, PS.project_status_title, PS.project_status_color
 from project P left join project_status PS on P.project_status_code = PS.project_status_code; 
---drop view view_project;
 --select * from view_project;
 
 --================================================
@@ -563,7 +567,7 @@ from project P left join project_status PS on P.project_status_code = PS.project
 --================================================
 create or replace view view_projectMember as
 select V.*, M.password, M.member_name, M.email, M.phone, M.date_of_birth, M.dept_code, M.job_code, M.quit_yn, M.manager_id, M.original_filename, M.renamed_filename, M.dept_title, M.job_title
-from (select P.*, PM.member_id
+from (select P.*, PM.member_id, PM.project_quit_yn
       from view_project P left join project_members PM on P.project_no = PM.project_no
       order by P.project_no desc) V 
       left join view_member M on V.member_id = M.member_id;
@@ -592,4 +596,52 @@ select C.*, M.member_name, M.renamed_filename
 from community C left join member M on C.commu_writer = M.member_id; 
 --drop view view_communityMember;
 --select * from view_communityMember;
+
+--================================================
+--트리거: 회원가입시 내 워크패드 생성
+--================================================
+create or replace trigger trg_member_register
+    after
+    update on member
+    for each row
+begin
+    insert into project values(seq_project.nextval, :old.member_id, '나의 워크패드', 'Y', null, null, null, null, null);
+end;
+/
+
+
+--================================================
+--트리거: project_members의 project_quit_yn이 N->Y로 변경될 때
+--================================================
+create or replace trigger trg_project_members_quit
+    after
+    update on project_members
+    for each row
+declare
+    vproject_no number := :old.project_no;
+    vmember_id varchar2(30) := :old.member_id;
+    vwork_no number;
+    
+    cursor cur is
+        select V.work_no                                      
+        from (select V.*, W.worklist_no from (select * from work_charged_members where charged_member_id = vmember_id) V 
+                    left join work W on V.work_no = W.work_no) V
+                    left join worklist WL on V.worklist_no = WL.worklist_no
+        where project_no = vproject_no;
+begin
+
+    --프로젝트에서 나가는 경우 
+    if :new.project_quit_yn = 'Y' then
+        open cur;
+    
+        loop
+            fetch cur into vwork_no;
+            exit when cur%notFound;
+        
+            delete from work_charged_members where charged_member_id = vmember_id and work_no = vwork_no;
+        end loop;
+        
+    end if;
+end;
+/
 
