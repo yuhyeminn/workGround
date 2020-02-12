@@ -92,44 +92,53 @@ public class ProjectController {
 			
 			//1-2. 프로젝트에 내가 속해있는지 여부
 			boolean bool = false;
-			List<Member> list = p.getProjectMemberList();
-			
-			for(Member m: list) {
-				String memId = m.getMemberId();
-				String yn = m.getProjectQuitYn();
-				if(loggedInMemberId.equals(memId) && yn.equals("N"))
-					bool = true;
+			List<Member> list = null;
+			List<Member> inMemList = new ArrayList<>();
+			//내 워크패드인 경우
+			if("Y".equals(p.getPrivateYn())) {
+				bool = true;
 			}
-			
-			
-			//1-3.프로젝트 속함 여부에 따라 분기
-			if(bool) {
-				//프로젝트에 포함되어 있는 멤버리스트 다시 구하기
-				List<Member> inMemList = new ArrayList<>();
-				
-				for(Member m: list){
-					String yn = m.getProjectQuitYn();
-					if(yn.equals("N"))
-						inMemList.add(m);
-				}
-				
-				//2. 뷰모델 처리
-				mav.addObject("project", p);
-				mav.addObject("allMemList", list);
-				mav.addObject("inMemList", inMemList);
-				mav.addObject("wlList", p.getWorklistList());
-				
-				//서브헤더 탭에 따라 분기
-				if("work".equals(tab))
-					mav.setViewName("/project/projectView");
-				else if("attach".equals(tab))
-					mav.setViewName("/project/projectAttachmentAjax");
-			}
+			//프로젝트인 경우
 			else {
-				mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
-				mav.addObject("loc", "/project/projectList.do");
-				mav.setViewName("/common/msg");
+				list = p.getProjectMemberList();
+				
+				for(Member m: list) {
+					String memId = m.getMemberId();
+					String yn = m.getProjectQuitYn();
+					if(loggedInMemberId.equals(memId) && yn.equals("N"))
+						bool = true;
+				}
+				logger.debug("//////////////////////////////////////////");
+				logger.debug("bool={}", bool);
+				
+				//1-3.프로젝트 속함 여부에 따라 분기
+				if(bool) {
+					//프로젝트에 포함되어 있는 멤버리스트 다시 구하기
+					for(Member m: list){
+						String yn = m.getProjectQuitYn();
+						if(yn.equals("N"))
+							inMemList.add(m);
+					}
+					
+					//2. 뷰모델 처리
+					mav.addObject("project", p);
+					mav.addObject("allMemList", list);
+					mav.addObject("inMemList", inMemList);
+					mav.addObject("wlList", p.getWorklistList());
+					
+					//서브헤더 탭에 따라 분기
+					if("work".equals(tab))
+						mav.setViewName("/project/projectView");
+					else if("attach".equals(tab))
+						mav.setViewName("/project/projectAttachmentAjax");
+				}
+				else {
+					mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
+					mav.addObject("loc", "/project/projectList.do");
+					mav.setViewName("/common/msg");
+				}
 			}
+			
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);

@@ -144,18 +144,17 @@ function addWorklist(){
         $.ajax({
         	url: '${pageContext.request.contextPath}/project/addWorklist.do',
         	data: formData,
-        	dataType: 'json',
+        	dataType: 'html',
         	type: 'POST',
         	success: data=>{
         		console.log(data);
         		
-        		if(data.result===1){
-        			
-        			//초기화
-        			$(inputTitle).val("");
-        			$(addWkltFrm).hide();
-        			$(addWklt).show();
-        		}
+       			//초기화
+       			$(inputTitle).val("");
+       			$(addWkltFrm).hide();
+       			$(addWklt).show();
+       			
+       			
         	},
         	error: (x,s,e) => {
 				console.log(x,s,e);

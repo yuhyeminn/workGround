@@ -9,7 +9,7 @@
 		<id column="project_no" property="projectNo"></id>
 		<result column="project_writer" property="projectWriter"></result>
 		<result column="project_title" property="projectTitle"></result>
-		<result column="private_yn" property="projectYn"></result>
+		<result column="private_yn" property="privateYn"></result>
 		<result column="project_desc" property="projectDesc"></result>
 		<result column="project_startdate" property="projectStartDate"></result>
 		<result column="project_enddate" property="projectEndDate"></result>
