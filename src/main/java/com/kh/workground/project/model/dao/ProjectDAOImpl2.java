@@ -124,7 +124,7 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	}
 
 	@Override
-	public List<String> selectProjectMemberIdList(int projectNo) {
+	public List<Member> selectProjectMemberIdList(int projectNo) {
 		return sqlSession.selectList("project.selectProjectMemberIdList", projectNo);
 	}
 

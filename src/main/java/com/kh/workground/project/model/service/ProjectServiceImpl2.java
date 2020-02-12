@@ -224,16 +224,30 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		//수정할 프로젝트 회원 리스트
 		String[] updateMemberArr = updateMemberStr.split(",");
 		List<String> updateMemberList = new ArrayList<>(Arrays.asList(updateMemberArr));
+		logger.debug("updateMemberList={}",updateMemberList);
 		
-		//프로젝트에서 나갔었던 회원 리스트(project_quit_yn이 y)
+		//프로젝트 전체 회원 리스트(이전에 나갔었던 멤버까지 조회)
+		List<Member> projectAllMemberList = projectDAO.selectProjectMemberIdList(projectNo);
+		if(projectAllMemberList==null) throw new ProjectException("프로젝트 멤버 조회 오류!");
 		
-		//원래의 프로젝트 회원 리스트(project_quit_yn이 n)
-		List<String> projectMemberList = projectDAO.selectProjectMemberIdList(projectNo);
-		if(projectMemberList==null) throw new ProjectException("프로젝트 멤버 조회 오류!");
-
+		logger.debug("projectAllMemberList={}",projectAllMemberList);
+		
+		List<String> projectMemberList = new ArrayList<>(); 	//기존 프로젝트 회원 리스트
+		List<String> projectQuitMemberList = new ArrayList<>();
+		for(Member m : projectAllMemberList) {
+			if(("N").equals(m.getProjectQuitYn())){
+				projectMemberList.add(m.getMemberId());
+			}else {
+				projectQuitMemberList.add(m.getMemberId());
+			}
+		}
+		
+		logger.debug("projectMemberList={}",projectMemberList);
+		logger.debug("projectQuitMemberList={}",projectQuitMemberList);
+		
 		//새롭게 추가되는 프로젝트 멤버
 		for(String memberId : updateMemberList) {
-			if(!projectMemberList.contains(memberId)) {
+			if(!projectMemberList.contains(memberId) && !projectQuitMemberList.contains(memberId)) {
 				Map<String, String> param = new HashMap<>();
 				param.put("projectNo", Integer.toString(projectNo));
 				param.put("projectMember", memberId);
@@ -241,6 +255,14 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 				if(result==0) throw new ProjectException("프로젝트 멤버 수정 (추가) 오류!");
 			}
 			//quit_yn이 y인 멤버 리스트.. projectQuitMemberList에 memberId가 포함되어있다..? 그렇다면.. 다시 컬럼을 y로..변경..^^,,
+			if(projectQuitMemberList.contains(memberId)) {
+				Map<String, String> param = new HashMap<>();
+				param.put("projectNo", Integer.toString(projectNo));
+				param.put("projectMember", memberId);
+				param.put("quitYN", "N");
+				result = projectDAO.updateProjectQuit(param);
+				if(result==0) throw new ProjectException("프로젝트 멤버 수정 (재추가) 오류!");
+			}
 		}
 		//기존 프로젝트 멤버였는데 삭제되는 프로젝트 멤버
 		for(String memberId : projectMemberList) {
@@ -248,6 +270,7 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 				Map<String, String> param = new HashMap<>();
 				param.put("projectNo", Integer.toString(projectNo));
 				param.put("projectMember", memberId);
+				param.put("quitYN", "Y");
 				result = projectDAO.updateProjectQuit(param);
 				if(result==0) throw new ProjectException("프로젝트 멤버 수정 (삭제) 오류!");
 			}

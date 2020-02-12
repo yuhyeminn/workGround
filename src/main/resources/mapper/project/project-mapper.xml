@@ -311,7 +311,7 @@
 		</if>
 	</select>
 	
-	<!-- projectSetting.do : 프로젝트 설정 사이드바에서 조회할 프로젝트 정보 조회 . 프로젝트멤버는 팀장 제외하고 조회-->
+	<!-- projectSetting.do : 프로젝트 설정 사이드바에서 조회할 프로젝트 정보 조회 .-->
 	<select id="selectProjectOneForSetting" resultMap="viewProjectMemberCollectionMap">
 		select * from view_projectMember where project_no = #{projectNo} and project_quit_yn = 'N'
 	</select>
@@ -384,17 +384,16 @@
 		</if>
 	</update>
 	
-	<!-- updateProjectMember.do : 해당 projectNo의 팀원 리스트-->
-	<select id="selectProjectMemberIdList" resultType="String">
-		select member_id from project_members where project_no = #{project_no} and project_quit_yn = 'N'
+	<!-- updateProjectMember.do : 해당 projectNo의 팀원 리스트(이전에 나갔었던 사람까지 포함. 팀장 제외)-->
+	<select id="selectProjectMemberIdList" resultType="member">
+		select PM.member_id, PM.project_quit_yn from project_members PM left join member M on PM.member_id = M.member_id where project_no=#{projectNo} and manager_yn = 'N'
 	</select>
 	
-	
-	
-	<!-- 프로젝트 나가기 -->
+	<!-- 프로젝트 멤버 project_quit_yn 수정 -->
 	<update id="updateProjectQuit">
-		update project_members set project_quit_yn = 'Y' where project_no=#{projectNo} and member_id=#{projectMember}
+		update project_members set project_quit_yn = #{quitYN} where project_no=#{projectNo} and member_id=#{projectMember}
 	</update>
+	
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>
 			<result column="password" property="password"></result>

@@ -124,7 +124,6 @@ public class ProjectController2 {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("프로젝트 속성 조회 오류!");
 		}
-		
 		return mav;
 	}
 	
@@ -262,9 +261,6 @@ public class ProjectController2 {
 			Map<String, Object> map = new HashMap<>();
 		
 		try {
-			logger.debug("date={}",date);
-			logger.debug("dateType={}",dateType);
-			logger.debug("projectNo={}",projectNo);
 			Map<String, String> param = new HashMap<>();
 			param.put("date", date);
 			param.put("dateType", dateType);
@@ -285,18 +281,20 @@ public class ProjectController2 {
 	
 	@RequestMapping("/project/updateProjectMember.do")
 	@ResponseBody
-	public ModelAndView updateProjectMember(@RequestParam String updateMemberStr, @RequestParam int projectNo, ModelAndView mav) {
-		logger.debug("updateProjectMember={}",updateMemberStr);
-		logger.debug("projectNo={}",projectNo);
+	public Map<String, Object> updateProjectMember(@RequestParam String updateMemberStr, @RequestParam int projectNo) {
+			Map<String, Object> map = new HashMap<>();
 		
 		try {
 			
 			int result = projectService.updateProjectMember(updateMemberStr, projectNo);
+			boolean isUpdated = result==0?false:true;
+			map.put("isUpdated",isUpdated );
 			
 		}catch(Exception e) {
-			
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 팀원 수정 오류!");
 		}
-		return mav;
+		return map;
 	}
 	
 	

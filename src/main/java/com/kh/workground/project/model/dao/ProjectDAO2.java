@@ -49,7 +49,7 @@ public interface ProjectDAO2 {
 
 	int updateProjectDate(Map<String, String> param);
 
-	List<String> selectProjectMemberIdList(int projectNo);
+	List<Member> selectProjectMemberIdList(int projectNo);
 
 	int updateProjectQuit(Map<String, String> param);
 
