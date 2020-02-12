@@ -29,6 +29,7 @@ $(function(){
     });
 	
 	sidebarActive(); //사이드바 활성화
+	tabActive(); //서브헤더 탭 활성화
 });
 
 //사이드바 활성화
@@ -42,6 +43,20 @@ function sidebarActive(){
 	});
 	
 	$("#sidebar-club").addClass("active");
+}
+
+//서브헤더 탭 active
+function tabActive(){
+  let tabArr = document.querySelectorAll("#navbar-tab li");
+
+  tabArr.forEach((obj, idx)=>{
+      let $obj = $(obj);
+      if($obj.hasClass('active')){
+          $obj.removeClass('active');
+      }
+  });
+
+  $("#tab-attachment").addClass("active");
 }
 
 //멤버 프로필 페이지로 이동
@@ -160,7 +175,7 @@ function fileDownload(oName, rName, clubNo) {
 <!-- /.navbar -->
 
 <!-- Content Wrapper. Contains page content -->
-<div id="member-list" class="content-wrapper">
+<div id="member-list" class="content-wrapper" style="padding-top: 50px;">
     <!-- Main content -->
     <section class="content">
         <h2>파일</h2>
