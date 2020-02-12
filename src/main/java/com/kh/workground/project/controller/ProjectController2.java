@@ -283,5 +283,21 @@ public class ProjectController2 {
 		return map;
 	}
 	
+	@RequestMapping("/project/updateProjectMember.do")
+	@ResponseBody
+	public ModelAndView updateProjectMember(@RequestParam String updateMemberStr, @RequestParam int projectNo, ModelAndView mav) {
+		logger.debug("updateProjectMember={}",updateMemberStr);
+		logger.debug("projectNo={}",projectNo);
+		
+		try {
+			
+			int result = projectService.updateProjectMember(updateMemberStr, projectNo);
+			
+		}catch(Exception e) {
+			
+		}
+		return mav;
+	}
+	
 	
 }

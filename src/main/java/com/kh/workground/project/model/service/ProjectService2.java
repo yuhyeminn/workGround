@@ -27,4 +27,6 @@ public interface ProjectService2 {
 
 	int updateProjectDate(Map<String, String> param);
 
+	int updateProjectMember(String updateMemberStr, int projectNo);
+
 }

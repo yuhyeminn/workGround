@@ -1,6 +1,7 @@
 package com.kh.workground.project.model.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,6 +215,45 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 			throw new ProjectException("프로젝트 날짜 관련 수정 오류!");
 		}
 		return result; 
+	}
+
+	@Override
+	public int updateProjectMember(String updateMemberStr, int projectNo) {
+		int result = 1;
+		
+		//수정할 프로젝트 회원 리스트
+		String[] updateMemberArr = updateMemberStr.split(",");
+		List<String> updateMemberList = new ArrayList<>(Arrays.asList(updateMemberArr));
+		
+		//프로젝트에서 나갔었던 회원 리스트(project_quit_yn이 y)
+		
+		//원래의 프로젝트 회원 리스트(project_quit_yn이 n)
+		List<String> projectMemberList = projectDAO.selectProjectMemberIdList(projectNo);
+		if(projectMemberList==null) throw new ProjectException("프로젝트 멤버 조회 오류!");
+
+		//새롭게 추가되는 프로젝트 멤버
+		for(String memberId : updateMemberList) {
+			if(!projectMemberList.contains(memberId)) {
+				Map<String, String> param = new HashMap<>();
+				param.put("projectNo", Integer.toString(projectNo));
+				param.put("projectMember", memberId);
+				result = projectDAO.insertProjectMember(param);
+				if(result==0) throw new ProjectException("프로젝트 멤버 수정 (추가) 오류!");
+			}
+			//quit_yn이 y인 멤버 리스트.. projectQuitMemberList에 memberId가 포함되어있다..? 그렇다면.. 다시 컬럼을 y로..변경..^^,,
+		}
+		//기존 프로젝트 멤버였는데 삭제되는 프로젝트 멤버
+		for(String memberId : projectMemberList) {
+			if(!updateMemberList.contains(memberId)) {
+				Map<String, String> param = new HashMap<>();
+				param.put("projectNo", Integer.toString(projectNo));
+				param.put("projectMember", memberId);
+				result = projectDAO.updateProjectQuit(param);
+				if(result==0) throw new ProjectException("프로젝트 멤버 수정 (삭제) 오류!");
+			}
+		}
+		
+		return result;
 	}
 	
 

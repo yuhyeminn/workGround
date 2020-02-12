@@ -178,14 +178,19 @@
                 </div>
             </div>
             <hr/>
+           <%--  <form action="${pageContext.request.contextPath }/project/updateProjectMember.do"> --%>
             <div class="row setting-row">
                 <label class="setting-content-label">프로젝트 팀원</label>
                 <div class='control-wrapper pv-multiselect-box'>
                 <div class="control-styles">
                     <input type="text" tabindex="1" id='projectMember' name="projectMember"/>
+                    <c:if test="${project.projectWriter eq memberLoggedIn.memberId || memberLoggedIn.memberId eq 'admin' }">
+		               <button type="submit" class="sign-out-project" id="updateProjectMember">프로젝트 팀원 수정</button>
+		            </c:if>
                 </div>
             </div>
             </div>
+            <!-- </form> -->
             <c:if test="${!empty project.projectMemberList}">
             	<c:forEach var="member" items="${project.projectMemberList}" varStatus="vs">
             		<c:if test="${member.memberId eq memberLoggedIn.memberId }">
@@ -210,6 +215,7 @@ $(()=>{
 	var projectWriter = '${project.projectWriter}';
 	projectManager(projectWriter);
 	projectMember(projectNo);
+	updateProjectMember();
 });
 
 //업무 사이드바 닫기
@@ -330,5 +336,24 @@ function dateValidation(date,dateType){
 	}
 	return true;
 }
+function updateProjectMember(){
+	$("#updateProjectMember").on('click',function(){
+		var projectNo = '${project.projectNo}';
+		var updateMemberArr = $("select[name=projectMember]").val();
+		var updateMemberStr = updateMemberArr.join(", ");
+		$.ajax({
+			url: "${pageContext.request.contextPath}/project/updateProjectMember.do",
+			data: {updateMemberStr:updateMemberStr, projectNo:projectNo},
+			dataType:"json",
+			success: data =>{
+				console.log("ggs")
+			},
+			error:(jqxhr, textStatus, errorThrown) =>{
+				console.log(jqxhr, textStatus, errorThrown);
+			}
+		});
+	});
+}
+
 </script>
 <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

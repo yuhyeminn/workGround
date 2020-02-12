@@ -279,8 +279,8 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
 .setting-contents-inform .setting-contents-date{color:rgb(180, 183, 185);}
 .project-setting-tabs .nav-item{width:100%}
 .project-setting-tabs .nav-item button{width:100%}
-.p-setting-container{padding:20px;}
-.setting-row{padding:10px;}
+.p-setting-container{padding: 0px 20px;}
+.setting-row{padding:15px 0px;}
 .add-description{color:#17a2b8;}
 .add-description:hover{background: #e7e7e7;cursor: pointer;}
 .tab-content{background:#f3f4f5; font-size:15px;height:100%;}

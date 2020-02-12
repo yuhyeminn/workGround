@@ -35,4 +35,7 @@ public class Member implements Serializable {
 	private String originalFileName;
 	private String renamedFileName;
 	
+	
+	private String projectQuitYn; //프로젝트 테이블 - 혜민
+	
 }

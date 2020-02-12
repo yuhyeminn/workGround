@@ -122,6 +122,16 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	public int updateProjectDate(Map<String, String> param) {
 		return sqlSession.update("project.updateProjectDate", param);
 	}
+
+	@Override
+	public List<String> selectProjectMemberIdList(int projectNo) {
+		return sqlSession.selectList("project.selectProjectMemberIdList", projectNo);
+	}
+
+	@Override
+	public int updateProjectQuit(Map<String, String> param) {
+		return sqlSession.update("project.updateProjectQuit", param);
+	}
 	
 
 }
