@@ -109,7 +109,8 @@ $(function () {
         right : 'dayGridMonth'
       },
       //Random default events
-      events: [
+      ${calString},
+/*       events: [
  
     	 {
           title          : 'All Day Event',
@@ -154,8 +155,7 @@ $(function () {
           backgroundColor: '#3c8dbc', //Primary (light-blue)
           borderColor    : '#3c8dbc' //Primary (light-blue)
         } 
-      ] 
-      ,
+      ]  */
       editable  : true,
       droppable : true, // this allows things to be dropped onto the calendar !!!
       drop      : function(info) {
@@ -164,7 +164,30 @@ $(function () {
           // if so, remove the element from the "Draggable Events" list
           info.draggedEl.parentNode.removeChild(info.draggedEl);
         }
-      }    
+      }, 
+      
+      eventClick(info) {
+    	  var noAndTitle = info.event.title;
+    	  var arr = noAndTitle.split(",");
+    	  var clubPlanNo = arr[0];
+    	  $.ajax({
+    		  
+    		  url: "${pageContext.request.contextPath}/club/selectOneClubPlan.do?",
+    			dataType: "json",
+    			data:{"clubPlanNo" : clubPlanNo},
+    			type: "GET",
+    			success: data => {
+    				console.log(data);
+    			    
+    			},
+    			error: (x,s,e)=> {
+    				console.log(x,s,e);
+    			}
+    		  
+    	  });
+
+      }
+
     });
 
     calendar.render();
@@ -326,9 +349,7 @@ $(function () {
 		<!-- Content Header (Page header) -->
 		<section class="content-header">
 			<div class="container-fluid">
-				<div class="row mb-2">
-					
-				</div>
+				<div class="row mb-2"></div>
 			</div>
 			<!-- /.container-fluid -->
 		</section>
@@ -354,7 +375,7 @@ $(function () {
 			</div>
 			<!-- /.container-fluid -->
 		</section>
-	
+
 		<!-- /.content -->
 	</div>
 	<!-- div content wrapper -->

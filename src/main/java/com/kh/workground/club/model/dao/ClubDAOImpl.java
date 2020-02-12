@@ -91,5 +91,11 @@ public class ClubDAOImpl implements ClubDAO {
 		return sqlSession.selectList("club.selectClubPlanList",clubNo);
 	}
 
+	@Override
+	public ClubPlan selectOneClubPlan(int clubPlanNo) {
+
+		return sqlSession.selectOne("club.selectOneClubPlan",clubPlanNo);
+	}
+
 
 }

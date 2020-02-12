@@ -91,5 +91,10 @@ public class ClubServiceImpl implements ClubService {
 		return clubDAO.selectClubPlanList(clubNo);
 	}
 
+	@Override
+	public ClubPlan selectOneClubPlan(int clubPlanNo) {
+		return clubDAO.selectOneClubPlan(clubPlanNo);
+	}
+
 
 }

@@ -121,7 +121,41 @@
 			 or A.job_title like '%'|| #{keyword} || '%'
 
 	</select>
+	
+	<select id="selectOneClubPlan" resultMap="clubPlanCollectionMap">
+		select P.* ,A.* , M.member_id, M.renamed_filename, M.member_name 
+		from club_plan_attendee A 
+			left join club_member C on A.club_member_no = C.club_member_no
+    		left join member M on C.emp_id = M.member_id
+            left join club_plan P on P.club_plan_no = A.club_plan_no
+		where A.club_plan_no = #{clubPlanNo} 
+		order by A.club_plan_attendee_date desc
+	
+	</select>
 
+	<resultMap type="clubPlan" id="clubPlanCollectionMap">
+		<id column="club_plan_no" property="clubPlanNo"></id>
+		<result column="club_plan_title" property="clubPlanTitle"></result>
+		<result column="club_plan_content" property="clubPlanContent"></result>
+		<result column="club_plan_start" property="clubPlanStart"></result>
+		<result column="club_plan_state" property="clubPlanState"></result>
+		<result column="club_plan_color" property="clubPlanColor"></result>
+		<result column="club_plan_place" property="clubPlanPlace"></result>
+		<result column="club_plan_manager" property="clubPlanManager"></result>
+		<result column="club_no" property="clubNo"></result>
+		
+		<collection property="planAttendeeList" ofType="clubPlanAttendee">
+			<id column="club_plan_attendee_no" property="clubPlanAttendeeNo"></id>
+			<result column="club_plan_no" property="clubPlanNo"></result>
+			<result column="club_member_no" property="clubMemberNo"></result>
+			<result column="club_plan_attendee_date" property="clubPlanAttendeeDate"></result>
+			<result column="renamed_filename" property="renamedFileName"></result>
+			<result column="member_id" property="memberId"></result>
+			<result column="member_name" property="memberName"></result>
+		
+		</collection>
+
+	</resultMap>
 	<!-- sh end -->
 
 	<!-- br start -->
