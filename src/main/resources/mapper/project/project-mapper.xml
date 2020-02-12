@@ -107,7 +107,7 @@
 	<!-- projectView 뿌리기 : 업무번호로 체크리스트 조회 -->
 	<select id="selectChklstListByWorkNo" resultMap="checklistMap">
 		select C.*, WM.charged_member_id
-		from checklist C join work_charged_members WM on C.checklist_charged_members_no = WM.work_charged_members_no
+		from checklist C left join work_charged_members WM on C.checklist_charged_members_no = WM.work_charged_members_no
 		where C.work_no = #{workNo}
 		order by checklist_no
 	</select>

@@ -164,6 +164,9 @@ public class ProjectServiceImpl implements ProjectService {
 					chklst.setChecklistWriterMember(writerMember); //체크리스트 작성자
 					chklst.setChecklistChargedMember(chargedMember); //체크리스트에 배정된 멤버
 				}
+				logger.debug("////////////////////////////////////");
+				logger.debug("workNo={}", work.getWorkNo());
+				logger.debug("chklstList={}", chklstList);
 				
 				//3-2. 업무 번호로 파일첨부 가져오기
 				List<Attachment> attachList = projectDAO.selectAttachListByWorkNo(work.getWorkNo());

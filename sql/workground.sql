@@ -465,18 +465,10 @@ insert into work_charged_members values(seq_work_charged_members.nextval, 6, 'kh
 insert into work_charged_members values(seq_work_charged_members.nextval, 7, 'kh2020124');
 insert into work_charged_members values(seq_work_charged_members.nextval, 7, 'kh2020127');
 insert into work_charged_members values(seq_work_charged_members.nextval, 8, 'kh2020127');
-commit;
-select * from project_members where project_no = 2;
-select * from work;
-select * from work_charged_members where charged_member_id = 'kh2020127';
-select * from checklist;
-update checklist set checklist_charged_members_no = 101 where checklist_no = 41;
-update checklist set checklist_charged_members_no = 5 where checklist_no = 4; --no: 5
-rollback;
 --업무 체크리스트
 insert into checklist values(seq_checklist.nextval,1,'kh2020115',null,'회식 장소 답사하기',default,null,'N');
-insert into checklist values(seq_checklist.nextval,3,'kh2020122',6,'프로젝트 관리 기능 정리',default,null,'Y');
-insert into checklist values(seq_checklist.nextval,3,'kh2020122',6,'업무설정 기능 정리',default,null,'N');
+insert into checklist values(seq_checklist.nextval,3,'kh2020122',121,'프로젝트 관리 기능 정리',default,null,'Y');
+insert into checklist values(seq_checklist.nextval,3,'kh2020122',121,'업무설정 기능 정리',default,null,'N');
 insert into checklist values(seq_checklist.nextval,3,'kh2020122',5,'파일첨부 기능 정리',default,null,'N');
 insert into checklist values(seq_checklist.nextval,7,'kh2020122',101,'on delete null잘 되나!?',default,null,'N');
 --업무 코멘트
@@ -538,7 +530,6 @@ create or replace view view_member as
 select M.*, D.dept_title, J.job_title 
 from member M left join department D on M.dept_code = D.dept_code
                           left join job J on M.job_code = J.job_code;
---drop view view_member;
 --select * from view_member;
 
 --================================================
@@ -547,7 +538,6 @@ from member M left join department D on M.dept_code = D.dept_code
 create or replace view view_project as 
 select P.*, PS.project_status_title, PS.project_status_color
 from project P left join project_status PS on P.project_status_code = PS.project_status_code; 
---drop view view_project;
 --select * from view_project;
 
 --================================================
@@ -569,24 +559,21 @@ from work W left join work_tag WT on W.work_tag_code = WT.work_tag_code;
 
 
 
-
-
-
-
-
-                                        
-                                        
-select * from checklist;
-
-rollback;
-select * from work_charged_members where charged_member_id = 'kh2020127';
-select * from project_members where project_no = 2;
-update project_members set project_quit_yn = 'N' where project_members_no = 13;
-commit;
-delete from work_charged_members where member_id = 'kh2020127' and work_no = 8;
 --================================================
---트리거: 프로젝트에서 멤버가 나가는 경우
---프로젝트 멤버 테이블 quit_yn 이 'N'에서 'Y'로 업데이트 -> 업무 배정된 멤버 테이블에서 해당 멤버아이디 행 삭제
+--트리거: 회원가입시 내 워크패드 생성
+--================================================
+create or replace trigger trg_member_register
+    after
+    update on member
+    for each row
+begin
+    insert into project values(seq_project.nextval, :old.member_id, '나의 워크패드', 'Y', null, null, null, null, null);
+end;
+/
+
+
+--================================================
+--트리거: project_members의 project_quit_yn이 N->Y로 변경될 때
 --================================================
 create or replace trigger trg_project_members_quit
     after
