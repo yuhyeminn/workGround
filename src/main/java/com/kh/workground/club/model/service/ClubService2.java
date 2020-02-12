@@ -53,6 +53,8 @@ public interface ClubService2 {
 
 	int deleteClubPlanAttendee(int clubPlanNo);
 
+	int deleteClubNoticeComment(int clubNoticeCommentNo);
+
 
 
 

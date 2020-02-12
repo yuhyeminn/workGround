@@ -1,7 +1,12 @@
 package com.kh.workground.club.controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -75,7 +83,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		mav.addObject("clubPhotoCount", clubPhotoList.size());
 		mav.addObject("clubPlanCount", clubPlanList.size());
 		mav.addObject("clubNoticeCount", clubNoticeList.size());
-		mav.setViewName("/club/clubView");
+		mav.setViewName("club/clubView");
 		
 		return mav;
 	}
@@ -381,8 +389,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	public ModelAndView deleteClubPlan(ModelAndView mav, 
 									   @RequestParam("clubPlanNo") int clubPlanNo, 
 									   @RequestParam("clubNo") int clubNo) {
-		logger.debug("clubPlanNo={}", clubPlanNo);
-		logger.debug("clubNo={}", clubNo);
+//		logger.debug("clubPlanNo={}", clubPlanNo);
+//		logger.debug("clubNo={}", clubNo);
 		
 		int result = clubService2.deleteClubPlanAttendee(clubPlanNo);
 		
@@ -392,5 +400,70 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		return mav;
 	}
-
+	
+	@PostMapping("/club/deleteClubNoticeComment.do")
+	public ModelAndView deleteClubNoticeComment(ModelAndView mav, 
+												@RequestParam("clubNoticeCommentNo") int clubNoticeCommentNo, 
+												@RequestParam("clubNo") int clubNo) {
+		int result = clubService2.deleteClubNoticeComment(clubNoticeCommentNo);
+		
+		mav.addObject("msg", result>0?"댓글을 삭제하였습니다.":"댓글을 삭제하지 못했습니다.");
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNo);
+		mav.setViewName("common/msg");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/clubFileList.do")
+	public ModelAndView clubFileList(ModelAndView mav, 
+									 @RequestParam("clubNo") int clubNo) {
+		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
+		logger.debug("clubPhotoList={}", clubPhotoList);
+		
+		mav.addObject("clubPhotoList", clubPhotoList);
+		mav.setViewName("club/clubFileList");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/clubFileDownload.do")
+	public ModelAndView clubFileDownload(ModelAndView mav, 
+										 @RequestParam("oName") String oName, 
+										 @RequestParam("rName") String rName, 
+										 @RequestParam("clubNo") int clubNo, 
+										 HttpServletRequest request, 
+										 HttpServletResponse response) throws ServletException, IOException {
+		String saveDirectory = request.getServletContext().getRealPath("/resources/upload/club/"+clubNo);
+//		logger.debug("saveDirectory={}", saveDirectory);
+		
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(saveDirectory+File.separator+rName));
+		
+		ServletOutputStream sos = response.getOutputStream();
+		BufferedOutputStream  bos = new BufferedOutputStream(sos);
+		
+		String resFileName = "";
+		
+		boolean isMSIE = request.getHeader("user-agent").indexOf("MSIE") != -1 
+						|| request.getHeader("user-agent").indexOf("Trident") != -1;
+		
+		if(isMSIE) {
+			resFileName = URLEncoder.encode(oName, "utf-8");
+			resFileName = resFileName.replaceAll("\\", "%20");
+		}
+		else {
+			resFileName = new String(oName.getBytes("utf-8"), "iso-8859-1");
+		}
+		
+		response.setContentType("application/oxtet-stream");
+		response.setHeader("Content-Disposition", "attachment;filename="+resFileName);
+		
+		int read = -1;
+		while((read = bis.read()) != -1) {
+			bos.write(read);
+		}
+		bos.close();
+		bis.close();
+		
+		return mav;
+	}
 }

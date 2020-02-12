@@ -121,6 +121,11 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 		return sqlSession.delete("club.deleteClubPlan", clubPlanNo);
 	}
 
+	@Override
+	public int deleteClubNoticeComment(int clubNoticeCommentNo) {
+		return sqlSession.delete("club.deleteClubNoticeComment", clubNoticeCommentNo);
+	}
+
 
 
 }

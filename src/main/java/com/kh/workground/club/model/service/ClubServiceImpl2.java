@@ -128,6 +128,11 @@ public class ClubServiceImpl2 implements ClubService2 {
 		return clubDAO2.deleteClubPlanAttendee(clubPlanNo);
 	}
 
+	@Override
+	public int deleteClubNoticeComment(int clubNoticeCommentNo) {
+		return clubDAO2.deleteClubNoticeComment(clubNoticeCommentNo);
+	}
+
 
 
 }

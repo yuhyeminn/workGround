@@ -119,6 +119,10 @@ function memberList(clubNo){
 	location.href = "${pageContext.request.contextPath}/club/clubMemberList.do?clubNo="+clubNo;
 }
 
+function clubFileList(clubNo) {
+	location.href = "${pageContext.request.contextPath}/club/clubFileList.do?clubNo="+clubNo;
+}
+
 //사이드바 활성화
 function sidebarActive(){
 	let navLinkArr = document.querySelectorAll(".sidebar .nav-link");
@@ -231,6 +235,11 @@ function deleteClubPlanAttendee() {
 	}
 }
 
+function confirmDelete() {
+	if(!confirm("정말로 삭제하시겠습니까?")) return false;
+	return true;
+}
+
 function loginAlert() {
 	alert("로그인 후 이용하실 수 있습니다.");
 }
@@ -261,7 +270,7 @@ function loginAlert() {
 			<li id="tab-member" class="nav-item">
 			<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button></li>
 		</c:if>
-		<li id="tab-attachment" class="nav-item"><button type="button">파일</button></li>
+		<li id="tab-attachment" class="nav-item"><button type="button" onclick="clubFileList('${club.clubNo}');">파일</button></li>
 	</ul>
 
 	<!-- Right navbar links -->
@@ -488,7 +497,7 @@ function loginAlert() {
 				  <!-- clubPhotoModal -->
 				  <div class="modal fade cd-example-modal-lg" id="clubPhoto${vs.index }"
 					   tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-					<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 					  <div class="modal-content card card-outline card-info">
 						<div class="modal-header">
 						  <h5 class="modal-title" id="exampleModalLongTitle">${clubPhoto.clubPhotoTitle }</h5>
@@ -515,7 +524,7 @@ function loginAlert() {
 							<input type="hidden" name="clubNo" value="${club.clubNo }" />
 							<input type="hidden" name="clubPhotoNo" value=${clubPhoto.clubPhotoNo } />
 							<input type="hidden" name="clubPhotoRenamed" value=${clubPhoto.clubPhotoRenamed } />
-							<button type="submit" class="btn btn-danger">삭제</button>
+							<button type="submit" class="btn btn-danger" onclick="return confirmDelete();">삭제</button>
 						  </form>
 						</c:if>
 						  <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
@@ -679,7 +688,7 @@ function loginAlert() {
 											<form name="deleteClubPlanFrm" action="${pageContext.request.contextPath }/club/deleteClubPlan.do" method="POST">
 											  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
 											  <input type="hidden" name="clubNo" value="${club.clubNo }" />
-											  <button type="submit" class="btn btn-danger">삭제</button>
+											  <button type="submit" class="btn btn-danger" onclick="return confirmDelete();">삭제</button>
 											</form>
 										  </c:if>
 											<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
@@ -872,7 +881,11 @@ function loginAlert() {
 						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">${clubNoticeComment.clubNoticeCommentDate }</span></span>
 						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
 						                    <c:if test="${not empty memberLoggedIn and clubNoticeComment.memberId==memberLoggedIn.memberId }">
-						                      <button class="comment-delete float-right">삭제</button>
+						                      <form name="deleteClubNoticeCommentFrm" action="${pageContext.request.contextPath }/club/deleteClubNoticeComment.do" method="POST">
+						                        <input type="hidden" name="clubNoticeCommentNo" value="${clubNoticeComment.clubNoticeCommentNo }" />
+						                        <input type="hidden" name="clubNo" value="${club.clubNo }" />
+						                        <button type="submit" class="comment-delete float-right" onclick="return confirmDelete();">삭제</button>
+						                      </form>
 						                    </c:if>
 						                  </div>
 						                </div>
@@ -906,7 +919,7 @@ function loginAlert() {
 									<form name="deleteClubNoticeFrm" action="${pageContext.request.contextPath}/club/deleteClubNotice.do" method="POST">
 										<input type="hidden" name="clubNo" value="${club.clubNo }" />
 										<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
-										<button type="submit" class="btn btn-danger" >삭제</button>
+										<button type="submit" class="btn btn-danger" onclick="return confirmDelete();" >삭제</button>
 									</form>
 									<button type="button" class="btn btn-info"
 										data-dismiss="modal" data-toggle="modal"

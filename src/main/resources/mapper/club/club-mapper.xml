@@ -253,5 +253,10 @@
 		delete from club_plan 
 		where club_plan_no = #{clubPlanNo}
 	</delete>
+	
+	<delete id="deleteClubNoticeComment">
+		delete from club_notice_comment 
+		where club_notice_comment_no = #{clubNoticeCommentNo}
+	</delete>
 	<!-- br end -->
 </mapper>
