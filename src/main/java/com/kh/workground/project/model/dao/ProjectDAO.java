@@ -53,5 +53,7 @@ public interface ProjectDAO {
 
 	int insertWorkChargedMember(Map<String, Object> chargedParam);
 
+	Work selectWorkOne();
+
 
 }

@@ -17,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Attachment implements Serializable {
+public class Attachment extends Work implements Serializable {
 
 	/**
 	 * 
@@ -25,7 +25,6 @@ public class Attachment implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int attachmentNo;
-	//업무 번호는 상속받아서!? 
 	private int attachmentWriterNo; //Project의 projectMemberList에서 참조
 	private String attachmentWriterId; 
 	private String originalFilename;

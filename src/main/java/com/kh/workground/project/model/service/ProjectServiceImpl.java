@@ -44,6 +44,7 @@ public class ProjectServiceImpl implements ProjectService {
 		//2. 중요 표시된 프로젝트 조회(프로젝트 번호만)
 		List<Project> listByImportant = new ArrayList<>();
 		List<Integer> pNoListByImportant = projectDAO.selectListByImportantProjectNo(memberId);
+		
 		if(pNoListByImportant==null)
 			throw new ProjectException("중요 표시된 프로젝트 조회 오류!");
 		
@@ -59,18 +60,21 @@ public class ProjectServiceImpl implements ProjectService {
 			listByInclude.add(myP);
 		
 		//3-2. 부서 전체 프로젝트에서 내가 포함된 프로젝트 판별
+		boolean bool = false; //내가 포함됐는지 여부
 		if(!listByDept.isEmpty()) {
+			
 			for(Project p: listByDept) {
+				bool = false;
 				int projectNo = p.getProjectNo();
 				List<Member> memList = p.getProjectMemberList();
 				
-				boolean bool = false; //내가 포함됐는지 여부
 				for(Member m: memList) {
 					String pMemId = m.getMemberId();
-					if(memberId.equals(pMemId)) 
+					String yn = m.getProjectQuitYn();
+					
+					if(memberId.equals(pMemId) && yn.equals("N")) 
 						bool = true;
 				}
-				
 				//3-3. 내가 포함됐다면 중요 표시되어있는지 확인
 				if(bool) {
 					boolean important = pNoListByImportant.contains(projectNo);
@@ -298,40 +302,58 @@ public class ProjectServiceImpl implements ProjectService {
 		Work work = new Work();
 		work.setWorklistNo((int)param.get("worklistNo"));
 		work.setWorkTitle(String.valueOf(param.get("workTitle")));
-		work.setWorkTagCode(String.valueOf(param.get("workTag")));
-		//to_date('02/12/2020', 'mm/dd/yyyy')
+		
+		//업무코드 넣기
+		if(param.get("workTag")!=null)
+			work.setWorkTagCode(String.valueOf(param.get("workTag")));
+		
 		//날짜 넣기
 		List<String> dateList = (List<String>)param.get("workDate");
 		if(dateList!=null && !dateList.isEmpty()) {
+			String start = dateList.get(0);
+			String end = dateList.get(1);
 			//시작일을 지정한 경우
-			if(dateList.get(0)!=null) {
-				//work.setWorkStartDate(dateList.get(0));
-			}
+			if(start!=null) 
+				work.setWorkStartDate(java.sql.Date.valueOf(start));
+			//마감일을 지정한 경우
+			if(end!=null && !end.equals(start)) 
+				work.setWorkEndDate(java.sql.Date.valueOf(end));
 		}
 		
 		//2.업무 insert
-		/*result = projectDAO.insertWork(work);
+		result = projectDAO.insertWork(work);
 		
 		if(result==0)
 			throw new ProjectException("새 업무 만들기 오류!");
 		
 		
 		//3.위에서 가져온 workNo로 업무 배정된 멤버 insert
-		result = 0;
 		List<String> memberList = (List<String>)param.get("workChargedMember");
-		Map<String, Object> chargedParam = new HashMap<>(); 
-		chargedParam.put("workNo", work.getWorkNo());
-		
-		for(String memberId: memberList) {
-			chargedParam.put("memberId", memberId);
-			result += projectDAO.insertWorkChargedMember(chargedParam);
+		if(memberList!=null && !memberList.isEmpty()) {
+			result = 0;
+			Map<String, Object> chargedParam = new HashMap<>(); 
+			chargedParam.put("workNo", work.getWorkNo());
+			
+			for(String memberId: memberList) {
+				chargedParam.put("memberId", memberId);
+				result += projectDAO.insertWorkChargedMember(chargedParam);
+			}
+			
+			if(result != memberList.size())
+				throw new ProjectException("업무 배정된 멤버 추가 오류!");
 		}
 		
-		if(result != memberList.size())
-			throw new ProjectException("업무 배정된 멤버 추가 오류!");*/
-		
-		
 		return result;
+	}
+
+	@Override
+	public Work selectWorkOne() {
+		Work work = projectDAO.selectWorkOne();
+		
+		if(work==null)
+			throw new ProjectException("업무 객체 조회 오류!");
+		
+		return work;
 	}
 
 }

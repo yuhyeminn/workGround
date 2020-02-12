@@ -46,13 +46,10 @@ public class ProjectController {
 		
 		try {
 			//1.업무로직
-			//1-1.부서 사람들 조회
-			memberListByDept = projectService.selectMemberListByDept(memberLoggedIn.getDeptCode());
-			
-			//1-2.부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
+			//1-1.부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
 			projectMap = projectService.selectProjectListAll(memberLoggedIn);
 			
-			//1-3.부서 전체 프로젝트 상태 카운트
+			//1-2.부서 전체 프로젝트 상태 카운트
 			List<Project> listByDept = projectMap.get("listByDept");
 			
 			for(Project p: listByDept) {
@@ -71,7 +68,6 @@ public class ProjectController {
 			//2.뷰모델 처리
 			mav.addObject("projectMap", projectMap);
 			mav.addObject("statusCntMap", statusCntMap);
-			mav.addObject("memberListByDept", memberListByDept);
 			mav.setViewName("/project/projectList"); 
 			
 		} catch(Exception e) {
@@ -85,24 +81,58 @@ public class ProjectController {
 	@RequestMapping("/project/projectView.do")
 	public ModelAndView projectView(ModelAndView mav, HttpSession session, @RequestParam int projectNo, 
 									@RequestParam(defaultValue="work", required=false) String tab) {
+		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		logger.debug("tab={}", tab);
+		String loggedInMemberId = memberLoggedIn.getMemberId();
 		
 		try {
 			//1. 업무로직
-			Project p = projectService.selectProjectWorklistAll(projectNo, memberLoggedIn.getMemberId());
+			//1-1. 해당 프로젝트 조회
+			Project p = projectService.selectProjectWorklistAll(projectNo, loggedInMemberId);
 			
-			//2. 뷰모델 처리
-			mav.addObject("project", p);
-			mav.addObject("pMemList", p.getProjectMemberList());
-			mav.addObject("wlList", p.getWorklistList());
+			//1-2. 프로젝트에 내가 속해있는지 여부
+			boolean bool = false;
+			List<Member> list = p.getProjectMemberList();
 			
-			//서브헤더 탭에 따라 분기
-			if("work".equals(tab))
-				mav.setViewName("/project/projectView");
-			else if("attach".equals(tab))
-				mav.setViewName("/project/projectAttachmentAjax");
+			for(Member m: list) {
+				String memId = m.getMemberId();
+				String yn = m.getProjectQuitYn();
+				if(loggedInMemberId.equals(memId) && yn.equals("N"))
+					bool = true;
+			}
 			
+			
+			//1-3.프로젝트 속함 여부에 따라 분기
+			if(bool) {
+				//프로젝트에 포함되어 있는 멤버리스트 다시 구하기
+				List<Member> inMemList = new ArrayList<>();
+				
+				for(Member m: list){
+					String yn = m.getProjectQuitYn();
+					if(yn.equals("N"))
+						inMemList.add(m);
+				}
+				
+				//2. 뷰모델 처리
+				mav.addObject("project", p);
+				mav.addObject("allMemList", list);
+				mav.addObject("inMemList", inMemList);
+				mav.addObject("wlList", p.getWorklistList());
+				
+				logger.debug("allMemList={}", list);
+				logger.debug("inMemList={}", inMemList);
+				
+				//서브헤더 탭에 따라 분기
+				if("work".equals(tab))
+					mav.setViewName("/project/projectView");
+				else if("attach".equals(tab))
+					mav.setViewName("/project/projectAttachmentAjax");
+			}
+			else {
+				mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
+				mav.addObject("loc", "/project/projectList.do");
+				mav.setViewName("/common/msg");
+			}
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -193,13 +223,13 @@ public class ProjectController {
 	
 	@PostMapping("/project/insertWork")
 	@ResponseBody
-	public Map<String, Integer> insertWork(@RequestParam(value="worklistNo") int worklistNo, 
+	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="worklistNo") int worklistNo, 
 										   @RequestParam(value="workTitle") String workTitle,
 										   @RequestParam(value="workChargedMember[]", required=false) List<String> workChargedMember,
 										   @RequestParam(value="workTag", required=false) String workTag,
 										   @RequestParam(value="workDate[]", required=false) List<String> workDate){
 		
-		Map<String, Integer> map = new HashMap<>();
+		//Map<String, Object> map = new HashMap<>();
 		logger.debug("worklistNo={}", worklistNo);
 		logger.debug("workTitle={}", workTitle);
 		logger.debug("workChargedMember={}", workChargedMember);
@@ -213,43 +243,35 @@ public class ProjectController {
 			param.put("worklistNo", worklistNo);
 			param.put("workTitle", workTitle);
 			
-			if(workChargedMember.size()==0) param.put("workChargedMember", null);
+			if(workChargedMember==null) param.put("workChargedMember", null);
 			else param.put("workChargedMember", workChargedMember);
 			
 			if(workTag==null) param.put("workTag", null);
 			else param.put("workTag", workTag);
 			
-			if(workDate.size()==0) param.put("workDate", null);
+			if(workDate==null) param.put("workDate", null);
 			else param.put("workDate", workDate);
 			
 			//1-2.추가
 			int result = projectService.insertWork(param);
-			map.put("result", result);
+			
+			//1-3.방금 추가된 업무 객체 가져오기 
+			Work work = projectService.selectWorkOne();
+			//logger.debug("work={}", work);
+			
+			//map.put("result", result);
+			//map.put("work", work);
+			mav.addObject("w", work);
+			mav.setViewName("/project/addWorkAjax");
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("새 업무 만들기 오류!");
 		}
 		
-		return map;
-	}
-	
-	/*@RequestMapping("/project/projectAttachment.do")
-	public ModelAndView projectAttachment(ModelAndView mav) {
-		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		
-		try {
-			//1. 업무로직
-			Project p = projectService.selectProjectWorklistAll(projectNo, memberLoggedIn.getMemberId());
-		} catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new ProjectException("프로젝트 파일탭 조회 오류!");
-		}
-		
-		mav.setViewName("/project/projectAttachmentAjax");
-		
+		//return map;
 		return mav;
-	}*/
+	}
 	
 	@RequestMapping("/project/projectAnalysis.do")
 	public ModelAndView projectAnalysis(ModelAndView mav) {

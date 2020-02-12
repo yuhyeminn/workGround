@@ -1,3 +1,6 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="com.kh.workground.member.model.vo.Member"%>
+<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@page import="java.util.Date"%>
@@ -196,18 +199,8 @@ function addWork(){
 		let workTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
 		let dPickerArr = document.querySelectorAll('.daterangepicker');
    		
-    	//버튼 value에 worklistNo 담기
-    	/* $(btnAddMem).val(worklistNo); //멤버배정
-    	$(btnCancel).val(worklistNo); //취소
-    	$(btnSu bmit).val(worklistNo); //만들기 */
-    	
    		//+버튼 클릭
     	obj.addEventListener('click', ()=>{
-    		//let worklistNo = obj.value;
-   			/* let memTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-memTag');
-   			let workTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
-   			let dPicker = document.querySelectorAll('.daterangepicker'); */
-   			
     		//입력창 열기
     		$('.addWork-wrapper').removeClass('show');
     		$(addWorkWrapper).addClass("show");
@@ -315,20 +308,21 @@ function addWork(){
    				$btnApply.on('click', ()=>{
    					//날짜 뽑아내기
    					selectedVal = $(dp).find('.drp-selected').text();
-   					let start = selectedVal.split(' - ')[0];
-   					let end = selectedVal.split(' - ')[1];
-   					let startArr = start.split('/');
-   					let endArr = end.split('/');
+   					let startArr = selectedVal.split(' - ')[0].split('/');
+   					let endArr = selectedVal.split(' - ')[1].split('/');
    					
    					let startDate = startArr[0]+"월 "+startArr[1]+"일";
    					let endDate = endArr[0]+"월 "+endArr[1]+"일";
    					
+   					let startSql = startArr[2]+"-"+startArr[0]+"-"+startArr[1];
+   					let endSql = endArr[2]+"-"+endArr[0]+"-"+endArr[1];
+   					
    					//배열에 담기
-   					addDateArr.push(start);
-   					addDateArr.push(end);
+   					addDateArr.push(startSql);
+   					addDateArr.push(endSql);
    					
     				//추가될 버튼 요소
-    				let dateHtml = '<button type="button" class="btn-cancelDate">'+start+' - '+end+'<i class="fas fa-times"></i></button>';
+    				let dateHtml = '<button type="button" class="btn-cancelDate">'+startDate+' - '+endDate+'<i class="fas fa-times"></i></button>';
     				
     				//데이트피커버튼 지우고  
     				$(btnAddDate).remove();
@@ -351,8 +345,6 @@ function addWork(){
    			//만들기버튼 클릭
    			btnSubmit.addEventListener('click', e=>{
    				let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]').value;
-   				console.log(addMemberArr);
-   				console.log(addDateArr);
    				let data = {
    						worklistNo: worklistNo,
    						workTitle: workTitle,
@@ -364,24 +356,23 @@ function addWork(){
    				$.ajax({
    					url: '${pageContext.request.contextPath}/project/insertWork',
    					data: data,
-   					dataType: 'json',
+   					dataType: 'html',
    					type: 'POST',
    					success: data=>{
    						console.log(data);
    						
-   						//성공한 경우
-   						if(data.result===addMemberArr.length){
-   							
-   						}
-   						//실패한 경우
-   						else{
-   							
-   						}
+   						let wlSection = document.querySelector('#worklist-'+worklistNo+' .worklist-contents');
+   						
+   						//입력창 닫기
+   			    		$(workTitle).val("");
+   			    		$(addWorkWrapper).removeClass("show");
+   			    		
+   						$(wlSection).prepend(data);
    					},
    					error: (x,s,e) => {
    						console.log(x,s,e);
    					}
-   				});
+   				}); 
    			}) //end of 만들기 버튼
    			
    			
@@ -641,14 +632,16 @@ function setting(){
                 <i class="far fa-comments"></i> 프로젝트 대화
             </button>
         </li>
-
+	
+		<c:if test=""></c:if>
+		
         <!-- 프로젝트 멤버 -->
         <li id="nav-member" class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="far fa-user"></i> ${fn:length(pMemList)}
+                <i class="far fa-user"></i> ${fn:length(inMemList)}
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            <c:forEach items="${pMemList}" var="m">
+            <c:forEach items="${inMemList}" var="m">
             <a href="${pageContext.request.contextPath}/member/memberView.do?memberId=${m.memberId}" class="dropdown-item">
                 <div class="media">
 	                <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">
@@ -1172,12 +1165,12 @@ function setting(){
 	                <c:if test="${w.workStartDate!=null}">
 	                <div class="work-deadline">
 	                    <p>
-	                    	<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
 	                    	<c:if test="${w.workEndDate!=null}">
+	                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
 	                    		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />
 	                    	</c:if>
 	                    	<c:if test="${w.workEndDate==null}">
-	                    		마감일 없음
+	                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" />에 시작
 	                    	</c:if>
 	                    </p>
 	                    <!-- 업무리스트 완료됨이 아닐 경우 -->

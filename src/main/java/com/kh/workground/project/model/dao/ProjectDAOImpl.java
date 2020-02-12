@@ -88,7 +88,6 @@ public class ProjectDAOImpl implements ProjectDAO {
 
 	@Override
 	public List<Integer> selectListByImportantProjectNo(String memberId) {
-		logger.debug("DAOIMPLE22222222222222222222222222");
 		return sqlSession.selectList("project.selectImportantProjectNo", memberId);
 	}
 
@@ -125,6 +124,11 @@ public class ProjectDAOImpl implements ProjectDAO {
 	@Override
 	public int insertWorkChargedMember(Map<String, Object> chargedParam) {
 		return sqlSession.insert("project.insertWorkChargedMember", chargedParam);
+	}
+
+	@Override
+	public Work selectWorkOne() {
+		return sqlSession.selectOne("project.selectWorkOne");
 	}
 
 

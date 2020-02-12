@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.vo.Project;
+import com.kh.workground.project.model.vo.Work;
 
 public interface ProjectService {
 
@@ -25,4 +26,6 @@ public interface ProjectService {
 	int deleteWorklist(int worklistNo);
 
 	int insertWork(Map<String, Object> param);
+
+	Work selectWorkOne();
 }
