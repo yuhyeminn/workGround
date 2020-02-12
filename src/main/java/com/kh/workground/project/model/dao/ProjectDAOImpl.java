@@ -1,12 +1,16 @@
 package com.kh.workground.project.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kh.workground.member.model.vo.Member;
+import com.kh.workground.project.model.service.ProjectServiceImpl;
 import com.kh.workground.project.model.vo.Attachment;
 import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
@@ -17,6 +21,8 @@ import com.kh.workground.project.model.vo.Worklist;
 @Repository
 public class ProjectDAOImpl implements ProjectDAO {
 
+	private static final Logger logger = LoggerFactory.getLogger(ProjectDAOImpl.class);
+	
 	@Autowired
 	SqlSessionTemplate sqlSession;
 	
@@ -82,8 +88,49 @@ public class ProjectDAOImpl implements ProjectDAO {
 
 	@Override
 	public List<Integer> selectListByImportantProjectNo(String memberId) {
-		return sqlSession.selectList("project.selectListByImportantProjectNo", memberId);
+		return sqlSession.selectList("project.selectImportantProjectNo", memberId);
 	}
+
+	@Override
+	public Map<String, Object> selectProjectImportantOne(Map<String, Object> param) {
+		return sqlSession.selectOne("project.selectProjectImportantOne", param);
+	}
+
+	@Override
+	public int insertProjectImportant(Map<String, Object> param) {
+		return sqlSession.insert("project.insertProjectImportant", param);
+	}
+
+	@Override
+	public int deleteProjectImportant(int projectImportantNo) {
+		return sqlSession.delete("project.deleteProjectImportant", projectImportantNo);
+	}
+
+	@Override
+	public int insertWorklist(Map<String, Object> param) {
+		return sqlSession.insert("project.insertWorklist", param);
+	}
+
+	@Override
+	public int deleteWorklist(int worklistNo) {
+		return sqlSession.delete("project.deleteWorklist", worklistNo);
+	}
+
+	@Override
+	public int insertWork(Work work) {
+		return sqlSession.insert("project.insertWork", work);
+	}
+
+	@Override
+	public int insertWorkChargedMember(Map<String, Object> chargedParam) {
+		return sqlSession.insert("project.insertWorkChargedMember", chargedParam);
+	}
+
+	@Override
+	public Work selectWorkOne() {
+		return sqlSession.selectOne("project.selectWorkOne");
+	}
+
 
 
 }
