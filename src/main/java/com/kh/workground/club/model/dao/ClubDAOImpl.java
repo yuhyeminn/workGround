@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
+import com.kh.workground.club.model.vo.ClubPlan;
 
 @Repository
 public class ClubDAOImpl implements ClubDAO {
@@ -83,6 +84,11 @@ public class ClubDAOImpl implements ClubDAO {
 	@Override
 	public List<ClubMember> searchClubMember(Map param) {
 		return sqlSession.selectList("club.searchClubMember",param);
+	}
+
+	@Override
+	public List<ClubPlan> selectClubPlanList(int clubNo) {
+		return sqlSession.selectList("club.selectClubPlanList",clubNo);
 	}
 
 

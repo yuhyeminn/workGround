@@ -110,8 +110,16 @@
 	</update>
 	
 	<select id="searchClubMember" resultMap="clubMemberCollectionMap">
-		select *
-	
+		select *        
+		from (select C.*, M.*, (select dept_title from department where dept_code = M.dept_code) dept_title, (select job_title from job where M.job_code = job_code) job_title
+			 from (select * from club_member where club_code = #{clubNo}) C
+		left join member M on C.emp_id = M.member_id) A
+		where A.member_id like '%'|| #{keyword} || '%' 
+			 or A.email like '%'|| #{keyword} || '%' 
+			 or A.member_name like '%'|| #{keyword} || '%' 
+			 or A.dept_title like '%'|| #{keyword} || '%' 
+			 or A.job_title like '%'|| #{keyword} || '%'
+
 	</select>
 
 	<!-- sh end -->

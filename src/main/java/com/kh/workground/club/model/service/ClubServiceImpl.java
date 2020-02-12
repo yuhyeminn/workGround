@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.kh.workground.club.model.dao.ClubDAO;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
+import com.kh.workground.club.model.vo.ClubPlan;
 
 @Service
 public class ClubServiceImpl implements ClubService {
@@ -83,6 +84,11 @@ public class ClubServiceImpl implements ClubService {
 	public List<ClubMember> searchClubMember(Map param) {
 
 		return clubDAO.searchClubMember(param);
+	}
+
+	@Override
+	public List<ClubPlan> selectClubPlanList(int clubNo) {
+		return clubDAO.selectClubPlanList(clubNo);
 	}
 
 

@@ -35,7 +35,6 @@
 }
 
 #tbl-projectAttach.member-table .dropdown-item {
-
 	font-size: .8rem;
 }
 
@@ -45,13 +44,20 @@
 
 .allow-btn {
 	width: 60px;
+	min-width: 3rem;
+	margin-right: .3rem;
 }
-#manage-change{
+
+#manage-change {
 	color: black;
 }
 
-#delMem{
+#delMem {
 	color: #dc3545;
+}
+
+#clubMemberSearchFrm {
+	left: 10px;
 }
 </style>
 
@@ -68,6 +74,7 @@ $(function(){
     });
 	
 	sidebarActive(); //사이드바 활성화
+	tabActive(); //서브헤더 탭 활성화
 });
 
 //사이드바 활성화
@@ -81,6 +88,20 @@ function sidebarActive(){
 	});
 	
 	$("#sidebar-club").addClass("active");
+}
+
+//서브헤더 탭 active
+function tabActive(){
+    let tabArr = document.querySelectorAll("#navbar-tab li");
+
+    tabArr.forEach((obj, idx)=>{
+        let $obj = $(obj);
+        if($obj.hasClass('active')){
+            $obj.removeClass('active');
+        }
+    });
+
+    $("#tab-member").addClass("active");
 }
 
 //멤버 프로필 페이지로 이동
@@ -113,93 +134,193 @@ function approveJoin(memberId){
 }
 </script>
 
+<nav id="navbar-club"
+	class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
+	<!-- Left navbar links -->
+	<!-- SEARCH FORM -->
+	<div style="margin: 20px;">
+		<form id="clubMemberSearchFrm" class="form-inline"
+			action="${pageContext.request.contextPath}/club/searchClubMember.do"
+			method="post" enctype="multipart/form-data">
+			<div class="input-group input-group-sm">
+				<input class="form-control form-control-navbar" type="search"
+					placeholder="멤버 검색하기" aria-label="Search" name="keyword"
+					> <input
+					type="hidden" value="${clubNo }" name="clubNo" />
+				<div class="input-group-append">
+					<button class="btn btn-navbar" type="submit">
+						<i class="fas fa-search"></i>
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<!-- Middle navbar links -->
+	<ul id="navbar-tab" class="navbar-nav ml-auto">
+		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
+		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${clubNo}'">일정</button></li>
+		<c:if
+			test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
+			<li id="tab-member" class="nav-item">
+				<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button>
+			</li>
+		</c:if>
+		<li id="tab-attachment" class="nav-item"><button type="button">파일</button></li>
+	</ul>
+
+	<!-- Right navbar links -->
+	<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
+		<!-- 동호회 대화 -->
+		<li class="nav-item">
+			<button type="button"
+				class="btn btn-block btn-default btn-xs nav-link">
+				<i class="far fa-comments"></i> 동호회 대화
+			</button>
+		</li>
+
+		<!-- 동호회 멤버 -->
+		<li id="nav-member" class="nav-item dropdown"><a class="nav-link"
+			data-toggle="dropdown" href="#"> <i class="far fa-user"></i> 6
+		</a>
+			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+				<a href="#" class="dropdown-item"> <!-- Message Start -->
+					<div class="media">
+						<img
+							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							alt="User Avatar" class="img-circle img-profile ico-profile" />
+						<div class="media-body">
+							<p class="memberName">Brad Diesel</p>
+						</div>
+					</div> <!-- Message End -->
+				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
+					<div class="media">
+						<img
+							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							alt="User Avatar" class="img-circle img-profile ico-profile">
+						<div class="media-body">
+							<p class="memberName">Brad Diesel</p>
+						</div>
+					</div> <!-- Message End -->
+				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
+					<div class="media">
+						<img
+							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							alt="User Avatar" class="img-circle img-profile ico-profile">
+						<div class="media-body">
+							<p class="memberName">Brad Diesel</p>
+						</div>
+					</div> <!-- Message End -->
+				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
+					<div class="media">
+						<img
+							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							alt="User Avatar" class="img-circle img-profile ico-profile">
+						<div class="media-body">
+							<div class="media-body">
+								<p class="memberName">Brad Diesel</p>
+							</div>
+						</div>
+					</div> <!-- Message End -->
+				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
+					<div class="media">
+						<img
+							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
+							alt="User Avatar" class="img-circle img-profile ico-profile">
+						<div class="media-body">
+							<p class="memberName">Brad Diesel</p>
+						</div>
+					</div> <!-- Message End -->
+				</a>
+			</div></li>
+
+		<!-- 동호회 설정 -->
+		<li class="nav-item">
+			<button type="button"
+				class="btn btn-block btn-default btn-xs nav-link">
+				<i class="fas fa-cog"></i>
+			</button>
+		</li>
+	</ul>
+</nav>
+<!-- /.navbar -->
 
 <!-- Content Wrapper. Contains page content -->
 <div id="member-list" class="content-wrapper">
-	<!-- Main content -->
-	<section class="content">
-		<h2>동호회 멤버</h2>
 
-		<div id="member-inner" class="table-responsive p-0">
-			<!-- SEARCH FORM -->
-			<div class="navbar-light">
-				<form id="clubMemberSearchFrm" class="form-inline"
-				action="${pageContext.request.contextPath}/club/searchClubMember.do"
-				method="post" enctype="multipart/form-data">
-					<div class="input-group input-group-sm">
-						<input class="form-control form-control-navbar" type="search"
-							placeholder="멤버 검색하기" aria-label="Search" name="keyword">
-						<div class="input-group-append">
-							<button class="btn btn-navbar" type="submit">
-								<i class="fas fa-search"></i>
-							</button>
-						</div>
-					</div>
-				</form>
-			</div>
-			<br />
+	<h2>동호회 상세보기</h2>
+	<div class="content">
+		<div class="container-fluid">
+			<!-- Main content -->
+			<section class="content">
 
-			<!-- 멤버리스트 -->
-			<table id="tbl-projectAttach"
-				class="table table-hover text-nowrap member-table">
-				<thead>
-					<tr>
-						<th style="width: 8%"></th>
-						<th style="width: 22%">이름</th>
-						<th style="width: 17%">직급</th>
-						<th style="width: 17%">부서</th>
-						<th style="width: 26%">이메일</th>
-						<th style="width: 16%"></th>
-					</tr>
-				</thead>
-				<tbody id="member-body">
-					<c:forEach items="${memberList}" var="m">
-						<tr>
-							<td>
-								
-								<c:if test="${fn:contains(m.clubManagerYN,'Y')}">
-									<button type="button"
-										class="btn btn-block btn-outline-warning btn-xs btn-admin">관리자</button>
-								</c:if>
-							</td>
-							<td onclick="goMemberProfile('${m.empId}');"><img
-								src="${pageContext.request.contextPath }/resources/img/profile/${m.clubMemberList[0].renamedFileName}"
-								alt="User Avatar" class="img-circle img-profile ico-profile">
-								${m.clubMemberList[0].memberName}</td>
-							<td>${m.jobTitle}</td>
-							<td>${m.deptTitle}</td>
+				<div id="member-inner" class="table-responsive p-0">
 
-							<td>${m.clubMemberList[0].email}
 
-							</td>
+					<!-- 멤버리스트 -->
+					<table id="tbl-projectAttach"
+						class="table table-hover text-nowrap member-table">
+						<thead>
+							<tr>
+								<th style="width: 8%"></th>
+								<th style="width: 22%">이름</th>
+								<th style="width: 17%">직급</th>
+								<th style="width: 17%">부서</th>
+								<th style="width: 17%">이메일</th>
+								<th style="width: 13%"></th>
+							</tr>
+						</thead>
+						<tbody id="member-body">
+							<c:forEach items="${memberList}" var="m">
+								<tr>
+									<td><c:if test="${fn:contains(m.clubManagerYN,'Y')}">
+											<button type="button"
+												class="btn btn-block btn-outline-warning btn-xs btn-admin">관리자</button>
+										</c:if></td>
+									<td onclick="goMemberProfile('${m.empId}');"><img
+										src="${pageContext.request.contextPath }/resources/img/profile/${m.clubMemberList[0].renamedFileName}"
+										alt="User Avatar" class="img-circle img-profile ico-profile">
+										${m.clubMemberList[0].memberName}</td>
+									<td>${m.jobTitle}</td>
+									<td>${m.deptTitle}</td>
 
-							<td><c:if
-									test="${fn:contains(m.clubApproveYN,'N')}">
-									<button type="button" class="btn btn-primary btn-sm allow-btn" onclick="approveJoin('${m.empId}')">Allow</button>
-								</c:if>
+									<td>${m.clubMemberList[0].email}</td>
 
-								<div class="dropdown">
-									<button type="button" class="btn-moreMenu btn-drop btn-file"
-										data-toggle="dropdown" aria-haspopup="true"
-										aria-expanded="false">
-										<i class="fas fa-ellipsis-v"></i>
-									</button>
-									<div class="dropdown-menu dropdown-menu-right">
-										<a href="#" class="dropdown-item" onclick="deleteClubMem('${m.clubMemberNo}')"><i
-											class="far fa-trash-alt"></i> 탈퇴</a>
-											
-										<c:if test="${fn:contains(m.clubManagerYN,'N') and fn:contains(m.clubApproveYN,'Y')}">
-											<a href="#" class="dropdown-item" onclick="addManager('${m.empId}')"><i class="fas fa-star"></i>관리자변경</a>
+									<td><c:if test="${fn:contains(m.clubApproveYN,'N')}">
+											<button type="button"
+												class="btn btn-primary btn-sm allow-btn"
+												onclick="approveJoin('${m.empId}')">Allow</button>
 										</c:if>
-									</div>
-								</div></td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
+
+
+										<div class="dropdown">
+											<button type="button" class="btn-moreMenu btn-drop btn-file"
+												data-toggle="dropdown" aria-haspopup="true"
+												aria-expanded="false">
+												<i class="fas fa-ellipsis-v"></i>
+											</button>
+											<div class="dropdown-menu dropdown-menu-right">
+												<a href="#" class="dropdown-item"
+													onclick="deleteClubMem('${m.clubMemberNo}')"><i
+													class="far fa-trash-alt"></i> 탈퇴</a>
+
+												<c:if
+													test="${fn:contains(m.clubManagerYN,'N') and fn:contains(m.clubApproveYN,'Y')}">
+													<a href="#" class="dropdown-item"
+														onclick="addManager('${m.empId}')"><i
+														class="fas fa-star"></i>관리자변경</a>
+												</c:if>
+											</div>
+										</div></td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
+			</section>
+			<!-- /.content -->
 		</div>
-	</section>
-	<!-- /.content -->
+	</div>
 </div>
 
 

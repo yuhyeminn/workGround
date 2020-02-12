@@ -1,5 +1,8 @@
 package com.kh.workground.club.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +23,7 @@ import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.service.ClubService;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
+import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.member.model.vo.Member;
 
 @RestController
@@ -241,7 +245,7 @@ public class ClubController {
 			param.put("memberId", memberId);
 
 			int result = clubService.approveClubMember(param);
-			logger.info("result{}", result);
+			//logger.info("result{}", result);
 			mav.addObject("msg", result > 0 ? "회원 승인" : "회원 승인 실패");
 			mav.addObject("loc", "/club/clubMemberList.do?clubNo=" + clubNo);
 			mav.setViewName("common/msg");
@@ -262,12 +266,14 @@ public class ClubController {
 			Map param = new HashMap<>();
 			param.put("keyword", keyword);
 			param.put("clubNo", clubNo);
+			//logger.info("clubNo={}",clubNo);
 			List<ClubMember> memberList = clubService.searchClubMember(param);
-			logger.info("memberList{}", memberList);
+			//logger.info("memberList{}", memberList);
 
 			mav.addObject("memberList", memberList);
 			mav.addObject("clubNo", clubNo);
 			mav.addObject("searchKeyword", "no");
+			mav.setViewName("/club/clubMemberList");
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -276,4 +282,127 @@ public class ClubController {
 
 		return mav;
 	}
+	
+	@RequestMapping("/club/clubCalendar.do")
+	public ModelAndView selectClubSchedule(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo) {
+		List<ClubPlan> clubPlanList = null;
+		try {
+			//일정가져오기
+			clubPlanList = clubService.selectClubPlanList(clubNo);
+			String calString="";
+			calString += "events: [";
+			/*
+			title          : 'All Day Event',
+          	start          : new Date(y, m, 2),
+          	end          : new Date(y, m, 2),
+          	backgroundColor: '#f56954', //red
+          	borderColor    : '#f56954', //red
+			 
+			 * */
+			for(int i=0;i<clubPlanList.size();i++) {
+				
+				calString+="{";
+				String calNoAndTitle = clubPlanList.get(i).getClubPlanNo()+","+clubPlanList.get(i).getClubPlanTitle();
+				
+				//title
+				calString+="title :"+"'"+calNoAndTitle+"'"+",";
+				//시작날짜 구하기.
+				SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd"); 
+				String sDate = fmt.format(clubPlanList.get(i).getClubPlanStart()); 
+				String sDateArr[] = sDate.split("-");
+				int year = Integer.parseInt(sDateArr[0]);
+				int mon = Integer.parseInt(sDateArr[1]);
+				int day =  Integer.parseInt(sDateArr[2]);
+				
+				//현재날짜 구하기.
+
+				calString+="start :"+calNoAndTitle;
+				
+				
+				
+
+				if(clubPlanList.size()-1 == i) {
+
+					calString+="}";
+				}
+				else {
+
+					calString+="},";
+				}
+				
+			}
+			calString += "]";
+			
+			
+			mav.addObject("calString",calString);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ClubException("동호회 일정 페이지 오류!");
+		}
+
+		return mav;
+	}
+	
+	
+	@RequestMapping("/club/selectClubPlan.do")
+	public ModelAndView selectClubPlan(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo) {
+		
+		List<ClubPlan> clubPlanList = null;
+		
+		try {
+			
+			//일정가져오기
+			clubPlanList = clubService.selectClubPlanList(clubNo);
+			String calString="";
+			calString += "events: [";
+			/*
+			title          : 'All Day Event',
+          	start          : new Date(y, m, 2),
+          	end          : new Date(y, m, 2),
+          	backgroundColor: '#f56954', //red
+          	borderColor    : '#f56954', //red
+			 
+			 * */
+			for(int i=0;i<clubPlanList.size();i++) {
+				
+				calString+="{";
+				String calNoAndTitle = clubPlanList.get(i).getClubPlanNo()+","+clubPlanList.get(i).getClubPlanTitle();
+				
+				//title
+				calString+="title :"+"'"+calNoAndTitle+"'"+",";
+				//시작날짜 구하기
+				SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd"); 
+				String sDate = fmt.format(clubPlanList.get(i).getClubPlanStart()); 
+				logger.info("sDate={}",sDate);
+				
+				calString+="start :"+calNoAndTitle;
+				
+				
+				
+
+				if(clubPlanList.size()-1 == i) {
+
+					calString+="}";
+				}
+				else {
+
+					calString+="},";
+				}
+				
+			}
+			calString += "]";
+			
+			
+			mav.addObject("calString",calString);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ClubException("동호회 일정 가져오기 오류!");
+		}
+
+		return mav;
+	}
+	
+	
 }
