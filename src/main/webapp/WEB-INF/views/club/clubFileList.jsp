@@ -7,6 +7,45 @@
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
 <style>
+.note-editing-area {
+	min-height: 100px;
+}
+.note-editor.note-frame {
+	max-height: 148px;
+}
+
+#navbar-club #noticeSearchFrm {
+	margin-left: 1rem;
+}
+
+#info-wrapper .card-body {
+	padding: 3rem 1.25rem;
+}
+
+#info-wrapper .card-header {
+	margin-top: 0;
+}
+
+#info-wrapper .card-title {
+	color: ##464c59;
+	font-size: 1rem;
+	font-weight: bold;
+}
+/* nav new club */
+#nav-new-club {
+	color: white;
+	border: none;
+	padding: 0.35rem 0.5rem;
+	margin-right: 1rem;
+	border-radius: 0.25rem;
+}
+/* new club card */
+#new-club-card {
+	height: 298x;
+	text-align: center;
+	padding: 6rem 0rem;
+}
+
 .btn-drop{background-color:transparent; border:0px transparent solid;}
 .navbar-project .dropdown-menu{min-width: 6rem;}
 #tbl-projectAttach.table.member-table td{padding: .5rem 0;}
@@ -69,6 +108,18 @@ function fileDownload(oName, rName, clubNo) {
 	
 	location.href = "${pageContext.request.contextPath}/club/clubFileDownload.do?clubNo="+clubNo+"&oName="+oName+"&rName="+rName;
 }
+
+function clubView(clubNo) {
+	location.href = "${pageContext.request.contextPath}/club/clubView.do?clubNo="+clubNo;
+}
+
+function memberList(clubNo){
+	location.href = "${pageContext.request.contextPath}/club/clubMemberList.do?clubNo="+clubNo;
+}
+
+function clubFileList(clubNo) {
+	location.href = "${pageContext.request.contextPath}/club/clubFileList.do?clubNo="+clubNo;
+}
 </script>	
 
 <!-- Navbar ClubView -->
@@ -90,7 +141,7 @@ function fileDownload(oName, rName, clubNo) {
 
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
-		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
+		<li id="tab-club" class="nav-item"><button type="button" onclick="clubView('${club.clubNo}');">동호회</button></li>
 		<li id="tab-calendar" class="nav-item"><button type="button">일정</button></li>
 		<c:if test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
 			<li id="tab-member" class="nav-item">
@@ -114,53 +165,19 @@ function fileDownload(oName, rName, clubNo) {
 			<i class="far fa-user"></i> 6
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+			  <c:if test="${not empty clubMemberList }">
+			  <c:forEach items="${clubMemberList }" var="clubMember">
 				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile" />
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
+				  <div class="media">
+				  	<img src="${pageContext.request.contextPath}/resources/img/profile/${clubMember.clubMemberList[0].renamedFileName }"
+				  		 alt="User Avatar" class="img-circle img-profile ico-profile" />
+				  	<div class="media-body">
+				  		<p class="memberName">${clubMember.clubMemberList[0].memberName }</p>
+				  	</div>
+				  </div> <!-- Message End -->
 				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<div class="media-body">
-								<p class="memberName">Brad Diesel</p>
-							</div>
-						</div>
-					</div> <!-- Message End -->
-				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a>
+			  </c:forEach>
+			  </c:if>
 			</div>
 		</li>
 

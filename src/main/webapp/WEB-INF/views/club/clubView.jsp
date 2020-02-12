@@ -288,53 +288,19 @@ function loginAlert() {
 			<i class="far fa-user"></i> 6
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+			  <c:if test="${not empty clubMemberList }">
+			  <c:forEach items="${clubMemberList }" var="clubMember">
 				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile" />
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
+				  <div class="media">
+				  	<img src="${pageContext.request.contextPath}/resources/img/profile/${clubMember.clubMemberList[0].renamedFileName }"
+				  		 alt="User Avatar" class="img-circle img-profile ico-profile" />
+				  	<div class="media-body">
+				  		<p class="memberName">${clubMember.clubMemberList[0].memberName }</p>
+				  	</div>
+				  </div> <!-- Message End -->
 				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<div class="media-body">
-								<p class="memberName">Brad Diesel</p>
-							</div>
-						</div>
-					</div> <!-- Message End -->
-				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a>
+			  </c:forEach>
+			  </c:if>
 			</div>
 		</li>
 
@@ -826,9 +792,8 @@ function loginAlert() {
 										<h5>${clubNotice.clubNoticeTitle }</h5>
 									</div>
 									<!-- 프로필 사진 -->
-									<img
-										src="${pageContext.request.contextPath}/resources/img/profile/${clubNotice.renamedFileName }"
-										alt="User Avatar" class="img-circle img-profile">
+									<img src="${pageContext.request.contextPath}/resources/img/profile/${clubNotice.renamedFileName }"
+										 alt="User Avatar" class="img-circle img-profile">
 									<!-- 타이틀 -->
 									<div class="card-title text-center">
 										<h5>${clubNotice.memberName }/${clubNotice.memberId }</h5>

@@ -53,6 +53,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@Autowired
 	ClubService2 clubService2;
+	@Autowired
+	ClubService clubService1;
 	
 	@RequestMapping("/club/clubView.do")
 	public ModelAndView clubView(ModelAndView mav,
@@ -64,7 +66,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 //		logger.info("club={}", club);
 		
 		List<ClubPlan> clubPlanList = clubService2.selectClubPlanList(clubNo);
-		logger.debug("clubPlanList={}", clubPlanList);
+//		logger.debug("clubPlanList={}", clubPlanList);
 		List<ClubNotice> clubNoticeList = clubService2.selectClubNoticeList(clubNo);
 //		logger.debug("clubNoticeList={}", clubNoticeList);
 		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
@@ -73,6 +75,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 //		logger.debug("clubNoticeCommentList={}", clubNoticeCommentList);
 		List<ClubPlanAttendee> clubPlanAttendeeList = clubService2.selectAllClubPlanAttendeeList(clubNo);
 //		logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
+		List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
+//		logger.debug("clubMemberList={}", clubMemberList);
 		
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
@@ -80,6 +84,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		mav.addObject("clubPhotoList", clubPhotoList);
 		mav.addObject("clubNoticeCommentList", clubNoticeCommentList);
 		mav.addObject("clubPlanAttendeeList", clubPlanAttendeeList);
+		mav.addObject("clubMemberList", clubMemberList);
 		mav.addObject("clubPhotoCount", clubPhotoList.size());
 		mav.addObject("clubPlanCount", clubPlanList.size());
 		mav.addObject("clubNoticeCount", clubNoticeList.size());
@@ -417,10 +422,17 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	@RequestMapping("/club/clubFileList.do")
 	public ModelAndView clubFileList(ModelAndView mav, 
 									 @RequestParam("clubNo") int clubNo) {
-		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
-		logger.debug("clubPhotoList={}", clubPhotoList);
+		Club club = clubService2.selectClub(clubNo);
+//		logger.info("club={}", club);
 		
+		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
+//		logger.debug("clubPhotoList={}", clubPhotoList);
+		List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
+//		logger.debug("clubMemberList={}", clubMemberList);
+		
+		mav.addObject("club", club);
 		mav.addObject("clubPhotoList", clubPhotoList);
+		mav.addObject("clubMemberList", clubMemberList);
 		mav.setViewName("club/clubFileList");
 		
 		return mav;
