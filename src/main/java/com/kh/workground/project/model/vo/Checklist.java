@@ -17,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Checklist implements Serializable {
+public class Checklist extends Work implements Serializable {
 
 	/**
 	 * 
@@ -25,7 +25,6 @@ public class Checklist implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int checklistNo;
-	//업무 번호는 상속받아서!? 
 	private String checklistWriter; //관리자, 팀장, 업무에 배정된 멤버 중
 	private int checklistChargedMembersNo; 
 	private String checklistChargedMemberId; //Work의 workChargedMemberList랑 조인 

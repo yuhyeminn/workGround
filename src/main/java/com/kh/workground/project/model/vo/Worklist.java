@@ -14,7 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Worklist implements Serializable {
+public class Worklist extends Project implements Serializable {
 
 	/**
 	 * 
