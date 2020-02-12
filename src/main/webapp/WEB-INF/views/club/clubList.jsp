@@ -1,17 +1,27 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
 <script>
+var sort; 
+$( document ).ready(function() {
+	sort = $("#drop-sort a").html();
+	clubFunc();
+});
+
+$(document).on('click', '#drop-sort a', function() {
+	$("#drop-sort-name").text($(this).text());
+	sort = $(this).text();
+    clubFunc();
+}); 
+
 $(function(){
-	$(".club").click(function(){
-	  $("#modal-club").modal();
-	});
-	
+ 
 	$("#new-club-card").click(function(){
 	  $("#modal-new-club").modal();
 	});
@@ -20,8 +30,43 @@ $(function(){
 	  $("#modal-new-club").modal();
 	});
 	
+	// Summernote
+	$('.textarea').summernote()
+	
 	sidebarActive(); //사이드바 활성화
+	
 });
+
+// 새 동호회 클릭시
+function modal(){
+	$("#modal-new-club").modal();
+}
+
+//delete함수
+function delClubFunc(clubNo){
+	if(!confirm("동호회를 삭제하시겠습니까?")) return false;
+	else {
+		location.href = "${pageContext.request.contextPath}/club/deleteClub.do?clubNo="+clubNo;
+	}
+}
+
+//동호회 소개 모달
+function clubModalView(clubNo){
+	$("#modal-club-"+clubNo).modal();
+}
+
+// 동호회 수정 모달
+function updateClubModal(clubNo){
+	$("#modal-update-"+clubNo).modal();
+}
+
+// 동호회 페이지 이동(가입시)
+function clubView(clubNo){
+	$("#introduce").text('');
+	location.href = "${pageContext.request.contextPath}/club/clubView.do?clubNo="+clubNo;
+}
+
+
 
 //사이드바 활성화
 function sidebarActive(){
@@ -35,489 +80,775 @@ function sidebarActive(){
 	
 	$("#sidebar-club").addClass("active");
 }
+function clubFunc(){
+	$("#all-club-intro").html(''); //데이터 없을 경우 비우기 위함.
+	$("#my-club-list").html(''); //데이터 없을 경우 비우기 위함.
+	$("#stand-by-club-list").html(''); //데이터 없을 경우 비우기 위함.
+	
+	$.ajax({
+		
+		url: "${pageContext.request.contextPath}/club/clubListBySort.do",
+		dataType: "json",
+		data:{"sort" : sort},
+		type: "GET",
+		success: data => {
+			console.log(data);
+
+			//all club
+			//AllClubCountHeader수
+			$("#allClubCountHeader").text('('+Object.keys(data.clubList).length+')');
+			
+			let allClubHtml='';
+			$.each(data.clubList,(idx,list)=>{
+							
+		    	allClubHtml+='<div class="col-12 col-sm-6 col-md-3"><div class="card club card-hover"><div class="card-body"><div class="card-title">'+list.clubName
+		    				+'</div>';
+		    	
+		    	//삭제하기 버튼
+		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	{
+			    	allClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
+		    			   	   +'onclick="delClubFunc('+list.clubNo+')">'
+		    			   	   +'<i class="fas fa-times"></i></button></div>';
+		    	}
+		    	
+		    	allClubHtml+='<div class="card-club-image">';		
+		    	//이미지
+		    	if('${memberLoggedIn.memberId}' == 'admin'){
+	
+		    	   	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
+		    	   		allClubHtml+='<img src="'
+			    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+			    						+'onclick="clubView('+list.clubNo+')">';
+			    	}
+			    	else{
+			    		allClubHtml+='<img src="'
+			    					+'${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"'
+			    					+'onclick="clubView('+list.clubNo+')">';
+		    			}
+		    	}
+		    	
+		    	else{
+		    	   	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
+		    			allClubHtml+='<img src="'
+		    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+		    						+'onclick="clubModalView('+list.clubNo+')">';
+			    	}
+			    	else{
+			    		allClubHtml+='<img src="'
+			    					+'${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"'
+			    					+'onclick="clubModalView('+list.clubNo+')">';
+		    		}    	
+		    	 	
+		    	}
+		 
+		    	allClubHtml+='</div>';
+		    	//동호회 수정
+		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	{	
+		    		allClubHtml+='<button type="button" id="up-btn" onclick="updateClubModal('+list.clubNo+')">'
+    				+'<i class="fas fa-edit"></i></button>';
+		    		
+		    	}
+		    	
+		    	allClubHtml+='<div class="category">'
+		    				+'<span class="club-category">'+list.clubCategory+'</span></div></div></div></div>';
+	
+		    });
+			//새 동호회 부분
+			allClubHtml+='<div class="col-12 col-sm-6 col-md-3"><div class="card new" id="new-club-card" onclick="modal();"><div class="card-body">'
+					   +'<i class="fas fa-plus"></i><h6>새 동호회</h6></div></div></div>';
+					   
+			// 나의 동호회 부분
+			//AllMyClubCount
+			$("#myclub-header-count").text('('+Object.keys(data.myClubList).length+')');
+			let myClubHtml='';
+			
+			$.each(data.myClubList,(idx,list)=>{
+				
+				myClubHtml+='<div class="col-12 col-sm-6 col-md-3"><div class="card club card-hover"><div class="card-body">'
+						  +'<div class="card-title">'+list.clubName+'</div>';
+						
+				//삭제버튼 부분
+				if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin'){
+
+					myClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
+	    			   	   	  +'onclick="delClubFunc('+list.clubNo+')">'
+	    			   	      +'<i class="fas fa-times"></i></button></div>';	
+				}
+				
+				myClubHtml+='<div class="card-club-image">';		
+		    	//이미지
+		    	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
+		    		myClubHtml+='<img src="'
+		    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+		    						+'onclick="clubView('+list.clubNo+')">';
+		    	}
+		    	else{
+		    		myClubHtml+='<img src="'
+		    					+'${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"'
+		    					+'onclick="clubView('+list.clubNo+')">';
+		    	}
+		    	myClubHtml+='</div>';
+		    	
+		    	//수정버튼
+		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	{	
+		    		myClubHtml+='<button type="button" id="up-btn" onclick="updateClubModal('+list.clubNo+')">'
+    				+'<i class="fas fa-edit"></i></button>';
+		    		
+		    	}
+		    	
+		    	myClubHtml+='<div class="category">'
+		    				+'<span class="club-category">'+list.clubCategory+'</span></div></div></div></div>';
+		
+				
+				
+				
+			});
+			
+			$("#standBy-header-count").text('('+Object.keys(data.standByClubList).length+')');
+			
+			//대기 목록 동호회
+			let standByClubHtml='';
+			$.each(data.standByClubList,(idx,list)=>{
+				
+				standByClubHtml+='<div class="col-12 col-sm-6 col-md-3"><div class="card club card-hover"><div class="card-body"><div class="card-title">'+list.clubName
+		    				+'</div>';
+		    	
+		    	//삭제하기 버튼
+		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	{
+		    		standByClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
+		    			   	   +'onclick="delClubFunc('+list.clubNo+')">'
+		    			   	   +'<i class="fas fa-times"></i></button></div>';
+		    	}
+		    	
+		    	standByClubHtml+='<div class="card-club-image">';		
+		    	//이미지
+		    	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
+		    		standByClubHtml+='<img src="'
+		    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+		    						+'onclick="clubModalView('+list.clubNo+')">';
+		    	}
+		    	else{
+		    		standByClubHtml+='<img src="'
+		    					+'${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"'
+		    					+'onclick="clubModalView('+list.clubNo+')">';
+		    	}
+		    	standByClubHtml+='</div>';
+		    	//동호회 수정
+		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	{	
+		    		standByClubHtml+='<button type="button" id="up-btn" onclick="updateClubModal('+list.clubNo+')">'
+    				+'<i class="fas fa-edit"></i></button>';
+		    		
+		    	}
+		    	
+		    	standByClubHtml+='<div class="category">'
+		    				+'<span class="club-category">'+list.clubCategory+'</span></div></div></div></div>';
+	
+		    });
+
+			
+			
+			
+			$("#all-club-intro").html(allClubHtml);
+			$("#my-club-list").html(myClubHtml);
+			$("#stand-by-club-list").html(standByClubHtml);
+
+			
+            
+		},
+		error: (x,s,e)=> {
+			console.log(x,s,e);
+		}
+		
+		
+		
+		
+	});
+	
+	
+}
+
+
+
 </script>
 
 <style>
 /*card*/
-.card-club-image img{
-  margin-top: 0.5rem;
-  width: 100%;
-  height: 200px;
+.card-club-image img {
+	margin-top: 0.5rem;
+	width: 100%;
+	height: 200px;
 }
-.card-enroll-date{
-  margin-top: 0.5rem;
-  float: right;
+
+.category {
+	margin-top: 0.5rem;
+	float: right;
 }
-.card-stand{
-  margin-top: 0.5rem;
+
+.card-stand {
+	margin-top: 0.5rem;
 }
 
 /*modal*/
-.modal-club-info{
-  color: gray;
+.modal-club-info {
+	color: gray;
 }
-#modal-image-slider img{
-  width: 70%;
-  height: 300px;
-  margin-bottom: 2rem;
+
+#modal-image-slider img {
+	width: 70%;
+	height: 300px;
+	margin-bottom: 2rem;
 }
-#up-btn{
-  margin-top: 0.5rem;
-  color: #464c59;
+
+#up-btn {
+	margin-top: 0.5rem;
+	color: #464c59;
 }
 /*club-form*/
-.form-check{
-  margin: 0.7rem;
+.form-check {
+	margin: 0.7rem;
 }
-#btn-sub{
-  margin: 1rem 0 2rem;
-  text-align: center;
+
+#btn-sub {
+	margin: 1rem 0 2rem;
+	text-align: center;
 }
 /* nav new club */
-#nav-new-club{color:white;border:none;padding:0.35rem 0.5rem;margin-right:1rem;border-radius: 0.25rem;}
+#nav-new-club {
+	color: white;
+	border: none;
+	padding: 0.35rem 0.5rem;
+	margin-right: 1rem;
+	border-radius: 0.25rem;
+}
 /* new club card */
-#new-club-card{height: 298x; text-align: center; padding: 6rem 0rem;}
-#new-club-card .card-body{color: #17a2b8;}
-#new-club-card i{margin-bottom: .7rem; font-size:30px;}
-#new-club-card:hover {background: #17a2b8;}
-#new-club-card:hover .card-body{color: #fff;}
+#new-club-card {
+	height: 298x;
+	text-align: center;
+	padding: 6rem 0rem;
+}
+
+#new-club-card .card-body {
+	color: #17a2b8;
+}
+
+#new-club-card i {
+	margin-bottom: .7rem;
+	font-size: 30px;
+}
+
+#new-club-card:hover {
+	background: #17a2b8;
+}
+
+#new-club-card:hover .card-body {
+	color: #fff;
+}
+
+/*meeting-cycle*/
+#meeting-cycle {
+	width: 20%;
+}
 </style>
 
 <!-- Navbar Club -->
-<nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-            모임주기 <span class="caret"></span>
-        </a>
-        <div class="dropdown-menu">
-            <a class="dropdown-item" tabindex="-1" href="#">매주</a>
-            <a class="dropdown-item" tabindex="-1" href="#">격주</a>
-            <a class="dropdown-item" tabindex="-1" href="#">매달</a>
-            <a class="dropdown-item" tabindex="-1" href="#">3개월</a>
-        </div>
-        </li>
-    </ul>
+<nav
+	class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
+	<!-- Left navbar links -->
 
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto navbar-nav-sort">
-        <li class="nav-item dropdown">
-            정렬
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-            이름순 <span class="caret"></span>
-            </a>
-            <div class="dropdown-menu">
-            <a class="dropdown-item" tabindex="-1" href="#">등록일순</a>
-            <a class="dropdown-item" tabindex="-1" href="#">이름순</a>
-            </div>
-        </li>
-        <!-- 새 동호회 만들기 -->
-        <li class="nav-item">
-        <button id="nav-new-club" class="bg-info" style="font-size:0.85rem;" data-toggle="modal" data-target="#add-project-modal">
-            <i class="fa fa-plus"></i>
-            <span>새 동호회</span>
-        </button>  
-        </li>
-    </ul>
+	<!-- Right navbar links -->
+	<ul class="navbar-nav ml-auto navbar-nav-sort">
+		<li class="nav-item dropdown">정렬 <a
+			class="nav-link dropdown-toggle" id="drop-sort-name"
+			data-toggle="dropdown" href="#"> 등록일순 <span class="caret"></span>
+		</a>
+			<div class="dropdown-menu" id="drop-sort">
+				<a class="dropdown-item" tabindex="-1" href="#">등록일순</a> <a
+					class="dropdown-item" tabindex="-1" href="#">이름순</a>
+			</div>
+		</li>
+		<!-- 새 동호회 만들기 -->
+		<li class="nav-item">
+			<button id="nav-new-club" class="bg-info" style="font-size: 0.85rem;"
+				data-toggle="modal" data-target="#add-project-modal">
+				<i class="fa fa-plus"></i> <span>새 동호회</span>
+			</button>
+		</li>
+	</ul>
 </nav>
 <!-- /.navbar -->
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-  <!-- Main content -->
-  <div class="content">
-    <div class="container-fluid">
-      
-      <!-- 동호회 목록 -->
-      <section class="club-all-list">
-          <div class="card-header" role="button" onclick="toggleList(this);">
-            <h3><i class="fas fa-chevron-down"></i> 동호회 목록 <span class="header-count">(1)</span></h3>
-          </div><!-- /.card-header -->
-          
-          <div class="row card-content">
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card club card-hover">
-                <div class="card-body">
-                  <div class="card-title">
-                    <h5>Eat Together</h5>
-                  </div>
+	<!-- Main content -->
+	<div class="content">
+		<div class="container-fluid">
 
-                    <!-- 삭제 버튼 -->
-                    <div class="card-tools text-right">
-                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                      </button>
-                    </div>
-                
-                  <div class="card-club-image"><img src="${pageContext.request.contextPath}/resources/img/food1.JPG" alt=""></div>
-                  <div class="card-enroll-date">
-                    <span class="enroll-date">2019/03/20</span>
-                  </div>
-                </div>
-              </div><!-- /.card -->
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card club card-hover">
-                <div class="card-body">
-                  <div class="card-title">
-                    <h5>여행여행</h5>
-                  </div>
-                   <!-- 삭제 버튼 -->
-                   <div class="card-tools text-right">
-                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                    </button>
-                  </div>
-                  <div class="card-club-image"><img src="${pageContext.request.contextPath}/resources/img/travel1.JPG" alt=""></div>
-                  <div class="card-enroll-date">
-                    <span class="enroll-date">2019/03/20</span>
-                  </div>
-                </div>
-              </div><!-- /.card -->
-            </div>
+			<!-- 동호회 목록 -->
+			<section class="club-all-list">
+				<div class="card-header" role="button" onclick="toggleList(this);">
+					<h3>
+						<i class="fas fa-chevron-down"></i> 동호회 목록 <span
+							class="header-count" id="allClubCountHeader"></span>
+					</h3>
+				</div>
+				<!-- /.card-header -->
 
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card club card-hover">
-                <div class="card-body">
-                  <div class="card-title">
-                    <h5>사진동호회</h5>
-                  </div>
-                 <!-- 삭제 버튼 -->
-                 <div class="card-tools text-right">
-                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                  </button>
-                </div>
-                  <div class="card-club-image"><img src="${pageContext.request.contextPath}/resources/img/dd.JPG" alt=""></div>
-                  <div class="card-enroll-date">
-                    <span class="enroll-date">2019/03/20</span>
-                  </div>
-                </div>
-              </div><!-- /.card -->
-            </div>
+				<!-- All Club -->
+				<div class="row card-content" id="all-club-intro"></div>
 
-        
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card club card-hover">
-                <div class="card-body">
-                  <div class="card-title">
-                    <h5>애니메이션</h5>
-                  </div>
-                <!-- 삭제 버튼 -->
-                <div class="card-tools text-right">
-                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                  </button>
-                </div>
-                  <div class="card-club-image"><img src="${pageContext.request.contextPath}/resources/img/ff.JPG" alt=""></div>
-                  <div class="card-enroll-date">
-                    <span class="enroll-date">2019/03/20</span>
-                  </div>
-                </div>
-              </div><!-- /.card -->
-            </div>
 
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card club card-hover">
-                <div class="card-body">
-                  <div class="card-title">
-                    <h5>애니메이션</h5>
-                  </div>
-                    <!-- 삭제 버튼 -->
-                    <div class="card-tools text-right">
-                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                      </button>
-                    </div>
-                  <div class="card-club-image"><img src="${pageContext.request.contextPath}/resources/img/aa.JPG" alt=""></div>
-                  <div class="card-enroll-date">
-                    <span class="enroll-date">2019/03/20</span>
-                  </div>
-                </div>
-              </div><!-- /.card -->
-            </div>
+				<c:forEach items="${clubList }" var="club">
+					<!-- modal Club 부분 -->
+					<div class="modal fade" id="modal-club-${club.clubNo }">
+						<div class="modal-dialog modal-lg">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title">${club.clubName }</h4>
 
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card club card-hover">
-                <div class="card-body">
-                  <div class="card-title">
-                    <h5>야구</h5>
-                  </div>
-                  
-               
-                  <!-- 삭제 버튼 -->
-                  <div class="card-tools text-right">
-                      
-                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                    </button>
-                  </div>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
 
-                  <div class="card-club-image"><img src="${pageContext.request.contextPath}/resources/img/fs.JPG" alt=""></div>
-                   <!-- 수정 버튼 -->
-                   <button type="button" id="up-btn"><i class="fas fa-edit"></i></button>
-                  <div class="card-enroll-date">
-                    <span class="enroll-date">2019/03/20</span>
-                  </div>
-                </div>
-              </div><!-- /.card -->
-            </div>
+									<div id="modal-image-slider" class="carousel slide"
+										data-ride="carousel">
 
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card new" id="new-club-card">
-                <div class="card-body">
-                  <i class="fas fa-plus"></i>
-                  <h6>새 동호회</h6>
-                </div>
-              </div><!-- /.card -->
-            </div>
-    
-          </div>
-      </section>
+										<div class="carousel-inner">
 
-      <!-- 내가 가입한 동호회 목록 -->
-      <section class="my-club">
-          <div class="card-header" role="button" onclick="toggleList(this);">
-            <h3><i class="fas fa-chevron-down"></i> 내가 가입한 동호회 <span class="header-count">(1)</span></h3>
-          </div><!-- /.card-header -->
-          <div class="row card-content">
-            <div class="col-12 col-sm-6 col-md-3">
-              <div class="card club card-hover">
-              	<a href="${pageContext.request.contextPath}/club/clubView.do">
-	                <div class="card-body">
-	                    <div class="card-title">
-	                    	<h5>야구</h5>
-	                    </div>
-	                    <!-- 삭제 버튼 -->
-	                    <div class="card-tools text-right">
-	                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-	                      </button>
-	                    </div>
-	                    <div class="card-club-image"><img src="${pageContext.request.contextPath}/resources/img/fs.JPG" alt=""></div>
-	                    <div class="card-enroll-date">
-	                    	<span class="enroll-date">2019/03/20</span>
-	                    </div>
-	                </div>
-                </a>
-              </div><!-- /.card -->
-            </div>
-          </div>
-      </section>
+											<c:choose>
 
-      <!-- 승인 대기중인 동아리 목록 -->
-      <section class="stand-by-club">
-        <div class="card-header" role="button" onclick="toggleList(this);">
-          <h3><i class="fas fa-chevron-down"></i> 승인 대기중인 동호회 <span class="header-count">(1)</span></h3>
-        </div><!-- /.card-header -->
-        
-        <div class="row card-content">
-          <div class="col-12 col-sm-6 col-md-3">
-              <div class="card club card-hover">
-                <div class="card-body">
-                  <!-- 타이틀 -->
-                  <div class="card-title">
-                    <h5>애니메이션</h5>
-                  </div>
-                     <!-- 삭제 버튼 -->
-                     <div class="card-tools text-right">
-                      <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-                      </button>
-                    </div>
-                  <div class="card-club-image"><img src="${pageContext.request.contextPath}/resources/img/dd.JPG" alt=""></div>
-                  <!-- 프로젝트 상태 / 마감일 -->
-                  
-                  <div class="card-stand"><span>승인대기</span></div>
-                
-                  <div class="card-enroll-date">
-                    <span class="enroll-date">2019/03/20</span>
-                  </div>
-                </div>
-              </div><!-- /.card -->
-          </div>
-        </div>
-      </section>
+												<c:when
+													test="${club.clubPhotoList[0].clubPhotoRenamed ne null}">
 
-    </div><!-- /.container-fluid -->
-  </div>
-  <!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
+													<div class="carousel-item active">
+														<img class="d-block w-100"
+															src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[0].clubPhotoRenamed}"
+															alt="First slide">
+													</div>
+												</c:when>
 
-<!-- modal Club 부분 -->
-<div class="modal fade" id="modal-club">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">여행여행</h4>
-      
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- image -->
-        <div id="modal-image-slider" class="carousel slide" data-ride="carousel">
-          <ol class="carousel-indicators">
-            <li data-target="#modal-image-slider" data-slide-to="0" class="active"></li>
-            <li data-target="#modal-image-slider" data-slide-to="1"></li>
-            <li data-target="#modal-image-slider" data-slide-to="2"></li>
-          </ol>
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img class="d-block w-100" src="${pageContext.request.contextPath}/resources/img/dd.JPG" alt="First slide">
-            </div>
-            <div class="carousel-item">
-              <img class="d-block w-100" src="${pageContext.request.contextPath}/resources/img/dd.JPG" alt="Second slide">
-            </div>
-            <div class="carousel-item">
-              <img class="d-block w-100" src="${pageContext.request.contextPath}/resources/img/dd.JPG" alt="Third slide">
-            </div>
-          </div>
-          <a class="carousel-control-prev" href="#modal-image-slider" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a class="carousel-control-next" href="#modal-image-slider" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-          </a>
-        </div>
+												<c:otherwise>
+													<div class="carousel-item active">
+														<img class="d-block w-100"
+															src="${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"
+															alt="First slide">
+													</div>
 
-        <span class="modal-text">국내여행.해외여행.정기모임.트레킹(산행).섬여행. 명승지관광. 정모를 통하여 친목을 다지며 국내여행과 더존나라 해외여행으로 견문을 넓히며 보다 건강하고 즐겁게 삶의 여유를 가지고 살아가는 회원들이 주최인 여행동호회 입니다.</span>
-        <hr>
-        <div class="modal-club-info">
-          <span>회원 - </span>&nbsp;
-          <span>10명</span>
-          <br>
-          <span>담당대표 - </span>&nbsp;
-          <span>박보검</span>
-          <br>
-          <span>모임날짜 - </span>&nbsp;
-          <span>월, 금</span>
-          <br>
-          <span>등록일 - </span>&nbsp;
-          <span>2019/03/20</span>
-        </div>
-        
-      </div>
-      <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="join">가입하기</button>
-      </div>
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
+												</c:otherwise>
+											</c:choose>
+											<c:if
+												test="${club.clubPhotoList[1].clubPhotoRenamed ne null}">
+												<div class="carousel-item">
+													<img class="d-block w-100"
+														src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[1].clubPhotoRenamed}"
+														alt="Second slide">
+												</div>
+											</c:if>
+											<c:if
+												test="${club.clubPhotoList[2].clubPhotoRenamed ne null}">
+												<div class="carousel-item">
+													<img class="d-block w-100"
+														src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[2].clubPhotoRenamed}"
+														alt="Third slide">
+												</div>
+											</c:if>
+										</div>
 
-<!-- new Club modal -->
-<!-- modal 부분 -->
-<div class="modal fade" id="modal-new-club" data-backdrop="static">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Let's Be</h4>
-      
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div>
-          <!-- form start -->
-          <form role="form" id="new-club-form">
-              <div class="form-group">
-                <label>이름</label>
-                <input type="text" class="form-control">
-              </div><!--  /.form-group -->
-              <div class="form-group">
-                <label>소개</label>
-                <textarea class="form-control" rows="7" placeholder="소개글을 작성해주세요"></textarea>
-              </div><!--  /.form-group -->
-              <div class="form-group">
-                <label>사진파일</label>
-                <div class="input-group">
-                  <div class="custom-file col-lg-6">
-                      <input type="file" class="custom-file-input" id="file1">
-                      <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
-                  <div class="custom-file col-lg-6">
-                    <input type="file" class="custom-file-input" id="file2">
-                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
-                </div>
-                <div class="input-group">
-                  <div class="custom-file col-lg-6">
-                    <input type="file" class="custom-file-input" id="file3">
-                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
-                  <div class="custom-file col-lg-6">
-                    <input type="file" class="custom-file-input" id="file4">
-                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
-                </div>
-                <div class="input-group">
-                  <div class="custom-file col-lg-6">
-                    <input type="file" class="custom-file-input" id="file5">
-                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
-                  <div class="custom-file col-lg-6">
-                    <input type="file" class="custom-file-input" id="file6">
-                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
-                </div>
-                <div class="input-group">
-                  <div class="custom-file col-lg-6">
-                    <input type="file" class="custom-file-input" id="file7">
-                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
-                  <div class="custom-file col-lg-6">
-                    <input type="file" class="custom-file-input" id="file8">
-                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                  </div>
-                </div>
-              </div><!--  /.form-group -->
-                
-              <label for="check-week">모임 요일</label>
-              <div id="check-week" class="input-group">
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="mon">
-                  <label class="form-check-label" for="mon">월</label>
-                </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="tue">
-                  <label class="form-check-label" for="tue">화</label>
-                </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="wed">
-                  <label class="form-check-label" for="wed">수</label>
-                </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="thu">
-                  <label class="form-check-label" for="thu">목</label>
-                </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="fri">
-                  <label class="form-check-label" for="fri">금</label>
-                </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="sat">
-                  <label class="form-check-label" for="sat">토</label>
-                </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="sun">
-                  <label class="form-check-label" for="sun">일</label>
-                </div>
-              </div><!-- /.input-group -->
-            
-              <div id="btn-sub">
-                <button type="submit" id="join-btn" class="btn btn-primary">가입하기</button>
-              </div>
-          </form>
-          <!-- form end -->
-        </div>
-      </div><!-- /.modal-body -->
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
+										<a class="carousel-control-prev" href="#modal-image-slider"
+											role="button" data-slide="prev"> <span
+											class="carousel-control-prev-icon" aria-hidden="true"></span>
+											<span class="sr-only">Previous</span>
+										</a> <a class="carousel-control-next" href="#modal-image-slider"
+											role="button" data-slide="next"> <span
+											class="carousel-control-next-icon" aria-hidden="true"></span>
+											<span class="sr-only">Next</span>
+										</a>
 
-<jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
+									</div>
+
+
+
+									<span class="modal-text">${club.clubIntroduce }</span>
+
+									<hr>
+									<div class="modal-club-info">
+										<span>담당대표 사번 - </span>&nbsp; <span>${club.clubManagerId }</span>
+										<br> <span>모임주기 - </span>&nbsp; <span>${club.clubMeetingCycle}</span>
+										<br> <span>모임날짜 - </span>&nbsp; <span>${club.clubMeetingDate}</span>
+										<br> <span>개설일 - </span>&nbsp; <span>${club.clubEnrollDate }</span>
+									</div>
+
+								</div>
+
+								<div class="modal-footer justify-content-between">
+									<button type="button" class="btn btn-default"
+										data-dismiss="modal">Close</button>
+									<c:set var="approve" value="${club.clubApproveYN}"></c:set>
+
+									<c:choose>
+										<c:when test="${fn:contains(approve,'Y')}"></c:when>
+										<c:when test="${fn:contains(approve,'N')}"></c:when>
+										<c:otherwise>
+
+											<form role="form"
+												action="${pageContext.request.contextPath}/club/insertClubMember.do"
+												method="post" enctype="multipart/form-data">
+												<input type="hidden" name="clubNo" value="${club.clubNo }" />
+												<input type="hidden" name="memberId"
+													value="${memberLoggedIn.memberId }" />
+
+
+												<button type="submit" class="btn btn-primary" id="join">가입하기</button>
+
+
+											</form>
+										</c:otherwise>
+									</c:choose>
+
+
+								</div>
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+					<!-- /.modal -->
+
+
+					<!-- new Club modal -->
+					<!-- modal 부분 -->
+					<div class="modal fade" id="modal-new-club" data-backdrop="static">
+						<div class="modal-dialog modal-lg">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title">동호회 개설</h4>
+
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+
+								</div>
+								<div class="modal-body">
+									<div>
+										<!-- form start -->
+										<form role="form" id="new-club-form"
+											action="${pageContext.request.contextPath}/club/insertNewClub.do"
+											method="post" enctype="multipart/form-data">
+
+											<!-- 아이디값 히든으로 넘겨주기  -->
+											<input type="hidden" name="clubManagerId"
+												value="${memberLoggedIn.memberId}" />
+
+											<div class="form-group">
+												<label>이름</label> <input type="text" name="clubName"
+													class="form-control" required>
+											</div>
+											<div class="form-group">
+												<div class="mb-3">
+													<label for="introduce">소개</label>
+													<textarea id="introduce" name="clubIntroduce"
+														class="textarea"
+														style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"
+														placeholder="소개글을 작성해주세요" required></textarea>
+												</div>
+											</div>
+
+
+											<div class="form-group">
+												<label>모임주기</label> <select class="form-control"
+													name="clubMeetingCycle">
+													<option>매주</option>
+													<option>격주</option>
+												</select>
+											</div>
+											<label for="check-week">모임 요일</label>
+											<div id="check-week" class="input-group">
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="clubMeetingDate" id="meetingDate0" value="월" checked>
+													<label class="form-check-label" for="meetingDate0">월</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="clubMeetingDate" id="meetingDate1" value="화">
+													<label class="form-check-label" for="meetingDate1">화</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="clubMeetingDate" id="meetingDate2" value="수">
+													<label class="form-check-label" for="meetingDate2">수</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="clubMeetingDate" id="meetingDate3" value="목">
+													<label class="form-check-label" for="meetingDate3">목</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="clubMeetingDate" id="meetingDate4" value="금">
+													<label class="form-check-label" for="meetingDate4">금</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="clubMeetingDate" id="meetingDate5" value="토">
+													<label class="form-check-label" for="meetingDate5">토</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="clubMeetingDate" id="meetingDate6" value="일">
+													<label class="form-check-label" for="meetingDate6">일</label>
+												</div>
+											</div>
+											<!-- /.input-group -->
+
+											<label for="radio-category">카테고리</label>
+											<div id="radio-category" class="input-group">
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory0" value="사회" checked>
+													<label class="form-check-label" for="clubCategory0">사회</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory1" value="취미">
+													<label class="form-check-label" for="clubCategory1">취미</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory2" value="음식">
+													<label class="form-check-label" for="clubCategory2">음식</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory3" value="운동">
+													<label class="form-check-label" for="clubCategory3">운동</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory4" value="문학">
+													<label class="form-check-label" for="clubCategory4">문학</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory5" value="기타">
+													<label class="form-check-label" for="clubCategory5">기타</label>
+												</div>
+
+											</div>
+
+											<div id="btn-sub">
+												<button type="submit" id="join-btn" class="btn btn-primary">생성하기</button>
+											</div>
+										</form>
+										<!-- form end -->
+									</div>
+								</div>
+								<!-- /.modal-body -->
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+					<!-- /.modal -->
+
+
+
+					<!--  modal 수정 -->
+					<!-- modal 부분 -->
+					<div class="modal fade" id="modal-update-${club.clubNo }"
+						data-backdrop="static">
+						<div class="modal-dialog modal-lg">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title">동호회 정보 수정</h4>
+
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+
+								</div>
+								<div class="modal-body">
+									<div>
+										<!-- form start -->
+										<form role="form" id="update-club-form"
+											action="${pageContext.request.contextPath}/club/updateClub.do"
+											method="post" enctype="multipart/form-data">
+
+											<!-- clubNo 값 히든으로 넘겨주기  -->
+											<input type="hidden" name="clubNo" value="${club.clubNo}" />
+
+											<div class="form-group">
+												<label>이름</label> <input type="text" name="clubName"
+													class="form-control" value="${club.clubName }" required>
+											</div>
+											<div class="form-group">
+												<div class="mb-3">
+													<label for="introduce">소개</label>
+													<textarea id="introduce" name="clubIntroduce"
+														class="textarea"
+														style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">${club.clubIntroduce }</textarea>
+												</div>
+											</div>
+
+
+
+											<div class="form-group">
+												<label>모임주기</label> <select class="form-control"
+													name="meetingCycle">
+													<option
+														<c:if test="${club.clubMeetingCycle eq '매주'}">selected</c:if>>매주</option>
+													<option
+														<c:if test="${club.clubMeetingCycle eq '격주'}">selected</c:if>>격주</option>
+												</select>
+											</div>
+
+
+											<c:set var="dateStr" value="${club.clubMeetingDate }"></c:set>
+											<label for="check-week">모임 요일</label>
+											<div id="check-week" class="input-group">
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="meetingDate" id="meetingDate0" value="월"
+														<c:if test="${fn:contains(dateStr,'월') }">checked</c:if>>
+													<label class="form-check-label" for="meetingDate0">월</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="meetingDate" id="meetingDate1" value="화"
+														<c:if test="${fn:contains(dateStr,'화') }">checked</c:if>>
+													<label class="form-check-label" for="meetingDate1">화</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="meetingDate" id="meetingDate2" value="수"
+														<c:if test="${fn:contains(dateStr,'수') }">checked</c:if>>
+													<label class="form-check-label" for="meetingDate2">수</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="meetingDate" id="meetingDate3" value="목"
+														<c:if test="${fn:contains(dateStr,'목') }">checked</c:if>>
+													<label class="form-check-label" for="meetingDate3">목</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="meetingDate" id="meetingDate4" value="금"
+														<c:if test="${fn:contains(dateStr,'금') }">checked</c:if>>
+													<label class="form-check-label" for="meetingDate4">금</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="meetingDate" id="meetingDate5" value="토"
+														<c:if test="${fn:contains(dateStr,'토') }">checked</c:if>>
+													<label class="form-check-label" for="meetingDate5">토</label>
+												</div>
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input"
+														name="meetingDate" id="meetingDate6" value="일"
+														<c:if test="${fn:contains(dateStr,'일') }">checked</c:if>>
+													<label class="form-check-label" for="meetingDate6">일</label>
+												</div>
+											</div>
+											<!-- /.input-group -->
+
+											<label for="radio-category">카테고리</label>
+											<div id="radio-category" class="input-group">
+
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory1" value="사회"
+														<c:if test="${club.clubCategory eq '사회'}">checked</c:if>>
+													<label class="form-check-label" for="clubCategory1">사회</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory2" value="음식"
+														<c:if test="${club.clubCategory eq '음식'}">checked</c:if>>
+													<label class="form-check-label" for="clubCategory2">음식</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory3" value="운동"
+														<c:if test="${club.clubCategory eq '운동'}">checked</c:if>>
+													<label class="form-check-label" for="clubCategory3">운동</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory4" value="문학"
+														<c:if test="${club.clubCategory eq '문학'}">checked</c:if>>
+													<label class="form-check-label" for="clubCategory4">문학</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input" type="radio"
+														name="clubCategory" id="clubCategory5" value="기타"
+														<c:if test="${club.clubCategory eq '기타'}">checked</c:if>>
+													<label class="form-check-label" for="clubCategory5">기타</label>
+												</div>
+
+											</div>
+
+											<div id="btn-sub">
+												<button type="submit" id="update-btn"
+													class="btn btn-primary">수정하기</button>
+											</div>
+										</form>
+										<!-- form end -->
+									</div>
+								</div>
+								<!-- /.modal-body -->
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+					<!-- /.modal -->
+				</c:forEach>
+			</section>
+
+			<!-- 내가 가입한 동호회 목록 -->
+			<section class="my-club">
+				<div class="card-header" role="button" onclick="toggleList(this);">
+					<h3>
+						<i class="fas fa-chevron-down"></i> 내가 가입한 동호회 <span
+							class="header-count" id="myclub-header-count"></span>
+					</h3>
+				</div>
+
+				<!-- /.card-header -->
+				<div class="row card-content" id="my-club-list"></div>
+			</section>
+
+			<!-- 승인 대기중인 동아리 목록 -->
+			<section class="stand-by-club">
+				<div class="card-header" role="button" onclick="toggleList(this);">
+					<h3>
+						<i class="fas fa-chevron-down"></i> 승인 대기중인 동호회 <span
+							class="header-count" id="standBy-header-count"></span>
+					</h3>
+				</div>
+				<!-- /.card-header -->
+
+				<div class="row card-content" id="stand-by-club-list"></div>
+			</section>
+
+		</div>
+		<!-- /.container-fluid -->
+
+		<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
+
+
+
+
+
+	<jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

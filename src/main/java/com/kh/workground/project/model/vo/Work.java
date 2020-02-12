@@ -24,7 +24,6 @@ public class Work extends Worklist implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int workNo;
-	//업무리스트 번호는 상속받아서!? 
 	private String workTitle;
 	private String workDesc;
 	private int workPoint;
