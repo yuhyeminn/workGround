@@ -17,6 +17,7 @@ $(()=>{
 	sidebarActive(); //사이드바 활성화
 	
 	projectStar(); //프로젝트 별 해제/등록
+	searchWork(); //업무검색
 	
     addWorklist(); //새 업무리스트 만들기
     deleteWorklist(); //업무리스트 삭제하기
@@ -27,7 +28,7 @@ $(()=>{
     tabActive(); //서브헤더 탭 활성화
     goTabMenu(); //서브헤더 탭 링크 이동
     
-    setting(); //설정창- 나중에 수정
+    //setting(); //설정창- 나중에 수정
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -78,6 +79,37 @@ function projectStar(){
     });
 }
 
+//업무 검색
+function searchWork(){
+	let wrapper = document.querySelector("#wlList-wrapper");
+	let frm = document.querySelector("#workSearchFrm");
+	let input = document.querySelector("input[name=searchWorkKeyword]");
+	let btn = document.querySelector("#btn-searchWork");
+	
+	btn.addEventListener('click', ()=>{
+		let data = {
+				projectNo: ${project.projectNo},
+				keyword: input.value,
+				memberId: '${memberLoggedIn.memberId}'
+		};
+		$.ajax({
+			url: '${pageContext.request.contextPath}/project/searchWork',
+			data: data,
+			dataType: 'html',
+			type: 'GET',
+			success: data=>{
+				console.log(data);
+				
+				$(wrapper).html("");
+				$(wrapper).html(data);
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
+	});
+}
+
 //새 업무리스트 만들기
 function addWorklist(){
     let addWklt = document.querySelector("#add-wklt-wrapper");
@@ -88,14 +120,16 @@ function addWorklist(){
     
     let btnAdd = document.querySelector("#btn-addWorklist");
     let btnCancel = document.querySelector("#btn-cancel-addWorklist");
-
-    //업무리스트 추가 클릭시 입력폼 보이기
-    addWklt.addEventListener('click', ()=>{
-        $(addWklt).hide();
-        $(addWkltFrm).show();
-        $(inputTitle).focus();
-    });
-
+	
+    //프로젝트 팀원들에게는 업무리스트 추가가 보이지 않음!
+    if(addWklt!==null){
+	    //업무리스트 추가 클릭시 입력폼 보이기
+	    addWklt.addEventListener('click', ()=>{
+	        $(addWklt).hide();
+	        $(addWkltFrm).show();
+	        $(inputTitle).focus();
+	    });
+    }
     //x버튼 클릭시 다시 업무리스트 추가 보이기
     btnCancel.addEventListener('click', ()=>{
         $(addWkltFrm).hide();
@@ -391,39 +425,106 @@ function addWork(){
 
 //체크리스트 체크
 function checklist(){
-    let $btnCheck = $(".btn-check");
-
-    $(".btn-check").on('click', e=>{
-        let checkbox = e.target;
-        let $tr = $(checkbox.parentNode.parentNode.parentNode);
-        let $tdChecklist = $(checkbox.parentNode.parentNode.nextSibling.nextSibling);
-
-        //클릭한 대상이 i태그일 경우에만 적용
-        if(checkbox.tagName==='I')
-            $tr.toggleClass('completed');
-
-        //완료된 체크리스트인 경우 
-        if($tr.hasClass('completed')){
-            //체크박스 변경
-            $(checkbox).removeClass('far fa-square');
-            $(checkbox).addClass('fas fa-check-square');
-
-            //리스트에 줄 긋기
-            $tdChecklist.css('text-decoration', 'line-through');
-        }
-        //미완료된 체크리스트인 경우
-        else{
-            if(checkbox.tagName=='I'){
-                //체크박스 변경
-                $(checkbox).removeClass('fas fa-check-square');
-                $(checkbox).addClass('far fa-square');
-
-                //리스트에 줄 해제
-                $tdChecklist.css('text-decoration', 'none');
-            }
-        }
-
-    }); //end of .btn-check click
+	let loggedInMemberId = '${memberLoggedIn.memberId}';
+	let loggedInMemberName = '${memberLoggedIn.memberName}';
+	let projectAdminId = '${project.projectWriter}';
+    let btnCheckArr = document.querySelectorAll(".btn-check");
+    
+    btnCheckArr.forEach((obj, idx)=>{
+    	obj.addEventListener('click', ()=>{
+    		let workNo = obj.value.split(",")[0];
+    		let chkNo = obj.value.split(",")[1];
+    		
+    		let $workSection = $("section#"+workNo);
+    		let $tr = $(obj.parentNode.parentNode);
+    		let $tdChecklist = $(obj.parentNode.nextSibling.nextSibling);
+    		let $icoChk = $(obj.firstChild);
+    		
+    		let workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
+    		let chkChargedMemId = obj.nextSibling.nextSibling.value;
+    		let isValid = false;
+    		
+    		
+    		//1.유효성 검사
+    		//체크리스트에 배정된 멤버가 있다면
+    		if(chkChargedMemId!==""){
+    			//체크리스트에 배정된 멤버, 프로젝트 팀장, admin만 클릭 가능
+    			if(loggedInMemberId===chkChargedMemId || loggedInMemberId===projectAdminId || loggedInMemberId==='admin'){
+    				isValid = true;
+    			}
+    			else{
+    				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
+    				return;
+    			}
+    		}
+    		//체크리스트에 배정된 멤버가 없다면, 업무에 배정된 멤버인지
+    		else{
+    			let chkbool = false;
+    			workChargedMemIdArr.forEach(id=>{
+    				if(loggedInMemberId===id) bool = true;
+    			});
+    			
+    			if(chkbool===true || loggedInMemberId===projectAdminId || loggedInMemberId==='admin'){
+    				isValid = true;
+    			}
+    			else{
+    				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
+    				return;
+    			}
+    		}	
+    		
+    		//2.체크리스트 완료 여부
+    		let yn = "N";
+    		if(isValid){
+    			//완료된 체크리스트인 경우 
+    			if($tr.hasClass('completed')) yn = "Y";
+    			
+    			let data = {
+    				completeYn: yn,
+    				checklistNo: chkNo
+    			};
+    			
+    			$.ajax({
+    				url: '${pageContext.request.contextPath}/project/updateChklistCompleteYn.do',
+    				data: data,
+    				dataType: 'json',
+    				type: 'POST',
+    				success: data=>{
+    					console.log(data);	
+    					
+    					//업데이트 성공한 경우
+    					if(data.result===1){
+	    					$tr.toggleClass('completed');
+	    					
+	    					//완료된 체크리스트인 경우 
+	    					if($tr.hasClass('completed')){
+	    				        //체크박스 변경
+	    				        $icoChk.removeClass('far fa-square');
+	    				        $icoChk.addClass('fas fa-check-square');
+	
+	    				        //리스트에 줄 긋기
+	    				        $tdChecklist.css('text-decoration', 'line-through');
+	    				    }
+	    					//미완료된 체크리스트인 경우
+	    				    else{
+	   				           //체크박스 변경
+	   				           $icoChk.removeClass('fas fa-check-square');
+	   				        	$icoChk.addClass('far fa-square');
+	
+	   				           //리스트에 줄 해제
+	   				           $tdChecklist.css('text-decoration', 'none');
+	    				    }
+    					}
+    					
+    				},
+    				error: (x,s,e) => {
+   						console.log(x,s,e);
+   					}
+    			});
+    	        
+    		}
+    	}); //end of .btn-check click
+    }); //end of btnCheckArr.forEach
 }
 
 //서브헤더 탭 active
@@ -630,15 +731,16 @@ function setting(){
         <!-- SEARCH FORM -->
         <form id="workSearchFrm" class="form-inline">
 	        <div class="input-group input-group-sm">
-	            <input class="form-control form-control-navbar" type="search" placeholder="업무 검색" aria-label="Search">
+	            <input class="form-control form-control-navbar" name="searchWorkKeyword" type="search" placeholder="업무 검색" aria-label="Search">
 	            <div class="input-group-append">
-	            <button class="btn btn-navbar" type="submit">
+	            <button class="btn btn-navbar" type="button" id="btn-searchWork">
 	                <i class="fas fa-search"></i>
 	            </button>
 	            </div>
 	        </div>
         </form>
         
+        <div id="wlList-wrapper">
         <!-- 업무리스트 -->
         <c:forEach items="${wlList}" var="wl" varStatus="wlVs">
         <section class="worklist" id="worklist-${wl.worklistNo}">
@@ -733,7 +835,15 @@ function setting(){
             	<c:if test="${(wlVs.index!=2 && w.workCompleteYn=='N') || (wlVs.index==2 && w.workCompleteYn=='Y')}">
                 <!-- 업무 -->
                 <section class="work-item" role="button" tabindex="0" id="${w.workNo}">
-                	<input type="hidden" id="hiddenworklistTitle" value="${wl.worklistTitle}" />
+                	<input type="hidden" id="hiddenworklistTitle" value="${wl.worklistTitle}"/>
+                	
+					<!-- 업무배정된 멤버아이디 구하기 -->
+					<c:set var="workCharedMemId" value=""/>
+					<c:forEach items="${w.workChargedMemberList}" var="m" varStatus="wcmVs">
+						<c:set var="workCharedMemId" value="${wcmVs.last?workCharedMemId.concat(m.memberId):workCharedMemId.concat(m.memberId).concat(',')}"/>
+					</c:forEach>
+                	<input type="hidden" class="hiddenWorkChargedMemId" value="${workCharedMemId}"/>
+					            	
 	                <!-- 태그 -->
 	                <c:if test="${w.workTagCode!=null}">
 	                <div class="work-tag">
@@ -769,29 +879,32 @@ function setting(){
 	                    <table class="tbl-checklist">
 		                    <tbody>
 			                	<c:forEach items="${clList}" var="chk">
-				                	<c:set var="m" value="${chk.checklistChargedMember}"></c:set>
+				                	<c:set var="m" value="${chk.checklistChargedMember}"/>
+				                	<!-- 체크리스트 배정된 멤버 구하기 -->
+				                    <c:set var="chkChargedMemId" value="${m.memberId}"/>
+				                    
 				                	<c:if test="${chk.completeYn=='Y'}">
 			                        <tr class="completed">
-				                		<th><button type="button" class="btn-check"><i class="fas fa-check-square"></i></button></th>
+				                		<th>
+				                			<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>
+				                			<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>	
+				                		</th>
 				                        <td style="text-decoration:line-through;">
+				                    </c:if>
+				                    <c:if test="${chk.completeYn=='N'}">
+			                        <tr>
+			                        	<th>
+			                        		<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>
+			                        		<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>
+			                        	</th>
+				                        <td>
+				                    </c:if>
 				                        	<c:if test="${chk.checklistChargedMemberId!=null}">
 				                            <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
 				                            </c:if>
 				                            ${chk.checklistContent}
 				                        </td>
 			                        </tr>
-			                        </c:if>
-			                        <c:if test="${chk.completeYn=='N'}">
-			                        <tr>
-			                        	<th><button type="button" class="btn-check"><i class="far fa-square"></i></button></th>
-				                        <td>
-				                        	<c:if test="${chk.checklistChargedMemberId!=null}">
-				                            <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
-				                            </c:if>
-				                            ${chk.checklistContent}
-				                        </td>
-			                        </tr>
-			                        </c:if>
 		                        </c:forEach>
 		                    </tbody>
 	                    </table>                
@@ -907,9 +1020,11 @@ function setting(){
         </section><!-- /.worklist -->
 
         <div class="clear"></div>
+        
+        </div><!-- /.wlList-wrapper -->
+        
     </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content -->
+    </div><!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
 

@@ -131,6 +131,15 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.selectOne("project.selectWorkOne");
 	}
 
+	@Override
+	public int updateChklistCompleteYn(Map<String, Object> param) {
+		return sqlSession.update("project.updateChklistCompleteYn", param);
+	}
+
+	@Override
+	public List<Work> selectWorkListBySearchKeyword(Map<String, Object> param) {
+		return sqlSession.selectList("project.selectWorkListBySearchKeyword", param);
+	}
 
 
 }

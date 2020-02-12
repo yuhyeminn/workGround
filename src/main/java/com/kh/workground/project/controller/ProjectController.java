@@ -119,9 +119,6 @@ public class ProjectController {
 				mav.addObject("inMemList", inMemList);
 				mav.addObject("wlList", p.getWorklistList());
 				
-				logger.debug("allMemList={}", list);
-				logger.debug("inMemList={}", inMemList);
-				
 				//서브헤더 탭에 따라 분기
 				if("work".equals(tab))
 					mav.setViewName("/project/projectView");
@@ -257,10 +254,7 @@ public class ProjectController {
 			
 			//1-3.방금 추가된 업무 객체 가져오기 
 			Work work = projectService.selectWorkOne();
-			//logger.debug("work={}", work);
 			
-			//map.put("result", result);
-			//map.put("work", work);
 			mav.addObject("w", work);
 			mav.setViewName("/project/addWorkAjax");
 			
@@ -269,9 +263,58 @@ public class ProjectController {
 			throw new ProjectException("새 업무 만들기 오류!");
 		}
 		
-		//return map;
 		return mav;
 	}
+	
+	@PostMapping("/project/updateChklistCompleteYn.do")
+	@ResponseBody
+	public Map<String, Integer> updateChklistCompleteYn(@RequestParam String completeYn, @RequestParam int checklistNo) {
+		Map<String, Integer> map = new HashMap<>();
+		logger.debug("completeYn={}", completeYn);
+		logger.debug("checklistNo={}", checklistNo);
+		
+		try {
+			Map<String, Object> param = new HashMap<>();
+			param.put("checklistNo", checklistNo);
+			
+			//체크리스트 완료하는 경우
+			if("N".equals(completeYn)) 
+				param.put("completeYn", "Y");
+			//체크리스트 완료 해제하는 경우
+			else 
+				param.put("completeYn", "N");
+				
+			//업무로직
+			int result = projectService.updateChklistCompleteYn(param);
+			map.put("result", result);	
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("체크리스트 완료여부 업데이트 오류!");
+		}
+		return map;
+	}
+	
+	@RequestMapping("/project/searchWork")
+	public ModelAndView searchWork(ModelAndView mav, @RequestParam int projectNo, @RequestParam String keyword, @RequestParam String memberId) {
+		
+		try {
+			//1.업무로직
+			Project p = projectService.searchWork(projectNo, keyword);
+			
+			//2.뷰모델 처리
+			mav.addObject("project", p);
+			mav.addObject("wlList", p.getWorklistList());
+			mav.setViewName("/project/projectSearchResultAjax");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 검색 오류!");
+		}
+		
+		return mav;
+	}
+	
 	
 	@RequestMapping("/project/projectAnalysis.do")
 	public ModelAndView projectAnalysis(ModelAndView mav) {

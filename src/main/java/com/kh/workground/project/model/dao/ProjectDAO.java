@@ -55,5 +55,10 @@ public interface ProjectDAO {
 
 	Work selectWorkOne();
 
+	int updateChklistCompleteYn(Map<String, Object> param);
+
+	List<Work> selectWorkListBySearchKeyword(Map<String, Object> param);
+
+
 
 }
