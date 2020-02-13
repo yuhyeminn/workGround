@@ -167,7 +167,7 @@ function clubFileList(clubNo) {
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 			  <c:if test="${not empty clubMemberList }">
 			  <c:forEach items="${clubMemberList }" var="clubMember">
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
+				<a href="${pageContext.request.contextPath }/member/memberView.do?memberId=${clubMember.empId }" class="dropdown-item"> <!-- Message Start -->
 				  <div class="media">
 				  	<img src="${pageContext.request.contextPath}/resources/img/profile/${clubMember.clubMemberList[0].renamedFileName }"
 				  		 alt="User Avatar" class="img-circle img-profile ico-profile" />
