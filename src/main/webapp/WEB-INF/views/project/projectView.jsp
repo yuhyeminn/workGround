@@ -1,3 +1,4 @@
+<%@page import="com.kh.workground.project.model.vo.Project"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="com.kh.workground.member.model.vo.Member"%>
 <%@page import="java.util.List"%>
@@ -23,6 +24,7 @@ $(()=>{
     deleteWorklist(); //업무리스트 삭제하기
     
     addWork(); //새 업무 만들기
+    deleteWork(); //업무 삭제하기
     checklist(); //체크리스트 체크
     
     tabActive(); //서브헤더 탭 활성화
@@ -140,20 +142,21 @@ function addWorklist(){
     //+버튼 클릭시 업무리스트 추가
     btnAdd.addEventListener('click', ()=>{
         let formData = $(frm).serialize();
-
+        
         $.ajax({
         	url: '${pageContext.request.contextPath}/project/addWorklist.do',
         	data: formData,
         	dataType: 'html',
         	type: 'POST',
         	success: data=>{
-        		console.log(data);
         		
        			//초기화
        			$(inputTitle).val("");
        			$(addWkltFrm).hide();
        			$(addWklt).show();
        			
+       			//업무리스트 추가
+       			$(addWklt).before(data);
        			
         	},
         	error: (x,s,e) => {
@@ -168,40 +171,55 @@ function addWorklist(){
 function deleteWorklist(){
 	let btnDelModal = document.querySelectorAll(".btn-removeWorklist-modal");
 	let modal = document.querySelector("#modal-worklist-remove");
-	let modalTitle = document.querySelector("#modal-worklist-title");
+	let delTitle = document.querySelector("#modal-del-title");
 	let btnDel = document.querySelector("#btn-removeWorklist");
+	let title;
+	let worklistNo;
 	
 	//업무리스트 x버튼 클릭시 모달창: 모달창에 업무리스트 정보 뿌리기
 	btnDelModal.forEach((obj, idx)=>{
-		let val = obj.value;
-		let valArr = val.split(',');
-		
 		obj.addEventListener('click', ()=>{
-			$(modalTitle).text(valArr[1]); //업무리스트 타이틀 
-			$(btnDel).val(valArr[0]); //업무리스트 번호
+			let val = obj.value;
+			let valArr = val.split(',');
+			title = valArr[1];
+			worklistNo = valArr[0];
+			
+			$(".modal-del-target").text("업무리스트");
+			$(delTitle).text(title); //업무리스트 타이틀 
+			$(btnDel).val('worklist-'+worklistNo); //업무리스트 번호
 		});
 	});
 	
 	//삭제버튼 클릭시
 	btnDel.addEventListener('click', e=>{
-		let worklistNo = e.target.value;
+		let val = e.target.value
+		let worklistNo = val.split('-')[1]*1;
+		let delwl = document.querySelector("#worklist-"+worklistNo);
 		
-		$.ajax({
-        	url: '${pageContext.request.contextPath}/project/deleteWorklist.do',
-        	data: {worklistNo: worklistNo},
-        	dataType: 'json',
-        	type: 'POST',
-        	success: data=>{
-        		console.log(data);
-        		
-        		if(data.result===1){
-        			$(modal).modal('hide');
-        		}
-        	},
-        	error: (x,s,e) => {
-				console.log(x,s,e);
-			}
-        }); 
+		//업무 삭제와 구분하기
+		if(val.split('-')[0] == 'worklist'){
+			$.ajax({
+	        	url: '${pageContext.request.contextPath}/project/deleteWorklist.do',
+	        	data: {worklistNo: worklistNo},
+	        	dataType: 'json',
+	        	type: 'POST',
+	        	success: data=>{
+	        		console.log(data);
+	        		
+	        		//삭제 성공시 모달창 닫기
+	        		if(data.result===1){
+	        			$(modal).modal('hide');
+	        			
+		        		//해당 요소 지우기
+		        		delwl.remove();
+	        		}
+	        		
+	        	},
+	        	error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+	        }); 
+		} 
 		
 	}); //end of btnDel click 
 }
@@ -381,7 +399,10 @@ function addWork(){
    			//만들기버튼 클릭
    			btnSubmit.addEventListener('click', e=>{
    				let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]').value;
+   				let wlSection = document.querySelector('#worklist-'+worklistNo);
+   				
    				let data = {
+   						projectWriter: '${project.projectWriter}',
    						worklistNo: worklistNo,
    						workTitle: workTitle,
    						workChargedMember: addMemberArr,
@@ -390,20 +411,18 @@ function addWork(){
    				};
    				
    				$.ajax({
-   					url: '${pageContext.request.contextPath}/project/insertWork',
+   					url: '${pageContext.request.contextPath}/project/insertWork.do',
    					data: data,
    					dataType: 'html',
    					type: 'POST',
    					success: data=>{
    						console.log(data);
    						
-   						let wlSection = document.querySelector('#worklist-'+worklistNo+' .worklist-contents');
-   						
    						//입력창 닫기
    			    		$(workTitle).val("");
    			    		$(addWorkWrapper).removeClass("show");
    			    		
-   						$(wlSection).prepend(data);
+   						$(wlSection).html(data);
    					},
    					error: (x,s,e) => {
    						console.log(x,s,e);
@@ -420,6 +439,81 @@ function addWork(){
    			
     	}); //end of +버튼 클릭
     }); // end of +버튼 제어 끝
+}
+
+//업무 삭제하기
+function deleteWork(){
+	let menu = document.querySelector("#menu-delWork");
+	
+	let modal = document.querySelector("#modal-worklist-remove");
+	let delTitle = document.querySelector("#modal-del-title");
+	let btnDel = document.querySelector("#btn-removeWorklist");
+	
+	let work; 
+	
+	//업무 우클릭시 삭제 드롭다운 메뉴 열기
+	$(".work-item").contextmenu(function(e){
+		e.preventDefault();
+		
+		let x = e.pageX + 'px';
+		let y = (e.pageY-100) + 'px';
+		
+		menu.style.display = 'block';
+		menu.style.left = x;
+		menu.style.top = y;	
+		
+		//내가 클릭한 업무
+		work = e.currentTarget; 
+	});
+	
+	//업무 삭제 클릭: 모달에 정보 뿌리기 
+	menu.addEventListener('click', (e)=>{
+		let workNo = work.id;
+		let title = $('#'+workNo).find('h6').text();
+		
+		$(".modal-del-target").text("업무");
+		$(delTitle).text(title); //업무 타이틀 
+		$(btnDel).val('work-'+workNo); //업무 번호
+	});
+	
+	//삭제버튼 클릭시
+	btnDel.addEventListener('click', e=>{
+		let val = e.target.value
+		let workNo = val.split('-')[1]*1;
+		let $delWork = $("#"+workNo);
+		
+		//업무리스트와 구분
+		if(val.split('-')[0] == 'work'){
+			$.ajax({
+	        	url: '${pageContext.request.contextPath}/project/deleteWork.do',
+	        	data: {workNo: workNo},
+	        	dataType: 'json',
+	        	type: 'POST',
+	        	success: data=>{
+	        		console.log(data);
+	        		
+	        		//삭제 성공시 모달창 닫기
+	        		if(data.result===1){
+	        			$(modal).modal('hide');
+	        			
+		        		//해당 요소 지우기
+		        		$delWork.remove();
+	        		}
+	        		
+	        	},
+	        	error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+	        }); 
+		}
+		
+	}); //end of btnDel click 
+	
+	
+	
+	document.addEventListener('click', ()=>{
+		menu.style.display = 'none';
+	});
 }
 
 //체크리스트 체크
@@ -987,8 +1081,8 @@ function setting(){
         </c:forEach>
         
         
-        <!-- 업무리스트 추가: admin, 대표, 프로젝트 팀장에게만 보임 -->
-        <c:if test="${'admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || project.projectWriter==memberLoggedIn.memberId}">
+        <!-- 업무리스트 추가: 내워크패드인 경우 / 아닌 경우는 admin, 대표, 프로젝트 팀장에게만 보임 -->
+        <c:if test="${'Y'==project.privateYn || ('N'==project.privateYn && ('admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || project.projectWriter==memberLoggedIn.memberId)) }">
         <section id="add-wklt-wrapper" class="worklist add-worklist" role="button" tabindex="0">
             <!-- 타이틀 -->
             <div class="worklist-title">
@@ -1027,21 +1121,28 @@ function setting(){
 </div>
 <!-- /.content-wrapper -->
 
-<!-- 업무리스트 삭제 모달 -->
+<!-- 업무 삭제 드롭다운 -->
+<!-- <div id="menu-delWork" class="dropdown"> -->
+    <div id="menu-delWork" class="dropdown-menu dropdown-menu-right">
+        <a href="#" id="dropdown-work-remove" class="dropdown-item dropdown-file-remove" data-toggle="modal" data-target="#modal-worklist-remove">업무 삭제</a>
+    </div>
+<!-- </div> -->
+
+<!-- 업무리스트/업무삭제 모달 -->
 <div class="modal fade" id="modal-worklist-remove">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h4 class="modal-title">업무리스트 삭제</h4>
+            <h4 class="modal-title"><span class="modal-del-target"></span> 삭제</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
             <div class="modal-body">
-            <p>정말 삭제하시겠습니까? [<span id="modal-worklist-title"></span>] 업무리스트는 영구 삭제됩니다.</p>
+            <p>정말 삭제하시겠습니까? [<span id="modal-del-title"></span>] <span class="modal-del-target"></span>는 영구 삭제됩니다.</p>
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">아니오, 업무리스트를 유지합니다.</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">아니오, <span class="modal-del-target"></span>를 유지합니다.</button>
             <button type="button" id="btn-removeWorklist" class="btn btn-danger">네</button>
             </div>
         </div>

@@ -90,17 +90,18 @@ public class ProjectController {
 			//1-1. 해당 프로젝트 조회
 			Project p = projectService.selectProjectWorklistAll(projectNo, loggedInMemberId);
 			
-			//1-2. 프로젝트에 내가 속해있는지 여부
-			boolean bool = false;
-			List<Member> list = null;
-			List<Member> inMemList = new ArrayList<>();
-			//내 워크패드인 경우
+			//1-2. 나의 워크패드인 경우/아닌 경우에 따라 분기
 			if("Y".equals(p.getPrivateYn())) {
-				bool = true;
+				//2. 뷰모델 처리
+				mav.addObject("project", p);
+				mav.addObject("wlList", p.getWorklistList());
+				mav.setViewName("/project/projectView");
 			}
-			//프로젝트인 경우
 			else {
-				list = p.getProjectMemberList();
+				//1-3. 프로젝트에 내가 속해있는지 여부
+				boolean bool = false;
+				List<Member> list = p.getProjectMemberList();
+				List<Member> inMemList = new ArrayList<>();
 				
 				for(Member m: list) {
 					String memId = m.getMemberId();
@@ -108,10 +109,8 @@ public class ProjectController {
 					if(loggedInMemberId.equals(memId) && yn.equals("N"))
 						bool = true;
 				}
-				logger.debug("//////////////////////////////////////////");
-				logger.debug("bool={}", bool);
 				
-				//1-3.프로젝트 속함 여부에 따라 분기
+				//프로젝트 속함 여부에 따라 분기
 				if(bool) {
 					//프로젝트에 포함되어 있는 멤버리스트 다시 구하기
 					for(Member m: list){
@@ -137,8 +136,8 @@ public class ProjectController {
 					mav.addObject("loc", "/project/projectList.do");
 					mav.setViewName("/common/msg");
 				}
-			}
-			
+				
+			} //end of 나의 워크패드가 아닌 경우 
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -188,8 +187,8 @@ public class ProjectController {
 	
 	@PostMapping("/project/addWorklist.do")
 	@ResponseBody
-	public Map<String, Integer> insertWorklist(@RequestParam int projectNo, @RequestParam String worklistTitle) {
-		Map<String, Integer> map = new HashMap<>();
+	public ModelAndView insertWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam String worklistTitle) {
+		
 		
 		try {
 			//1.업무로직
@@ -197,22 +196,29 @@ public class ProjectController {
 			param.put("projectNo", projectNo);
 			param.put("worklistTitle", worklistTitle);
 			
-			int result = projectService.insertWorklist(param);
-			map.put("result", result);
+			//1-1. 업무리스트 추가하고, 그 업무리스트 가져오기 
+			Worklist wl = projectService.insertWorklist(param);
+			
+			//1-2.projectWriter 가져와서 담기
+			String projectWriter = projectService.selectProjectWriter(projectNo);
+			wl.setProjectWriter(projectWriter);
+			
+			//2.뷰모델 처리
+			mav.addObject("wl", wl);
+			mav.setViewName("/project/addWorklistAjax");
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("업무리스트 생성 오류!");
 		}
 		
-		return map;
+		return mav;
 	}
 	
 	@PostMapping("/project/deleteWorklist.do")
 	@ResponseBody
 	public Map<String, Integer> deleteWorklist(@RequestParam int worklistNo) {
 		Map<String, Integer> map = new HashMap<>();
-		logger.debug("worklistNo={}", worklistNo);
 		
 		try {
 			//1.업무로직
@@ -227,20 +233,14 @@ public class ProjectController {
 		return map;
 	}
 	
-	@PostMapping("/project/insertWork")
+	@PostMapping("/project/insertWork.do")
 	@ResponseBody
-	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="worklistNo") int worklistNo, 
+	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="projectWriter") String projectWriter,
+									       @RequestParam(value="worklistNo") int worklistNo, 
 										   @RequestParam(value="workTitle") String workTitle,
 										   @RequestParam(value="workChargedMember[]", required=false) List<String> workChargedMember,
 										   @RequestParam(value="workTag", required=false) String workTag,
 										   @RequestParam(value="workDate[]", required=false) List<String> workDate){
-		
-		//Map<String, Object> map = new HashMap<>();
-		logger.debug("worklistNo={}", worklistNo);
-		logger.debug("workTitle={}", workTitle);
-		logger.debug("workChargedMember={}", workChargedMember);
-		logger.debug("workTag={}", workTag);
-		logger.debug("workDate={}", workDate);
 		
 		try {
 			//1.업무로직
@@ -261,10 +261,15 @@ public class ProjectController {
 			//1-2.추가
 			int result = projectService.insertWork(param);
 			
-			//1-3.방금 추가된 업무 객체 가져오기 
-			Work work = projectService.selectWorkOne();
+			//1-3. 업무가 추가된 업무리스트 가져오기
+			Worklist wl = projectService.selectWorklistOne(worklistNo);
+			wl.setProjectWriter(projectWriter);
 			
-			mav.addObject("w", work);
+			logger.debug("/////////////////////////진행중인 업무수 잘 나오는가!////////////////////////////////");
+			logger.debug("totalWorkCompletYn={}", wl.getTotalWorkCompletYn());
+			
+			
+			mav.addObject("wl", wl);
 			mav.setViewName("/project/addWorkAjax");
 			
 		} catch(Exception e) {
@@ -322,6 +327,26 @@ public class ProjectController {
 		}
 		
 		return mav;
+	}
+	
+	@PostMapping("/project/deleteWork.do")
+	@ResponseBody
+	public Map<String, Integer> deleteWork(@RequestParam int workNo) {
+		Map<String, Integer> map = new HashMap<>();
+		logger.debug("///////////////////////////////////");
+		logger.debug("workNo={}", workNo);
+		
+		try {
+			//1.업무로직
+			int result = projectService.deleteWork(workNo);
+			map.put("result", result);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무리스트 삭제 오류!");
+		}
+		
+		return map;
 	}
 	
 	
