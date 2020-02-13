@@ -831,13 +831,13 @@ function fileDownload(oName, rName, clubNo) {
 									</div>
 									<div class="form-group">
 										<br />
-										<c:if test="${clubNotice.clubNoticeRenamed ne null }">
-										  <div class="form-group" onclick="fileDownload('${clubNotice.clubNoticeOriginal}', '${clubNotice.clubNoticeRenamed }', '${club.clubNo }');">
-										  	<i class="far fa-file"></i>
-										    ${clubNotice.clubNoticeOriginal }
-										  </div>
-										</c:if>
 									</div>
+									<c:if test="${clubNotice.clubNoticeRenamed ne null }">
+									  <div class="form-group" onclick="fileDownload('${clubNotice.clubNoticeOriginal}', '${clubNotice.clubNoticeRenamed }', '${club.clubNo }');">
+									  	<i class="far fa-file"></i>
+									    ${clubNotice.clubNoticeOriginal }
+									  </div>
+									</c:if>
 									<div class="form-group">
 										${clubNotice.clubNoticeContent }
 									</div>
@@ -920,7 +920,7 @@ function fileDownload(oName, rName, clubNo) {
 										<span aria-hidden="true">&times;</span>
 									</button>
 								</div>
-								<form name="clubNoticeUpdateFrm" action="${pageContext.request.contextPath }/club/clubNoticeUpdate.do" method="POST">
+								<form name="clubNoticeUpdateFrm" action="${pageContext.request.contextPath }/club/clubNoticeUpdate.do" enctype="multipart/form-data" method="POST">
 									<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
 									<input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />
 									<div class="modal-body">
@@ -929,6 +929,29 @@ function fileDownload(oName, rName, clubNo) {
 											<input type="text" id="inputClientCompany" class="form-control" name="clubNoticeTitle"
 												   placeholder="제목을 입력하세요." value="${clubNotice.clubNoticeTitle }" />
 										</div>
+										  <div class="form-group">
+										  	<label for="exampleInputFile">파일</label>
+										  	<div class="input-group">
+								                <!-- <input type="file" class="form-control-file" id="exampleFormControlFile1" name="updateFile"> -->
+										  		<div class="custom-file">
+										  			<input type="file" class="custom-file-input" name=upFile id="exampleInputFile"> 
+										  			<label class="custom-file-label" for="exampleInputFile">파일을 선택하세요.</label>
+										  		</div>
+										  	</div>
+										  	<div class="input-group">
+								                <span class="fname">${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""}</span>
+								                <input type="hidden" name="noticeOriginalFileName" value="${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""} "/>
+								                <input type="hidden" name="noticeRenamedFileName" value="${clubNotice.clubNoticeRenamed!=null?clubNotice.clubNoticeRenamed:""} "/>
+											</div>
+											<div class="input-group">
+												<c:if test="${clubNotice.clubNoticeRenamed ne null }">
+								               		<span class="deleteFileSpan">
+									               		<input type="checkbox" name="delFileChk" id="delFileChk" />
+									               		<label for="delFileChk">첨부파일삭제</label>	               		
+								               		</span>
+												</c:if>
+										  	</div>
+										  </div>
 										<div class="form-group">
 											<label for="inputClientCompany">공지내용</label> 
 											<div class="card-body pad">
