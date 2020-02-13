@@ -35,4 +35,12 @@ public interface ProjectService2 {
 
 	int updateWorkMember(String updateWorkMemberStr, int workNo);
 
+	int deleteWorkMember(Map<String, String> param);
+
+	int updateWorkTag(Map<String, Object> param);
+
+	int updateWorkPoint(Map<String, Integer> param);
+
+	int updateWorkDate(Map<String, String> param);
+
 }

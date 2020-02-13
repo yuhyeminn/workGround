@@ -55,4 +55,14 @@ public interface ProjectDAO2 {
 
 	int updateProjectManager(Map<String, String> param);
 
+	int insertWorkMember(Map<String, String> param);
+
+	int deleteWorkMember(Map<String, String> param);
+
+	int updateWorkTag(Map<String, Object> param);
+
+	int updateWorkPoint(Map<String, Integer> param);
+
+	int updateWorkDate(Map<String, String> param);
+
 }

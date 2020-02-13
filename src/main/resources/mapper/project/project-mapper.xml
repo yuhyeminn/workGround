@@ -426,7 +426,10 @@
 	
 	<!-- 프로젝트 멤버 project_quit_yn 수정 -->
 	<update id="updateProjectQuit">
-		update project_members set project_quit_yn = #{quitYN} where project_no=#{projectNo} and member_id=#{projectMember}
+		update project_members set project_quit_yn = #{quitYN} where project_no=#{projectNo} and manager_yn = 'N'
+		<if test="projectMember != '' and projectMember !=null">
+			and member_id=#{projectMember}
+		</if>
 	</update>
 	
 	<!-- updateProjectManager.do : 프로젝트 관리자 수정 -->
@@ -434,6 +437,43 @@
 		update project_members set member_id = #{updateManager} where project_no=to_number(#{projectNo}) and manager_yn = 'Y'
 	</update>
 	
+	<!-- updateWorkMember.do : 업무 배정 멤버 추가 -->
+	<insert id="insertWorkMember">
+		insert into work_charged_members values(seq_work_charged_members.nextval,to_number(#{workNo}),#{memberId})
+	</insert>
+	
+	<!-- updateWorkMember.do : 업무 배정 멤버 삭제 -->
+	<insert id="deleteWorkMember">
+		delete from work_charged_members where work_no=#{workNo} 
+		<if test="memberId != '' and memberId != null">
+			and charged_member_id=#{memberId}
+		</if>
+	</insert>
+	
+	<!-- updateWorkTag.do : 업무 태그 변경 -->
+	<update id="updateWorkTag">
+		<if test="workTag != null and workTag != ''">
+		update work set work_tag_code= to_char(#{workTag}) where work_no = to_number(#{workNo})
+		</if>
+		<if test="workTag == null or workTag == ''">
+		update work set work_tag_code= null where work_no = to_number(#{workNo})
+		</if>
+	</update>
+	
+	<!-- updateWorkPoint.do : 업무 포인트 변경 -->
+	<update id="updateWorkPoint">
+		update work set work_point = #{workPoint} where work_no=#{workNo}
+	</update>
+	
+	<update id="updateWorkDate">
+		<if test="date != null and date != ''">
+		update work set ${dateType} = to_date(#{date}, 'YYYY/MM/DD') where work_no = to_number(#{workNo})
+		</if>
+		<if test="date == null or date ==''">
+		update work set ${dateType} = null where work_no = to_number(#{workNo})
+		</if>
+	</update>
+
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>
 			<result column="password" property="password"></result>

@@ -294,22 +294,70 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 
 	@Override
 	public int updateWorkMember(String updateWorkMemberStr, int workNo) {
-		Work work = projectDAO.selectOneWorkForSetting(workNo);
 		
+		int result = 1;
+		Work work = projectDAO.selectOneWorkForSetting(workNo);
+
 		//수정 할 업무 배정된 멤버 리스트
 		String[] updateWorkMemberArr = updateWorkMemberStr.split(",");
-		List<String> updateWorkMemberList = new ArrayList<>(Arrays.asList(updateWorkMemberStr));
+		List<String> updateWorkMemberList = new ArrayList<>(Arrays.asList(updateWorkMemberArr));
 		logger.debug("updateWorkMemberList={}",updateWorkMemberList);
 		
 		//해당 업무에 배정된 멤버 리스트
-		List<Member> workMemberList = work.getWorkChargedMemberList();
-		
+		List<String> workMemberList = new ArrayList<>();
+		for(Member m : work.getWorkChargedMemberList()) {
+			workMemberList.add(m.getMemberId());
+		}
 		//새로 추가되는 멤버
 		for(String memberId:updateWorkMemberList) {
-		  
+		    if(!workMemberList.contains(memberId)) {
+		    	//새로 배정된 멤버
+		    	Map<String,String> param = new HashMap<>();
+		    	param.put("workNo",Integer.toString(workNo));
+		    	param.put("memberId", memberId);
+		    	result = projectDAO.insertWorkMember(param);
+		    	if(result==0) throw new ProjectException("업무 배정 멤버 추가 오류!");
+			}
 		}
-		
-		return 0;
+		for(String memberId:workMemberList) {
+			if(!updateWorkMemberList.contains(memberId)) {
+				//삭제되는 멤버
+				Map<String,String> param = new HashMap<>();
+		    	param.put("workNo",Integer.toString(workNo));
+		    	param.put("memberId", memberId);
+		    	result = projectDAO.deleteWorkMember(param);
+		    	if(result==0) throw new ProjectException("업무 배정 멤버 삭제 오류!");
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int deleteWorkMember(Map<String, String> param) {
+		int result = projectDAO.deleteWorkMember(param);
+		if(result==0) throw new ProjectException("업무 배정 멤버 전체 삭제 오류!");
+		return result;
+	}
+
+	@Override
+	public int updateWorkTag(Map<String, Object> param) {
+		int result = projectDAO.updateWorkTag(param);
+		if(result==0) throw new ProjectException("업무 태그 수정 오류!");
+		return result;
+	}
+
+	@Override
+	public int updateWorkPoint(Map<String, Integer> param) {
+		int result = projectDAO.updateWorkPoint(param);
+		if(result==0) throw new ProjectException("업무 포인트 수정 오류!");
+		return result;
+	}
+
+	@Override
+	public int updateWorkDate(Map<String, String> param) {
+		int result = projectDAO.updateWorkDate(param);
+		if(result==0) throw new ProjectException("업무 날짜 수정 오류!");
+		return result;
 	}
 	
 

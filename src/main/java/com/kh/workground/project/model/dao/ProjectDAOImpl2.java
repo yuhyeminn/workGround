@@ -138,4 +138,29 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 		return sqlSession.update("project.updateProjectManager",param);
 	}
 
+	@Override
+	public int insertWorkMember(Map<String, String> param) {
+		return sqlSession.insert("project.insertWorkMember",param);
+	}
+
+	@Override
+	public int deleteWorkMember(Map<String, String> param) {
+		return sqlSession.delete("project.deleteWorkMember",param);
+	}
+
+	@Override
+	public int updateWorkTag(Map<String, Object> param) {
+		return sqlSession.update("project.updateWorkTag",param);
+	}
+
+	@Override
+	public int updateWorkPoint(Map<String, Integer> param) {
+		return sqlSession.update("project.updateWorkPoint",param);
+	}
+
+	@Override
+	public int updateWorkDate(Map<String, String> param) {
+		return sqlSession.update("project.updateWorkDate",param);
+	}
+
 }

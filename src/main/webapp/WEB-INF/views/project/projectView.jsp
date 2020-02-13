@@ -766,7 +766,7 @@ function setting(){
 		                        <!-- 업무 멤버 배정 -->
 		                        <div class="add-member dropdown">
 			                        <button type="button" class="nav-link btn-addWorkMember" data-toggle="dropdown"><i class="fas fa-user-plus"></i></button>
-			                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+			                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="test-member-ajax">
 			                            <c:forEach items="${pMemList}" var="m">
 							            <a href="javascript:void(0)" class="dropdown-item drop-memTag ${m.memberId}">
 							                <div class="media">

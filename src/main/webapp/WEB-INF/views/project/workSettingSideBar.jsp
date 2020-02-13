@@ -121,33 +121,58 @@
                     		</c:forEach> --%>
                         </p>
             </div>
-            <!-- 업무 날짜 -->
+            <!-- 시작일 -->
             <div class="row">
-                <label class="setting-content-label"><span><i class="far fa-calendar-alt" style="width:20px;"></i></span> 날짜 설정</label>
+                <label class="setting-content-label"><span><i class="far fa-calendar-alt" style="width:20px;"></i></span> 시작일</label>
                 <div class="dropdown">
                    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
                      <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
                    </c:if>
-                    <div class="dropdown-menu setting-date-dropdown work-date-dropdown">
+                    <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
                         <div class="input-group" >
-                            <input type="text" class="form-control float-right" id="workDate" name="workDate"> 
+                            <input type="text" class="form-control float-right" id="work_startdate" data-provide='datepicker'> 
+                            <input type="hidden" id="workStartDate"  value="${work.workStartDate}"> 
                         </div>
                         </div>
                         <button class="btn bg-info date-update" type="button">수정</button>
                         <button class="btn bg-secondary date-cancel">취소</button>
                 </div>
                 </div>
-                    <p class="setting-content-inform">
-                        <fmt:formatDate value="${work.workStartDate}" type="date" pattern="MM월dd일" /> - 
-                        <c:if test="${work.workEndDate == null or work.workEndDate ==''}">마감일 없음</c:if>
-                        <c:if test="${work.workEndDate != null and work.workEndDate !=''}"><fmt:formatDate value="${work.workEndDate}" type="date" pattern="MM월dd일" /></c:if>
-                    </p>
+                    <c:if test="${work.workStartDate != null and work.workStartDate != '' }">
+                     <p class="setting-content-inform">
+	                      <fmt:formatDate value="${work.workStartDate}" type="date" pattern="MM월 dd일" />
+                     </p>
+                    </c:if>
+            </div>
+            
+            <!-- 마감일 -->
+			<div class="row">
+                <label class="setting-content-label"><span><i class="far fa-calendar-alt" style="width:20px;"></i></span> 마감일</label>
+                <div class="dropdown">
+                   <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
+                     <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
+                   </c:if>
+                   <div class="dropdown-menu setting-date-dropdown">
+                        <div class="form-group">
+	                        <div class="input-group">
+	                            <input type="text" class="form-control float-right" id="work_enddate" data-provide='datepicker'> 
+	                        	<input type="hidden" id="workEndDate"  value="${work.workEndDate}"> 
+	                        </div>
+                        </div>
+                        <button class="btn bg-info date-update">수정</button>
+                        <button class="btn bg-secondary date-cancel">취소</button>
+                	</div>
+                </div>
+                    <c:if test="${work.workEndDate != null and work.workEndDate != '' }">
+                     <p class="setting-content-inform">
+	                        <fmt:formatDate value="${work.workEndDate}" type="date" pattern="MM월 dd일" /> 
+                     </p>
+                    </c:if>
             </div>
             <!-- 배정된 멤버-->
             <div class="row">
                 <label class="setting-content-label"><span><i class='fas fa-user-plus' style="width:20px;"></i></span> 배정된 멤버</label>
-                
                 <div class='control-wrapper pv-multiselect-box'>
                     <div class="control-styles">
                         <input type="text" tabindex="1" id='workMember' name="workMember"/>
@@ -163,15 +188,16 @@
                 <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
                 	<button class="plusBtn" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
                 </c:if>
-                <div class="work-tag">
+                <div class="work-tag" id="current-workTag">
                 	<c:if test="${work.workTagTitle != null and work.workTagTitle != ''}">
                     	<span class="btn btn-xs bg-${work.workTagColor}">${work.workTagTitle }</span>
                     </c:if>
                 </div>
                 <div class="dropdown-menu work-setting-tag">
-                    <a class="dropdown-item" tabindex="-1" href="#"><span class="btn btn-xs bg-danger">priority</span></a>
-                    <a class="dropdown-item" tabindex="-1" href="#"><span class="btn btn-xs bg-primary">important</span></a>
-                    <a class="dropdown-item" tabindex="-1" href="#"><span class="btn btn-xs bg-warning">review</span></a>
+                    <a class="dropdown-item update-work-tag" tabindex="-1" id="WT1"><span class="btn btn-xs bg-danger">priority</span></a>
+                    <a class="dropdown-item update-work-tag" tabindex="-1" id="WT2"><span class="btn btn-xs bg-primary">important</span></a>
+                    <a class="dropdown-item update-work-tag" tabindex="-1" id="WT3"><span class="btn btn-xs bg-warning">review</span></a>
+                    <a class="dropdown-item update-work-tag" tabindex="-1" id=""><span class="btn btn-xs bg-secondary">태그없음</span></a>
                 </div>
             </div>
             </div>
@@ -179,7 +205,7 @@
             <div class="row setting-row setting-point">
                 <label class="setting-content-label"> <span><i class='fas fa-ellipsis-h' style="width:20px;"></i></span> 포인트</label>
                 <div class="dropdown status-dropdown">
-                    <button data-toggle="dropdown">
+                    <button data-toggle="dropdown" id="current-work-point">
                         <c:set var="point" value="${work.workPoint}" />
 	                    <c:if test="${point>0}">
 		                    <c:forEach var="i" begin="1" end="${point}">
@@ -200,20 +226,23 @@
                     <i class="fa fa-angle-down"></i>
                     </div>
                     <div class="dropdown-menu">
-	                    <a class="dropdown-item work-importances" tabindex="-1" href="#">
+	                    <a class="dropdown-item work-importances" tabindex="-1" id="1">
 	                        <span class="importance-dot checked"></span> <span class="importance-dot"></span> <span class="importance-dot"></span> <span class="importance-dot"></span> <span class="importance-dot"></span>
 	                    </a>
-	                    <a class="dropdown-item work-importances" tabindex="-1" href="#">
+	                    <a class="dropdown-item work-importances" tabindex="-1" id="2">
 	                        <span class="importance-dot checked"></span> <span class="importance-dot checked"></span> <span class="importance-dot"></span> <span class="importance-dot"></span> <span class="importance-dot"></span>
 	                    </a>
-	                    <a class="dropdown-item work-importances" tabindex="-1" href="#">
+	                    <a class="dropdown-item work-importances" tabindex="-1" id="3">
 	                        <span class="importance-dot checked"></span> <span class="importance-dot checked"></span> <span class="importance-dot checked"></span> <span class="importance-dot"></span> <span class="importance-dot"></span>
 	                    </a>
-	                    <a class="dropdown-item work-importances" tabindex="-1" href="#">
+	                    <a class="dropdown-item work-importances" tabindex="-1" id="4">
 	                        <span class="importance-dot checked"></span> <span class="importance-dot checked"></span> <span class="importance-dot checked"></span> <span class="importance-dot checked"></span> <span class="importance-dot"></span>
 	                    </a>
-	                    <a class="dropdown-item work-importances" tabindex="-1" href="#">
+	                    <a class="dropdown-item work-importances" tabindex="-1" id="5">
 	                        <span class="importance-dot checked"></span> <span class="importance-dot checked"></span> <span class="importance-dot checked"></span> <span class="importance-dot checked"></span> <span class="importance-dot checked"></span>
+	                    </a>
+	                    <a class="dropdown-item work-importances" tabindex="-1" id="0">
+	                        <span class="importance-dot"></span> <span class="importance-dot"></span> <span class="importance-dot"></span> <span class="importance-dot"></span> <span class="importance-dot"></span>
 	                    </a>
                     </div>
                 </div>
@@ -391,22 +420,34 @@
     </div>
     
  <script>
- var workNo = '${work.workNo}';
- var projectNo = '${project.projectNo}';
+
  $(()=>{
+	var workNo = '${work.workNo}';
+	var projectNo = '${project.projectNo}';
 	workMember(workNo,projectNo);
 	sidechecklist(); 
-	workDateRangePicker();
 	sideClose();
+	workDatePicker();
+	updateWorkDate();
 	updateWorkMember();
+	updateWorkTag();
+	updateWorkPoint();
  });
  
- function workDateRangePicker(){
-	 $("#workDate").daterangepicker({
-		 locale: {
-	         format: 'YYYY/MM/DD'
-	     }
+ 
+ function workDatePicker(){
+	 $("#work_startdate").datepicker({
+		    todayHighlight: true,
+		    format: 'yyyy/mm/dd',
+		    uiLibrary: 'bootstrap4'
+		    
 	 });
+	 $("#work_enddate").datepicker({
+		    todayHighlight: true,
+		    format: 'yyyy/mm/dd',
+		    uiLibrary: 'bootstrap4'
+		    
+	});
  }
  
 function sideClose(){
@@ -456,8 +497,70 @@ function sideClose(){
 
 	    }); //end of .btn-check click
 	}
+ function updateWorkDate(){
+	 $(".date-update").on('click',function(){
+			var $this = $(this);
+			var workNo = '${work.workNo}';
+			var input = $this.parent(".setting-date-dropdown").find("input");
+			var date = input.val();	//수정할 날짜
+			var dateType = input.attr('id');  //수정할 날짜 종류(startDate,endDate)
+			console.log(date);
+			console.log(dateType);
+			
+			var bool = workDateValidation(date,dateType); //유효성 검사
+			if(bool){
+				$.ajax({
+					url: "${pageContext.request.contextPath}/project/updateWorkDate.do",
+					data: {workNo:workNo, date:date, dateType:dateType},
+					dataType:"json",
+					success: data =>{
+						var dateArr = date.split('/');
+						var dateView = $this.closest(".row").find(".setting-content-inform");
+						if(date == null || date ==''){
+							var dateTypeName = $this.closest(".row").find("label").text();
+							dateView.text(dateTypeName+" 없음");
+						}else{
+							dateView.text(dateArr[1]+'월 '+dateArr[2] +'일');
+						}
+					},
+					error:(jqxhr, textStatus, errorThrown) =>{
+						console.log(jqxhr, textStatus, errorThrown);
+					}
+				});
+			}
+	})
+ }
  
- function updateWorkMember(){
+
+function workDateValidation(date,dateType){
+	 	if(dateType == 'work_startdate'){
+			var startDateArr = date.split('/');
+			var endDate = $("#workEndDate").val();
+			console.log(endDate)
+			var endDateArr = endDate.split('-');
+			var startDateCompare = new Date(startDateArr[0], parseInt(startDateArr[1])-1, startDateArr[2]);
+			
+			if(endDate != null && endDate != ''){
+		        var endDateCompare = new Date(endDateArr[0], parseInt(endDateArr[1])-1, endDateArr[2]);
+		        if(startDateCompare.getTime() > endDateCompare.getTime()) {alert("시작일과 마감일을 확인 해 주세요.");return false;}
+			}
+		}
+		if(dateType== 'work_enddate'){
+			var endDateArr = date.split('/');
+			var startDate = $("#workStartDate").val();
+			console.log(startDate)
+			var startDateArr = startDate.split('-');
+			var endDateCompare = new Date(endDateArr[0], parseInt(endDateArr[1])-1, endDateArr[2]);
+			if(startDate != null && startDate != ''){
+				var startDateCompare = new Date(startDateArr[0], parseInt(startDateArr[1])-1, startDateArr[2]);
+		        if(startDateCompare.getTime() > endDateCompare.getTime()) {alert("시작일과 마감일을 확인 해 주세요.");return false;}
+			}
+		}
+		return true;
+}
+ 
+function updateWorkMember(){
+	 var workNo = '${work.workNo}';
 	 $("#updateWorkMember").on('click',function(){
 		 var updateWorkMemberArr = $("select[name=workMember]").val();
 		 var updateWorkMemberStr = updateWorkMemberArr.join(",");
@@ -477,6 +580,51 @@ function sideClose(){
 	 })
  }
  
-
+ function updateWorkTag(){
+	 $(".update-work-tag").on('click',function(){
+		 var workNo = '${work.workNo}';
+		 var workTag = $(this).attr('id');
+		 $.ajax({
+			url: "${pageContext.request.contextPath}/project/updateWorkTag.do",
+			data: {workNo:workNo, workTag:workTag},
+			dataType:"json",
+			success: data =>{
+				if(data.isUpdated){
+					var currentWorkTag = $(this).html();
+					if(workTag !='' && workTag != null){
+						$("#current-workTag").html(currentWorkTag);
+					}else{
+						$("#current-workTag").html('');
+					}
+				}
+			},
+			error:(jqxhr, textStatus, errorThrown)=>{
+				console.log(jqxhr, textStatus, errorThrown);
+			}
+		 });
+	 })
+ }
+ 
+ function updateWorkPoint(){
+	 $(".work-importances").on('click',function(){
+		 var workNo = '${work.workNo}';
+		 var workPoint = $(this).attr('id');
+		 $.ajax({
+			 url:"${pageContext.request.contextPath}/project/updateWorkPoint.do",
+			 data: {workNo:workNo, workPoint:workPoint},
+			 dataType:"json",
+			 success: data=>{
+				 if(data.isUpdated){
+					 var currentWorkPoint = $(this).html();
+					 $("#current-work-point").html(currentWorkPoint);
+				 }
+			 },
+			 error:(jqxhr, textStatus, errorThrown)=>{
+				 console.log(jqxhr, textStatus, errorThrown);
+			 }
+		 })
+	 })
+ }
+ 
  </script>
  <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

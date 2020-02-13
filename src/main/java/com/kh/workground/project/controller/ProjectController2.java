@@ -273,7 +273,7 @@ public class ProjectController2 {
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
-			throw new ProjectException("프로젝트 팀원 조회 오류!");
+			throw new ProjectException("프로젝트 날짜 수정 오류!");
 		}
 		
 		return map;
@@ -285,8 +285,18 @@ public class ProjectController2 {
 			Map<String, Object> map = new HashMap<>();
 		
 		try {
+			int result=0;
 			
-			int result = projectService.updateProjectMember(updateMemberStr, projectNo);
+			//모두 삭제할 경우
+			if(("").equals(updateMemberStr) || updateMemberStr ==null) {
+				Map<String, String> param = new HashMap<>();
+				param.put("projectNo", Integer.toString(projectNo));
+				param.put("quitYN", "Y");
+				result = projectService.updateProjectQuit(param);
+			}else {
+				result = projectService.updateProjectMember(updateMemberStr, projectNo);
+			}
+			
 			boolean isUpdated = result>0?true:false;
 			map.put("isUpdated",isUpdated );
 			
@@ -352,15 +362,92 @@ public class ProjectController2 {
 	public Map<String, Object> updateWorkMember(@RequestParam String updateWorkMemberStr, @RequestParam int workNo) {
 			Map<String, Object> map = new HashMap<>();
 		try {
-			int result = projectService.updateWorkMember(updateWorkMemberStr, workNo);
+			int result = 0;
+			//모두 삭제할 경우
+			if(("").equals(updateWorkMemberStr) || updateWorkMemberStr ==null) {
+				Map<String,String> param = new HashMap<>();
+				param.put("workNo",Integer.toString(workNo));
+				result = projectService.deleteWorkMember(param);
+			}else {
+				result = projectService.updateWorkMember(updateWorkMemberStr, workNo);
+			}
+			
+			boolean isUpdated = result==0?false:true;
+			map.put("isUpdated",isUpdated);
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 배정 멤버 수정 오류!");
+		}
+		return map;
+	}
+	
+	@RequestMapping("/project/updateWorkTag.do")
+	@ResponseBody
+	public Map<String, Object> updateWorkTag(@RequestParam String workTag, @RequestParam int workNo){
+		Map<String, Object> map = new HashMap<>();
+			try {
+				
+				Map<String, Object> param = new HashMap<>();
+				param.put("workNo", workNo);
+				param.put("workTag", workTag);
+				
+				int result = projectService.updateWorkTag(param);
+				
+				boolean isUpdated = result>0?true:false;
+				map.put("isUpdated",isUpdated );
+				
+			}catch(Exception e) {
+				logger.error(e.getMessage(), e);
+				throw new ProjectException("업무 태그 수정 오류!");
+			}
+		return map;
+	}
+	
+	@RequestMapping("/project/updateWorkPoint.do")
+	@ResponseBody
+	public Map<String, Object> updateWorkPoint(@RequestParam int workPoint ,@RequestParam int workNo){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			
+			Map<String, Integer> param = new HashMap<>();
+			param.put("workNo", workNo);
+			param.put("workPoint", workPoint);
+			
+			int result = projectService.updateWorkPoint(param);
 			
 			boolean isUpdated = result>0?true:false;
 			map.put("isUpdated",isUpdated );
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
-			throw new ProjectException("프로젝트 팀원 수정 오류!");
+			throw new ProjectException("업무 태그 수정 오류!");
 		}
 		return map;
 	}
+	
+	@RequestMapping("/project/updateWorkDate.do")
+	@ResponseBody
+	public Map<String, Object> updateWorkDate(@RequestParam String date, @RequestParam String dateType,@RequestParam String workNo){
+			Map<String, Object> map = new HashMap<>();
+		
+		try {
+			Map<String, String> param = new HashMap<>();
+			param.put("date", date);
+			param.put("dateType", dateType);
+			param.put("workNo", workNo);
+			
+			int result = projectService.updateWorkDate(param);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated );
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 날짜 수정 오류!");
+		}
+		
+		return map;
+	}
+	
 }
