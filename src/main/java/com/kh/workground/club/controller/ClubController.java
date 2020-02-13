@@ -1,8 +1,6 @@
 package com.kh.workground.club.controller;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +10,11 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -312,7 +310,7 @@ public class ClubController {
 				String sDate = fmt.format(clubPlanList.get(i).getClubPlanStart());
 
 				String dateArr[] = sDate.split("-");
-				String date = dateArr[0] + " , " + (Integer.parseInt(dateArr[1]) - 1) + " , " + dateArr[2];
+				String date = dateArr[0] + " , " + (Integer.parseInt(dateArr[1]) - 1) + " , " + (Integer.parseInt(dateArr[2])-1);
 
 				calString += "start :new Date(" + date + "),";
 
@@ -348,7 +346,7 @@ public class ClubController {
 		return mav;
 	}
 
-	@RequestMapping("/club/selectOneClubPlan.do")
+	@GetMapping("/club/selectOneClubPlan.do")
 	public Map<String,List> selectOneClubPlan(ModelAndView mav, @RequestParam(value = "clubPlanNo") int clubPlanNo) {
 		
 		Map map = new HashMap<>();
@@ -359,8 +357,7 @@ public class ClubController {
 			logger.info("clubPlanDate={}",clubPlan.getClubPlanStart());
 			logger.info("clubPlan={}",clubPlan);
 			map.put("clubPlan", clubPlan);
-				
-			
+							
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ClubException("동호회 일정 가져오기 오류!");

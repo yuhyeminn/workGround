@@ -8,10 +8,23 @@
 <jsp:include page="/WEB-INF/views/club/clubViewModal.jsp"></jsp:include>
 
 <style>
+
 </style>
 
 <script>
 $(function(){
+	
+	$('.textarea').summernote();
+	
+	//Date range picker
+	$('#reservation').daterangepicker({
+	    singleDatePicker: true,
+	    showDropdowns: true,
+	    locale: {
+		    format: 'YYYY-MM-DD'
+	    }
+	  });
+
 	
 	sidebarActive(); //사이드바 활성화
 	tabActive(); //서브헤더 탭 활성화
@@ -110,52 +123,6 @@ $(function () {
       },
       //Random default events
       ${calString},
-/*       events: [
- 
-    	 {
-          title          : 'All Day Event',
-          start          : new Date(2019, 11, 10),
-          end          : new Date(2020, 1, 4),
-          backgroundColor: '#f56954', //red
-          borderColor    : '#f56954', //red
-        },
-        {
-          title          : 'Long Event',
-          start          : new Date(y, m, d - 5),
-          end            : new Date(y, m, d - 2),
-          backgroundColor: '#f39c12', //yellow
-          borderColor    : '#f39c12' //yellow
-        },
-        {
-          title          : 'Meeting',
-          start          : new Date(y, m, d, 10, 30),
-          backgroundColor: '#0073b7', //Blue
-          borderColor    : '#0073b7' //Blue
-        },
-        {
-          title          : 'Lunch',
-          start          : new Date(y, m, d, 12, 0),
-          end            : new Date(y, m, d, 14, 0),
-          allDay         : false,
-          backgroundColor: '#00c0ef', //Info (aqua)
-          borderColor    : '#00c0ef' //Info (aqua)
-        },
-        {
-          title          : 'Birthday Party',
-          start          : new Date(y, m, d + 1, 19, 0),
-          end            : new Date(y, m, d + 1, 22, 30),
-          backgroundColor: '#00a65a', //Success (green)
-          borderColor    : '#00a65a' //Success (green)
-        },
-        {
-          title          : 'Click for Google',
-          start          : new Date(y, m, 28),
-          end            : new Date(y, m, 29),
-          url            : 'http://google.com/',
-          backgroundColor: '#3c8dbc', //Primary (light-blue)
-          borderColor    : '#3c8dbc' //Primary (light-blue)
-        } 
-      ]  */
       editable  : true,
       droppable : true, // this allows things to be dropped onto the calendar !!!
       drop      : function(info) {
@@ -167,6 +134,7 @@ $(function () {
       }, 
       
       eventClick(info) {
+    	  
     	  var noAndTitle = info.event.title;
     	  var arr = noAndTitle.split(",");
     	  var clubPlanNo = arr[0];
@@ -223,8 +191,9 @@ $(function () {
 									 +'<input type="hidden" name="memberId" value='+'${memberLoggedIn.memberId}'+ ' />'
 									 +'<input type="hidden" name="clubNo" value='+data.clubPlan.clubNo+' />'
 									 +'<button type="submit" class="btn btn-info float-right">\<i class="fas fa-plus"></i>\</button>\</form>';
-									 
-					if('${memberLoggedIn}' != null && (data.clubPlan.memberId)===('${memberLoggedIn.memberId}')){
+					
+					alert(data.clubPlan.memberId);
+					if('${memberLoggedIn}' != null && data.clubPlan.memberId=='${memberLoggedIn.memberId}'){
 					clubPlanViewModal+='<button type="button" class="btn btn-info" data-target="#plan-modify'+data.clubPlan.clubPlanNo+'" data-dismiss="modal" data-toggle="modal">수정</button>'
 									 +'<form name="deleteClubPlanFrm" action="${pageContext.request.contextPath }/club/deleteClubPlan.do" method="POST">'
 									 +'<input type="hidden" name="clubPlanNo" value="'+data.clubPlan.clubPlanNo+ '" />'
@@ -259,7 +228,7 @@ $(function () {
 									   +'<div class="form-group"><label for="">날짜</label><div class="input-group"><div class="input-group-prepend">'
 									   +'<span class="input-group-text"><i class="far fa-calendar-alt"></i></span></div>'
 									   +'<input type="text" class="form-control float-right" name="clubPlanDate" id="clubPlanUpdateDate'+data.clubPlan.clubPlanNo+'" />'
-									   +'</div></div>';
+									   +'</div>';
 										
 									 
 										$(()=> {
@@ -273,24 +242,24 @@ $(function () {
 											  });
 										});
 										
-					clubPlanModifyModal+='<div class="form-group"><label for="inputStatus">상태</label>'
+					clubPlanModifyModal+='</div><div class="form-group"><label for="inputStatus">상태</label>'
 									   +'<select name="clubPlanState" class="form-control custom-select">'
 									   +'<option selected disabled>선택하세요.</option>'
-									   +'<option '+data.clubPlan.clubPlanState+'=="예정"?"selected":"" }>예정</option>'
-									   +'<option '+data.clubPlan.clubPlanState+'=="완료"?"selected":"" }>완료</option>'
-									   +'<option '+data.clubPlan.clubPlanState+'=="취소"?"selected":"" }>취소</option></select></div>'
+									   +'<option '+data.clubPlan.clubPlanState+'=="예정"?selected:"" }>예정</option>'
+									   +'<option '+data.clubPlan.clubPlanState+'=="완료"?selected:"" }>완료</option>'
+									   +'<option '+data.clubPlan.clubPlanState+'=="취소"?selected:"" }>취소</option></select></div>'
 									   +'<div class="form-group"><label for="inputClientCompany">장소</label>'
 									   +'<input type="text" id="inputClientCompany" class="form-control" name="clubPlanPlace" placeholder="장소를 입력하세요." value="'+data.clubPlan.clubPlanPlace +'" /></div>'
 									   +'<div class="form-group"><label for="inputProjectLeader">담당진행자</label>' 
 									   +'<input type="text" id="inputProjectLeader" class="form-control" name="clubPlanManager" placeholder="담당진행자를 입력하세요." value="'+data.clubPlan.clubPlanManager +'"></div></div>'
-									   +'<div class= modal-footer"><button type="submit" class="btn btn-info">수정</button>'
+									   +'<div class= modal-footer" style="padding: 20px; text-align: right;"><button type="submit" class="btn btn-info" style="margin-right: 10px;">수정</button>'
 									   +'<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button></div>'
 									   +'</form></div></div></div>';
 		
 					$("#club-plan-modify-modal-content").html(clubPlanModifyModal);
 
     				
-    				
+					$('.textarea').summernote();
     				
     				
     			    

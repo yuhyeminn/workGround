@@ -30,10 +30,13 @@ public class Club implements Serializable {
 	private String clubMeetingCycle;
 	private String clubMeetingDate;
 	private String clubCategory;
-	private String clubManagerId;
+	private String clubManagerId; //동호회 회장 아이디.
 	
 	//동호회 가입승인 여부 가상컬럼
 	private String clubApproveYN;
+	
+	//동호회 관리자 여부 가상컬럼
+	private String clubManagerYN;
 	
 	//동호회 사진 가상컬럼
 	private List<ClubPhoto> clubPhotoList;
