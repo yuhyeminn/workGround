@@ -120,12 +120,12 @@
 			 or A.job_title like '%'|| #{keyword} || '%'
 	</select>
 	<select id="selectOneClubPlan" resultMap="clubPlanCollectionMap">
-		select P.* ,A.* , M.member_id, M.renamed_filename, M.member_name
-		from club_plan_attendee A
-			left join club_member C on A.club_member_no = C.club_member_no
-    		left join member M on C.emp_id = M.member_id
-            left join club_plan P on P.club_plan_no = A.club_plan_no
-		where A.club_plan_no = #{clubPlanNo}
+		select P.*,  A.*, M.member_id, M.renamed_filename, M.member_name
+		from (select * from club_plan) P
+		left join club_plan_attendee A on A.club_plan_no = P.club_plan_no
+		left join club_member C on A.club_member_no = C.club_member_no
+		left join member M on M.member_id = C.emp_id
+		where P.club_plan_no = #{clubPlanNo}
 		order by A.club_plan_attendee_date desc
 	</select>
 	<resultMap type="clubPlan" id="clubPlanCollectionMap">
