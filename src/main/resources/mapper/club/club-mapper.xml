@@ -7,7 +7,10 @@
 	<!-- sh start -->
 
 	<select id="selectAllClubList" resultMap="clubCollectionMap">
-		select C.*, P.*,(select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn
+		select C.*, 
+			   P.*,
+			   (select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn,
+			   (select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
 		from (select * from club order by ${sort} asc) C
 			left join club_photo P
 				on C.club_no = P.club_no
@@ -33,13 +36,13 @@
 		values(seq_club_member_no.nextval,#{memberId},#{clubNo},'N','N')
 	</insert>
 	<select id="selectAllMyClubList" resultMap="clubCollectionMap">
-		select C.*, P.*
+		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
 		from (select * from club where club_no in
 			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'Y') order by ${sort} asc) C
 		left join club_photo P on C.club_no = P.club_no
 	</select>
 	<select id="selectAllStandByClubList" resultMap="clubCollectionMap">
-		select C.*, P.*
+		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
 		from (select * from club where club_no in
 			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'N') order by ${sort} asc) C
 		left join club_photo P on C.club_no = P.club_no
@@ -54,6 +57,7 @@
 		<result column="club_category" property="clubCategory"></result>
 		<result column="club_manager_id" property="clubManagerId"></result>
 		<result column="club_approve_YN" property="clubApproveYN"></result>
+		<result column="club_manager_yn" property="clubManagerYN"></result>
 		<collection property="clubPhotoList" ofType="clubPhoto">
 			<id column="club_photo_no" property="clubPhotoNo"></id>
 			<result column="club_photo_title" property="clubPhotoTitle"></result>
@@ -134,6 +138,9 @@
 		<result column="club_plan_place" property="clubPlanPlace"></result>
 		<result column="club_plan_manager" property="clubPlanManager"></result>
 		<result column="club_no" property="clubNo"></result>
+		<result column="member_id" property="memberId"></result>
+		<result column="club_manager_yn" property="clubManagerYN"></result>
+		<result column="club_member_name" property="clubMemberName"></result>
 		<collection property="planAttendeeList" ofType="clubPlanAttendee">
 			<id column="club_plan_attendee_no" property="clubPlanAttendeeNo"></id>
 			<result column="club_plan_no" property="clubPlanNo"></result>
