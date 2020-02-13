@@ -395,7 +395,8 @@
  
 function sideClose(){
 	//업무 사이드바 닫기
-	 $(".div-close").on('click',()=>{
+	 $(".div-close").on('click',(e)=>{
+		 console.log(e.target);
 	     var $side = $("#setting-sidebar");
 	     if($side.hasClass('open')) {
 	         $side.stop(true).animate({right:'-520px'});

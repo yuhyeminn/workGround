@@ -177,9 +177,7 @@ create table work(
     constraint ck_wokr_work_complete_yn check (work_complete_yn in ('Y','N')),
     constraint fk_work_work_no_ref foreign key(work_no_ref) references work(work_no) on delete cascade
 );
-select * from work;
-delete from work where work_no = 65;
-commit;
+
 -----------------------------------------------------------------------
 --work테이블 시퀀스 생성
 -----------------------------------------------------------------------
@@ -204,7 +202,6 @@ CREATE SEQUENCE seq_work_charged_members;
 -----------------------------------------------------------------------
 --checklist 테이블
 -----------------------------------------------------------------------
---on delete set null 추가함 다시 만들기!!!
 create table checklist(
     checklist_no number not null,
     work_no number not null,
@@ -240,7 +237,6 @@ create table work_comment(
     constraint fk_work_comment_work_no foreign key (work_no) references work(work_no) on delete cascade,
     constraint fk_work_comment_ref foreign key (work_comment_ref) references work_comment(work_comment_no) on delete cascade
 );
-
 
 -----------------------------------------------------------------------
 --work_comment테이블 시퀀스 생성
@@ -492,6 +488,7 @@ insert into checklist values(seq_checklist.nextval,3,'kh2020122',121,'프로젝�
 insert into checklist values(seq_checklist.nextval,3,'kh2020122',121,'업무설정 기능 정리',default,null,'N');
 insert into checklist values(seq_checklist.nextval,3,'kh2020122',5,'파일첨부 기능 정리',default,null,'N');
 insert into checklist values(seq_checklist.nextval,7,'kh2020122',101,'on delete null잘 되나!?',default,null,'N');
+insert into checklist values(seq_checklist.nextval,7,'kh2020122',null,'테이블 수정 그만',default,null,'N');
 --업무 코멘트
 insert into work_comment values(seq_work_comment.nextval, 2, 5,1,'뭐드시나요?',default,null);
 insert into work_comment values(seq_work_comment.nextval, 2, 6,2,'뭐드시나요?',default,2);
@@ -517,7 +514,7 @@ commit;
 --------------------------------------------------
 select * from job;
 select * from department;
-select * from member;                                                                                                                                                                         
+select * from member;    
 
 --------------------------------------------------
 --project테이블 관련 select문
@@ -543,6 +540,8 @@ select * from attachment;
 --------------------------------------------------
 select * from notice;
 select * from community;
+
+
 
 
 --================================================
@@ -597,15 +596,25 @@ from community C left join member M on C.commu_writer = M.member_id;
 --drop view view_communityMember;
 --select * from view_communityMember;
 
+
 --================================================
 --트리거: 회원가입시 내 워크패드 생성
 --================================================
-create or replace trigger trg_member_register
+create or replace trigger trg_member_workpad
     after
     update on member
     for each row
+declare
+    vold_password varchar2(300) := :old.password;
+    vnew_password varchar2(300) := :new.password;
 begin
-    insert into project values(seq_project.nextval, :old.member_id, '나의 워크패드', 'Y', null, null, null, null, null);
+    --회원가입 한 경우
+    if vold_password = null then 
+        insert into project values(seq_project.nextval, :old.member_id, '나의 워크패드', 'Y', null, null, null, null, null);
+    --계정삭제 한 경우
+    elsif vnew_password = null then 
+        delete from project where project_writer = :old.member_id and private_yn = 'Y';
+    end if;
 end;
 /
 

@@ -28,7 +28,7 @@ public class Project implements Serializable {
 	private int projectNo;
 	private String projectWriter;
 	private String projectTitle;
-	private String projectYn;
+	private String privateYn;
 	private String projectDesc;
 	private Date projectStartDate;
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")

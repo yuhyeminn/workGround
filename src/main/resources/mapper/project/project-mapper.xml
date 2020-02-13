@@ -9,7 +9,7 @@
 		<id column="project_no" property="projectNo"></id>
 		<result column="project_writer" property="projectWriter"></result>
 		<result column="project_title" property="projectTitle"></result>
-		<result column="private_yn" property="projectYn"></result>
+		<result column="private_yn" property="privateYn"></result>
 		<result column="project_desc" property="projectDesc"></result>
 		<result column="project_startdate" property="projectStartDate"></result>
 		<result column="project_enddate" property="projectEndDate"></result>
@@ -203,9 +203,17 @@
                              	  left join view_member VM on WCM.charged_member_id = VM.member_id
 	</select>
 	
+	<update id="updateChklistCompleteYn" parameterType="hashMap">
+		update checklist set complete_yn = #{completeYn} where checklist_no = #{checklistNo}
+	</update>
 	
-	
-	
+	<select id="selectWorkListBySearchKeyword" parameterType="hashMap" resultMap="workListCollectionMap">
+		select V.*, WCM.work_charged_members_no, VM.*
+		from (select * from view_workTag where worklist_no = #{worklistNo}
+         		order by work_no desc) V left join work_charged_members WCM on V.work_no = WCM.work_no
+                                         left join view_member VM on WCM.charged_member_id = VM.member_id
+		where work_title like '%'||#{keyword}||'%'
+	</select>
 	
 	
 	
@@ -354,6 +362,7 @@
 		where V.work_no = #{workNo}
 	</select>
 	
+<<<<<<< HEAD
 	<!-- workSetting.do : 업무별 attachmentList조회 (작성자 멤버 객체 까지)-->
 	<select id="selectAttachmentListByWorkNo" resultMap="attachmentMemberMap">
 		select A.*, VM.*
@@ -436,4 +445,6 @@
 			<result column="renamed_filename" property="renamedFileName"></result>
 			<result column="project_quit_yn" property="projectQuitYn"></result>
 	</resultMap>
+=======
+>>>>>>> project
 </mapper>

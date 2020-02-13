@@ -35,4 +35,6 @@ public class Checklist extends Work implements Serializable {
 	
 	private Member checklistWriterMember; //checklistWriter사번으로 가져온 멤버 객체
 	private Member checklistChargedMember; //checklistChargedMemberNo로 가져온 멤버 객체
+	
+	//실제완료자!?
 }
