@@ -90,49 +90,40 @@
 			<result column="renamed_filename" property="renamedFileName"></result>
 		</collection>
 	</resultMap>
-	
 	<delete id="deleteClubMember">
 		delete from club_member
 		where club_member_no = #{clubMemberNo}
 	</delete>
-	
 	<update id="updateClubManager">
 		update club_member
 		set club_manager_yn = 'Y'
 		where club_code = #{clubNo} and emp_id = #{memberId}
-	
 	</update>
-	
 	<update id="approveClubMember">
 		update club_member
 		set club_approve_yn = 'Y'
 		where club_code = #{clubNo} and emp_id = #{memberId}
 	</update>
-	
 	<select id="searchClubMember" resultMap="clubMemberCollectionMap">
-		select *        
+		select *
 		from (select C.*, M.*, (select dept_title from department where dept_code = M.dept_code) dept_title, (select job_title from job where M.job_code = job_code) job_title
 			 from (select * from club_member where club_code = #{clubNo}) C
 		left join member M on C.emp_id = M.member_id) A
-		where A.member_id like '%'|| #{keyword} || '%' 
-			 or A.email like '%'|| #{keyword} || '%' 
-			 or A.member_name like '%'|| #{keyword} || '%' 
-			 or A.dept_title like '%'|| #{keyword} || '%' 
+		where A.member_id like '%'|| #{keyword} || '%'
+			 or A.email like '%'|| #{keyword} || '%'
+			 or A.member_name like '%'|| #{keyword} || '%'
+			 or A.dept_title like '%'|| #{keyword} || '%'
 			 or A.job_title like '%'|| #{keyword} || '%'
-
 	</select>
-	
 	<select id="selectOneClubPlan" resultMap="clubPlanCollectionMap">
-		select P.* ,A.* , M.member_id, M.renamed_filename, M.member_name 
-		from club_plan_attendee A 
+		select P.* ,A.* , M.member_id, M.renamed_filename, M.member_name
+		from club_plan_attendee A
 			left join club_member C on A.club_member_no = C.club_member_no
     		left join member M on C.emp_id = M.member_id
             left join club_plan P on P.club_plan_no = A.club_plan_no
-		where A.club_plan_no = #{clubPlanNo} 
+		where A.club_plan_no = #{clubPlanNo}
 		order by A.club_plan_attendee_date desc
-	
 	</select>
-
 	<resultMap type="clubPlan" id="clubPlanCollectionMap">
 		<id column="club_plan_no" property="clubPlanNo"></id>
 		<result column="club_plan_title" property="clubPlanTitle"></result>
@@ -143,7 +134,6 @@
 		<result column="club_plan_place" property="clubPlanPlace"></result>
 		<result column="club_plan_manager" property="clubPlanManager"></result>
 		<result column="club_no" property="clubNo"></result>
-		
 		<collection property="planAttendeeList" ofType="clubPlanAttendee">
 			<id column="club_plan_attendee_no" property="clubPlanAttendeeNo"></id>
 			<result column="club_plan_no" property="clubPlanNo"></result>
@@ -152,10 +142,9 @@
 			<result column="renamed_filename" property="renamedFileName"></result>
 			<result column="member_id" property="memberId"></result>
 			<result column="member_name" property="memberName"></result>
-		
 		</collection>
-
 	</resultMap>
+
 	<!-- sh end -->
 
 	<!-- br start -->
@@ -165,9 +154,11 @@
 	</select>
 
 	<select id="selectClubPlanList" resultType="clubPlan">
-		select * from club_plan
-		where club_no = #{clubNo} and extract(month from club_plan_start) = extract(month from sysdate)
-		order by club_plan_start, club_plan_no asc
+		select * 
+		from club_plan P 
+    		left join club_member M on P.club_no = M.club_code and P.member_id = M.emp_id 
+		where P.club_no = #{clubNo} and extract(month from club_plan_start) = extract(month from sysdate)
+		order by club_plan_start asc
 	</select>
 
 	<update id="updateClubPlan">
@@ -196,10 +187,11 @@
 			   #{clubPlanContent},
 			   #{clubPlanStart},
 			   #{clubPlanState},
+			   #{clubPlanColor}, 
 			   #{clubPlanPlace},
 			   #{clubPlanManager},
 			   #{clubNo}, 
-			   #{clubPlanColor})
+			   #{memberId})
 	</insert>
 	
 	<select id="selectClubNoticeList" resultType="clubNotice">
@@ -303,5 +295,22 @@
 			   #{clubNo})
 	</insert>
 	
+	<select id="selectAllClubPlanAttendeeList" resultType="clubPlanAttendee">
+		select A.* , M.member_id, M.renamed_filename, M.member_name 
+		from club_plan_attendee A 
+			left join club_member C on A.club_member_no = C.club_member_no
+    		left join member M on C.emp_id = M.member_id
+		order by A.club_plan_attendee_date desc
+	</select>
+	
+	<delete id="deleteClubPlan">
+		delete from club_plan 
+		where club_plan_no = #{clubPlanNo}
+	</delete>
+	
+	<delete id="deleteClubNoticeComment">
+		delete from club_notice_comment 
+		where club_notice_comment_no = #{clubNoticeCommentNo}
+	</delete>
 	<!-- br end -->
 </mapper>
