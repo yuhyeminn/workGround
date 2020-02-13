@@ -426,7 +426,7 @@ function clubFunc(){
 											<c:choose>
 
 												<c:when
-													test="${club.clubPhotoList[0].clubPhotoRenamed ne null}">
+													test="${not empty club.clubPhotoList[0].clubPhotoRenamed}">
 
 													<div class="carousel-item active">
 														<img class="d-block w-100"
@@ -445,7 +445,7 @@ function clubFunc(){
 												</c:otherwise>
 											</c:choose>
 											<c:if
-												test="${club.clubPhotoList[1].clubPhotoRenamed ne null}">
+												test="${not empty club.clubPhotoList[1].clubPhotoRenamed}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
 														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[1].clubPhotoRenamed}"
@@ -453,7 +453,7 @@ function clubFunc(){
 												</div>
 											</c:if>
 											<c:if
-												test="${club.clubPhotoList[2].clubPhotoRenamed ne null}">
+												test="${not empty club.clubPhotoList[2].clubPhotoRenamed}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
 														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[2].clubPhotoRenamed}"

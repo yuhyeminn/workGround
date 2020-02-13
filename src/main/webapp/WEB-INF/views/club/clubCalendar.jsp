@@ -138,6 +138,7 @@ $(function () {
     	  var noAndTitle = info.event.title;
     	  var arr = noAndTitle.split(",");
     	  var clubPlanNo = arr[0];
+    	  alert("tlf");
     	  $.ajax({
     		  
     		  url: "${pageContext.request.contextPath}/club/selectOneClubPlan.do?",

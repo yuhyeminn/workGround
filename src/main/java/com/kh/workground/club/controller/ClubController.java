@@ -347,12 +347,13 @@ public class ClubController {
 	}
 
 	@GetMapping("/club/selectOneClubPlan.do")
+	@ResponseBody
 	public Map<String,List> selectOneClubPlan(ModelAndView mav, @RequestParam(value = "clubPlanNo") int clubPlanNo) {
 		
 		Map map = new HashMap<>();
 		try {
 			ClubPlan clubPlan = clubService.selectOneClubPlan(clubPlanNo);
-			
+		
 			//날짜를 util.date로 바꿔서 돌려주기.
 			logger.info("clubPlanDate={}",clubPlan.getClubPlanStart());
 			logger.info("clubPlan={}",clubPlan);
