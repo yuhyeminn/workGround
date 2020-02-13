@@ -142,7 +142,7 @@ function clubFileList(clubNo) {
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button" onclick="clubView('${club.clubNo}');">동호회</button></li>
-		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${clubNo}'">일정</button></li>
+		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${club.clubNo}'">일정</button></li>
 		<c:if test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
 			<li id="tab-member" class="nav-item">
 			<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button></li>
@@ -233,6 +233,18 @@ function clubFileList(clubNo) {
                         </td>
                         <td>${clubPhoto.clubPhotoOriginal}</td>
                         <td>${clubPhoto.clubPhotoDate}</td>
+                    </tr>
+                    </c:forEach>
+                    <c:forEach items="${clubNoticeList }" var="clubNotice">
+                    <tr>
+                        <td>
+                            <%-- <img src="${pageContext.request.contextPath }/resources/upload/club/${clubPhoto.clubNo }/${clubPhoto.clubPhotoRenamed}" alt="User Avatar" class="img-circle img-profile ico-profile"> --%>
+                        </td>
+                        <td onclick="fileDownload('${clubNotice.clubNoticeOriginal}', '${clubNotice.clubNoticeRenamed }', '${clubNotice.clubNo }');">
+                        	${clubNotice.clubNoticeTitle}
+                        </td>
+                        <td>${clubNotice.clubNoticeOriginal}</td>
+                        <td>${clubNotice.clubNoticeDate}</td>
                     </tr>
                     </c:forEach>
                 </tbody>

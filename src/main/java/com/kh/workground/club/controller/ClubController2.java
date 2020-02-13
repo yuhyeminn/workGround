@@ -224,7 +224,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		clubNotice.setClubMemberNo(clubMember.getClubMemberNo());
 		logger.debug("clubNotice={}", clubNotice);
 		
-		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/notice/"+clubNotice.getClubNo());
+		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/"+clubNotice.getClubNo());
 		
 		//동적으로 directory 생성하기
 		File dir = new File(saveDirectory);
@@ -269,7 +269,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		int result = clubService2.deleteClubNotice(clubNotice.getClubNoticeNo());
 		
 		if(result>0 && !"".equals(clubNotice.getClubNoticeRenamed())) {
-			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/notice/"+clubNotice.getClubNo());
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/"+clubNotice.getClubNo());
 			
 			//1. 파일 삭제처리
 			File delFile = new File(saveDirectory, clubNotice.getClubNoticeRenamed());
@@ -310,7 +310,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		clubPhoto.setClubMemberNo(clubMember.getClubMemberNo());
 		
-		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/photo/"+clubPhoto.getClubNo());
+		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/"+clubPhoto.getClubNo());
 		
 		//동적으로 directory 생성하기
 		File dir = new File(saveDirectory);
@@ -489,11 +489,21 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
 //		logger.debug("clubPhotoList={}", clubPhotoList);
+		List<ClubNotice> clubNoticeList = clubService2.selectClubNoticeList(clubNo);
+		logger.debug("clubNoticeList={}", clubNoticeList);
 		List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
 //		logger.debug("clubMemberList={}", clubMemberList);
+		List<Object> clubFileList = new ArrayList<>();
+		for(ClubPhoto p : clubPhotoList)
+			clubFileList.add(p);
+		for(ClubNotice n : clubNoticeList)
+			clubFileList.add(n);
+		logger.debug("clubFileList={}", clubFileList);
 		
 		mav.addObject("club", club);
 		mav.addObject("clubPhotoList", clubPhotoList);
+		mav.addObject("clubNoticeList", clubNoticeList);
+		mav.addObject("clubFileList", clubFileList);
 		mav.addObject("clubMemberList", clubMemberList);
 		mav.setViewName("club/clubFileList");
 		
@@ -507,7 +517,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 										 @RequestParam("clubNo") int clubNo, 
 										 HttpServletRequest request, 
 										 HttpServletResponse response) throws ServletException, IOException {
-		String saveDirectory = request.getServletContext().getRealPath("/resources/upload/club/photo/"+clubNo);
+		String saveDirectory = request.getServletContext().getRealPath("/resources/upload/club/"+clubNo);
 //		logger.debug("saveDirectory={}", saveDirectory);
 		
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(saveDirectory+File.separator+rName));

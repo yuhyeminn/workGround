@@ -265,7 +265,7 @@ function loginAlert() {
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
-		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${clubNo}'">일정</button></li>
+		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${club.clubNo}'">일정</button></li>
 		<c:if test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
 			<li id="tab-member" class="nav-item">
 			<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button></li>
@@ -339,7 +339,7 @@ function loginAlert() {
 				        <c:if test="${vs.index<4 }">
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -360,7 +360,7 @@ function loginAlert() {
 				        <c:if test="${vs.index<4 }">
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -379,7 +379,7 @@ function loginAlert() {
 				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<i*4 }">
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -392,7 +392,7 @@ function loginAlert() {
 				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<clubPhotoCount }"> <!-- 4개씩 반복 조건 -->
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -479,7 +479,7 @@ function loginAlert() {
 							  <span class="text-muted float-right">${clubPhoto.clubPhotoDate }</span>
 							</div>
 							<div class="form-group">
-							  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+							  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 								   alt="..." class="img-thumbnail" data-toggle="modal"
 								   data-target="#clubPhoto${vs.index }">
 							</div>
