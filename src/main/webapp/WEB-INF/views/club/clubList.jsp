@@ -448,7 +448,7 @@ function clubFunc(){
 												test="${club.clubPhotoList[1].clubPhotoRenamed ne null}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${club.clubPhotoList[1].clubPhotoRenamed}"
 														alt="Second slide">
 												</div>
 											</c:if>
@@ -456,7 +456,7 @@ function clubFunc(){
 												test="${club.clubPhotoList[2].clubPhotoRenamed ne null}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${club.clubPhotoList[2].clubPhotoRenamed}"
 														alt="Third slide">
 												</div>
 											</c:if>
@@ -847,8 +847,6 @@ function clubFunc(){
 		<!-- /.content -->
 	</div>
 	<!-- /.content-wrapper -->
-
-
 
 
 
