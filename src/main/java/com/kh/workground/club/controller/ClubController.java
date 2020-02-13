@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -354,6 +355,8 @@ public class ClubController {
 		try {
 			ClubPlan clubPlan = clubService.selectOneClubPlan(clubPlanNo);
 			
+			//날짜를 util.date로 바꿔서 돌려주기.
+			logger.info("clubPlanDate={}",clubPlan.getClubPlanStart());
 			logger.info("clubPlan={}",clubPlan);
 			map.put("clubPlan", clubPlan);
 				
