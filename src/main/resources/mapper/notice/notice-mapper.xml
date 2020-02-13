@@ -28,7 +28,8 @@
 			<result column="comment_writer_profile" property="commentWriterProfile"/>
 		</collection>
 	</resultMap>
-
+	
+	<!-- 게시판 + 댓글 -->
 	<resultMap type="community" id="communityMap">
  		<id column="commu_no" property="commuNo"/>
 		<result column="commu_writer" property="commuWriter"/>
@@ -51,12 +52,33 @@
 			<result column="comment_writer_profile" property="commentWriterProfile"/>
 		</collection>
 	</resultMap>
+
 	
+<!-- 	<select id="selectNoticeList" resultMap="noticeMap">
+		select * from notice where dept_code is null order by notice_no
+	</select>
+
+	<select id="selectPlanningDeptNoticeList" resultMap="noticeMap">
+		select * from view_noticeMember where dept_code = 'D1' order by notice_no
+	</select>
+
+	<select id="selectDesignDeptNoticeList" resultMap="noticeMap">
+		select * from view_noticeMember where dept_code = 'D2' order by notice_no
+	</select>
+
+	<select id="selectDevelopmentDeptNoticeList" resultMap="noticeMap">
+		select * from view_noticeMember where dept_code  = 'D3' order by notice_no
+	</select>
+	
+	<select id="selectCommunityList" resultMap="communityMap">
+		select * from view_communityMember order by commu_no
+	</select> -->
+	
+
 	<!-- 전체 공지 + 댓글 조회 -->
 	<select id="selectNoticeList" resultMap="noticeMap">
 		select * from view_noticeMemberNoticeComment where dept_code is null order by notice_no desc, notice_comment_no
-<!-- 		select * from view_noticeMemberNoticeComment start with notice_comment_level = 1 connect by notice_comment_ref = prior notice_comment_no order siblings by notice_comment_no asc
- -->	</select>
+	</select>
 
 	<!-- 부서별 공지 + 댓글 조회 -->
 	<select id="selectPlanningDeptNoticeList" resultMap="noticeMap">
@@ -75,6 +97,7 @@
 	<select id="selectCommunityList" resultMap="communityMap">
 		select * from view_commuMemberCommuComment order by commu_no desc, commu_comment_no
 	</select>
+
 	
 	<insert id="insertNotice">
 		insert into notice
@@ -88,6 +111,43 @@
 		 	   #{deptCode})
 	</insert>
 	
+	<delete id="deleteNotice">
+		delete from notice where notice_no = #{noticeNo}
+	</delete>
+	
+	<insert id="insertCommunity">
+		insert into community
+		values(seq_community.nextval, 
+			  #{commuWriter},
+			  #{commuTitle},
+			  #{commuContent},
+			  default,
+			  #{commuOriginalFileName},
+			  #{commuRenamedFileName})
+	</insert>
+	
+	<delete id="deleteCommunity">
+		delete from community where commu_no = #{commuNo}
+	</delete>
+
+	<update id="updateNotice">
+		update notice set notice_title = #{noticeTitle},
+		                  notice_content = #{noticeContent},
+		                  notice_original_filename = #{noticeOriginalFileName},
+		                  notice_renamed_filename = #{noticeRenamedFileName},
+		                  dept_code = #{deptCode}
+		where notice_no = #{noticeNo}
+	</update>
+	
+	<update id="updateCommunity">
+		update community set commu_title = #{commuTitle},
+							 commu_content = #{commuContent},
+							 commu_original_filename = #{commuOriginalFileName},
+							 commu_renamed_filename = #{commuRenamedFileName}
+		where commu_no = #{commuNo}
+	</update>
+	
+
 	<!-- 공지 댓글 추가 -->
 	<insert id="insertNoticeComment">
 		insert into notice_comment
@@ -122,7 +182,5 @@
 		delete from community_comment where commu_comment_no = #{commuCommentNo}
 	</delete>
 	
-	
-
 
 </mapper>

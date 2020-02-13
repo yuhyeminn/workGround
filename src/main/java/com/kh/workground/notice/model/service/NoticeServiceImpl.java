@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.kh.workground.notice.model.dao.NoticeDAO;
 import com.kh.workground.notice.model.vo.Community;
-import com.kh.workground.notice.model.vo.CommunityComment;
 import com.kh.workground.notice.model.vo.Notice;
-import com.kh.workground.notice.model.vo.NoticeComment;
 
 @Service
 public class NoticeServiceImpl implements NoticeService {
@@ -53,6 +51,31 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
+	public int deleteNotice(int noticeNo) {
+		return noticeDAO.deleteNotice(noticeNo);
+	}
+
+	@Override
+	public int insertCommunity(Community commu) {
+		return noticeDAO.insertCommunity(commu);
+	}
+
+	@Override
+	public int deleteCommunity(int commuNo) {
+		return noticeDAO.deleteCommunity(commuNo);
+	}
+
+	@Override
+	public int updateNotice(Notice notice) {
+		return noticeDAO.updateNotice(notice);
+	}
+
+	@Override
+	public int updateCommunity(Community commu) {
+		return noticeDAO.updateCommunity(commu);
+	}
+	
+	@Override
 	public int insertNoticeComment(Map<String, Object> noticeCommentMap) {
 		return noticeDAO.insertNoticeComment(noticeCommentMap);
 	}
@@ -73,6 +96,5 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 
-
-
 }
+

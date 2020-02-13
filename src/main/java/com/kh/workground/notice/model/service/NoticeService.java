@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kh.workground.notice.model.vo.Community;
-import com.kh.workground.notice.model.vo.CommunityComment;
 import com.kh.workground.notice.model.vo.Notice;
-import com.kh.workground.notice.model.vo.NoticeComment;
 
 public interface NoticeService {
 
@@ -22,6 +20,16 @@ public interface NoticeService {
 	
 	int insertNotice(Notice notice);
 
+	int deleteNotice(int noticeNo);
+
+	int insertCommunity(Community commu);
+
+	int deleteCommunity(int commuNo);
+
+	int updateNotice(Notice notice);
+
+	int updateCommunity(Community commu);
+	
 	int insertNoticeComment(Map<String, Object> noticeCommentMap);
 
 	int deleteNoticeComment(int noticeCommentNo);
@@ -31,3 +39,4 @@ public interface NoticeService {
 	int deleteCommunityComment(int communityCommentNo);
 
 }
+

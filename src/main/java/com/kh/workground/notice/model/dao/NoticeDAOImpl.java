@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kh.workground.notice.model.vo.Community;
-import com.kh.workground.notice.model.vo.CommunityComment;
 import com.kh.workground.notice.model.vo.Notice;
-import com.kh.workground.notice.model.vo.NoticeComment;
 
 @Repository
 public class NoticeDAOImpl implements NoticeDAO {
@@ -49,6 +47,31 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
+	public int deleteNotice(int noticeNo) {
+		return sqlSession.delete("notice.deleteNotice", noticeNo);
+	}
+
+	@Override
+	public int insertCommunity(Community commu) {
+		return sqlSession.insert("notice.insertCommunity", commu);
+	}
+
+	@Override
+	public int deleteCommunity(int commuNo) {
+		return sqlSession.delete("notice.deleteCommunity", commuNo);
+	}
+
+	@Override
+	public int updateNotice(Notice notice) {
+		return sqlSession.update("notice.updateNotice", notice);
+	}
+
+	@Override
+	public int updateCommunity(Community commu) {
+		return sqlSession.update("notice.updateCommunity", commu);
+	}
+	
+	@Override
 	public int insertNoticeComment(Map<String, Object> noticeCommentMap) {
 		return sqlSession.insert("notice.insertNoticeComment", noticeCommentMap);
 	}
@@ -69,6 +92,5 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 
-
-
 }
+
