@@ -243,6 +243,12 @@ function confirmDelete() {
 function loginAlert() {
 	alert("로그인 후 이용하실 수 있습니다.");
 }
+
+function fileDownload(oName, rName, clubNo) {
+	oName = encodeURIComponent(oName);
+	
+	location.href = "${pageContext.request.contextPath}/club/clubFileDownload.do?clubNo="+clubNo+"&oName="+oName+"&rName="+rName;
+}
 </script>
 
 <!-- Navbar ClubView -->
@@ -825,6 +831,12 @@ function loginAlert() {
 									</div>
 									<div class="form-group">
 										<br />
+										<c:if test="${clubNotice.clubNoticeRenamed ne null }">
+										  <div class="form-group" onclick="fileDownload('${clubNotice.clubNoticeOriginal}', '${clubNotice.clubNoticeRenamed }', '${club.clubNo }');">
+										  	<i class="far fa-file"></i>
+										    ${clubNotice.clubNoticeOriginal }
+										  </div>
+										</c:if>
 									</div>
 									<div class="form-group">
 										${clubNotice.clubNoticeContent }
@@ -833,7 +845,7 @@ function loginAlert() {
 										<br />
 									</div>
 									<!-- NoticeModalComment -->
-									<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
+									<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글</div>
 						            <div class="card-footer card-comments">
 									
 									<c:if test="${not empty clubNoticeCommentList }">

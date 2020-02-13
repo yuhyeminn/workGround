@@ -226,7 +226,7 @@ function clubFileList(clubNo) {
                 	<c:forEach items="${clubPhotoList}" var="clubPhoto">
                     <tr>
                         <td>
-                            <%-- <img src="${pageContext.request.contextPath }/resources/upload/club/${clubPhoto.clubNo }/${clubPhoto.clubPhotoRenamed}" alt="User Avatar" class="img-circle img-profile ico-profile"> --%>
+                          <button type="button" class="btn btn-block btn-outline-info btn-xs btn-admin">사진</button>
                         </td>
                         <td onclick="fileDownload('${clubPhoto.clubPhotoOriginal}', '${clubPhoto.clubPhotoRenamed }', '${clubPhoto.clubNo }');">
                         	${clubPhoto.clubPhotoTitle}
@@ -238,7 +238,7 @@ function clubFileList(clubNo) {
                     <c:forEach items="${clubNoticeList }" var="clubNotice">
                     <tr>
                         <td>
-                            <%-- <img src="${pageContext.request.contextPath }/resources/upload/club/${clubPhoto.clubNo }/${clubPhoto.clubPhotoRenamed}" alt="User Avatar" class="img-circle img-profile ico-profile"> --%>
+                          <button type="button" class="btn btn-block btn-outline-primary btn-xs btn-admin">공지</button>
                         </td>
                         <td onclick="fileDownload('${clubNotice.clubNoticeOriginal}', '${clubNotice.clubNoticeRenamed }', '${clubNotice.clubNo }');">
                         	${clubNotice.clubNoticeTitle}
