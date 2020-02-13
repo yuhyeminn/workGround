@@ -243,6 +243,12 @@ function confirmDelete() {
 function loginAlert() {
 	alert("로그인 후 이용하실 수 있습니다.");
 }
+
+function fileDownload(oName, rName, clubNo) {
+	oName = encodeURIComponent(oName);
+	
+	location.href = "${pageContext.request.contextPath}/club/clubFileDownload.do?clubNo="+clubNo+"&oName="+oName+"&rName="+rName;
+}
 </script>
 
 <!-- Navbar ClubView -->
@@ -265,7 +271,7 @@ function loginAlert() {
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
-		<li id="tab-calendar" class="nav-item"><button type="button">일정</button></li>
+		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${club.clubNo}'">일정</button></li>
 		<c:if test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
 			<li id="tab-member" class="nav-item">
 			<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button></li>
@@ -290,7 +296,7 @@ function loginAlert() {
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 			  <c:if test="${not empty clubMemberList }">
 			  <c:forEach items="${clubMemberList }" var="clubMember">
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
+				<a href="${pageContext.request.contextPath }/member/memberView.do?memberId=${clubMember.empId }" class="dropdown-item"> <!-- Message Start -->
 				  <div class="media">
 				  	<img src="${pageContext.request.contextPath}/resources/img/profile/${clubMember.clubMemberList[0].renamedFileName }"
 				  		 alt="User Avatar" class="img-circle img-profile ico-profile" />
@@ -485,7 +491,7 @@ function loginAlert() {
 							</div>
 						</div>
 						<div class="modal-footer">
-						<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubPhoto.memberId }">
+						<c:if test="${not empty memberLoggedIn and (memberLoggedIn.memberId == clubPhoto.memberId or isManager)}">
 						  <form name="deleteClubPhotoFrm" action="${pageContext.request.contextPath }/club/deleteClubPhoto.do" method="POST">
 							<input type="hidden" name="clubNo" value="${club.clubNo }" />
 							<input type="hidden" name="clubPhotoNo" value=${clubPhoto.clubPhotoNo } />
@@ -649,7 +655,7 @@ function loginAlert() {
 												<i class="fas fa-plus"></i>
 											</button>
 										  </form>
-										  <c:if test="${not empty memberLoggedIn and clubPlan.memberId == memberLoggedIn.memberId}">
+										  <c:if test="${not empty memberLoggedIn and (clubPlan.memberId == memberLoggedIn.memberId or isManager)}">
 											<button type="button" class="btn btn-info" data-target="#plan-modify${vs.index }" data-dismiss="modal" data-toggle="modal">수정</button>
 											<form name="deleteClubPlanFrm" action="${pageContext.request.contextPath }/club/deleteClubPlan.do" method="POST">
 											  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
@@ -825,6 +831,12 @@ function loginAlert() {
 									</div>
 									<div class="form-group">
 										<br />
+										<c:if test="${clubNotice.clubNoticeRenamed ne null }">
+										  <div class="form-group" onclick="fileDownload('${clubNotice.clubNoticeOriginal}', '${clubNotice.clubNoticeRenamed }', '${club.clubNo }');">
+										  	<i class="far fa-file"></i>
+										    ${clubNotice.clubNoticeOriginal }
+										  </div>
+										</c:if>
 									</div>
 									<div class="form-group">
 										${clubNotice.clubNoticeContent }
@@ -833,7 +845,7 @@ function loginAlert() {
 										<br />
 									</div>
 									<!-- NoticeModalComment -->
-									<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
+									<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글</div>
 						            <div class="card-footer card-comments">
 									
 									<c:if test="${not empty clubNoticeCommentList }">
@@ -845,7 +857,7 @@ function loginAlert() {
 						                  <div class="comment-text">
 						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">${clubNoticeComment.clubNoticeCommentDate }</span></span>
 						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
-						                    <c:if test="${not empty memberLoggedIn and clubNoticeComment.memberId==memberLoggedIn.memberId }">
+						                    <c:if test="${not empty memberLoggedIn and (clubNoticeComment.memberId==memberLoggedIn.memberId or isManager) }">
 						                      <form name="deleteClubNoticeCommentFrm" action="${pageContext.request.contextPath }/club/deleteClubNoticeComment.do" method="POST">
 						                        <input type="hidden" name="clubNoticeCommentNo" value="${clubNoticeComment.clubNoticeCommentNo }" />
 						                        <input type="hidden" name="clubNo" value="${club.clubNo }" />
@@ -880,10 +892,11 @@ function loginAlert() {
 						            </div> 
 								</div>
 								<div class="modal-footer">
-									<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubNotice.memberId }">
+									<c:if test="${not empty memberLoggedIn and (memberLoggedIn.memberId == clubNotice.memberId or isManager) }">
 									<form name="deleteClubNoticeFrm" action="${pageContext.request.contextPath}/club/deleteClubNotice.do" method="POST">
 										<input type="hidden" name="clubNo" value="${club.clubNo }" />
 										<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
+										<input type="hidden" name="clubNoticeRenamed" value="${clubNotice.clubNoticeRenamed }" />
 										<button type="submit" class="btn btn-danger" onclick="return confirmDelete();" >삭제</button>
 									</form>
 									<button type="button" class="btn btn-info"

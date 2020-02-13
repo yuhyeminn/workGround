@@ -80,6 +80,7 @@ function sidebarActive(){
 	
 	$("#sidebar-club").addClass("active");
 }
+
 function clubFunc(){
 	$("#all-club-intro").html(''); //데이터 없을 경우 비우기 위함.
 	$("#my-club-list").html(''); //데이터 없을 경우 비우기 위함.
@@ -105,7 +106,7 @@ function clubFunc(){
 		    				+'</div>';
 		    	
 		    	//삭제하기 버튼
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if( (list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{
 			    	allClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
 		    			   	   +'onclick="delClubFunc('+list.clubNo+')">'
@@ -144,7 +145,7 @@ function clubFunc(){
 		 
 		    	allClubHtml+='</div>';
 		    	//동호회 수정
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{	
 		    		allClubHtml+='<button type="button" id="up-btn" onclick="updateClubModal('+list.clubNo+')">'
     				+'<i class="fas fa-edit"></i></button>';
@@ -170,7 +171,7 @@ function clubFunc(){
 						  +'<div class="card-title">'+list.clubName+'</div>';
 						
 				//삭제버튼 부분
-				if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin'){
+				if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin'){
 
 					myClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
 	    			   	   	  +'onclick="delClubFunc('+list.clubNo+')">'
@@ -192,7 +193,7 @@ function clubFunc(){
 		    	myClubHtml+='</div>';
 		    	
 		    	//수정버튼
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{	
 		    		myClubHtml+='<button type="button" id="up-btn" onclick="updateClubModal('+list.clubNo+')">'
     				+'<i class="fas fa-edit"></i></button>';
@@ -217,7 +218,7 @@ function clubFunc(){
 		    				+'</div>';
 		    	
 		    	//삭제하기 버튼
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{
 		    		standByClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
 		    			   	   +'onclick="delClubFunc('+list.clubNo+')">'
@@ -238,7 +239,7 @@ function clubFunc(){
 		    	}
 		    	standByClubHtml+='</div>';
 		    	//동호회 수정
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{	
 		    		standByClubHtml+='<button type="button" id="up-btn" onclick="updateClubModal('+list.clubNo+')">'
     				+'<i class="fas fa-edit"></i></button>';
@@ -425,11 +426,11 @@ function clubFunc(){
 											<c:choose>
 
 												<c:when
-													test="${club.clubPhotoList[0].clubPhotoRenamed ne null}">
+													test="${not empty club.clubPhotoList[0].clubPhotoRenamed}">
 
 													<div class="carousel-item active">
 														<img class="d-block w-100"
-															src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[0].clubPhotoRenamed}"
+															src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 															alt="First slide">
 													</div>
 												</c:when>
@@ -444,18 +445,18 @@ function clubFunc(){
 												</c:otherwise>
 											</c:choose>
 											<c:if
-												test="${club.clubPhotoList[1].clubPhotoRenamed ne null}">
+												test="${not empty club.clubPhotoList[1].clubPhotoRenamed}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[1].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[1].clubPhotoRenamed}"
 														alt="Second slide">
 												</div>
 											</c:if>
 											<c:if
-												test="${club.clubPhotoList[2].clubPhotoRenamed ne null}">
+												test="${not empty club.clubPhotoList[2].clubPhotoRenamed}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[2].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[2].clubPhotoRenamed}"
 														alt="Third slide">
 												</div>
 											</c:if>
@@ -846,8 +847,6 @@ function clubFunc(){
 		<!-- /.content -->
 	</div>
 	<!-- /.content-wrapper -->
-
-
 
 
 
