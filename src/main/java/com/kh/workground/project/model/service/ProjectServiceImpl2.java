@@ -14,7 +14,10 @@ import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.controller.ProjectController2;
 import com.kh.workground.project.model.dao.ProjectDAO2;
 import com.kh.workground.project.model.exception.ProjectException;
+import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
+import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.Worklist;
 @Service
 public class ProjectServiceImpl2 implements ProjectService2 {
 	@Autowired
@@ -118,5 +121,72 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		
 		return map;
 	}
+
+	@Override
+	public Project selectProjectOneForSetting(int projectNo,boolean isIncludeManager) {
+		
+		Project p = projectDAO.selectProjectOneForSetting(projectNo);
+		if(p==null) {
+			throw new ProjectException("중요 표시된 프로젝트 조회 오류!");
+		}
+		if(!isIncludeManager) {
+			List<Member> list = p.getProjectMemberList();
+			for(int i=0;i<list.size();i++) {
+				Member m = list.get(i);
+				if(m.getMemberId().equals(p.getProjectWriter())) {
+					list.remove(i);
+				}
+			}
+		}
+		List<Worklist> worklistList = projectDAO.selectWorklistListByProjectNo(projectNo);
+		if(worklistList==null) {
+			throw new ProjectException("업무리스트 조회 오류!");
+		}
+		
+		p.setWorklistList(worklistList);
+		return p;
+	}
+
+	@Override
+	public List<Member> selectProjectManagerByDept(String projectWriter) {
+		List<Member> list = projectDAO.selectProjectManagerByDept(projectWriter);
+		if(list == null) {
+			throw new ProjectException("부서별 팀장 조회 오류!");
+		}
+		return list;
+	}
+
+	@Override
+	public Work selectOneWorkForSetting(int workNo) {
+		Work work = projectDAO.selectOneWorkForSetting(workNo);
+		if(work == null) {
+			throw new ProjectException("업무 조회 오류!");
+		}
+		
+		//체크리스트의 리스트
+		List<Checklist> chklstList = projectDAO.selectChklstListByWorkNo(workNo);
+		
+		//체크리스트 작성자, 배정된 멤버 객체 구하기
+		for(Checklist chklst: chklstList) {
+			Member writerMember = projectDAO.selectMemberOneByMemberId(chklst.getChecklistWriter());
+			Member chargedMember = projectDAO.selectMemberOneByMemberId(chklst.getChecklistChargedMemberId());
+			chklst.setChecklistWriterMember(writerMember); //체크리스트 작성자
+			chklst.setChecklistChargedMember(chargedMember); //체크리스트에 배정된 멤버
+		}
+		
+		work.setChecklistList(chklstList);
+		
+		return work;
+	}
+	//언니꺼
+	@Override
+	public Member selectMemberOneByMemberId(String memberId) {
+		Member m = projectDAO.selectMemberOneByMemberId(memberId);
+		if(m==null) {
+			throw new ProjectException("회원 아이디 조회 오류!");
+		}
+		return m;
+	}
+	
 
 }

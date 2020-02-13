@@ -1,5 +1,6 @@
-
 package com.kh.workground.member.controller;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,9 +41,45 @@ public class MemberController {
 
 	@RequestMapping("/member/memberList.do")
 	public ModelAndView memberList(ModelAndView mav) {
+		try {
+			//1. 업무로직
+			List<Member> list = memberSerivce.selectMemberListAll();
+			logger.debug("list={}", list);
+			
+			//2. 뷰모델 처리
+			mav.addObject("list", list);
+			mav.setViewName("/member/memberList");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new MemberException("멤버리스트 조회 오류!", e);
+		}
 
-		mav.setViewName("/member/memberList");
-
+		return mav;
+	}
+	
+	@RequestMapping("/member/memberView.do")
+	public ModelAndView memberView(ModelAndView mav, 
+								   @RequestParam String memberId, 
+								   @RequestParam(value="active", defaultValue="profile", required=false) String active) {
+		logger.debug("active={}", active);
+		
+		try {
+			//1.업무로직
+			
+			
+			//2.뷰모델 처리
+			//나중에 업무로직 하고 나서 memberId는 지우기!! 
+			//memberView.jsp에서도 c:if태그에서 memberId로 되어있는 부분 수정하기!!!! 
+			mav.addObject("memberId", memberId);
+			mav.addObject("active", active);
+			mav.setViewName("/member/memberView");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new MemberException("멤버 조회 오류!", e);
+		}
+		
 		return mav;
 	}
 
@@ -209,5 +245,5 @@ public class MemberController {
 		return mav;
 	}
 	
+	
 }
-

@@ -36,3 +36,4 @@ public class Community implements Serializable{
 	private List<CommunityComment> communityCommentList;
 
 }
+

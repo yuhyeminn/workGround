@@ -14,7 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Worklist implements Serializable {
+public class Worklist extends Project implements Serializable {
 
 	/**
 	 * 
@@ -22,7 +22,6 @@ public class Worklist implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int worklistNo;
-	//프로젝트 번호는 !? 
 	private String worklistTitle;
 	
 	private List<Work> workList; //업무리스트 안의 업무들

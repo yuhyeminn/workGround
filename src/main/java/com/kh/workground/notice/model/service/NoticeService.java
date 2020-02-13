@@ -39,4 +39,3 @@ public interface NoticeService {
 	int deleteCommunityComment(int communityCommentNo);
 
 }
-
