@@ -217,7 +217,9 @@
 			   #{clubNoticeContent}, 
 			   #{clubNo}, 
 			   #{clubMemberNo}, 
-			   default)
+			   default, 
+			   #{clubNoticeOriginal}, 
+			   #{clubNoticeRenamed})
 	</insert>
 	
 	<select id="selectOneClubMember" resultType="clubMember">

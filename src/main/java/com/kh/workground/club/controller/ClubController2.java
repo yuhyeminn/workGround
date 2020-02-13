@@ -58,7 +58,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@RequestMapping("/club/clubView.do")
 	public ModelAndView clubView(ModelAndView mav,
-								 @RequestParam("clubNo") int clubNo) {
+								 @RequestParam("clubNo") int clubNo, 
+								 HttpServletRequest request) {
 		
 //		logger.info("clubNo={}",clubNo);
 		
@@ -78,6 +79,22 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
 //		logger.debug("clubMemberList={}", clubMemberList);
 		
+		Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
+//		logger.debug("memberLoggedIn={}", memberLoggedIn);
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("clubNo", clubNo+"");
+		param.put("memberId", memberLoggedIn.getMemberId());
+		ClubMember clubMember = clubService2.selectOneClubMember(param);
+//		logger.debug("clubMember={}", clubMember);
+		
+		boolean isManager = false;
+//		logger.debug("clubManagerYN={}", clubMember.getClubManagerYN());
+		if('Y'==clubMember.getClubManagerYN().charAt(0)) {
+			isManager = true;
+		}
+//		logger.debug("isManager={}", isManager);
+		
 		mav.addObject("club", club);
 		mav.addObject("clubPlanList", clubPlanList);
 		mav.addObject("clubNoticeList", clubNoticeList);
@@ -88,6 +105,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		mav.addObject("clubPhotoCount", clubPhotoList.size());
 		mav.addObject("clubPlanCount", clubPlanList.size());
 		mav.addObject("clubNoticeCount", clubNoticeList.size());
+		mav.addObject("isManager", isManager);
 		mav.setViewName("club/clubView");
 		
 		return mav;
@@ -190,8 +208,11 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@RequestMapping("/club/insertClubNotice.do")
 	public ModelAndView clubNoticeInsert(ModelAndView mav, 
-										 ClubNotice clubNotice) {
+										 ClubNotice clubNotice, 
+										 @RequestParam(value="upFile", required=false) MultipartFile upFile, 
+										 HttpServletRequest request) {
 //		logger.debug("clubNotice={}", clubNotice);
+		logger.debug("upFile={}", upFile.getOriginalFilename());
 		
 		Map<String, String> param = new HashMap<>();
 		param.put("clubNo", clubNotice.getClubNo()+"");
@@ -201,7 +222,34 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		ClubMember clubMember = clubService2.selectOneClubMember(param);
 		
 		clubNotice.setClubMemberNo(clubMember.getClubMemberNo());
-//		logger.debug("clubNotice={}", clubNotice);
+		logger.debug("clubNotice={}", clubNotice);
+		
+		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/notice/"+clubNotice.getClubNo());
+		
+		//동적으로 directory 생성하기
+		File dir = new File(saveDirectory);
+		if(dir.exists() == false)
+			dir.mkdir();
+		if(!"".equals(upFile.getOriginalFilename())) {
+			String clubNoticeOriginal = upFile.getOriginalFilename();
+			String ext = clubNoticeOriginal.substring(clubNoticeOriginal.lastIndexOf("."));
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+			int rndNum = (int)(Math.random()*1000);
+			String clubNoticeRenamed = sdf.format(new Date())+"_"+rndNum+ext;
+			
+			try {
+				upFile.transferTo(new File(saveDirectory+"/"+clubNoticeRenamed));
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			clubNotice.setClubNoticeOriginal(clubNoticeOriginal);
+			clubNotice.setClubNoticeRenamed(clubNoticeRenamed);
+		}
+		
+//		logger.debug("clubPhoto={}", clubPhoto);
 		
 		int result = clubService2.clubNoticeInsert(clubNotice);
 		
@@ -214,15 +262,29 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@PostMapping("/club/deleteClubNotice.do")
 	public ModelAndView deleteClubNotice(ModelAndView mav, 
-										 @RequestParam("clubNoticeNo") int clubNoticeNo, 
-										 @RequestParam("clubNo") int clubNo) {
-//		logger.debug("clubNoticeNo={}", clubNoticeNo);
-//		logger.debug("clubNo={}", clubNo);
+										 ClubNotice clubNotice, 
+										 HttpServletRequest request) {
+		logger.debug("clubNotice={}", clubNotice);
 		
-		int result = clubService2.deleteClubNotice(clubNoticeNo);
+		int result = clubService2.deleteClubNotice(clubNotice.getClubNoticeNo());
+		
+		if(result>0 && !"".equals(clubNotice.getClubNoticeRenamed())) {
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/notice/"+clubNotice.getClubNo());
+			
+			//1. 파일 삭제처리
+			File delFile = new File(saveDirectory, clubNotice.getClubNoticeRenamed());
+			boolean bool = delFile.delete();
+//			logger.debug("bool={}", bool?"파일삭제처리성공":"파일삭제처리실패");
+			
+			//2.파일 이동처리
+//			String delDirectory = request.getSession().getServletContext().getRealPath("/resources/delete/club/"+clubPhoto.getClubNo());
+//			File delFileTo = new File(delDirectory,  clubPhoto.getClubPhotoRenamed());
+//			boolean bool = delFile.renameTo(delFileTo);
+//			logger.debug("bool={}", bool?"파일삭제이동처리성공":"파일삭제이동처리실패");
+		}
 		
 		mav.addObject("msg", result>0?"공지사항을 성공적으로 삭제하였습니다.":"공지사항을 삭제하지 못했습니다.");
-		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNo);
+		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNotice.getClubNo());
 		mav.setViewName("common/msg");
 		
 		return mav;
@@ -248,7 +310,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		clubPhoto.setClubMemberNo(clubMember.getClubMemberNo());
 		
-		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/"+clubPhoto.getClubNo());
+		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/club/photo/"+clubPhoto.getClubNo());
 		
 		//동적으로 directory 생성하기
 		File dir = new File(saveDirectory);
@@ -445,7 +507,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 										 @RequestParam("clubNo") int clubNo, 
 										 HttpServletRequest request, 
 										 HttpServletResponse response) throws ServletException, IOException {
-		String saveDirectory = request.getServletContext().getRealPath("/resources/upload/club/"+clubNo);
+		String saveDirectory = request.getServletContext().getRealPath("/resources/upload/club/photo/"+clubNo);
 //		logger.debug("saveDirectory={}", saveDirectory);
 		
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(saveDirectory+File.separator+rName));

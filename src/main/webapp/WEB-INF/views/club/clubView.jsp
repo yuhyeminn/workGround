@@ -265,7 +265,7 @@ function loginAlert() {
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
-		<li id="tab-calendar" class="nav-item"><button type="button">일정</button></li>
+		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${clubNo}'">일정</button></li>
 		<c:if test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
 			<li id="tab-member" class="nav-item">
 			<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button></li>
@@ -339,7 +339,7 @@ function loginAlert() {
 				        <c:if test="${vs.index<4 }">
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -360,7 +360,7 @@ function loginAlert() {
 				        <c:if test="${vs.index<4 }">
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -379,7 +379,7 @@ function loginAlert() {
 				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<i*4 }">
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -392,7 +392,7 @@ function loginAlert() {
 				  		<c:if test="${vs.index>=(i-1)*4 and vs.index<clubPhotoCount }"> <!-- 4개씩 반복 조건 -->
 				  	  	  <div class="col-12 col-sm-6 col-md-3">
 					  	    <div class="card">
-					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+					  		  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 					  			   alt="..." class="img-thumbnail" data-toggle="modal"
 					  			   data-target="#clubPhoto${vs.index }">
 					  		</div>
@@ -479,13 +479,13 @@ function loginAlert() {
 							  <span class="text-muted float-right">${clubPhoto.clubPhotoDate }</span>
 							</div>
 							<div class="form-group">
-							  <img src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
+							  <img src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${clubPhoto.clubPhotoRenamed }"
 								   alt="..." class="img-thumbnail" data-toggle="modal"
 								   data-target="#clubPhoto${vs.index }">
 							</div>
 						</div>
 						<div class="modal-footer">
-						<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubPhoto.memberId }">
+						<c:if test="${not empty memberLoggedIn and (memberLoggedIn.memberId == clubPhoto.memberId or isManager)}">
 						  <form name="deleteClubPhotoFrm" action="${pageContext.request.contextPath }/club/deleteClubPhoto.do" method="POST">
 							<input type="hidden" name="clubNo" value="${club.clubNo }" />
 							<input type="hidden" name="clubPhotoNo" value=${clubPhoto.clubPhotoNo } />
@@ -649,7 +649,7 @@ function loginAlert() {
 												<i class="fas fa-plus"></i>
 											</button>
 										  </form>
-										  <c:if test="${not empty memberLoggedIn and clubPlan.memberId == memberLoggedIn.memberId}">
+										  <c:if test="${not empty memberLoggedIn and (clubPlan.memberId == memberLoggedIn.memberId or isManager)}">
 											<button type="button" class="btn btn-info" data-target="#plan-modify${vs.index }" data-dismiss="modal" data-toggle="modal">수정</button>
 											<form name="deleteClubPlanFrm" action="${pageContext.request.contextPath }/club/deleteClubPlan.do" method="POST">
 											  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
@@ -845,7 +845,7 @@ function loginAlert() {
 						                  <div class="comment-text">
 						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">${clubNoticeComment.clubNoticeCommentDate }</span></span>
 						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
-						                    <c:if test="${not empty memberLoggedIn and clubNoticeComment.memberId==memberLoggedIn.memberId }">
+						                    <c:if test="${not empty memberLoggedIn and (clubNoticeComment.memberId==memberLoggedIn.memberId or isManager) }">
 						                      <form name="deleteClubNoticeCommentFrm" action="${pageContext.request.contextPath }/club/deleteClubNoticeComment.do" method="POST">
 						                        <input type="hidden" name="clubNoticeCommentNo" value="${clubNoticeComment.clubNoticeCommentNo }" />
 						                        <input type="hidden" name="clubNo" value="${club.clubNo }" />
@@ -880,10 +880,11 @@ function loginAlert() {
 						            </div> 
 								</div>
 								<div class="modal-footer">
-									<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubNotice.memberId }">
+									<c:if test="${not empty memberLoggedIn and (memberLoggedIn.memberId == clubNotice.memberId or isManager) }">
 									<form name="deleteClubNoticeFrm" action="${pageContext.request.contextPath}/club/deleteClubNotice.do" method="POST">
 										<input type="hidden" name="clubNo" value="${club.clubNo }" />
 										<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
+										<input type="hidden" name="clubNoticeRenamed" value="${clubNotice.clubNoticeRenamed }" />
 										<button type="submit" class="btn btn-danger" onclick="return confirmDelete();" >삭제</button>
 									</form>
 									<button type="button" class="btn btn-info"

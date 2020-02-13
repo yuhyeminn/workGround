@@ -119,7 +119,7 @@ function clubFunc(){
 	
 		    	   	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
 		    	   		allClubHtml+='<img src="'
-			    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+			    						+'${pageContext.request.contextPath}/resources/upload/club/photo/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
 			    						+'onclick="clubView('+list.clubNo+')">';
 			    	}
 			    	else{
@@ -132,7 +132,7 @@ function clubFunc(){
 		    	else{
 		    	   	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
 		    			allClubHtml+='<img src="'
-		    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+		    						+'${pageContext.request.contextPath}/resources/upload/club/photo/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
 		    						+'onclick="clubModalView('+list.clubNo+')">';
 			    	}
 			    	else{
@@ -182,7 +182,7 @@ function clubFunc(){
 		    	//이미지
 		    	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
 		    		myClubHtml+='<img src="'
-		    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+		    						+'${pageContext.request.contextPath}/resources/upload/club/photo/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
 		    						+'onclick="clubView('+list.clubNo+')">';
 		    	}
 		    	else{
@@ -229,7 +229,7 @@ function clubFunc(){
 		    	//이미지
 		    	if(list.clubPhotoList[0].clubPhotoRenamed!=null){
 		    		standByClubHtml+='<img src="'
-		    						+'${pageContext.request.contextPath}/resources/upload/club/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
+		    						+'${pageContext.request.contextPath}/resources/upload/club/photo/'+list.clubNo+'/'+list.clubPhotoList[0].clubPhotoRenamed+'"'
 		    						+'onclick="clubModalView('+list.clubNo+')">';
 		    	}
 		    	else{
@@ -430,7 +430,7 @@ function clubFunc(){
 
 													<div class="carousel-item active">
 														<img class="d-block w-100"
-															src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
+															src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 															alt="First slide">
 													</div>
 												</c:when>
@@ -448,7 +448,7 @@ function clubFunc(){
 												test="${club.clubPhotoList[1].clubPhotoRenamed ne null}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 														alt="Second slide">
 												</div>
 											</c:if>
@@ -456,7 +456,7 @@ function clubFunc(){
 												test="${club.clubPhotoList[2].clubPhotoRenamed ne null}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/photo/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 														alt="Third slide">
 												</div>
 											</c:if>

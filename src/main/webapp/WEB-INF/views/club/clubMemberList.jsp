@@ -132,6 +132,18 @@ function approveJoin(memberId){
 	var clubNo ='${clubNo}';
 	location.href = "${pageContext.request.contextPath}/club/approveClubMember.do?clubNo="+clubNo+"&&memberId="+memberId;
 }
+
+function clubView(clubNo) {
+	location.href = "${pageContext.request.contextPath}/club/clubView.do?clubNo="+clubNo;
+}
+
+function memberList(clubNo){
+	location.href = "${pageContext.request.contextPath}/club/clubMemberList.do?clubNo="+clubNo;
+}
+
+function clubFileList(clubNo) {
+	location.href = "${pageContext.request.contextPath}/club/clubFileList.do?clubNo="+clubNo;
+}
 </script>
 
 <nav id="navbar-club"
@@ -158,15 +170,11 @@ function approveJoin(memberId){
 
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
-		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
+		<li id="tab-club" class="nav-item"><button type="button" onclick="clubView('${clubNo}');">동호회</button></li>
 		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${clubNo}'">일정</button></li>
-		<c:if
-			test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
 			<li id="tab-member" class="nav-item">
-				<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button>
-			</li>
-		</c:if>
-		<li id="tab-attachment" class="nav-item"><button type="button">파일</button></li>
+			<button type="button" onclick="memberList('${clubNo}');">동호회멤버</button></li>
+		<li id="tab-attachment" class="nav-item"><button type="button" onclick="clubFileList('${clubNo}');">파일</button></li>
 	</ul>
 
 	<!-- Right navbar links -->
@@ -180,59 +188,25 @@ function approveJoin(memberId){
 		</li>
 
 		<!-- 동호회 멤버 -->
-		<li id="nav-member" class="nav-item dropdown"><a class="nav-link"
-			data-toggle="dropdown" href="#"> <i class="far fa-user"></i> 6
+		<li id="nav-member" class="nav-item dropdown">
+		<a class="nav-link" data-toggle="dropdown" href="#"> <i class="far fa-user"></i> 6
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile" />
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<div class="media-body">
-								<p class="memberName">Brad Diesel</p>
-							</div>
-						</div>
-					</div> <!-- Message End -->
-				</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img
-							src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a>
-			</div></li>
+			  <c:if test="${not empty memberList }">
+			  <c:forEach items="${memberList }" var="clubMember">
+				<a href="${pageContext.request.contextPath }/member/memberView.do?memberId=${clubMember.empId }" class="dropdown-item"> <!-- Message Start -->
+				  <div class="media">
+				  	<img src="${pageContext.request.contextPath}/resources/img/profile/${clubMember.clubMemberList[0].renamedFileName }"
+				  		 alt="User Avatar" class="img-circle img-profile ico-profile" />
+				  	<div class="media-body">
+				  		<p class="memberName">${clubMember.clubMemberList[0].memberName }</p>
+				  	</div>
+				  </div> <!-- Message End -->
+				</a> 
+			  </c:forEach>
+			  </c:if>
+			</div>
+		</li>
 
 		<!-- 동호회 설정 -->
 		<li class="nav-item">
