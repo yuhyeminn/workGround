@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
+import com.kh.workground.club.model.vo.ClubPlan;
 
 public interface ClubService {
 
@@ -25,5 +26,17 @@ public interface ClubService {
 	List<Club> selectAllStandByClubList(Map param);
 
 	List<ClubMember> selectClubMemberList(int clubNo);
+
+	int deleteClubMember(int clubMemberNo);
+
+	int updateClubManager(Map param);
+
+	int approveClubMember(Map param);
+
+	List<ClubMember> searchClubMember(Map param);
+
+	List<ClubPlan> selectClubPlanList(int clubNo);
+
+	ClubPlan selectOneClubPlan(int clubPlanNo);
 
 }

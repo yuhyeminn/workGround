@@ -80,6 +80,7 @@ function sidebarActive(){
 	
 	$("#sidebar-club").addClass("active");
 }
+
 function clubFunc(){
 	$("#all-club-intro").html(''); //데이터 없을 경우 비우기 위함.
 	$("#my-club-list").html(''); //데이터 없을 경우 비우기 위함.
@@ -429,7 +430,7 @@ function clubFunc(){
 
 													<div class="carousel-item active">
 														<img class="d-block w-100"
-															src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[0].clubPhotoRenamed}"
+															src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 															alt="First slide">
 													</div>
 												</c:when>
@@ -447,7 +448,7 @@ function clubFunc(){
 												test="${club.clubPhotoList[1].clubPhotoRenamed ne null}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[1].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 														alt="Second slide">
 												</div>
 											</c:if>
@@ -455,7 +456,7 @@ function clubFunc(){
 												test="${club.clubPhotoList[2].clubPhotoRenamed ne null}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[2].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 														alt="Third slide">
 												</div>
 											</c:if>

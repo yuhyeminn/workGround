@@ -2,6 +2,7 @@ package com.kh.workground.club.model.vo;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,4 +36,9 @@ public class ClubPlan implements Serializable {
 	//가상컬럼
 	private String clubManagerYN;
 	private String memberName;
+
+	
+	//참가자 가상컬럼 추가
+	private List<ClubPlanAttendee> planAttendeeList;
+
 }
