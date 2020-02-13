@@ -11,13 +11,13 @@ public interface ProjectService2 {
 
 	int insertProject(Project p, List<String> projectMemberList);
 
-	List<Member> selectMemberListByDeptCode(Member memberLoggedIn);
+	List<Member> selectMemberListByManagerId(String projectWriter);
 
 	Map<String, List<Project>> selectProjectListByStatusCode(Map<String, Object> param);
 
 	Project selectProjectOneForSetting(int projectNo, boolean isIncludeManager);
 
-	List<Member> selectProjectManagerByDept(String projectWriter);
+	List<Member> selectProjectManagerByDept(String projectManager);
 
 	Work selectOneWorkForSetting(int workNo);
 
@@ -28,5 +28,11 @@ public interface ProjectService2 {
 	int updateProjectDate(Map<String, String> param);
 
 	int updateProjectMember(String updateMemberStr, int projectNo);
+
+	int updateProjectManager(Map<String, String> param);
+
+	int updateProjectQuit(Map<String, String> param);
+
+	int updateWorkMember(String updateWorkMemberStr, int workNo);
 
 }

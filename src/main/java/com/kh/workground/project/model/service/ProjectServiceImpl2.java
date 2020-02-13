@@ -66,12 +66,11 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 	}
 
 	@Override
-	public List<Member> selectMemberListByDeptCode(Member memberLoggedIn) {
-		List<Member> list = projectDAO.selectMemberListByDeptCode(memberLoggedIn);
-//		logger.debug("list={}", list);
+	public List<Member> selectMemberListByManagerId(String projectWriter) {
+		List<Member> list = projectDAO.selectMemberListByManagerId(projectWriter);
 		
 		if(list==null) 
-			throw new ProjectException("부서 멤버 조회 오류!");
+			throw new ProjectException("팀원 조회 오류!");
 		
 		return list;
 	}
@@ -136,7 +135,7 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 			List<Member> list = p.getProjectMemberList();
 			for(int i=0;i<list.size();i++) {
 				Member m = list.get(i);
-				if(m.getMemberId().equals(p.getProjectWriter())) {
+				if(("Y").equals(m.getManagerYn())) {
 					list.remove(i);
 				}
 			}
@@ -151,8 +150,8 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 	}
 
 	@Override
-	public List<Member> selectProjectManagerByDept(String projectWriter) {
-		List<Member> list = projectDAO.selectProjectManagerByDept(projectWriter);
+	public List<Member> selectProjectManagerByDept(String projectManager) {
+		List<Member> list = projectDAO.selectProjectManagerByDept(projectManager);
 		if(list == null) {
 			throw new ProjectException("부서별 팀장 조회 오류!");
 		}
@@ -224,13 +223,13 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		//수정할 프로젝트 회원 리스트
 		String[] updateMemberArr = updateMemberStr.split(",");
 		List<String> updateMemberList = new ArrayList<>(Arrays.asList(updateMemberArr));
-		logger.debug("updateMemberList={}",updateMemberList);
+//		logger.debug("updateMemberList={}",updateMemberList);
 		
 		//프로젝트 전체 회원 리스트(이전에 나갔었던 멤버까지 조회)
 		List<Member> projectAllMemberList = projectDAO.selectProjectMemberIdList(projectNo);
 		if(projectAllMemberList==null) throw new ProjectException("프로젝트 멤버 조회 오류!");
 		
-		logger.debug("projectAllMemberList={}",projectAllMemberList);
+//		logger.debug("projectAllMemberList={}",projectAllMemberList);
 		
 		List<String> projectMemberList = new ArrayList<>(); 	//기존 프로젝트 회원 리스트
 		List<String> projectQuitMemberList = new ArrayList<>();
@@ -242,8 +241,8 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 			}
 		}
 		
-		logger.debug("projectMemberList={}",projectMemberList);
-		logger.debug("projectQuitMemberList={}",projectQuitMemberList);
+//		logger.debug("projectMemberList={}",projectMemberList);
+//		logger.debug("projectQuitMemberList={}",projectQuitMemberList);
 		
 		//새롭게 추가되는 프로젝트 멤버
 		for(String memberId : updateMemberList) {
@@ -277,6 +276,40 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		}
 		
 		return result;
+	}
+
+	@Override
+	public int updateProjectManager(Map<String, String> param) {
+		int result = projectDAO.updateProjectManager(param);
+		if(result==0) throw new ProjectException("프로젝트 관리자 수정 오류!");
+		return result;
+	}
+
+	@Override
+	public int updateProjectQuit(Map<String, String> param) {
+		int result = projectDAO.updateProjectQuit(param);
+		if(result==0) throw new ProjectException("프로젝트 나가기 오류!");
+		return result;
+	}
+
+	@Override
+	public int updateWorkMember(String updateWorkMemberStr, int workNo) {
+		Work work = projectDAO.selectOneWorkForSetting(workNo);
+		
+		//수정 할 업무 배정된 멤버 리스트
+		String[] updateWorkMemberArr = updateWorkMemberStr.split(",");
+		List<String> updateWorkMemberList = new ArrayList<>(Arrays.asList(updateWorkMemberStr));
+		logger.debug("updateWorkMemberList={}",updateWorkMemberList);
+		
+		//해당 업무에 배정된 멤버 리스트
+		List<Member> workMemberList = work.getWorkChargedMemberList();
+		
+		//새로 추가되는 멤버
+		for(String memberId:updateWorkMemberList) {
+		  
+		}
+		
+		return 0;
 	}
 	
 

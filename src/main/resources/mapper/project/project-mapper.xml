@@ -32,6 +32,7 @@
 			<result column="manager_id" property="managerId"></result>
 			<result column="original_filename" property="originalFileName"></result>
 			<result column="renamed_filename" property="renamedFileName"></result>
+			<result column="manager_yn" property="managerYn"></result>
 			<result column="project_quit_yn" property="projectQuitYn"></result>
 		</collection>
 	</resultMap>
@@ -64,6 +65,7 @@
 			<result column="manager_id" property="managerId"></result>
 			<result column="original_filename" property="originalFileName"></result>
 			<result column="renamed_filename" property="renamedFileName"></result>
+			<result column="manager_yn" property="managerYn"></result>
 			<result column="project_quit_yn" property="projectQuitYn"></result>
 		</collection>
 	</resultMap>
@@ -315,9 +317,9 @@
 		</foreach>)A
 	</insert>
 	
-	<!-- projectDeptMember.do : 부서 사람들 조회 -->
-	<select id="selectMemberListByDeptCode" resultType="member">
-		select * from view_member where dept_code = #{deptCode} and member_id!=#{memberId} order by member_id
+	<!-- projectTeamMember.do : 같은 팀 사람들 조회 -->
+	<select id="selectMemberListByManagerId" resultType="member">
+		select * from view_member where manager_Id = #{projectWriter} order by member_id
 	</select>
 	
 	<!-- projectListByStatusCode.do : 상태코드별 부서 전체 프로젝트(최근 프로젝트) 조회 -->
@@ -351,7 +353,7 @@
 	
 	<!-- projectManagerSetting.do : 프로젝트 관리 위임을 위한 프로젝트 관리자와 같은 부서 내 팀장 리스트 조회 -->
 	<select id="selectProjectManagerByDept" resultType="member">
-		select * from view_member where dept_code = (select dept_code from view_member where member_id=#{projectWriter}) and job_title='팀장'
+		select * from view_member where dept_code = (select dept_code from view_member where member_id=#{projectManager}) and job_title='팀장'
 	</select>
 	
 	<!-- workSetting.do : workNo로 work조회 -->
@@ -362,7 +364,6 @@
 		where V.work_no = #{workNo}
 	</select>
 	
-<<<<<<< HEAD
 	<!-- workSetting.do : 업무별 attachmentList조회 (작성자 멤버 객체 까지)-->
 	<select id="selectAttachmentListByWorkNo" resultMap="attachmentMemberMap">
 		select A.*, VM.*
@@ -428,6 +429,11 @@
 		update project_members set project_quit_yn = #{quitYN} where project_no=#{projectNo} and member_id=#{projectMember}
 	</update>
 	
+	<!-- updateProjectManager.do : 프로젝트 관리자 수정 -->
+	<update id="updateProjectManager">
+		update project_members set member_id = #{updateManager} where project_no=to_number(#{projectNo}) and manager_yn = 'Y'
+	</update>
+	
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>
 			<result column="password" property="password"></result>
@@ -443,8 +449,8 @@
 			<result column="manager_id" property="managerId"></result>
 			<result column="original_filename" property="originalFileName"></result>
 			<result column="renamed_filename" property="renamedFileName"></result>
+			<result column="manager_yn" property="managerYn"></result>
 			<result column="project_quit_yn" property="projectQuitYn"></result>
 	</resultMap>
-=======
->>>>>>> project
+
 </mapper>

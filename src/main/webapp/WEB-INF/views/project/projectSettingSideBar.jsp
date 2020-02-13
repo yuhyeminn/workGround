@@ -10,6 +10,19 @@
     border: none;
 }
 </style>
+
+<!-- 프로젝트 관리자 -->
+<c:set var="projectManager" value=""/>
+<c:set var="isprojectManager" value="false"/>
+<c:forEach var="pm" items="${project.projectMemberList}">
+	<c:if test="${pm.managerYn eq 'Y'}">
+		<c:set var="projectManager" value="${pm.memberId}" />
+	</c:if>
+	<c:if test="${pm.memberId eq memberLoggedIn.memberId }">
+		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
+	</c:if>
+</c:forEach>
+
 <div class="div-close" role="button" tabindex="0">
     <i class="fas fa-times close-sidebar"></i>
 </div>
@@ -18,7 +31,7 @@
 	    <span class="setting-side-title">${project.projectTitle}</span>
 	    <p class="setting-contents-inform">
 	        <span>#${project.projectNo}</span>
-	        <span>작성자 ${projectManager.memberName }</span>
+	        <span>작성자 ${projectWriter.memberName }</span>
 	        <span class="setting-contents-date">시작일 ${project.projectStartDate }</span>
 	    </p>
     </div>
@@ -30,16 +43,32 @@
     </ul>
     <div class="tab-content" id="custom-content-above-tabContent">
         <div class="tab-pane fade show active p-setting-container" id="custom-content-above-home" role="tabpanel" aria-labelledby="custom-content-above-home-tab">
-            <c:if test="${project.projectDesc == null or project.projectDesc == ''}">
-	            <div class="row setting-row add-description">
-	            	<span>설명 추가</span>
-	            </div>
-            </c:if>
-            <c:if test="${project.projectDesc != null and project.projectDesc != '' }">
-	            <div class="row setting-row project-description">
-	            	<span>${project.projectDesc }</span>
-	            </div>
-            </c:if>
+           		<!-- 권한 있을 때 -->
+            	<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin'}">
+            	  <c:if test="${project.projectDesc == null or project.projectDesc == ''}">
+			            <div class="row setting-row add-description">
+			            	<span>설명 추가</span>
+			            </div>
+		          </c:if>
+		          <c:if test="${project.projectDesc != null and project.projectDesc != '' }">
+			            <div class="row setting-row project-description">
+			            	<span style='color:#696f7a'>${project.projectDesc }</span>
+			            </div>
+		          </c:if>
+	           	</c:if>
+	           	<!-- 권한 없을 때 -->
+	           	<c:if test="${!isprojectManager && memberLoggedIn.memberId ne 'admin'}">
+	           	  <c:if test="${project.projectDesc == null or project.projectDesc == ''}">
+			             <div class="row setting-row add-description">
+			            	<span>설명 없음</span>
+			             </div>
+		          </c:if>
+		           <c:if test="${project.projectDesc != null and project.projectDesc != '' }">
+			            <div class="row setting-row project-description">
+			            	<span>${project.projectDesc}</span>
+			            </div>
+		          </c:if>
+	           	</c:if>
             <hr/>
             <div class="row setting-row">
             <label class="setting-content-label col-md-4">프로젝트 상태</label>
@@ -54,7 +83,7 @@
                 	상태없음 <span class="status-dot bg-secondary"></span>
                 </button>
             </c:if>
-              <c:if test="${project.projectWriter eq memberLoggedIn.memberId || memberLoggedIn.memberId eq 'admin' }">
+              <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' }">
                 <div class="icon-box"  data-toggle="dropdown">
                 <i class="fa fa-angle-down"></i>
                 </div>
@@ -73,7 +102,7 @@
                 <label class="setting-content-label">시작일</label>
 
                 <div class="dropdown">
-                  <c:if test="${project.projectWriter eq memberLoggedIn.memberId || memberLoggedIn.memberId eq 'admin' }">
+                  <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' }">
                     <div class="setting-icon" data-toggle="dropdown">
                     <i class="fas fa-cog"></i>
                     </div>
@@ -106,7 +135,7 @@
             <div class="row">
                 <label class="setting-content-label">마감일</label>
                 <div class="dropdown">
-                  <c:if test="${project.projectWriter eq memberLoggedIn.memberId || memberLoggedIn.memberId eq 'admin' }">
+                  <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' }">
                     <div class="setting-icon" data-toggle="dropdown">
                     <i class="fas fa-cog"></i>
                     </div>
@@ -138,7 +167,7 @@
             <div class="row">
                 <label class="setting-content-label">실제 완료일</label>
                 <div class="dropdown">
-                  <c:if test="${project.projectWriter eq memberLoggedIn.memberId || memberLoggedIn.memberId eq 'admin' }">
+                  <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' }">
                     <div class="setting-icon" data-toggle="dropdown">
                     <i class="fas fa-cog"></i>
                     </div>
@@ -174,6 +203,9 @@
                 <div class='control-wrapper pv-multiselect-box'>
                 <div class="control-styles">
                     <input type="text" tabindex="1" id='projectManager' name="projectManager"/>
+                    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' }">
+		               <button type="button" class="sign-out-project" id="updateProjectManager">프로젝트 관리자 수정</button>
+		            </c:if>
                 </div>
                 </div>
             </div>
@@ -183,20 +215,20 @@
                 <div class='control-wrapper pv-multiselect-box'>
                 <div class="control-styles">
                     <input type="text" tabindex="1" id='projectMember' name="projectMember"/>
-                    <%-- <c:if test="${project.projectWriter eq memberLoggedIn.memberId || memberLoggedIn.memberId eq 'admin' }"> --%>
-		               <button type="submit" class="sign-out-project" id="updateProjectMember">프로젝트 팀원 수정</button>
-		            <%-- </c:if> --%>
+                    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' }">
+		               <button type="button" class="sign-out-project" id="updateProjectMember">프로젝트 팀원 수정</button>
+		            </c:if>
                 </div>
             </div>
             </div>
             <c:if test="${!empty project.projectMemberList}">
             	<c:forEach var="member" items="${project.projectMemberList}" varStatus="vs">
-            		<c:if test="${member.memberId eq memberLoggedIn.memberId }">
+            		<c:if test="${member.memberId eq memberLoggedIn.memberId && member.managerYn eq 'N' }">
             		<hr/>
 		            <div class="row setting-row">
 		                <label class="setting-content-label">프로젝트 나가기</label>
 		              <div>
-		                <button type="button" class="sign-out-project">프로젝트 나가기</button>
+		                <button type="button" class="sign-out-project" id="sign-out-project">프로젝트 나가기</button>
 		                <p>더 이상 이 프로젝트의 팀원이 아닙니다.</p>
 		              </div>
 		            </div>
@@ -209,10 +241,12 @@
 <script>
 $(()=>{
 	var projectNo = '${project.projectNo}';
-	var projectWriter = '${project.projectWriter}';
-	projectManager(projectWriter);
+	var projectManagerId = '${projectManager}';
+	projectManager(projectManagerId);
 	projectMember(projectNo);
 	updateProjectMember();
+	updateProjectManager();
+	quitProject();
 });
 
 //업무 사이드바 닫기
@@ -343,13 +377,47 @@ function updateProjectMember(){
 			data: {updateMemberStr:updateMemberStr, projectNo:projectNo},
 			dataType:"json",
 			success: data =>{
-				console.log("ggs")
+				if(data.isUpdated){
+					console.log("프로젝트 팀원 변경 성공~");
+				}
 			},
 			error:(jqxhr, textStatus, errorThrown) =>{
 				console.log(jqxhr, textStatus, errorThrown);
 			}
 		});
 	});
+}
+function updateProjectManager(){
+	$("#updateProjectManager").on('click',function(){
+		var projectNo = '${project.projectNo}';
+		var updateManagerArr = $("select[name=projectManager]").val();
+		if(updateManagerArr.length != 1) {alert("프로젝트 관리자는 1명만 설정 가능합니다.");return;}
+		var updateManager = updateManagerArr[0];
+		$.ajax({
+			url:"${pageContext.request.contextPath}/project/updateProjectManager.do",
+			data:{updateManager:updateManager, projectNo:projectNo},
+			dataType:"json",
+			success: data=>{
+				if(data.isUpdated){
+					console.log("프로젝트 관리자 변경 성공~");
+				}
+			},
+			error:(jqxhr, textStatus, errorThrown) =>{
+				console.log(jqxhr, textStatus, errorThrown);
+			}
+		});
+	});
+}
+
+function quitProject(){
+	//프로젝트 나가기
+	$("#sign-out-project").on('click',function(){
+		var projectNo = '${project.projectNo}';
+		var memberId = '${memberLoggedIn.memberId}';
+		if(confirm("프로젝트에서 나가시겠습니까?")){
+			location.href="${pageContext.request.contextPath}/project/quitProject.do?projectNo=${project.projectNo}";
+		}
+	})
 }
 
 </script>

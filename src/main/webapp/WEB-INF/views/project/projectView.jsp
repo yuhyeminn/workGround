@@ -28,7 +28,7 @@ $(()=>{
     tabActive(); //서브헤더 탭 활성화
     goTabMenu(); //서브헤더 탭 링크 이동
     
-    //setting(); //설정창- 나중에 수정
+    setting(); //설정창- 나중에 수정
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -635,9 +635,7 @@ function setting(){
         if($side.hasClass('open')) {
         	$side.stop(true).animate({right:'0px'});
         }
-        
     });
-     
 }
 </script>		
 

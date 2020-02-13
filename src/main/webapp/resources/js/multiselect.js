@@ -2,7 +2,7 @@
 	function addMember(){
 		  //프로젝트 추가는 팀장만 가능. 팀장의 아이디를 managerId로 갖고있는 멤버들 조회.
 		  $.ajax({
-				url:"../project/projectDeptMember.do",
+				url:contextPath+"/project/projectTeamMember.do",
 				dataType: "json",
 				success: data => {
 					var listObj = new ej.dropdowns.MultiSelect({
@@ -23,11 +23,11 @@
 				}
 			});
 	}
-	function projectManager(projectWriter){
+	function projectManager(projectManager){
 		//json data => 현재 프로젝트작성자와 같은 부서 팀장 리스트, 현재 프로젝트 작성자(관리자)
 		$.ajax({
 			url:contextPath+"/project/projectManagerSetting.do",
-			data:{projectWriter:projectWriter},
+			data:{projectManager:projectManager},
 			dataType: "json",
 			success: data => {
 				var listObj = new ej.dropdowns.MultiSelect({
@@ -39,7 +39,7 @@
 				          '<img class="value" src="'+contextPath+'/resources/img/profile/${renamedFileName}" height="26px" width="26px"/>' +
 				          '<div class="name">${memberName}</div></div>',
 				      mode: 'Box',
-				      value:[projectWriter]
+				      value:[projectManager]
 				  });
 				  listObj.appendTo('#projectManager');
 			},
@@ -62,7 +62,7 @@
 					i++;
 				});
 				var listObj = new ej.dropdowns.MultiSelect({
-					dataSource: data.deptMemberList,
+					dataSource: data.teamMemberList,
 				      fields: { text: 'memberName', value: 'memberId' },
 				      itemTemplate: '<div><img class="empImage img-circle img-sm-profile" src="'+contextPath+'/resources/img/profile/${renamedFileName}" width="35px" height="35px"/>' +
 				      '<div class="ename">${memberName}</div><div class="job"> ${deptTitle} </div></div>',

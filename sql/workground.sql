@@ -516,6 +516,9 @@ select * from job;
 select * from department;
 select * from member;    
 
+update project_members set member_id = 'kh2020122' where project_no = to_number('2') and manager_yn = 'Y';
+update member set password='1234' where member_id='kh2020115';
+commit;
 --------------------------------------------------
 --project테이블 관련 select문
 --------------------------------------------------

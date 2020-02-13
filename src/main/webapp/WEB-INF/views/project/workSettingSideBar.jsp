@@ -9,6 +9,18 @@
     border: none;
 }
 </style>
+<!-- 프로젝트 관리자 확인 -->
+<c:set var="projectManager" value=""/>
+<c:set var="isprojectManager" value="false"/>
+<c:forEach var="pm" items="${project.projectMemberList}">
+	<c:if test="${pm.managerYn eq 'Y'}">
+		<c:set var="projectManager" value="${pm.memberId}" />
+	</c:if>
+	<c:if test="${pm.memberId eq memberLoggedIn.memberId }">
+		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
+	</c:if>
+</c:forEach>
+
 <!-- 현재 로그인 한 회원이 업무에 배정되어있는 멤버인지 확인 -->
 <c:set var="isChargedMember" value="false" />
 <c:forEach var="wcm" items="${work.workChargedMemberList}">
@@ -52,7 +64,7 @@
         <!-- 업무 속성 탭-->
         <div class="tab-pane fade show active p-setting-container" id="custom-content-work-setting" role="tabpanel" aria-labelledby="custom-content-work-setting-tab">
            		<!-- 권한 있을 때 -->
-            	<c:if test="${memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
+            	<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
             	  <c:if test="${work.workDesc == null or work.workDesc == ''}">
 			            <div class="row setting-row add-description">
 			            	<span>설명 추가</span>
@@ -65,7 +77,7 @@
 		          </c:if>
 	           	</c:if>
 	           	<!-- 권한 없을 때 -->
-	           	<c:if test="${memberLoggedIn.memberId ne project.projectWriter && memberLoggedIn.memberId ne 'admin' && !isChargedMember}">
+	           	<c:if test="${!isprojectManager && memberLoggedIn.memberId ne 'admin' && !isChargedMember}">
 	           	  <c:if test="${work.workDesc == null or work.workDesc == ''}">
 			             <div class="row setting-row work-description">
 			            	<span>설명 없음</span>
@@ -86,7 +98,7 @@
                 
                 <!-- plus 버튼 눌렀을 때 dropdown-->
                 <div class="add-member-left dropdown">
-                	<c:if test="${memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
+                	<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
                    		 <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-pencil-alt"></i></button>
                     </c:if>
                     <div class="dropdown-menu location-dropdown"  aria-labelledby="dropdownMenuLink">
@@ -113,7 +125,7 @@
             <div class="row">
                 <label class="setting-content-label"><span><i class="far fa-calendar-alt" style="width:20px;"></i></span> 날짜 설정</label>
                 <div class="dropdown">
-                   <c:if test="${memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
+                   <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
                      <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
                    </c:if>
                     <div class="dropdown-menu setting-date-dropdown work-date-dropdown">
@@ -135,16 +147,20 @@
             <!-- 배정된 멤버-->
             <div class="row">
                 <label class="setting-content-label"><span><i class='fas fa-user-plus' style="width:20px;"></i></span> 배정된 멤버</label>
+                
                 <div class='control-wrapper pv-multiselect-box'>
                     <div class="control-styles">
                         <input type="text" tabindex="1" id='workMember' name="workMember"/>
+                        <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' }">
+		               		<button type="button" class="sign-out-project" id="updateWorkMember">배정된 멤버 수정</button>
+		            	</c:if>
                 </div>
                 </div>
             </div>
             <!-- 태그 -->
             <div class="row">
                 <label class="setting-content-label"><span><i class="fa fa-tag" style="width:20px;"></i></span> 태그</label>
-                <c:if test="${memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
+                <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
                 	<button class="plusBtn" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
                 </c:if>
                 <div class="work-tag">
@@ -236,7 +252,7 @@
                   </c:forEach>
                   </c:if>
                 </tbody>
-                <c:if test="${memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
+                <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
 	                <tfoot>
 	                    <tr id="chk-add-tr">
 	                    <th><button type="button" class="btn-add-checklist"><i class="fa fa-plus"></i></button></th>
@@ -375,14 +391,14 @@
     </div>
     
  <script>
+ var workNo = '${work.workNo}';
+ var projectNo = '${project.projectNo}';
  $(()=>{
-	var workNo = '${work.workNo}';
-	var projectNo = '${project.projectNo}';
 	workMember(workNo,projectNo);
 	sidechecklist(); 
 	workDateRangePicker();
 	sideClose();
-	
+	updateWorkMember();
  });
  
  function workDateRangePicker(){
@@ -440,5 +456,27 @@ function sideClose(){
 
 	    }); //end of .btn-check click
 	}
+ 
+ function updateWorkMember(){
+	 $("#updateWorkMember").on('click',function(){
+		 var updateWorkMemberArr = $("select[name=workMember]").val();
+		 var updateWorkMemberStr = updateWorkMemberArr.join(",");
+			$.ajax({
+				url: "${pageContext.request.contextPath}/project/updateWorkMember.do",
+				data: {updateWorkMemberStr:updateWorkMemberStr, workNo:workNo},
+				dataType:"json",
+				success: data =>{
+					if(data.isUpdated){
+						console.log("업무 배정된 멤버 변경 성공~");
+					}
+				},
+				error:(jqxhr, textStatus, errorThrown) =>{
+					console.log(jqxhr, textStatus, errorThrown);
+				}
+			});
+	 })
+ }
+ 
+
  </script>
  <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

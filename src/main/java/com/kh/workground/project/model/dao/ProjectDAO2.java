@@ -19,7 +19,7 @@ public interface ProjectDAO2 {
 
 	int insertProjectMember(Map<String, String> param);
 
-	List<Member> selectMemberListByDeptCode(Member memberLoggedIn);
+	List<Member> selectMemberListByManagerId(String projectWriter);
 
 	int insertDefaultWorkList(Map<String, Object> param);
 
@@ -31,7 +31,7 @@ public interface ProjectDAO2 {
 
 	Member selectOneProjectManager(String projectWriter);
 
-	List<Member> selectProjectManagerByDept(String projectWriter);
+	List<Member> selectProjectManagerByDept(String projectManager);
 
 	Work selectOneWorkForSetting(int workNo);
 
@@ -52,5 +52,7 @@ public interface ProjectDAO2 {
 	List<Member> selectProjectMemberIdList(int projectNo);
 
 	int updateProjectQuit(Map<String, String> param);
+
+	int updateProjectManager(Map<String, String> param);
 
 }

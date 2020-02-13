@@ -46,8 +46,8 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	}
 
 	@Override
-	public List<Member> selectMemberListByDeptCode(Member memberLoggedIn) {
-		return sqlSession.selectList("project.selectMemberListByDeptCode", memberLoggedIn);
+	public List<Member> selectMemberListByManagerId(String projectWriter) {
+		return sqlSession.selectList("project.selectMemberListByManagerId", projectWriter);
 	}
 
 	@Override
@@ -76,8 +76,8 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	}
 
 	@Override
-	public List<Member> selectProjectManagerByDept(String projectWriter) {
-		return sqlSession.selectList("project.selectProjectManagerByDept",projectWriter);
+	public List<Member> selectProjectManagerByDept(String projectManager) {
+		return sqlSession.selectList("project.selectProjectManagerByDept",projectManager);
 	}
 
 	@Override
@@ -132,6 +132,10 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	public int updateProjectQuit(Map<String, String> param) {
 		return sqlSession.update("project.updateProjectQuit", param);
 	}
-	
+
+	@Override
+	public int updateProjectManager(Map<String, String> param) {
+		return sqlSession.update("project.updateProjectManager",param);
+	}
 
 }

@@ -66,20 +66,20 @@ public class ProjectController2 {
 		return mav;
 	}
 	
-	@RequestMapping("/project/projectDeptMember.do")
+	@RequestMapping("/project/projectTeamMember.do")
 	@ResponseBody
-	public List<Member> projectDeptMember(HttpSession session){
+	public List<Member> projectTeamMember(HttpSession session){
 		List<Member> list = null;
 		try {
-			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-			list = projectService.selectMemberListByDeptCode(memberLoggedIn);
 			
-//			logger.debug("list@controller2={}",list);
+			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+			String projectWriter = memberLoggedIn.getMemberId();
+			list = projectService.selectMemberListByManagerId(projectWriter);
+			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
-			throw new ProjectException("부서별 프로젝트 멤버 조회 오류!");
+			throw new ProjectException("팀별 프로젝트 멤버 조회 오류!");
 		}
-		
 		return list;
 	}
 	
@@ -111,13 +111,14 @@ public class ProjectController2 {
 		
 		try {
 			//프로젝트 팀원 리스트에 팀장 포함이면 true, 제외하면 false
-			boolean isIncludeManager = false;
+			boolean isIncludeManager = true;
 			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
 			
-			Member pm = projectService.selectMemberOneByMemberId(p.getProjectWriter());
+			//프로젝트 관리자 멤버 객체
+			Member pwriter = projectService.selectMemberOneByMemberId(p.getProjectWriter());
 			
 			mav.addObject("project", p);
-			mav.addObject("projectManager", pm);
+			mav.addObject("projectWriter", pwriter);
 			mav.setViewName("/project/projectSettingSideBar");
 			
 		}catch(Exception e){
@@ -132,9 +133,9 @@ public class ProjectController2 {
 	public List<Member> projectManagerSetting(HttpServletRequest request){
 		List<Member> managerList = null;
 		try {
-			String projectWriter = request.getParameter("projectWriter");
+			String projectManager = request.getParameter("projectManager");
 			
-			managerList = projectService.selectProjectManagerByDept(projectWriter);
+			managerList = projectService.selectProjectManagerByDept(projectManager);
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -158,12 +159,11 @@ public class ProjectController2 {
 				//해당 프로젝트 팀원 리스트(팀장 제외되어있음)
 				List<Member> projectMemberList = p.getProjectMemberList();
 				
-				//item리스트에 뿌려질 팀장과 같은 부서 팀원 리스트(팀장 제외)
-				Member pm = projectService.selectMemberOneByMemberId(p.getProjectWriter());
-				List<Member> deptMemberList = projectService.selectMemberListByDeptCode(pm);
+				//item리스트에 뿌려질 팀장과 같은 팀 내 사원 리스트
+				List<Member> teamMemberList = projectService.selectMemberListByManagerId(p.getProjectWriter());
 				
 				map.put("projectMemberList", projectMemberList);
-				map.put("deptMemberList", deptMemberList);
+				map.put("teamMemberList", teamMemberList);
 				
 			}catch(Exception e) {
 				logger.error(e.getMessage(), e);
@@ -287,7 +287,7 @@ public class ProjectController2 {
 		try {
 			
 			int result = projectService.updateProjectMember(updateMemberStr, projectNo);
-			boolean isUpdated = result==0?false:true;
+			boolean isUpdated = result>0?true:false;
 			map.put("isUpdated",isUpdated );
 			
 		}catch(Exception e) {
@@ -297,5 +297,70 @@ public class ProjectController2 {
 		return map;
 	}
 	
+	@RequestMapping("/project/updateProjectManager.do")
+	@ResponseBody
+	public Map<String, Object> updateProjectManager(@RequestParam String updateManager, @RequestParam int projectNo){
+		Map<String, Object> map = new HashMap<>();
+		
+		try {
+			Map<String, String> param = new HashMap<>();
+			param.put("updateManager", updateManager);
+			param.put("projectNo", Integer.toString(projectNo));
+			
+			logger.debug("updateManager={}",updateManager);
+			logger.debug("projectNo={}",projectNo);
+			
+			int result = projectService.updateProjectManager(param);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated );
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 관리자 수정 오류!");
+		}
+		return map;
+	}
 	
+	@RequestMapping("/project/quitProject.do")
+	public ModelAndView quitProject(@RequestParam int projectNo, ModelAndView mav, HttpSession session) {
+		
+		try{
+			Member m = (Member)session.getAttribute("memberLoggedIn");
+			String memberId = m.getMemberId();
+			
+			Map<String, String> param = new HashMap<>();
+			param.put("projectNo", Integer.toString(projectNo));
+			param.put("projectMember", memberId);
+			param.put("quitYN", "Y");
+			
+			int result = projectService.updateProjectQuit(param);
+			
+			mav.addObject("msg", result>0?"성공적으로 처리되었습니다.":"처리를 실패하었습니다.");
+			mav.addObject("loc","/project/projectList.do");
+			mav.setViewName("common/msg");
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 나가기 오류!");
+		}
+		return mav;
+	}
+	
+	@RequestMapping("/project/updateWorkMember.do")
+	@ResponseBody
+	public Map<String, Object> updateWorkMember(@RequestParam String updateWorkMemberStr, @RequestParam int workNo) {
+			Map<String, Object> map = new HashMap<>();
+		try {
+			int result = projectService.updateWorkMember(updateWorkMemberStr, workNo);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated );
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 팀원 수정 오류!");
+		}
+		return map;
+	}
 }
