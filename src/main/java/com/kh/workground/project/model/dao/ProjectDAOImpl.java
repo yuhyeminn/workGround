@@ -107,8 +107,8 @@ public class ProjectDAOImpl implements ProjectDAO {
 	}
 
 	@Override
-	public int insertWorklist(Map<String, Object> param) {
-		return sqlSession.insert("project.insertWorklist", param);
+	public int insertWorklist(Worklist wl) {
+		return sqlSession.insert("project.insertWorklist", wl);
 	}
 
 	@Override
@@ -141,5 +141,19 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.selectList("project.selectWorkListBySearchKeyword", param);
 	}
 
+	@Override
+	public int deleteWork(int workNo) {
+		return sqlSession.delete("project.deleteWork", workNo);
+	}
+
+	@Override
+	public String selectProjectWriter(int projectNo) {
+		return sqlSession.selectOne("project.selectProjectWriter", projectNo);
+	}
+
+	@Override
+	public Worklist selectWorklistOne(int worklistNo) {
+		return sqlSession.selectOne("project.selectWorklistOne", worklistNo);
+	}
 
 }

@@ -45,7 +45,7 @@ public interface ProjectDAO {
 
 	int deleteProjectImportant(int projectImportantNo);
 
-	int insertWorklist(Map<String, Object> param);
+	int insertWorklist(Worklist wl);
 
 	int deleteWorklist(int worklistNo);
 
@@ -59,6 +59,11 @@ public interface ProjectDAO {
 
 	List<Work> selectWorkListBySearchKeyword(Map<String, Object> param);
 
+	int deleteWork(int workNo);
+
+	String selectProjectWriter(int projectNo);
+
+	Worklist selectWorklistOne(int worklistNo);
 
 
 }

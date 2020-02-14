@@ -144,11 +144,11 @@
 		select * from view_member where member_id = #{memberId}
 	</select>
 	
-	<!-- projectView 뿌리기 : 업무리스트번호로 진행 중인 업무 수 조회 -->
+	<!-- projectView 뿌리기 : 업무리스트번호로 완료된 업무 수 조회 -->
 	<select id="selectTotalWorkCompleteYn" resultType="_int">
 		select count(*) total_work_complete_yn
 		from worklist WL left join Work W on WL.worklist_no = W.worklist_no
-		where WL.worklist_no = #{worklistNo} and W.work_complete_yn = 'N'
+		where WL.worklist_no = #{worklistNo} and W.work_complete_yn = 'Y'
 	</select>
 	
 	<!-- projectView 뿌리기 : 프로젝트 중요표시 여부 조회 -->
@@ -176,6 +176,9 @@
 	<!-- addWorklist.do: 업무리스트 추가-->
 	<insert id="insertWorklist" parameterType="hashMap">
 		insert into worklist values(seq_worklist.nextval, #{projectNo}, #{worklistTitle})
+		<selectKey keyProperty="worklistNo" resultType="_int" order="AFTER">
+			select seq_worklist.currval from dual
+		</selectKey>
 	</insert>
 	
 	<!-- deleteWorklist.do: 업무리스트 삭제-->
@@ -205,10 +208,19 @@
                              	  left join view_member VM on WCM.charged_member_id = VM.member_id
 	</select>
 	
+	<!-- updateChklistCompleteYn.do: 체크리스트 완료여부 업데이트 -->
 	<update id="updateChklistCompleteYn" parameterType="hashMap">
-		update checklist set complete_yn = #{completeYn} where checklist_no = #{checklistNo}
+		update checklist set complete_yn = #{completeYn} 
+		<if test="endDate!=null">
+			, checklist_enddate = to_date(#{endDate}, 'yyyy-mm-dd')
+		</if>
+		<if test="endDate==null">
+			, checklist_enddate = null
+		</if>
+		where checklist_no = #{checklistNo}
 	</update>
 	
+	<!-- searchWork.do: 업무 검색 -->
 	<select id="selectWorkListBySearchKeyword" parameterType="hashMap" resultMap="workListCollectionMap">
 		select V.*, WCM.work_charged_members_no, VM.*
 		from (select * from view_workTag where worklist_no = #{worklistNo}
@@ -217,11 +229,20 @@
 		where work_title like '%'||#{keyword}||'%'
 	</select>
 	
+	<!-- deleteWork.do: 업무 삭제 -->
+	<delete id="deleteWork">
+		delete from work where work_no = #{workNo}
+	</delete>
 	
+	<!-- insertWorklist.do: 업무리스트 추가후 ajax로 뿌릴 때 프로젝트 작성자 필요 -->
+	<select id="selectProjectWriter" resultType="string">
+		select project_writer from project where project_no = #{projectNo}
+	</select>
 	
-	
-	
-	
+	<!-- insertWork.do: 업무 추가후 ajax로 뿌릴 때 업무리스트 통채로 필요-->
+	<select id="selectWorklistOne" resultType="worklist">
+		select * from worklist where worklist_no = #{worklistNo}
+	</select>
 	
 	
 	
