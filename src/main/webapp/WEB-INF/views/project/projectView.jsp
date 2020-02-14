@@ -32,6 +32,7 @@ $(()=>{
     goTabMenu(); //서브헤더 탭 링크 이동
     
     setting(); //설정창- 나중에 수정
+    
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -561,7 +562,7 @@ function checklist(){
     		else{
     			let chkbool = false;
     			workChargedMemIdArr.forEach(id=>{
-    				if(loggedInMemberId===id) bool = true;
+    				if(loggedInMemberId===id) chkbool = true;
     			});
     			
     			if(chkbool===true || loggedInMemberId===projectAdminId || loggedInMemberId==='admin'){
@@ -748,6 +749,7 @@ function setting(){
         if($side.hasClass('open')) {
         	$side.stop(true).animate({right:'0px'});
         }
+        console.log($("#workEndDate").val());
     });
 }
 </script>		
