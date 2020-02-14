@@ -420,14 +420,12 @@ function clubFunc(){
 								</div>
 								<div class="modal-body">
 
-									<div id="modal-image-slider" class="carousel slide"
+									<div id="modal-image-slider-${club.clubNo }" class="carousel slide"
 										data-ride="carousel">
 
 										<div class="carousel-inner">
-
-											<c:choose>
-
-												<c:when
+	
+												<c:if
 													test="${not empty club.clubPhotoList[0].clubPhotoRenamed}">
 
 													<div class="carousel-item active">
@@ -435,17 +433,16 @@ function clubFunc(){
 															src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 															alt="First slide">
 													</div>
-												</c:when>
+												</c:if>
 
-												<c:otherwise>
+												<c:if test="${empty club.clubPhotoList[0].clubPhotoRenamed}">
 													<div class="carousel-item active">
 														<img class="d-block w-100"
 															src="${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"
 															alt="First slide">
 													</div>
 
-												</c:otherwise>
-											</c:choose>
+												</c:if>
 											<c:if
 												test="${not empty club.clubPhotoList[1].clubPhotoRenamed}">
 												<div class="carousel-item">
@@ -464,11 +461,11 @@ function clubFunc(){
 											</c:if>
 										</div>
 
-										<a class="carousel-control-prev" href="#modal-image-slider"
+										<a class="carousel-control-prev" href="#modal-image-slider-${club.clubNo }"
 											role="button" data-slide="prev"> <span
 											class="carousel-control-prev-icon" aria-hidden="true"></span>
 											<span class="sr-only">Previous</span>
-										</a> <a class="carousel-control-next" href="#modal-image-slider"
+										</a> <a class="carousel-control-next" href="#modal-image-slider-${club.clubNo }"
 											role="button" data-slide="next"> <span
 											class="carousel-control-next-icon" aria-hidden="true"></span>
 											<span class="sr-only">Next</span>

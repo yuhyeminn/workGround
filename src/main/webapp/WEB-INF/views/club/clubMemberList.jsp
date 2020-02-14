@@ -137,13 +137,7 @@ function clubView(clubNo) {
 	location.href = "${pageContext.request.contextPath}/club/clubView.do?clubNo="+clubNo;
 }
 
-function memberList(clubNo){
-	location.href = "${pageContext.request.contextPath}/club/clubMemberList.do?clubNo="+clubNo;
-}
 
-function clubFileList(clubNo) {
-	location.href = "${pageContext.request.contextPath}/club/clubFileList.do?clubNo="+clubNo;
-}
 </script>
 
 <nav id="navbar-club"
@@ -171,10 +165,10 @@ function clubFileList(clubNo) {
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button" onclick="clubView('${clubNo}');">동호회</button></li>
-		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${clubNo}'">일정</button></li>
+		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+${clubNo}">일정</button></li>
 			<li id="tab-member" class="nav-item">
 			<button type="button" onclick="memberList('${clubNo}');">동호회멤버</button></li>
-		<li id="tab-attachment" class="nav-item"><button type="button" onclick="clubFileList('${clubNo}');">파일</button></li>
+		<li id="tab-attachment" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubFileList.do?clubNo='+${clubNo}");">파일</button></li>
 	</ul>
 
 	<!-- Right navbar links -->

@@ -466,10 +466,10 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 											   ClubPlanAttendee clubPlanAttendee, 
 											   @RequestParam("clubNo") int clubNo, 
 											   HttpServletRequest request) {
-//		logger.debug("clubPlanAttendee={}", clubPlanAttendee);
-//		logger.debug("clubNo={}", clubNo);
+		logger.debug("clubPlanAttendee={}", clubPlanAttendee);
+		logger.debug("clubNo={}", clubNo);
 		Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
-//		logger.debug("memberLoggedIn={}", memberLoggedIn);
+		logger.debug("memberLoggedIn={}", memberLoggedIn);
 		
 		mav.addObject("loc", "/club/clubView.do?clubNo="+clubNo);
 		

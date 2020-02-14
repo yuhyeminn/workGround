@@ -349,6 +349,7 @@ public class ClubController {
 			
 			mav.addObject("calString", calString);
 			mav.addObject("managerYN", clubMember.getClubManagerYN());
+			mav.addObject("clubNo", clubNo);
 			
 
 		} catch (Exception e) {
