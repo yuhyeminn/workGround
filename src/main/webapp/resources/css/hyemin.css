@@ -326,7 +326,7 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .work-setting-tag .btn{margin-right: .1rem;border-radius: 1rem;color: #fff !important;font-size: .6rem;font-weight: bold;line-height: 1.3;}
   
   /*업무 설정 체크리스트*/
-  .checklist-box-row .work-checklist{width:100%;font-size:14px;}
+  .checklist-box-row .work-checklist{font-size:14px;}
   .checklist-box-row .tbl-checklist th{height: 50px;padding: 5px;font-size: 20px;}
   .checklist-box-row .tbl-checklist td{font-size: 14px;}
   .checklist-box-row .tbl-checklist td img{width:25px;margin-right: .5rem;}
