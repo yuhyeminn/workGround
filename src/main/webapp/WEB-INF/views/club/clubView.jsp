@@ -76,6 +76,24 @@ left: .5rem;
 .comment-submit:hover, .comment-reply:hover{background: #007bff;}
 .comment-delete:hover{background: #dc3545;}
 .comment-level2{margin-left: 3rem;}
+
+.control-sidebar {
+      display: block;
+      top: 92px !important;
+      overflow: hidden;
+      background-color: #fff;
+      box-shadow: -1px 6px 10px 0 rgba(0, 0, 0, .2);
+      color: #696f7a;
+    }
+
+.control-sidebar,
+.control-sidebar::before {
+  bottom: calc(3.5rem + 1px);
+  display: none;
+  right: -475px;
+  width: 475px;
+  transition: right .3s ease-in-out, display .3s ease-in-out;
+}
 </style>
 
 <script>
@@ -283,7 +301,7 @@ function fileDownload(oName, rName, clubNo) {
 	<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
 		<!-- 동호회 대화 -->
 		<li class="nav-item">
-			<button type="button" class="btn btn-block btn-default btn-xs nav-link">
+			<button type="button" class="btn btn-block btn-default btn-xs nav-link" data-widget="control-sidebar" data-slide="true">
 				<i class="far fa-comments"></i> 동호회 대화
 			</button>
 		</li>
@@ -997,5 +1015,104 @@ function fileDownload(oName, rName, clubNo) {
 </div>
 <!-- /.content-wrapper -->
 
+<aside class="control-sidebar project-setting" style="display: block;">
+    <!-- Control sidebar content goes here -->
+    <div class="p-3">
+      <div class="card-header">
+                            <div class="post">
+                                <div class="user-block">
+                                    <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="user image">
+                                    <span class="username">
+                                        <h3>동호회이름</h3>
+                                    </span>
+                                </div>
+                            </div>
+                        </div><!-- /.card-header -->
+                        <div class="card-body">        
+                            <!-- Conversations are loaded here -->
+                            <div class="direct-chat-messages" style="height:25rem">
+                            <!-- Message. Default to the left -->
+                                <div class="direct-chat-msg">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-left">다른동호회멤버&nbsp;&nbsp;</span>
+                                        <span class="direct-chat-timestamp float-left">2:00 pm</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        Is this template really for free? That's unbelievable!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div>
+                                <!-- /.direct-chat-msg -->
+                        
+                                <!-- Message to the right -->
+                                <div class="direct-chat-msg right">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-right">나</span>
+                                        <span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user2-160x160.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        You better believe it!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div> 
 
+                                <div class="direct-chat-msg">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-left">이주현&nbsp;&nbsp;</span>
+                                        <span class="direct-chat-timestamp float-left">2:00 pm</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        Is this template really for free? That's unbelievable!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div>
+
+                                <div class="direct-chat-msg right">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-right">김효정</span>
+                                        <span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user2-160x160.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        You better believe it!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div> 
+
+                                <div class="direct-chat-msg">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-left">이주현&nbsp;&nbsp;</span>
+                                        <span class="direct-chat-timestamp float-left">2:00 pm</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        Is this template really for free? That's unbelievable!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div>
+                                <!-- /.direct-chat-msg -->
+                            </div><!-- /.direct-chat-messages -->
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-body pad">
+                            <div class="mb-3">
+                                <textarea class="textarea" placeholder="Place some text here"
+                                        style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                            </div>
+                        </div>
+    </div>
+  </aside>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
