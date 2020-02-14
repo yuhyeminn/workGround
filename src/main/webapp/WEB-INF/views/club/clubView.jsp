@@ -941,7 +941,7 @@ function fileDownload(oName, rName, clubNo) {
 										  		</div>
 										  	</div>
 										  	<div class="input-group">
-								                <span class="fname">${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""}</span>
+								                <span class="fname">기존 첨부파일 : ${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""}</span>
 								                <input type="hidden" name="clubNoticeOriginal" value="${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""} "/>
 								                <input type="hidden" name="clubNoticeRenamed" value="${clubNotice.clubNoticeRenamed!=null?clubNotice.clubNoticeRenamed:""} "/>
 											</div>
