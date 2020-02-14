@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.service.ClubService;
+import com.kh.workground.club.model.service.ClubService2;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubPlan;
@@ -32,6 +33,8 @@ public class ClubController {
 
 	@Autowired
 	ClubService clubService;
+	@Autowired
+	ClubService2 clubService2;
 
 	@RequestMapping("/club/clubList.do")
 	public ModelAndView clubList(ModelAndView mav, HttpSession session) {
@@ -283,7 +286,7 @@ public class ClubController {
 	}
 
 	@RequestMapping("/club/clubCalendar.do")
-	public ModelAndView selectClubSchedule(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo) {
+	public ModelAndView selectClubSchedule(ModelAndView mav,HttpSession session, @RequestParam(value = "clubNo") int clubNo) {
 		List<ClubPlan> clubPlanList = null;
 
 		try {
@@ -316,9 +319,9 @@ public class ClubController {
 
 				String color = "";
 				if ("예정".equals(clubPlanList.get(i).getClubPlanState()))
-					color = "#007bff";
-				else if ("완료".equals(clubPlanList.get(i).getClubPlanState()))
 					color = "#239d3f";
+				else if ("완료".equals(clubPlanList.get(i).getClubPlanState()))
+					color = "#eef946";
 				else if ("취소".equals(clubPlanList.get(i).getClubPlanState()))
 					color = "#ed5a5a";
 
@@ -335,8 +338,18 @@ public class ClubController {
 
 			}
 			calString += "]";
-
+			
+			//clubNo를 가지고 club_member의 manager_YN이 Y인지 관리자 여부 판단하기
+			Map param = new HashMap<>();
+			Member memberLoggedIn = (Member) session.getAttribute("memberLoggedIn");
+			param.put("memberId", memberLoggedIn.getMemberId());
+			param.put("clubNo", clubNo);
+			
+			ClubMember clubMember = clubService2.selectOneClubMember(param);
+			
 			mav.addObject("calString", calString);
+			mav.addObject("managerYN", clubMember.getClubManagerYN());
+			
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

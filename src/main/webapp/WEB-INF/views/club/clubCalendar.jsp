@@ -138,7 +138,7 @@ $(function () {
     	  var noAndTitle = info.event.title;
     	  var arr = noAndTitle.split(",");
     	  var clubPlanNo = arr[0];
-    	  alert("tlf");
+    	
     	  $.ajax({
     		  
     		  url: "${pageContext.request.contextPath}/club/selectOneClubPlan.do?",
@@ -193,7 +193,7 @@ $(function () {
 									 +'<input type="hidden" name="clubNo" value='+data.clubPlan.clubNo+' />'
 									 +'<button type="submit" class="btn btn-info float-right">\<i class="fas fa-plus"></i>\</button>\</form>';
 					
-					alert(data.clubPlan.memberId);
+					
 					if('${memberLoggedIn}' != null && data.clubPlan.memberId=='${memberLoggedIn.memberId}'){
 					clubPlanViewModal+='<button type="button" class="btn btn-info" data-target="#plan-modify'+data.clubPlan.clubPlanNo+'" data-dismiss="modal" data-toggle="modal">수정</button>'
 									 +'<form name="deleteClubPlanFrm" action="${pageContext.request.contextPath }/club/deleteClubPlan.do" method="POST">'
@@ -341,15 +341,15 @@ $(function () {
 
 		<!-- Middle navbar links -->
 		<ul id="navbar-tab" class="navbar-nav ml-auto">
-			<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
-			<li id="tab-calendar" class="nav-item"><button type="button">일정</button></li>
+			<li id="tab-club" class="nav-item"><button type="button" onClick="loaction.href='${pageContext.request.contextPath }/club/clubView.do?clubNo='+'${club.clubNo}'"">동호회</button></li>
+			<li id="tab-calendar" class="nav-item"><button type="button" location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${club.clubNo}'>일정</button></li>
 			<c:if
-				test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
+				test="${memberLoggedIn.memberId == 'admin' or fn:contains(managerYN,'Y')}">
 				<li id="tab-member" class="nav-item">
 					<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button>
 				</li>
 			</c:if>
-			<li id="tab-attachment" class="nav-item"><button type="button">파일</button></li>
+			<li id="tab-attachment" class="nav-item"><button type="button" onclick="clubFileList('${clubNo}');">파일</button></li>
 		</ul>
 
 		<!-- Right navbar links -->

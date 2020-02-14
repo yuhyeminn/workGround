@@ -154,6 +154,8 @@ function clubFunc(){
 		    	
 		    	allClubHtml+='<div class="category">'
 		    				+'<span class="club-category">'+list.clubCategory+'</span></div></div></div></div>';
+		    				
+
 	
 		    });
 			//새 동호회 부분

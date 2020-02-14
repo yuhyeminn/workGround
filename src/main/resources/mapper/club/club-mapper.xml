@@ -41,6 +41,7 @@
 			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'Y') order by ${sort} asc) C
 		left join club_photo P on C.club_no = P.club_no
 	</select>
+	
 	<select id="selectAllStandByClubList" resultMap="clubCollectionMap">
 		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
 		from (select * from club where club_no in
@@ -151,6 +152,7 @@
 			<result column="member_name" property="memberName"></result>
 		</collection>
 	</resultMap>
+	
 
 	<!-- sh end -->
 

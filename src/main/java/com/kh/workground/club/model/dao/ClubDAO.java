@@ -39,6 +39,9 @@ public interface ClubDAO {
 
 	ClubPlan selectOneClubPlan(int clubPlanNo);
 
+	
+
+	
 
 
 }
