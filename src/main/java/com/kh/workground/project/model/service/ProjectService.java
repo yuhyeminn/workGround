@@ -28,4 +28,8 @@ public interface ProjectService {
 	int insertWork(Map<String, Object> param);
 
 	Work selectWorkOne();
+
+	int updateChklistCompleteYn(Map<String, Object> param);
+
+	Project searchWork(int projectNo, String keyword);
 }

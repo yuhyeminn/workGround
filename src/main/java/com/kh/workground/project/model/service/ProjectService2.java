@@ -23,4 +23,10 @@ public interface ProjectService2 {
 
 	Member selectMemberOneByMemberId(String memberId);
 
+	int updateStatusCode(Map<String, Object> param);
+
+	int updateProjectDate(Map<String, String> param);
+
+	int updateProjectMember(String updateMemberStr, int projectNo);
+
 }
