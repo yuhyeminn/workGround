@@ -338,18 +338,18 @@ $(function () {
 				</div>
 			</div>
 		</form>
-
+		
 		<!-- Middle navbar links -->
 		<ul id="navbar-tab" class="navbar-nav ml-auto">
-			<li id="tab-club" class="nav-item"><button type="button" onClick="loaction.href='${pageContext.request.contextPath }/club/clubView.do?clubNo='+'${club.clubNo}'"">동호회</button></li>
-			<li id="tab-calendar" class="nav-item"><button type="button" location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${club.clubNo}'>일정</button></li>
+			<li id="tab-club" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubView.do?clubNo='+${clubNo}">동호회</button></li>
+			<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+${clubNo}">일정</button></li>
 			<c:if
 				test="${memberLoggedIn.memberId == 'admin' or fn:contains(managerYN,'Y')}">
 				<li id="tab-member" class="nav-item">
-					<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button>
+					<button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubMemberList.do?clubNo='+${clubNo}">동호회멤버</button>
 				</li>
 			</c:if>
-			<li id="tab-attachment" class="nav-item"><button type="button" onclick="clubFileList('${clubNo}');">파일</button></li>
+			<li id="tab-attachment" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubFileList.do?clubNo='+${clubNo}">파일</button></li>
 		</ul>
 
 		<!-- Right navbar links -->

@@ -121,7 +121,7 @@
 			 or A.job_title like '%'|| #{keyword} || '%'
 	</select>
 	<select id="selectOneClubPlan" resultMap="clubPlanCollectionMap">
-		select P.*,  A.*, M.member_id, M.renamed_filename, M.member_name
+		select P.*,  A.*, M.member_id as member_id_2, M.renamed_filename, M.member_name
 		from (select * from club_plan) P
 		left join club_plan_attendee A on A.club_plan_no = P.club_plan_no
 		left join club_member C on A.club_member_no = C.club_member_no
@@ -148,7 +148,7 @@
 			<result column="club_member_no" property="clubMemberNo"></result>
 			<result column="club_plan_attendee_date" property="clubPlanAttendeeDate"></result>
 			<result column="renamed_filename" property="renamedFileName"></result>
-			<result column="member_id" property="memberId"></result>
+			<result column="member_id_2" property="memberId"></result>
 			<result column="member_name" property="memberName"></result>
 		</collection>
 	</resultMap>
