@@ -213,7 +213,9 @@
 	<update id="clubNoticeUpdate">
 		update club_notice 
 		set club_notice_title = #{clubNoticeTitle}, 
-			club_notice_content = #{clubNoticeContent} 
+			club_notice_content = #{clubNoticeContent} , 
+			club_notice_original = #{clubNoticeOriginal}, 
+			club_notice_renamed= #{clubNoticeRenamed} 
 		where club_notice_no = #{clubNoticeNo}
 	</update>
 	

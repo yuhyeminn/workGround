@@ -90,7 +90,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		boolean isManager = false;
 //		logger.debug("clubManagerYN={}", clubMember.getClubManagerYN());
-		if('Y'==clubMember.getClubManagerYN().charAt(0)) {
+		if("admin".equals(memberLoggedIn.getMemberId()) || 'Y'==clubMember.getClubManagerYN().charAt(0)) {
 			isManager = true;
 		}
 //		logger.debug("isManager={}", isManager);
@@ -194,8 +194,55 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@RequestMapping("/club/clubNoticeUpdate.do")
 	public ModelAndView clubNoticeUpdate(ModelAndView mav, 
-										 ClubNotice clubNotice) {
-//		logger.debug("clubNotice={}", clubNotice);
+										 ClubNotice clubNotice, 
+										 @RequestParam(value="upFile", required=false) MultipartFile upFile, 
+										 String delFileChk, 
+										 HttpServletRequest request) {
+		logger.debug("clubNotice={}", clubNotice);
+		logger.debug("delFileChk={}", delFileChk);
+		logger.debug("delFileChk={}", delFileChk);
+		
+		String saveDirectory = request.getServletContext().getRealPath("/resources/upload/club/"+clubNotice.getClubNo());
+
+		//동적으로 directory 생성하기
+		File dir = new File(saveDirectory);
+		if(dir.exists() == false)
+			dir.mkdir();
+		if(!"".equals(clubNotice.getClubNoticeOriginal())) {
+			//신규첨부파일이 있는 경우, 기존첨부파일 삭제
+			if(!"".equals(upFile.getOriginalFilename())) {
+				File delFile = new File(saveDirectory, clubNotice.getClubNoticeRenamed());
+				boolean result = delFile.delete();
+				logger.debug("기존첨부파일삭제: {}", result?"성공!":"실패!");
+				
+				clubNotice.setClubNoticeOriginal(upFile.getOriginalFilename());
+				String ext = clubNotice.getClubNoticeOriginal().substring(clubNotice.getClubNoticeOriginal().lastIndexOf("."));
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+				int rndNum = (int)(Math.random()*1000);
+				clubNotice.setClubNoticeRenamed(sdf.format(new Date())+"_"+rndNum+ext);
+			}
+			//신규첨부파일이 없는 경우: 기존파일 삭제
+			else if(delFileChk!=null) {
+				File delFile = new File(saveDirectory, clubNotice.getClubNoticeRenamed());
+				boolean result = delFile.delete();
+				logger.debug("기존첨부파일삭제: {}", result?"성공!":"실패!");
+				
+			}
+			//신규첨부파일이 없는 경우: 기존파일 유지
+			else {
+				logger.debug("신규첨부파일이 없는 경우 : 기존파일 유지");
+				
+			}
+			
+			try {
+				upFile.transferTo(new File(saveDirectory+"/"+clubNotice.getClubNoticeRenamed()));
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
 		
 		int result = clubService2.clubNoticeUpdate(clubNotice);
 		

@@ -236,6 +236,7 @@ function clubFileList(clubNo) {
                     </tr>
                     </c:forEach>
                     <c:forEach items="${clubNoticeList }" var="clubNotice">
+                    <c:if test="${clubNotice.clubNoticeOriginal ne null }">
                     <tr>
                         <td>
                           <button type="button" class="btn btn-block btn-outline-primary btn-xs btn-admin">공지</button>
@@ -246,6 +247,7 @@ function clubFileList(clubNo) {
                         <td>${clubNotice.clubNoticeOriginal}</td>
                         <td>${clubNotice.clubNoticeDate}</td>
                     </tr>
+                    </c:if>
                     </c:forEach>
                 </tbody>
             </table>    
