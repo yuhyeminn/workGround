@@ -272,7 +272,7 @@ function fileDownload(oName, rName, clubNo) {
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
 		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${club.clubNo}'">일정</button></li>
-		<c:if test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
+		<c:if test="${memberLoggedIn.memberId == 'admin' or isManager}">
 			<li id="tab-member" class="nav-item">
 			<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button></li>
 		</c:if>
@@ -718,13 +718,15 @@ function fileDownload(oName, rName, clubNo) {
 												<script>
 												$(()=> {
 													$("#clubPlanUpdateDate${vs.index }").daterangepicker({
-														startDate: ${clubPlan.clubPlanStart}, 
 														singleDatePicker: true,
 													    showDropdowns: true, 
+													    startOfWeek: 'monday', 
+													    setDate: '${clubPlan.clubPlanStart}', 
 													    locale: {
-														    format: 'YYYY-MM-DD'
+														    format: 'YYYY-MM-DD' 
 													    }
 													  });
+													/* $("#clubPlanUpdateDate${vs.index }").daterangepicker('setDate', ${clubPlan.clubPlanStart}); */
 												});
 												</script>
 												<div class="form-group">
@@ -940,8 +942,8 @@ function fileDownload(oName, rName, clubNo) {
 										  	</div>
 										  	<div class="input-group">
 								                <span class="fname">${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""}</span>
-								                <input type="hidden" name="noticeOriginalFileName" value="${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""} "/>
-								                <input type="hidden" name="noticeRenamedFileName" value="${clubNotice.clubNoticeRenamed!=null?clubNotice.clubNoticeRenamed:""} "/>
+								                <input type="hidden" name="clubNoticeOriginal" value="${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""} "/>
+								                <input type="hidden" name="clubNoticeRenamed" value="${clubNotice.clubNoticeRenamed!=null?clubNotice.clubNoticeRenamed:""} "/>
 											</div>
 											<div class="input-group">
 												<c:if test="${clubNotice.clubNoticeRenamed ne null }">
