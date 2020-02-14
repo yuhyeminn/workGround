@@ -385,7 +385,6 @@
 		where V.work_no = #{workNo}
 	</select>
 	
-<<<<<<< HEAD
 	<!-- workSetting.do : 업무별 attachmentList조회 (작성자 멤버 객체 까지)-->
 	<select id="selectAttachmentListByWorkNo" resultMap="attachmentMemberMap">
 		select A.*, VM.*
@@ -468,6 +467,4 @@
 			<result column="renamed_filename" property="renamedFileName"></result>
 			<result column="project_quit_yn" property="projectQuitYn"></result>
 	</resultMap>
-=======
->>>>>>> project
 </mapper>
