@@ -1,6 +1,8 @@
 package com.kh.workground.project.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,6 @@ import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
 import com.kh.workground.project.model.vo.Project;
-import com.kh.workground.project.model.vo.Work;
 import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
@@ -265,10 +266,6 @@ public class ProjectController {
 			Worklist wl = projectService.selectWorklistOne(worklistNo);
 			wl.setProjectWriter(projectWriter);
 			
-			logger.debug("/////////////////////////진행중인 업무수 잘 나오는가!////////////////////////////////");
-			logger.debug("totalWorkCompletYn={}", wl.getTotalWorkCompletYn());
-			
-			
 			mav.addObject("wl", wl);
 			mav.setViewName("/project/addWorkAjax");
 			
@@ -284,19 +281,24 @@ public class ProjectController {
 	@ResponseBody
 	public Map<String, Integer> updateChklistCompleteYn(@RequestParam String completeYn, @RequestParam int checklistNo) {
 		Map<String, Integer> map = new HashMap<>();
-		logger.debug("completeYn={}", completeYn);
-		logger.debug("checklistNo={}", checklistNo);
 		
 		try {
 			Map<String, Object> param = new HashMap<>();
 			param.put("checklistNo", checklistNo);
 			
 			//체크리스트 완료하는 경우
-			if("N".equals(completeYn)) 
+			if("N".equals(completeYn)) {
+				Date today = new Date();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				
 				param.put("completeYn", "Y");
+				param.put("endDate", sdf.format(today));
+			}
 			//체크리스트 완료 해제하는 경우
-			else 
+			else {
 				param.put("completeYn", "N");
+				param.put("endDate", null);
+			}
 				
 			//업무로직
 			int result = projectService.updateChklistCompleteYn(param);
@@ -333,8 +335,6 @@ public class ProjectController {
 	@ResponseBody
 	public Map<String, Integer> deleteWork(@RequestParam int workNo) {
 		Map<String, Integer> map = new HashMap<>();
-		logger.debug("///////////////////////////////////");
-		logger.debug("workNo={}", workNo);
 		
 		try {
 			//1.업무로직

@@ -177,6 +177,7 @@ create table work(
     constraint ck_wokr_work_complete_yn check (work_complete_yn in ('Y','N')),
     constraint fk_work_work_no_ref foreign key(work_no_ref) references work(work_no) on delete cascade
 );
+--alter table work drop column 
 
 -----------------------------------------------------------------------
 --work테이블 시퀀스 생성
@@ -467,8 +468,11 @@ insert into work values(seq_work.nextval, 4, '기능 정리하기', '기능 정�
 insert into work values(seq_work.nextval, 4, '테이블 설계하기', null, 5, sysdate-4, sysdate-2, null, default, 'WT1', null);
 insert into work values(seq_work.nextval, 4, '깃 클론 하기', 'danbiilee/workGround 클론하세요!', 2, sysdate-4, null, null, default, null, null);
 insert into work values(seq_work.nextval, 4, '.gitignore파일 만들기', null, 1, sysdate-4, sysdate-3, sysdate-3, 'Y', 'WT3', null);
+insert into work values(seq_work.nextval, 4, '완료된 업무 보기', null, 2, sysdate, sysdate, sysdate, 'Y', null, null);
+insert into work values(seq_work.nextval, 5, '테이블 수정 그만', '그만 고치자 제발......', 5, sysdate-3, sysdate+5, sysdate, 'Y', 'WT3', null);
 insert into work values(seq_work.nextval, 5, '테이블 만들기', 'insert문까지 얼른 끝냅시다', 5, sysdate-8, sysdate+2, null, default, 'WT3', null);
-insert into work values(seq_work.nextval, 6, '.gitignore파일 만들기', null, 0, sysdate-4, sysdate-3, sysdate-3, 'Y', 'WT3', 6);
+insert into work values(seq_work.nextval, 6, '완료된 업무 페이지 수정', 'view다시 뿌려야 해...', 5, sysdate-3, sysdate+2, null, default, 'WT1', null);
+insert into work values(seq_work.nextval, 6, '업무 검색기능', null, 0, sysdate-2, sysdate+1, sysdate-1, 'Y', null, null);
 -- 업무 배정된 멤버
 insert into work_charged_members values(seq_work_charged_members.nextval, 1, 'kh2020115');
 insert into work_charged_members values(seq_work_charged_members.nextval, 1, 'kh2020116');

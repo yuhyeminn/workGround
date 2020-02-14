@@ -25,5 +25,5 @@ public class Worklist extends Project implements Serializable {
 	private String worklistTitle;
 	
 	private List<Work> workList; //업무리스트 안의 업무들
-	private int totalWorkCompletYn; //진행중인 업무 수
+	private int completedWorkCnt; //완료된 업무 수
 }

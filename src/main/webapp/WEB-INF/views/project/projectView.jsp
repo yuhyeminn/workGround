@@ -26,6 +26,7 @@ $(()=>{
     addWork(); //새 업무 만들기
     deleteWork(); //업무 삭제하기
     checklist(); //체크리스트 체크
+    openCompletedWork(); //완료된 업무 펼쳐보기
     
     tabActive(); //서브헤더 탭 활성화
     goTabMenu(); //서브헤더 탭 링크 이동
@@ -89,9 +90,16 @@ function searchWork(){
 	let btn = document.querySelector("#btn-searchWork");
 	
 	btn.addEventListener('click', ()=>{
+		let keyword = $(input).val().trim();
+		
+		//유효성 검사
+		if(keyword==""){
+			alert("검색 키워드를 입력해 주세요!");
+		}
+			
 		let data = {
 				projectNo: ${project.projectNo},
-				keyword: input.value,
+				keyword: keyword,
 				memberId: '${memberLoggedIn.memberId}'
 		};
 		$.ajax({
@@ -108,7 +116,7 @@ function searchWork(){
 			error: (x,s,e) => {
 				console.log(x,s,e);
 			}
-		});
+		}); 
 	});
 }
 
@@ -510,7 +518,6 @@ function deleteWork(){
 	}); //end of btnDel click 
 	
 	
-	
 	document.addEventListener('click', ()=>{
 		menu.style.display = 'none';
 	});
@@ -618,6 +625,18 @@ function checklist(){
     		}
     	}); //end of .btn-check click
     }); //end of btnCheckArr.forEach
+}
+
+//완료된 업무 펼쳐보기
+function openCompletedWork(){
+	let $btnShow = $(".btn-showCompletedWork");
+	$btnShow.on('click', function(){
+		let worklistNo = this.value;
+		let wlSection = document.querySelector("#worklist-"+worklistNo);
+		let completed = $(wlSection).find('.workCompleted-wrapper');
+		
+		$(completed).toggleClass('hide');
+	});
 }
 
 //서브헤더 탭 active
@@ -848,6 +867,11 @@ function setting(){
 	                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
                 </div>
                 </c:if>
+                
+                <!-- 진행 중인 업무 -->
+                <div class="worklist-titleInfo-top">
+                    <p>진행 중인 업무 ${fn:length(wl.workList)-wl.completedWorkCnt}개</p>
+                </div>
 
                 <!-- 새 업무 만들기 -->
                 <div class="addWork-wrapper">
@@ -908,175 +932,305 @@ function setting(){
 	                </form>
                 </div>
 
-                <!-- 진행 중인 업무 -->
-                <div class="worklist-titleInfo">
-                	<!-- 완료된 업무가 아닐 때 -->
-                	<c:if test="${wlVs.index!=2}">
-                	<p>진행 중인 업무 ${wl.totalWorkCompletYn}개</p>
-                	</c:if>
-                	<c:if test="${wlVs.index==2}">
-                	<p>완료된 업무 ${wl.totalWorkCompletYn}개</p>
-                	</c:if> 
-                </div>
             </div><!-- /.worklist-title -->
             
             <!-- 업무리스트 컨텐츠 -->
             <div class="worklist-contents">
             	<c:set var="workList" value="${wl.workList}"/>
             	
-            	<c:forEach items="${workList}" var="w" varStatus="wVs">
-            	<c:if test="${(wlVs.index!=2 && w.workCompleteYn=='N') || (wlVs.index==2 && w.workCompleteYn=='Y')}">
-                <!-- 업무 -->
-                <section class="work-item" role="button" tabindex="0" id="${w.workNo}">
-                	<input type="hidden" id="hiddenworklistTitle" value="${wl.worklistTitle}"/>
-                	
-					<!-- 업무배정된 멤버아이디 구하기 -->
-					<c:set var="workCharedMemId" value=""/>
-					<c:forEach items="${w.workChargedMemberList}" var="m" varStatus="wcmVs">
-						<c:set var="workCharedMemId" value="${wcmVs.last?workCharedMemId.concat(m.memberId):workCharedMemId.concat(m.memberId).concat(',')}"/>
-					</c:forEach>
-                	<input type="hidden" class="hiddenWorkChargedMemId" value="${workCharedMemId}"/>
-					            	
-	                <!-- 태그 -->
-	                <c:if test="${w.workTagCode!=null}">
-	                <div class="work-tag">
-	                	<span class="btn btn-xs bg-${w.workTagColor}">${w.workTagTitle}</span>
-	                </div>
-	                </c:if>
-
-	                <!-- 업무 타이틀 -->
-	                <div class="work-title">
-	                    <h6>${w.workTitle}</h6>
-	                    <div class="work-importances">
-	                    <c:set var="point" value="${w.workPoint}" />
-	                    <c:if test="${point>0}">
-		                    <c:forEach var="i" begin="1" end="${point}">
-		                    <span class="importance-dot checked"></span>
-		                    </c:forEach>
-		                    <c:forEach var="i" begin="1" end="${5-point}">
-		                    <span class="importance-dot"></span>
-		                    </c:forEach>
-	                    </c:if>
-	                    <c:if test="${point==0}">
-	                    	<c:forEach var="i" begin="1" end="5">
-		                    <span class="importance-dot"></span>
-		                    </c:forEach>
-	                    </c:if>
-	                    </div>
-	                </div>
-
-	                <!-- 체크리스트 -->
-	                <c:if test="${w.checklistList!=null && !empty w.checklistList}">
-	                <c:set var="clList" value="${w.checklistList}" />
-	                <div class="work-checklist">
-	                    <table class="tbl-checklist">
-		                    <tbody>
-			                	<c:forEach items="${clList}" var="chk">
-				                	<c:set var="m" value="${chk.checklistChargedMember}"/>
-				                	<!-- 체크리스트 배정된 멤버 구하기 -->
-				                    <c:set var="chkChargedMemId" value="${m.memberId}"/>
-				                    
-				                	<c:if test="${chk.completeYn=='Y'}">
-			                        <tr class="completed">
-				                		<th>
-				                			<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>
-				                			<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>	
-				                		</th>
-				                        <td style="text-decoration:line-through;">
-				                    </c:if>
-				                    <c:if test="${chk.completeYn=='N'}">
-			                        <tr>
-			                        	<th>
-			                        		<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>
-			                        		<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>
-			                        	</th>
-				                        <td>
-				                    </c:if>
-				                        	<c:if test="${chk.checklistChargedMemberId!=null}">
-				                            <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
-				                            </c:if>
-				                            ${chk.checklistContent}
-				                        </td>
-			                        </tr>
-		                        </c:forEach>
-		                    </tbody>
-	                    </table>                
-                	</div><!-- /.work-checklist -->
-					</c:if>
-					
-	                <!-- 날짜 설정 -->
-	                <c:if test="${w.workStartDate!=null}">
-	                <div class="work-deadline">
-	                    <p>
-	                    	<c:if test="${w.workEndDate!=null}">
-	                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
-	                    		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />
-	                    	</c:if>
-	                    	<c:if test="${w.workEndDate==null}">
-	                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" />에 시작
-	                    	</c:if>
-	                    </p>
-	                    <!-- 업무리스트 완료됨이 아닐 경우 -->
-	                    <c:if test="${wlVs.index!=2 && w.workEndDate!=null}">
-	                    	<c:set var="now" value="<%= new Date() %>"/>
-	                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
-	                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
-	                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
-	                    	<fmt:parseDate var="enddate" value="${w.workEndDate}" pattern="yyyy-MM-dd"/>
-	                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
-	                    	
-							<c:if test="${today_D > enddate_D}">
-								<p class="over">마감일 ${today_D - enddate_D}일 지남</p>
-							</c:if>               	
-	                    </c:if>
-	                    <!-- 업무리스트 완료됨일 경우 -->
-	                    <c:if test="${wlVs.index==2}">
-	                    	<p class="complete"><fmt:formatDate value="${w.workRealEndDate}" type="date" pattern="MM월dd일"/>에 완료</p>
-	                    </c:if>
-	                </div><!-- /.work-deadline -->
-					</c:if>
-					
-					<!-- 완료 체크리스트 수 구하기 -->
-					<c:set var="chkCnt" value="0"/>
-					<c:forEach items="${w.checklistList}" var="chk">
-						<c:if test="${chk.completeYn=='Y'}">
-							<c:set var="chkCnt" value="${chkCnt+1}"/>
+            	<!-- 진행중인 업무 -->
+                <div class="workIng-wrapper">
+	            	<c:forEach items="${workList}" var="w" varStatus="wVs">
+	            	<c:if test="${w.workCompleteYn=='N'}">
+	                <!-- 업무 -->
+	                <section class="work-item" role="button" tabindex="0" id="${w.workNo}">
+	                	<input type="hidden" id="hiddenworklistTitle" value="${wl.worklistTitle}"/>
+	                	
+						<!-- 업무배정된 멤버아이디 구하기 -->
+						<c:set var="workCharedMemId" value=""/>
+						<c:forEach items="${w.workChargedMemberList}" var="m" varStatus="wcmVs">
+							<c:set var="workCharedMemId" value="${wcmVs.last?workCharedMemId.concat(m.memberId):workCharedMemId.concat(m.memberId).concat(',')}"/>
+						</c:forEach>
+	                	<input type="hidden" class="hiddenWorkChargedMemId" value="${workCharedMemId}"/>
+						            	
+		                <!-- 태그 -->
+		                <c:if test="${w.workTagCode!=null}">
+		                <div class="work-tag">
+		                	<span class="btn btn-xs bg-${w.workTagColor}">${w.workTagTitle}</span>
+		                </div>
+		                </c:if>
+	
+		                <!-- 업무 타이틀 -->
+		                <div class="work-title">
+		                    <h6>
+		                    	<button type="button" class="btn-check btn-checkWork"><i class="far fa-square"></i></button>
+		                    	${w.workTitle}
+		                    </h6>
+		                    <div class="work-importances">
+		                    <c:set var="point" value="${w.workPoint}" />
+		                    <c:if test="${point>0}">
+			                    <c:forEach var="i" begin="1" end="${point}">
+			                    <span class="importance-dot checked"></span>
+			                    </c:forEach>
+			                    <c:forEach var="i" begin="1" end="${5-point}">
+			                    <span class="importance-dot"></span>
+			                    </c:forEach>
+		                    </c:if>
+		                    <c:if test="${point==0}">
+		                    	<c:forEach var="i" begin="1" end="5">
+			                    <span class="importance-dot"></span>
+			                    </c:forEach>
+		                    </c:if>
+		                    </div>
+		                </div>
+	
+		                <!-- 체크리스트 -->
+		                <c:if test="${w.checklistList!=null && !empty w.checklistList}">
+		                <c:set var="clList" value="${w.checklistList}" />
+		                <div class="work-checklist">
+		                    <table class="tbl-checklist">
+			                    <tbody>
+				                	<c:forEach items="${clList}" var="chk">
+					                	<c:set var="m" value="${chk.checklistChargedMember}"/>
+					                	<!-- 체크리스트 배정된 멤버 구하기 -->
+					                    <c:set var="chkChargedMemId" value="${m.memberId}"/>
+					                    
+					                	<c:if test="${chk.completeYn=='Y'}">
+				                        <tr class="completed">
+					                		<th>
+					                			<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>
+					                			<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>	
+					                		</th>
+					                        <td style="text-decoration:line-through;">
+					                    </c:if>
+					                    <c:if test="${chk.completeYn=='N'}">
+				                        <tr>
+				                        	<th>
+				                        		<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>
+				                        		<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>
+				                        	</th>
+					                        <td>
+					                    </c:if>
+					                        	<c:if test="${chk.checklistChargedMemberId!=null}">
+					                            <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+					                            </c:if>
+					                            ${chk.checklistContent}
+					                        </td>
+				                        </tr>
+			                        </c:forEach>
+			                    </tbody>
+		                    </table>                
+	                	</div><!-- /.work-checklist -->
 						</c:if>
-					</c:forEach>
-					
-	                <!-- 기타 아이콘 모음 -->
-	                <div class="work-etc">
-	                	<!-- 체크리스트/코멘트/첨부파일 수 -->
-	                	<c:if test="${fn:length(w.checklistList)==0}">
-	                    	<span class="ico"><i class="far fa-list-alt"></i> 0</span>
-	                    </c:if>
-	                    <c:if test="${fn:length(w.checklistList)>0}">
-	                    	<span class="ico"><i class="far fa-list-alt"></i> ${chkCnt}/${fn:length(w.checklistList)}</span>
-	                    </c:if>
-	                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
-	                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
-	                    
-	                    <!-- 업무 배정된 멤버 -->
-	                    <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">
-	                    <div class="chared-member text-right">
-	                    <c:forEach items="${w.workChargedMemberList}" var="m">
-		                    <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
-	                    </c:forEach>
-	                    </div>
-	                    </c:if>
-	                </div>
-
-	                <!-- 커버 이미지 -->
-	                <c:if test="${w.attachmentList!=null && !empty w.attachmentList}">
-	                <div class="work-coverImage">
-	                    <img src="${pageContext.request.contextPath}/resources/img/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="test image">
-	                </div>
-	                </c:if>
-                </section><!-- /.work-item -->
-            	</c:if>	
-                </c:forEach>
+						
+		                <!-- 날짜 설정 -->
+		                <c:if test="${w.workStartDate!=null}">
+		                <div class="work-deadline">
+		                    <p>
+		                    	<c:if test="${w.workEndDate!=null}">
+		                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
+		                    		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />
+		                    	</c:if>
+		                    	<c:if test="${w.workEndDate==null}">
+		                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" />에 시작
+		                    	</c:if>
+		                    </p>
+		                    <!-- 마감일 있는데 업무 완료되지 않은 경우 -->
+		                    <c:if test="${w.workEndDate!=null && w.workCompleteYn=='N'}">
+		                    	<c:set var="now" value="<%= new Date() %>"/>
+		                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
+		                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
+		                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
+		                    	<fmt:parseDate var="enddate" value="${w.workEndDate}" pattern="yyyy-MM-dd"/>
+		                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
+		                    	
+								<c:if test="${today_D > enddate_D}">
+									<p class="over">마감일 ${today_D - enddate_D}일 지남</p>
+								</c:if>               	
+		                    </c:if>
+		                </div><!-- /.work-deadline -->
+						</c:if>
+						
+						<!-- 완료 체크리스트 수 구하기 -->
+						<c:set var="chkCnt" value="0"/>
+						<c:forEach items="${w.checklistList}" var="chk">
+							<c:if test="${chk.completeYn=='Y'}">
+								<c:set var="chkCnt" value="${chkCnt+1}"/>
+							</c:if>
+						</c:forEach>
+						
+		                <!-- 기타 아이콘 모음 -->
+		                <div class="work-etc">
+		                	<!-- 체크리스트/코멘트/첨부파일 수 -->
+		                	<c:if test="${fn:length(w.checklistList)==0}">
+		                    	<span class="ico"><i class="far fa-list-alt"></i> 0</span>
+		                    </c:if>
+		                    <c:if test="${fn:length(w.checklistList)>0}">
+		                    	<span class="ico"><i class="far fa-list-alt"></i> ${chkCnt}/${fn:length(w.checklistList)}</span>
+		                    </c:if>
+		                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
+		                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+		                    
+		                    <!-- 업무 배정된 멤버 -->
+		                    <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">
+		                    <div class="chared-member text-right">
+		                    <c:forEach items="${w.workChargedMemberList}" var="m">
+			                    <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+		                    </c:forEach>
+		                    </div>
+		                    </c:if>
+		                </div>
+	
+		                <!-- 커버 이미지 -->
+		                <c:if test="${w.attachmentList!=null && !empty w.attachmentList}">
+		                <div class="work-coverImage">
+		                    <img src="${pageContext.request.contextPath}/resources/img/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="test image">
+		                </div>
+		                </c:if>
+	                </section><!-- /.work-item -->
+	            	</c:if>	
+	                </c:forEach>
+                </div><!-- /.workIng-wrapper -->
+                
+                <!-- 완료된 업무 -->
+                <div class="workCompleted-wrapper hide">
+                	<c:forEach items="${workList}" var="w" varStatus="wVs">
+            		<c:if test="${w.workCompleteYn=='Y'}">
+                	<!-- 업무 -->
+	                <section class="work-item" role="button" tabindex="0" id="${w.workNo}">
+	                	<input type="hidden" id="hiddenworklistTitle" value="${wl.worklistTitle}"/>
+	                	
+						<!-- 업무배정된 멤버아이디 구하기 -->
+						<c:set var="workCharedMemId" value=""/>
+						<c:forEach items="${w.workChargedMemberList}" var="m" varStatus="wcmVs">
+							<c:set var="workCharedMemId" value="${wcmVs.last?workCharedMemId.concat(m.memberId):workCharedMemId.concat(m.memberId).concat(',')}"/>
+						</c:forEach>
+	                	<input type="hidden" class="hiddenWorkChargedMemId" value="${workCharedMemId}"/>
+						            	
+		                <!-- 태그 -->
+		                <c:if test="${w.workTagCode!=null}">
+		                <div class="work-tag">
+		                	<span class="btn btn-xs bg-${w.workTagColor}">${w.workTagTitle}</span>
+		                </div>
+		                </c:if>
+	
+		                <!-- 업무 타이틀 -->
+		                <div class="work-title">
+		                    <h6>
+		                    	<button type="button" class="btn-check btn-checkWork"><i class="fas fa-check-square"></i></button>
+		                    	${w.workTitle}
+		                    </h6>
+		                    <div class="work-importances">
+		                    <c:set var="point" value="${w.workPoint}" />
+		                    <c:if test="${point>0}">
+			                    <c:forEach var="i" begin="1" end="${point}">
+			                    <span class="importance-dot checked"></span>
+			                    </c:forEach>
+			                    <c:forEach var="i" begin="1" end="${5-point}">
+			                    <span class="importance-dot"></span>
+			                    </c:forEach>
+		                    </c:if>
+		                    <c:if test="${point==0}">
+		                    	<c:forEach var="i" begin="1" end="5">
+			                    <span class="importance-dot"></span>
+			                    </c:forEach>
+		                    </c:if>
+		                    </div>
+		                </div>
+	
+		                <!-- 체크리스트 -->
+		                <c:if test="${w.checklistList!=null && !empty w.checklistList}">
+		                <c:set var="clList" value="${w.checklistList}" />
+		                <div class="work-checklist">
+		                    <table class="tbl-checklist">
+			                    <tbody>
+				                	<c:forEach items="${clList}" var="chk">
+					                	<c:set var="m" value="${chk.checklistChargedMember}"/>
+					                	<!-- 체크리스트 배정된 멤버 구하기 -->
+					                    <c:set var="chkChargedMemId" value="${m.memberId}"/>
+					                    
+					                	<c:if test="${chk.completeYn=='Y'}">
+				                        <tr class="completed">
+					                		<th>
+					                			<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>
+					                			<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>	
+					                		</th>
+					                        <td style="text-decoration:line-through;">
+					                    </c:if>
+					                    <c:if test="${chk.completeYn=='N'}">
+				                        <tr>
+				                        	<th>
+				                        		<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>
+				                        		<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>
+				                        	</th>
+					                        <td>
+					                    </c:if>
+					                        	<c:if test="${chk.checklistChargedMemberId!=null}">
+					                            <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+					                            </c:if>
+					                            ${chk.checklistContent}
+					                        </td>
+				                        </tr>
+			                        </c:forEach>
+			                    </tbody>
+		                    </table>                
+	                	</div><!-- /.work-checklist -->
+						</c:if>
+						
+		                <!-- 날짜 설정 -->
+		                <c:if test="${w.workRealEndDate!=null}">
+		                <div class="work-deadline">
+		                    <p class="complete"><fmt:formatDate value="${w.workRealEndDate}" type="date" pattern="MM월dd일"/>에 완료</p>
+		                </div><!-- /.work-deadline -->
+						</c:if>
+						
+						<!-- 완료 체크리스트 수 구하기 -->
+						<c:set var="chkCnt" value="0"/>
+						<c:forEach items="${w.checklistList}" var="chk">
+							<c:if test="${chk.completeYn=='Y'}">
+								<c:set var="chkCnt" value="${chkCnt+1}"/>
+							</c:if>
+						</c:forEach>
+						
+		                <!-- 기타 아이콘 모음 -->
+		                <div class="work-etc">
+		                	<!-- 체크리스트/코멘트/첨부파일 수 -->
+		                	<c:if test="${fn:length(w.checklistList)==0}">
+		                    	<span class="ico"><i class="far fa-list-alt"></i> 0</span>
+		                    </c:if>
+		                    <c:if test="${fn:length(w.checklistList)>0}">
+		                    	<span class="ico"><i class="far fa-list-alt"></i> ${chkCnt}/${fn:length(w.checklistList)}</span>
+		                    </c:if>
+		                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
+		                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+		                    
+		                    <!-- 업무 배정된 멤버 -->
+		                    <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">
+		                    <div class="chared-member text-right">
+		                    <c:forEach items="${w.workChargedMemberList}" var="m">
+			                    <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+		                    </c:forEach>
+		                    </div>
+		                    </c:if>
+		                </div>
+	
+		                <!-- 커버 이미지 -->
+		                <c:if test="${w.attachmentList!=null && !empty w.attachmentList}">
+		                <div class="work-coverImage">
+		                    <img src="${pageContext.request.contextPath}/resources/img/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="test image">
+		                </div>
+		                </c:if>
+	                </section><!-- /.work-item -->
+                	</c:if>	
+                	</c:forEach>
+                </div><!-- /.workCompleted-wrapper -->
                 
             </div><!-- /.worklist-contents -->
+            
+            <!-- 진행 중인 업무 -->
+            <div class="worklist-titleInfo-bottom">
+                <button type="button" class="btn-showCompletedWork" value="${wl.worklistNo}">완료된 업무 ${wl.completedWorkCnt}개 보기</button>
+            </div>
         </section><!-- /.worklist -->
         </c:forEach>
         

@@ -204,26 +204,15 @@ public class ProjectServiceImpl implements ProjectService {
 			
 		}//end of for
 		
-		//2-3. 진행 중인/완료된 업무 수 구하기
+		//2-3. 완료된 업무 수 구하기
 		for(int i=0; i<worklistList.size(); i++) {
 			Worklist wl = worklistList.get(i);
 			int worklistNo = wl.getWorklistNo();
-			int totalCnt = 0; //업무 수
+			int cnt = 0; 
 			
-			//진행 중인 업무 수
-			if(i!=2) {
-				totalCnt = projectDAO.selectTotalWorkCompleteYn(worklistNo);
-				wl.setTotalWorkCompletYn(totalCnt);
-			}
-			//완료된 업무 수 
-			else {
-				if(wl.getWorkList()==null)
-					totalCnt = 0;
-				else
-					totalCnt = wl.getWorkList().size();
-				
-				wl.setTotalWorkCompletYn(totalCnt);
-			}
+			cnt = projectDAO.selectTotalWorkCompleteYn(worklistNo);
+			wl.setCompletedWorkCnt(cnt);
+			
 		}
 		
 		//1-2. 프로젝트에 업무리스트의 리스트 담기
@@ -466,26 +455,14 @@ public class ProjectServiceImpl implements ProjectService {
 			
 		}//end of for
 		
-		//2-3. 진행 중인/완료된 업무 수 구하기
+		//2-3. 완료된 업무 수 구하기
 		for(int i=0; i<worklistList.size(); i++) {
 			Worklist wl = worklistList.get(i);
 			int worklistNo = wl.getWorklistNo();
-			int totalCnt = 0; //업무 수
+			int cnt = 0; 
 			
-			//진행 중인 업무 수
-			if(i!=2) {
-				totalCnt = projectDAO.selectTotalWorkCompleteYn(worklistNo);
-				wl.setTotalWorkCompletYn(totalCnt);
-			}
-			//완료된 업무 수 
-			else {
-				if(wl.getWorkList()==null)
-					totalCnt = 0;
-				else
-					totalCnt = wl.getWorkList().size();
-				
-				wl.setTotalWorkCompletYn(totalCnt);
-			}
+			cnt = projectDAO.selectTotalWorkCompleteYn(worklistNo);
+			wl.setCompletedWorkCnt(cnt);
 		}
 		
 		//1-2. 프로젝트에 업무리스트의 리스트 담기
@@ -529,25 +506,11 @@ public class ProjectServiceImpl implements ProjectService {
 		if(list==null)
 			throw new ProjectException("업무의 리스트 조회 오류!");
 		
-		//3. 진행 중인/완료된 업무 수 구하기
-		int totalCnt = 0; //업무 수
+		//3. 완료된 업무 수 구하기
+		int cnt = projectDAO.selectTotalWorkCompleteYn(worklistNo); 
 		
-		//완료된 업무 수 
-		if(wl.getWorklistTitle().equals("완료")) {
-			if(wl.getWorkList()==null)
-				totalCnt = 0;
-			else
-				totalCnt = wl.getWorkList().size();
-			
-			wl.setTotalWorkCompletYn(totalCnt);
-		}
-		//진행 중인 업무 수
-		else {
-			totalCnt = projectDAO.selectTotalWorkCompleteYn(worklistNo);
-			wl.setTotalWorkCompletYn(totalCnt);
-		}
-		
-		//3. 업무리스트에 업무 담기
+		//3. 업무리스트에 담기
+		wl.setCompletedWorkCnt(cnt);
 		wl.setWorkList(list);
 		
 		return wl;

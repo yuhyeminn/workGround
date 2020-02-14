@@ -155,7 +155,20 @@ button:active, button:focus{outline: none;}
 .worklist-title-btn button:hover, .worklist-title-btn button:active{background: rgb(24, 76, 113);}
 .worklist-title-btn button:last-of-type{margin-left: .3rem;}
 /* 진행 중인 업무 */
-.worklist-titleInfo{padding: 0 .6rem; background: #2c6a95; color: #d4d6db; font-size: .75rem; line-height: 2; clear: both;}
+.worklist-titleInfo-top, .worklist-titleInfo-bottom{padding: 0 .6rem; background: #2c6a95; color: #d4d6db; font-size: .75rem; line-height: 2; clear: both;}
+.worklist-titleInfo-bottom{height: 26px; background: #f3f4f5; color: #696f7a;}
+.worklist-titleInfo-bottom span{float:left;}
+.btn-showCompletedWork{float: right; color: #696f7a; text-decoration: underline;}
+.btn-showCompletedWork:focus, .btn-showCompletedWork:active{color: #323742;} 
+.btn-checkWork{font-size: 1rem;}
+/* 완료된 업무 */
+.workCompleted-wrapper{display: block;}
+.workCompleted-wrapper.hide{display: none;}
+.workCompleted-wrapper>.work-item:first-of-type{margin-top: 0;}
+.workCompleted-wrapper .work-item{background: #f3f4f5;}
+.workCompleted-wrapper .work-item:hover{background: #f3f4f5;}
+.workCompleted-title{padding: .5rem 0 .3rem; background: #f3f4f5;}
+.workCompleted-title h5{margin: 0; padding-left: 1rem; color: #464c59; font-size: .88rem; font-weight: bold;}
 /* 새 업무 만들기 */
 .addWork-wrapper{display:none; margin: 0 .6rem .6rem; clear: both;}
 .addWork-wrapper.show{display: block;}
@@ -253,11 +266,15 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 /* projectAttachment.jsp */
 #attachment-wrapper{padding: 5px 3rem;}
 #card-projectAttach{margin-top: 1.5rem;}
+#card-projectAttach .pagination{margin: 1rem 0 2.5rem;}
 .table-responsive{overflow-x: unset;}
-#tbl-projectAttach thead{background: #f3f4f5;}
-#tbl-projectAttach.table td{padding: 0; vertical-align: inherit; font-size: .8rem;}
+#tbl-projectAttach{background: #fff; border-radius: .25rem; color: #464c59; font-size: .85rem; box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);}
+#tbl-projectAttach thead{background: #f3f4f5; color: #464c59; font-size: .85rem;}
+#tbl-projectAttach.table td{padding: 0; vertical-align: inherit; font-size: .8rem; }
 #tbl-projectAttach.table th:not(:first-of-type){padding: .75rem 0;}
+#tbl-projectAttach.table th:first-of-type{padding-left: 1.5rem;}
 #tbl-projectAttach td:first-of-type{padding: .3rem 0 .3rem 1.5rem;}
+#tbl-projectAttach tr{cursor: pointer;}
 /* 이름 */
 #tbl-projectAttach .img-wrapper{display: inline-block; float: left; width: 40px; height: 40px; margin: .5rem .5rem .5rem 0;}
 #tbl-projectAttach img{width: 100%; height: 100%; vertical-align: inherit; object-fit: contain;}

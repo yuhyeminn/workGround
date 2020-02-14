@@ -42,10 +42,12 @@ function tabActive(){
     <!-- Main content -->
     <div id="attachment-wrapper" class="content view">
         <h3 class="sr-only">파일첨부</h3>
-        <div class="container-fluid"> 
+        
+        <!-- <div class="container-fluid"> --> 
             <!-- 첨부파일 테이블 -->
-            <div id="card-projectAttach" class="card">
-                <div class="card-body table-responsive p-0">
+            <!-- <div id="card-projectAttach" class="card">
+                <div class="card-body table-responsive p-0"> -->
+                <div id="card-projectAttach" class="table-responsive p-0">
                     <table id="tbl-projectAttach" class="table table-hover text-nowrap">
                         <thead>
                             <tr>
@@ -93,9 +95,9 @@ function tabActive(){
                     </table>
                 </div>
                 <!-- /.card-body -->
-            </div>
+            <!-- </div> -->
             <!-- /.card -->
-        </div>
+        <!-- </div> -->
         <!-- /.container-fluid -->
     </div>
     <!-- /.content -->
