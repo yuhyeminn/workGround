@@ -730,15 +730,24 @@ function updateWorkMember(){
 			 dataType:"json",
 			 success: data=>{
 				 var chk = data.checklist
-				 let html = '<tr><th><button type="button" class="btn-check" value="'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>'
+				 let html = '<tr><th><button type="button" class="btn-check" value="'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>        '
 					      +'<input type="hidden" class="hiddenChkChargedMemId" value=" "/></th><td>'
 					      +'<div class="img-circle img-profile ico-profile" ><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div>'
 	             		  + chk.checklistContent +'</td></tr>';
-	             var viewhtml = '<tr><th><button type="button" class="btn-check" value=""'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>'
+	             var viewhtml = '<tr><th><button type="button" class="btn-check" value=""'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>      '
 	   			      	  +'<input type="hidden" class="hiddenChkChargedMemId" value=" "/></th><td>'+ chk.checklistContent +'</td></tr>';
 	          		 	  
 				$("#chk-add-tr").before(html); 
-				$(".work-item#"+workNo+" .work-checklist tbody").append(viewhtml);
+				
+				if ( $(".work-item#"+workNo+" .work-checklist") > 0 ) {
+					$(".work-item#"+workNo+" .work-checklist tbody").append(viewhtml);
+			 	}else{
+			 		//테이블이 없을 경우
+			 		var tablehtml = '<table class="tbl-checklist"><tbody>'+viewhtml+'</tbody></table>'
+			 		$(".work-item#"+workNo+" .work-checklist").append(tablehtml);
+			 	}
+			 	$("#checklist-content").val('');
+				
 			 },
 			 error:(jqxhr, textStatus, errorThrown)=>{
 				 console.log(jqxhr, textStatus, errorThrown);

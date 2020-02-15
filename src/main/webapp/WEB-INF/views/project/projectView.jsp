@@ -1156,10 +1156,10 @@ function setting(){
 		                    </div>
 		                </div>
 	
+		                <div class="work-checklist">
 		                <!-- 체크리스트 -->
 		                <c:if test="${w.checklistList!=null && !empty w.checklistList}">
 		                <c:set var="clList" value="${w.checklistList}" />
-		                <div class="work-checklist">
 		                    <table class="tbl-checklist">
 			                    <tbody>
 				                	<c:forEach items="${clList}" var="chk">
@@ -1192,8 +1192,8 @@ function setting(){
 			                        </c:forEach>
 			                    </tbody>
 		                    </table>                
-	                	</div><!-- /.work-checklist -->
 						</c:if>
+	                	</div><!-- /.work-checklist -->
 						
 		                <!-- 날짜 설정 -->
 		                <c:if test="${w.workStartDate!=null}">
