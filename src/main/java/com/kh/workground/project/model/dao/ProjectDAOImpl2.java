@@ -163,4 +163,19 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 		return sqlSession.update("project.updateWorkDate",param);
 	}
 
+	@Override
+	public int insertCheckList(Checklist chk) {
+		return sqlSession.insert("project.insertCheckList",chk);
+	}
+
+	@Override
+	public Checklist selectOneChecklist(int checklistNo) {
+		return sqlSession.selectOne("project.selectOneChecklist",checklistNo);
+	}
+
+	@Override
+	public int updateWorkLocation(Map<String, Integer> param) {
+		return sqlSession.update("project.updateWorkLocation",param);
+	}
+
 }

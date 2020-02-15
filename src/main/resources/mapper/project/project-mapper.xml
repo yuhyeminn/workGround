@@ -494,7 +494,28 @@
 		update work set ${dateType} = null where work_no = to_number(#{workNo})
 		</if>
 	</update>
-
+	
+	<!-- 체크리스트 추가 -->
+	<insert id="insertCheckList">
+		insert into checklist values (seq_checklist.nextval, #{workNo}, #{checklistWriter},null,#{checklistContent},default,null,'N')
+		<selectKey keyProperty="checklistNo" resultType="_int" order="AFTER">
+			select seq_checklist.currval from dual
+		</selectKey>
+	</insert>
+	
+	<!-- insertChecklist.do : 뷰단 처리를 위한 insert한 체크리스트 객체 하나 가져오기 -->
+	<select id="selectOneChecklist" resultMap="checklistMap">
+		select C.*, WM.charged_member_id
+		from checklist C left join work_charged_members WM on C.checklist_charged_members_no = WM.work_charged_members_no
+		where C.checklist_no = #{checklistNo}
+	</select>
+	
+	<!-- updateWorkLocation.do : 업무 이동 -->
+	<update id="updateWorkLocation">
+		update work set worklist_no = #{worklistNo} where work_no = #{workNo}
+	</update>
+	
+	
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>
 			<result column="password" property="password"></result>

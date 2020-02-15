@@ -359,6 +359,24 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		if(result==0) throw new ProjectException("업무 날짜 수정 오류!");
 		return result;
 	}
-	
+
+	@Override
+	public Checklist insertCheckList(Checklist chk) {
+		int result = projectDAO.insertCheckList(chk);
+		if(result==0) throw new ProjectException("체크리스트 추가 오류!");
+		
+		//방금 insert한 체크리스트 객체가져오기
+		Checklist chklist = projectDAO.selectOneChecklist(chk.getChecklistNo());
+		
+		if(chklist==null) throw new ProjectException("체크리스트 추가 오류!");
+		return chklist;
+	}
+
+	@Override
+	public int updateWorkLocation(Map<String, Integer> param) {
+		int result = projectDAO.updateWorkLocation(param);
+		if(result==0) throw new ProjectException("업무 이동 오류!");
+		return result;
+	}
 
 }

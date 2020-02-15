@@ -114,14 +114,14 @@
                     <div class="dropdown-divider"></div>
                     <c:if test="${project.worklistList!=null and !empty project.worklistList }">
 	                    <c:forEach var="worklist" items="${project.worklistList }">
-		                    <a class="dropdown-item" tabindex="-1" href="#">${worklist.worklistTitle }</a>
+		                    <a class="dropdown-item work-location" tabindex="-1" id="${worklist.worklistNo}">${worklist.worklistTitle }</a>
 	                    </c:forEach>
                     </c:if>
                     </div>
                     
                 </div>
                         <p class="setting-content-inform">
-                            <span>${project.projectTitle }</span> <i class="fa fa-angle-double-right"></i> <span>${worklistTitle }</span>
+                            <span>${project.projectTitle }</span> <i class="fa fa-angle-double-right"></i> <span id="current-worklist">${worklistTitle }</span>
                             <%-- <c:forEach var="worklist" items="${project.worklistList }">
 	                    		<c:if test="${worklist.worklistNo eq work.worklistNo }">
 	                    			<span>${worklist.worklistTitle }</span>
@@ -274,7 +274,10 @@
 				                   <c:if test="${chk.checklistChargedMemberId!=null}">
 				                      <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
 				                   </c:if>
-				          		   ${chk.checklistContent}
+				                   <c:if test="${chk.checklistChargedMemberId==null}">
+				               			<div class="img-circle img-profile ico-profile"><i class='fas fa-user-plus' style="width:15px;margin-top: 5px;"></i></div>
+				               		</c:if>
+				               		${chk.checklistContent}
 				                </td>
 			              </tr>
 			        </c:if>
@@ -287,6 +290,9 @@
 				            <td>
 				               <c:if test="${chk.checklistChargedMemberId!=null}">
 				                 <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
+				               </c:if>
+				               <c:if test="${chk.checklistChargedMemberId==null}">
+				               	<div class="img-circle img-profile ico-profile" ><i class='fas fa-user-plus' style="width:15px;margin-top: 5px;"></i></div>
 				               </c:if>
 				               ${chk.checklistContent}
 				         	</td>
@@ -303,6 +309,9 @@
 	                    </tr>
                 </c:if>
                 </tbody>
+                <tfoot>
+                
+                </tfoot>
                 </table>                
               </div>
             
@@ -444,6 +453,8 @@
 	updateWorkMember();
 	updateWorkTag();
 	updateWorkPoint();
+	insertCheckList();
+	updateWorkLocation();
  });
  
  
@@ -482,6 +493,7 @@ function sidechecklist(){
     
     btnCheckArr.forEach((obj, idx)=>{
     	obj.addEventListener('click', ()=>{
+    		
     		let workNo = obj.value.split(",")[0];
     		let chkNo = obj.value.split(",")[1];
     		
@@ -576,41 +588,7 @@ function sidechecklist(){
     	}); //end of .btn-check click
     }); //end of btnCheckArr.forEach
 }
- /* function sidechecklist(){
-	    let $btnCheck = $(".btn-check");
 
-	    $(".btn-check").on('click', e=>{
-	        let checkbox = e.target;
-	        let $tr = $(checkbox.parentNode.parentNode.parentNode);
-	        let $tdChecklist = $(checkbox.parentNode.parentNode.nextSibling.nextSibling);
-
-	        //클릭한 대상이 i태그일 경우에만 적용
-	        if(checkbox.tagName==='I')
-	            $tr.toggleClass('completed');
-
-	        //완료된 체크리스트인 경우 
-	        if($tr.hasClass('completed')){
-	            //체크박스 변경
-	            $(checkbox).removeClass('far fa-square');
-	            $(checkbox).addClass('fas fa-check-square');
-
-	            //리스트에 줄 긋기
-	            $tdChecklist.css('text-decoration', 'line-through');
-	        }
-	        //미완료된 체크리스트인 경우
-	        else{
-	            if(checkbox.tagName=='I'){
-	                //체크박스 변경
-	                $(checkbox).removeClass('fas fa-check-square');
-	                $(checkbox).addClass('far fa-square');
-
-	                //리스트에 줄 해제
-	                $tdChecklist.css('text-decoration', 'none');
-	            }
-	        }
-
-	    }); //end of .btn-check click
-	} */
  function updateWorkDate(){
 	 $(".date-update").on('click',function(){
 			var $this = $(this);
@@ -690,13 +668,13 @@ function updateWorkMember(){
 				error:(jqxhr, textStatus, errorThrown) =>{
 					console.log(jqxhr, textStatus, errorThrown);
 				}
-			});
+		  });
 	 })
  }
  
  function updateWorkTag(){
+	 var workNo = '${work.workNo}';
 	 $(".update-work-tag").on('click',function(){
-		 var workNo = '${work.workNo}';
 		 var workTag = $(this).attr('id');
 		 $.ajax({
 			url: "${pageContext.request.contextPath}/project/updateWorkTag.do",
@@ -720,8 +698,8 @@ function updateWorkMember(){
  }
  
  function updateWorkPoint(){
+	 var workNo = '${work.workNo}';
 	 $(".work-importances").on('click',function(){
-		 var workNo = '${work.workNo}';
 		 var workPoint = $(this).attr('id');
 		 $.ajax({
 			 url:"${pageContext.request.contextPath}/project/updateWorkPoint.do",
@@ -736,6 +714,59 @@ function updateWorkMember(){
 			 error:(jqxhr, textStatus, errorThrown)=>{
 				 console.log(jqxhr, textStatus, errorThrown);
 			 }
+		 })
+	 })
+ }
+ 
+ function insertCheckList(){
+	 var workNo = '${work.workNo}';
+	 $(".btn-add-checklist").on('click',function(){
+		 var chkWriter = '${memberLoggedIn.memberId}';
+		 var chkContent = $("#checklist-content").val();
+		 
+		 $.ajax({
+			 url:"${pageContext.request.contextPath}/project/insertCheckList.do",
+			 data: {workNo:workNo, chkWriter:chkWriter, chkContent:chkContent},
+			 dataType:"json",
+			 success: data=>{
+				 var chk = data.checklist
+				 let html = '<tr><th><button type="button" class="btn-check" value="'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>'
+					      +'<input type="hidden" class="hiddenChkChargedMemId" value=" "/></th><td>'
+					      +'<div class="img-circle img-profile ico-profile" ><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div>'
+	             		  + chk.checklistContent +'</td></tr>';
+	             var viewhtml = '<tr><th><button type="button" class="btn-check" value=""'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>'
+	   			      	  +'<input type="hidden" class="hiddenChkChargedMemId" value=" "/></th><td>'+ chk.checklistContent +'</td></tr>';
+	          		 	  
+				$("#chk-add-tr").before(html); 
+				$(".work-item#"+workNo+" .work-checklist tbody").append(viewhtml);
+			 },
+			 error:(jqxhr, textStatus, errorThrown)=>{
+				 console.log(jqxhr, textStatus, errorThrown);
+			 }
+		 })
+	 })
+ }
+ 
+ function updateWorkLocation(){
+	 var workNo = '${work.workNo}';
+	 $(".work-location").on('click',function(){
+		 var worklistNo = $(this).attr('id');
+		 var worklistTitle = $(this).text();
+		 console.log(worklistTitle);
+		 $.ajax({
+			 url:"${pageContext.request.contextPath}/project/updateWorkLocation.do",
+			 data: {workNo:workNo, worklistNo:worklistNo},
+			 dataType:"json",
+			 success: data=>{
+				 if(data.isUpdated){
+					 console.log("변경 성공!");
+					 $(".setting-content-inform span#current-worklist").text(worklistTitle);
+				 }
+				 console.log("gg")
+			 },
+			 error:(jqxhr, textStatus, errorThrown)=>{
+				 console.log(jqxhr, textStatus, errorThrown);
+			 } 
 		 })
 	 })
  }

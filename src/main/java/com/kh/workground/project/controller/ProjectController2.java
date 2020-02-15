@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService2;
+import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
 
@@ -450,4 +450,49 @@ public class ProjectController2 {
 		return map;
 	}
 	
+	@RequestMapping("/project/insertCheckList.do")
+	@ResponseBody
+	public Map<String, Object> insertCheckList(@RequestParam int workNo, @RequestParam String chkWriter, @RequestParam String chkContent){
+		Map<String, Object> map = new HashMap<>();
+		
+		try {
+			Checklist chk = new Checklist();
+			chk.setWorkNo(workNo);
+			chk.setChecklistContent(chkContent);
+			chk.setChecklistWriter(chkWriter);
+			
+			//insert한 checklist 객체 가져오기
+			Checklist checklist = projectService.insertCheckList(chk);
+			
+			map.put("checklist",checklist);
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 날짜 수정 오류!");
+		}
+		
+		return map;
+	}
+	
+	@RequestMapping("/project/updateWorkLocation.do")
+	@ResponseBody
+	public Map<String, Object> updateWorkLocation(@RequestParam int workNo, @RequestParam int worklistNo){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			
+			Map<String, Integer> param = new HashMap<>();
+			param.put("worklistNo", worklistNo);
+			param.put("workNo", workNo);
+			
+			int result = projectService.updateWorkLocation(param);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated);
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 이동 오류!");
+		}
+		return map;
+	}
 }

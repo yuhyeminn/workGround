@@ -222,7 +222,6 @@ function deleteWorklist(){
 		        		//해당 요소 지우기
 		        		delwl.remove();
 	        		}
-	        		
 	        	},
 	        	error: (x,s,e) => {
 					console.log(x,s,e);
@@ -533,6 +532,7 @@ function checklist(){
     
     btnCheckArr.forEach((obj, idx)=>{
     	obj.addEventListener('click', ()=>{
+    		event.stopPropagation();
     		let workNo = obj.value.split(",")[0];
     		let chkNo = obj.value.split(",")[1];
     		
@@ -705,7 +705,6 @@ function setting(){
 			data:{projectNo:projectNo},
 			dataType: "html",
 			success: data => {
-				
 				$side.html("");
 				$side.html(data); 
 			},
@@ -735,8 +734,6 @@ function setting(){
 			data:{workNo:workNo, worklistTitle:worklistTitle, projectNo:projectNo},
 			dataType: "html",
 			success: data => {
-				console.log(data);
-				
 				$side.html("");
 				$side.html(data); 
 			},
@@ -1013,7 +1010,7 @@ function setting(){
 					                    </c:if>
 					                        	<c:if test="${chk.checklistChargedMemberId!=null}">
 					                            <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
-					                            </c:if>
+					                    </c:if>
 					                            ${chk.checklistContent}
 					                        </td>
 				                        </tr>

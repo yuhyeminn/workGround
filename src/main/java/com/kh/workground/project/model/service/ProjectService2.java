@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kh.workground.member.model.vo.Member;
+import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
 
@@ -42,5 +43,9 @@ public interface ProjectService2 {
 	int updateWorkPoint(Map<String, Integer> param);
 
 	int updateWorkDate(Map<String, String> param);
+
+	Checklist insertCheckList(Checklist chk);
+
+	int updateWorkLocation(Map<String, Integer> param);
 
 }

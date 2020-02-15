@@ -65,4 +65,10 @@ public interface ProjectDAO2 {
 
 	int updateWorkDate(Map<String, String> param);
 
+	int insertCheckList(Checklist chk);
+
+	Checklist selectOneChecklist(int checklistNo);
+
+	int updateWorkLocation(Map<String, Integer> param);
+
 }
