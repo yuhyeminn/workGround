@@ -526,6 +526,32 @@
 		update work set worklist_no = #{worklistNo} where work_no = #{workNo}
 	</update>
 	
+	<!-- updateChkChargedMember.do : 체크리스트 배정 멤버 수정 -->
+	<update id="updateChkChargedMember">
+		update checklist 
+		<if test="memberId != null and memberId != ''">
+			set checklist_charged_members_no=(select work_charged_members_no from work_charged_members where charged_member_id=#{memberId} and work_no = to_number(#{workNo})) 
+		</if>
+		<if test="memberId == null or memberId == '' ">
+			set checklist_charged_members_no = null
+		</if>
+		where checklist_no = to_number(#{checklistNo})
+	</update>	
+	
+	<!-- deleteChecklist.do : 체크리스트 삭제 -->
+	<delete id="deleteChecklist">
+		delete from checklist where checklist_no = #{checklistNo}
+	</delete>
+	
+	<!-- updateWorkDesc.do : 업무 설명 수정 -->
+	<update id="updateWorkDesc">
+		<if test="workDesc != '' and workDesc != null">
+			update work set work_desc= #{workDesc} where work_no = to_number(#{workNo})
+		</if>
+		<if test="workDesc =='' or workDesc == null">
+			update work set work_desc= null where work_no = to_number(#{workNo})
+		</if>
+	</update>
 	
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>

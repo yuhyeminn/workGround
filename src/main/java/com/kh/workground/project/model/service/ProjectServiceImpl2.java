@@ -379,4 +379,25 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		return result;
 	}
 
+	@Override
+	public int updateChkChargedMember(Map<String, String> param) {
+		int result = projectDAO.updateChkChargedMember(param);
+		if(result==0) throw new ProjectException("체크리스트 멤버 배정 오류!");
+		return result;
+	}
+
+	@Override
+	public int deleteChecklist(int checklistNo) {
+		int result = projectDAO.deleteChecklist(checklistNo);
+		if(result==0) throw new ProjectException("체크리스트 삭제 오류!");
+		return result;
+	}
+
+	@Override
+	public int updateWorkDesc(Map<String, String> param) {
+		int result = projectDAO.updateWorkDesc(param);
+		if(result==0) throw new ProjectException("업무 설명 수정 오류!");
+		return result;
+	}
+
 }

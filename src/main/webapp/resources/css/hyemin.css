@@ -1,3 +1,7 @@
+#workDesc{border: none;padding: 5px;width: 80%;}
+.edit-description{display:none;}
+.update-work-description:hover{color:black;}
+
 .wrapper{background: #f8f9fa;}
 
 .add-project button{color:white;border:none;padding:0.35rem 0.5rem;margin-right:1rem;border-radius: 0.25rem;}
@@ -274,8 +278,8 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
     width: 475px;
     transition: right .3s ease-in-out,display .3s ease-in-out;
 }
-.setting-side-title{font-size:18px; font-weight: bold; margin-left:5px;}
-.setting-contents-inform{font-size:.8rem;margin-left:25px;}
+.setting-side-title{font-size:18px; font-weight: bold; margin-left:10px;}
+.setting-contents-inform{font-size:.8rem;margin-left:10px;}
 .setting-contents-inform .setting-contents-date{color:rgb(180, 183, 185);}
 .project-setting-tabs .nav-item{width:100%}
 .project-setting-tabs .nav-item button{width:100%}
@@ -335,7 +339,8 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .btn-add-checklist{padding: .3rem .5rem;background: transparent;color: #d4d6db;}
   #checklist-content{border:none;font-size: 16px;width: 20rem;}
   #checklist-content:focus {outline:none;}
-  
+  .delete-checklist{color:gray;display:none;}
+  .checklist-box-row .tbl-checklist tr:hover .delete-checklist{display:initial;}
 
   /* Middle navbar links */
   .setting- button{display: inline-block; height: 46px; padding: 0 .8rem; border: 0; color: #696f7a; font-size: .85rem; background: transparent;}

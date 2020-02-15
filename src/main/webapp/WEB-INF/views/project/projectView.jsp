@@ -50,7 +50,7 @@ $(()=>{
     tabActive(); //서브헤더 탭 활성화
     goTabMenu(); //서브헤더 탭 링크 이동
     
-    //setting(); //설정창- 나중에 수정
+    setting(); //설정창- 나중에 수정
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -623,6 +623,7 @@ function workComplete(){
 	let projectManager = '${projectManager}';
 	
 	$(document).on('click', '.btn-checkWork', (e)=>{
+		e.stopPropagation(); 
 		let btnChk;		
 		if(e.target.tagName==='I') btnChk = e.target.parentNode;	
 		else btnChk = e.target;
@@ -696,6 +697,7 @@ function checklist(){
 	let projectManager = '${projectManager}';
 
     $(document).on('click', '.btn-check:not(.btn-checkWork)', (e)=>{
+    	e.stopPropagation(); 
     	let btnChk;		
 		if(e.target.tagName==='I') btnChk = e.target.parentNode;	
 		else btnChk = e.target;
@@ -709,8 +711,11 @@ function checklist(){
 		let $tdChecklist = $(btnChk.parentNode.nextSibling.nextSibling);
 		let $icoChk = $(btnChk.firstChild);
 		let $spanCntComp = $workSection.find('.chklt-cnt-completed');
-		
-		let workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
+		let workChargedMemIdArr = null;
+		if($workSection.find('.hiddenWorkChargedMemId').val() != null && $workSection.find('.hiddenWorkChargedMemId').val() !=''){
+			workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
+		}
+		console.log(workChargedMemIdArr);
 		let chkChargedMemId = btnChk.nextSibling.nextSibling.value;
 		let isValid = false;
 		
@@ -730,9 +735,11 @@ function checklist(){
 		//체크리스트에 배정된 멤버가 없다면, 업무에 배정된 멤버인지
 		else{
 			let chkbool = false;
-			workChargedMemIdArr.forEach(id=>{
-				if(loggedInMemberId===id) chkbool = true;
-			});
+			if(workChargedMemIdArr !=null && workChargedMemIdArr !=''){
+				workChargedMemIdArr.forEach(id=>{
+					if(loggedInMemberId===id) chkbool = true;
+				});
+			}
 			
 			if(chkbool===true || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
 				isValid = true;
@@ -905,7 +912,8 @@ function setting(){
     });
     
     //업무 사이드바 열기
-    $(".work-item").on('click', function(){
+    /* $(".work-item").on('click', function(){ */
+    $(document).on('click', '.work-item', function(){
     	var $side = $("#setting-sidebar");
     	var workNo = $(this).attr('id');
     	
@@ -1006,11 +1014,6 @@ function setting(){
     </ul>
 </nav>
 <!-- /.navbar -->
-
-<!-- 프로젝트 설정 사이드 바-->
-<aside class="control-sidebar project-setting" style="display: block;">
-    
-</aside> 
 
 <!-- 오른쪽 프로젝트/업무 설정 사이드 바-->
 <aside class="work-setting" id="setting-sidebar" style="display: block;">
@@ -1179,7 +1182,7 @@ function setting(){
 					                    <c:set var="chkChargedMemId" value="${m.memberId}"/>
 					                    
 					                	<c:if test="${chk.completeYn=='Y'}">
-				                        <tr class="completed">
+				                        <tr class="completed" id="${chk.checklistNo}">
 					                		<th>
 					                			<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>
 					                			<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>	
@@ -1187,7 +1190,7 @@ function setting(){
 					                        <td style="text-decoration:line-through;">
 					                    </c:if>
 					                    <c:if test="${chk.completeYn=='N'}">
-				                        <tr>
+				                        <tr id="${chk.checklistNo}">
 				                        	<th>
 				                        		<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>
 				                        		<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>
@@ -1343,7 +1346,7 @@ function setting(){
 					                    <c:set var="chkChargedMemId" value="${m.memberId}"/>
 					                    
 					                	<c:if test="${chk.completeYn=='Y'}">
-				                        <tr class="completed">
+				                        <tr class="completed" id="${chk.checklistNo }">
 					                		<th>
 					                			<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>
 					                			<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>	
@@ -1351,7 +1354,7 @@ function setting(){
 					                        <td style="text-decoration:line-through;">
 					                    </c:if>
 					                    <c:if test="${chk.completeYn=='N'}">
-				                        <tr>
+				                        <tr id="${chk.checklistNo}">
 				                        	<th>
 				                        		<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>
 				                        		<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>
@@ -1389,7 +1392,7 @@ function setting(){
 		                <div class="work-etc">
 		                	<!-- 체크리스트/코멘트/첨부파일 수 -->
 		                	<c:if test="${fn:length(w.checklistList)==0}">
-		                    	<span class="ico"><i class="far fa-list-alt"></i> 0</span>
+		                    	<span class="ico"><i class="far fa-list-alt "></i> 0</span>
 		                    </c:if>
 		                    <c:if test="${fn:length(w.checklistList)>0}">
 		                    	<span class="ico chklt-cnt">

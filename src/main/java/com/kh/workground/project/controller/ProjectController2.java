@@ -495,4 +495,75 @@ public class ProjectController2 {
 		}
 		return map;
 	}
+	
+	@RequestMapping("/project/updateChkChargedMember.do")
+	@ResponseBody
+	public Map<String, Object> updateChkChargedMember(@RequestParam String checklistNo, @RequestParam String memberId, @RequestParam String workNo){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			
+			Map<String, String> param = new HashMap<>();
+			param.put("checklistNo", checklistNo);
+			param.put("memberId", memberId);
+			param.put("workNo", workNo);
+			
+			int result = projectService.updateChkChargedMember(param);
+			
+			boolean isUpdated = false;
+			if(result>0) {
+				isUpdated = true;
+				map.put("isUpdated",isUpdated);
+				Member member = null;
+				if(!("").equals(memberId)) {
+					member = projectService.selectMemberOneByMemberId(memberId);
+				}
+				map.put("member", member);
+			}
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("체크리스트 멤버 배정 오류!");
+		}
+		return map;
+	}
+	
+	@RequestMapping("/project/deleteChecklist.do")
+	@ResponseBody
+	public Map<String, Object> deleteChecklist(@RequestParam int checklistNo){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			
+			int result = projectService.deleteChecklist(checklistNo);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated);
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("체크리스트 삭제 오류!");
+		}
+		return map;
+	}
+	
+	@RequestMapping("/project/updateWorkDesc.do")
+	@ResponseBody
+	public Map<String, Object> updateWorkDesc(@RequestParam String workNo, @RequestParam String workDesc){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			
+			Map<String, String> param = new HashMap<>();
+			param.put("workNo", workNo);
+			param.put("workDesc", workDesc);
+			
+			int result = projectService.updateWorkDesc(param);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated);
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 설명 수정 오류!");
+		}
+		return map;
+	}
 }

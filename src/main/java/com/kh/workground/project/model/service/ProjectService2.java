@@ -48,4 +48,10 @@ public interface ProjectService2 {
 
 	int updateWorkLocation(Map<String, Integer> param);
 
+	int updateChkChargedMember(Map<String, String> param);
+
+	int deleteChecklist(int checklistNo);
+
+	int updateWorkDesc(Map<String, String> param);
+
 }

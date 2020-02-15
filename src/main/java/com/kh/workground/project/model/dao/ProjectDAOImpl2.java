@@ -178,4 +178,19 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 		return sqlSession.update("project.updateWorkLocation",param);
 	}
 
+	@Override
+	public int updateChkChargedMember(Map<String, String> param) {
+		return sqlSession.update("project.updateChkChargedMember",param);
+	}
+
+	@Override
+	public int deleteChecklist(int checklistNo) {
+		return sqlSession.delete("project.deleteChecklist",checklistNo);
+	}
+
+	@Override
+	public int updateWorkDesc(Map<String, String> param) {
+		return sqlSession.update("project.updateWorkDesc",param);
+	}
+
 }
