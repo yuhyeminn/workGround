@@ -50,7 +50,7 @@ $(()=>{
     tabActive(); //서브헤더 탭 활성화
     goTabMenu(); //서브헤더 탭 링크 이동
     
-    //setting(); //설정창- 나중에 수정
+    setting(); //설정창- 나중에 수정
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -103,12 +103,46 @@ function projectStar(){
 
 //업무 검색
 function searchWork(){
-	let wrapper = document.querySelector("#wlList-wrapper");
-	let frm = document.querySelector("#workSearchFrm");
-	let input = document.querySelector("input[name=searchWorkKeyword]");
-	let btn = document.querySelector("#btn-searchWork");
 	
-	btn.addEventListener('click', ()=>{
+	$(document).on('click', '#btn-searchWork', (e)=>{
+		let wrapper = document.querySelector(".container-fluid");
+		let frm = document.querySelector("#workSearchFrm");
+		let input = document.querySelector("input[name=searchWorkKeyword]");
+		let btn = document.querySelector("#btn-searchWork");
+		let keyword = $(input).val().trim();
+
+		//유효성 검사
+		if(keyword==""){
+			alert("검색 키워드를 입력해 주세요!");
+		}
+		
+		let data = {
+				projectNo: ${project.projectNo},
+				keyword: keyword,
+				memberId: '${memberLoggedIn.memberId}'
+		};
+		$.ajax({
+			url: '${pageContext.request.contextPath}/project/searchWork',
+			data: data,
+			dataType: 'html',
+			type: 'GET',
+			success: data=>{
+				if(data!=null){
+					$(wrapper).html("");
+					$(wrapper).html(data);
+				}
+				else{
+					alert("업무 검색에 실패했습니다 :(");
+				}
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
+		
+	});
+	
+	/* btn.addEventListener('click', ()=>{
 		let keyword = $(input).val().trim();
 		
 		//유효성 검사
@@ -139,7 +173,7 @@ function searchWork(){
 				console.log(x,s,e);
 			}
 		}); 
-	});
+	}); */
 }
 
 //새 업무리스트 만들기
@@ -184,6 +218,8 @@ function addWorklist(){
         		projectManager: '${projectManager}',
         		worklistTitle: $(title).val().trim()
         };
+        
+        console.log(data);
         
         $.ajax({
         	url: '${pageContext.request.contextPath}/project/addWorklist.do',
@@ -463,6 +499,7 @@ function addWork(){
 				
 			let data = {
 					projectManager: '${projectManager}',
+					projectNo: ${project.projectNo},
 					worklistNo: worklistNo,
 					workTitle: $(workTitle).val().trim(),
 					workChargedMember: addMemberArr,
@@ -563,32 +600,43 @@ function deleteWork(){
 		});
 	}
 	
+	let workNo;
+	let title;
+	let cntChk;
+	let cntComment;
+	let cntFile;
+	
 	//업무 삭제 클릭: 모달에 정보 뿌리기 
 	menu.addEventListener('click', (e)=>{
-		let workNo = work.id;
-		let title = $('#'+workNo).find('h6').text();
+		workNo = work.id*1;
+		title = $('#'+workNo).find('h6').text();
+		cntChk = $(work).find('.chklt-cnt-total').text()*1;
+		cntComment = $(work).find('.comment-cnt').text()*1;
+		cntFile = $(work).find('.attach-cnt').text()*1;
 		
 		$(".modal-del-target").text("업무");
 		$(delTitle).text(title); //업무 타이틀 
-		$(btnDel).val('work-'+workNo); //업무 번호
+		$(btnDel).val('work');
 	});
 	
 	//삭제버튼 클릭시
 	btnDel.addEventListener('click', e=>{
-		let val = e.target.value
-		let workNo = val.split('-')[1]*1;
-		
+		let title = e.target.value;
 		let wlSection = work.parentNode.parentNode.parentNode;
  		let worklistNo = wlSection.id.split('-')[1]*1; 
-		
+ 		
 		let data = {
+			projectNo: ${project.projectNo},
 			worklistNo: worklistNo,
 			workNo: workNo,
+			cntChk: cntChk,
+			cntComment: cntComment,
+			cntFile: cntFile,
 			projectManager: '${projectManager}'
 		}
 		
 		//업무리스트와 구분
-		if(val.split('-')[0] == 'work'){
+		if(title==='work'){
 			$.ajax({
 	        	url: '${pageContext.request.contextPath}/project/deleteWork.do',
 	        	data: data,
@@ -660,6 +708,7 @@ function workComplete(){
 			let data = {
 				projectManager: projectManager,
 				completeYn: yn,
+				projectNo: ${project.projectNo},
 				worklistNo: worklistNo*1,
 				workNo: workNo*1
 			};
@@ -966,9 +1015,10 @@ function setting(){
         <li id="tab-analysis" class="nav-item"><button type="button" id="btn-tab-analysis">분석</button></li>
         <li id="tab-attachment" class="nav-item"><button type="button" id="btn-tab-attach">파일</button></li>
     </ul>
-
+	
     <!-- Right navbar links -->
     <ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
+	<c:if test="${project.privateYn=='N'}">
         <!-- 프로젝트 대화 -->
         <li class="nav-item">
             <button type="button" class="btn btn-block btn-default btn-xs nav-link">
@@ -976,8 +1026,6 @@ function setting(){
             </button>
         </li>
 	
-		<c:if test=""></c:if>
-		
         <!-- 프로젝트 멤버 -->
         <li id="nav-member" class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
@@ -1003,6 +1051,7 @@ function setting(){
             	<i class="fas fa-cog"></i>
             </button>
         </li>
+    </c:if>
     </ul>
 </nav>
 <!-- /.navbar -->
@@ -1397,8 +1446,8 @@ function setting(){
 		                    		<span class="chklt-cnt-completed">${chkCnt}</span>/<span class="chklt-cnt-total">${fn:length(w.checklistList)}</span>
 		                    	</span>
 		                    </c:if>
-		                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
-		                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+		                    <span class="ico"><i class="far fa-comment"></i> <span class="comment-cnt">${fn:length(w.workCommentList)}</span></span>
+		                    <span class="ico"><i class="fas fa-paperclip"></i> <span class="attach-cnt">${fn:length(w.attachmentList)}</span></span>
 		                    
 		                    <!-- 업무 배정된 멤버 -->
 		                    <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">

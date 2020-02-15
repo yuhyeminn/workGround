@@ -41,6 +41,49 @@ public class ProjectServiceImpl implements ProjectService {
 		if(listByDept==null)
 			throw new ProjectException("최근 프로젝트 조회 오류!");
 		
+		//1-1. 프로젝트에 총 업무수/완료된 업무수 담기
+		for(Project p: listByDept) {
+			int projectNo = p.getProjectNo();
+			List<Map<String, Object>> cntList = projectDAO.selectCntWork(projectNo);
+			
+			int cntY = 0; //완료된 업무수
+			int cntN = 0; //미완 업무수
+			int total = 0;
+			int percent = 0;
+			
+			if(cntList!=null && !cntList.isEmpty()) {
+				
+				if(cntList.size()==2) {
+					cntY = Integer.parseInt(String.valueOf(cntList.get(0).get("cnt")));
+					cntN = Integer.parseInt(String.valueOf(cntList.get(1).get("cnt")));
+				}
+				else {
+					String yn = String.valueOf(cntList.get(0).get("yn"));
+					//미완인 업무가 없는 경우
+					if("Y".equals(yn)) {
+						cntY = Integer.parseInt(String.valueOf(cntList.get(0).get("cnt")));
+					}
+					//완료된 업무가 없는 경우
+					else {
+						cntN = Integer.parseInt(String.valueOf(cntList.get(0).get("cnt")));
+					}
+				}
+				
+				total = cntY+cntN;
+				percent = (int)Math.round(((double)cntY/total)*100);
+				p.setTotalProjectWorkCnt(total);
+				p.setTotalProjectCompletedWorkCnt(cntY);
+				p.setCompletePercent(percent);
+			}
+			else {
+				p.setTotalProjectWorkCnt(0);
+				p.setTotalProjectCompletedWorkCnt(0);
+				p.setCompletePercent(0);
+			}
+			
+		}
+		
+		
 		//2. 중요 표시된 프로젝트 조회(프로젝트 번호만)
 		List<Project> listByImportant = new ArrayList<>();
 		List<Integer> pNoListByImportant = projectDAO.selectListByImportantProjectNo(memberId);
@@ -56,8 +99,49 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		if(myP==null)
 			throw new ProjectException("내 워크패드 조회 오류!");
-		else 
+		else {
+			
+			//내 워크패드에 총 업무수/완료된 업무수 담기
+			List<Map<String, Object>> cntList = projectDAO.selectCntWork(myP.getProjectNo());
+			
+			int cntY = 0; //완료된 업무수
+			int cntN = 0; //미완 업무수
+			int total = 0;
+			int percent = 0;
+			
+			if(cntList!=null && !cntList.isEmpty()) {
+				
+				if(cntList.size()==2) {
+					cntY = Integer.parseInt(String.valueOf(cntList.get(0).get("cnt")));
+					cntN = Integer.parseInt(String.valueOf(cntList.get(1).get("cnt")));
+				}
+				else {
+					String yn = String.valueOf(cntList.get(0).get("yn"));
+					//미완인 업무가 없는 경우
+					if("Y".equals(yn)) {
+						cntY = Integer.parseInt(String.valueOf(cntList.get(0).get("cnt")));
+					}
+					//완료된 업무가 없는 경우
+					else {
+						cntN = Integer.parseInt(String.valueOf(cntList.get(0).get("cnt")));
+					}
+				}
+				
+				total = cntY+cntN;
+				percent = (int)Math.round(((double)cntY/total)*100);
+				myP.setTotalProjectCompletedWorkCnt(cntY);
+				myP.setTotalProjectWorkCnt(total);
+				myP.setCompletePercent(percent);
+			}
+			else {
+				myP.setTotalProjectWorkCnt(0);
+				myP.setTotalProjectCompletedWorkCnt(0);
+				myP.setCompletePercent(0);
+			}
+			
 			listByInclude.add(myP);
+		}
+		
 		
 		//3-2. 부서 전체 프로젝트에서 내가 포함된 프로젝트 판별
 		boolean bool = false; //내가 포함됐는지 여부
@@ -388,6 +472,7 @@ public class ProjectServiceImpl implements ProjectService {
 			param.put("worklistNo", wl.getWorklistNo());
 			
 			List<Work> workList = projectDAO.selectWorkListBySearchKeyword(param);
+			int cnt = 0; //완료된 업무 수
 			
 			//3. 업무 안의 체크리스트/첨부파일/코멘트 가져오기
 			for(int j=0; j<workList.size(); j++) {
@@ -399,6 +484,9 @@ public class ProjectServiceImpl implements ProjectService {
 					String memberId = m.getMemberId();
 					chargedMemberIdList.add(memberId);
 				}
+				
+				//3-1. 완료여부 카운트하기
+				if("Y".equals(work.getWorkCompleteYn())) cnt++;
 				
 				//3-1. 업무 번호로 체크리스트 가져오기
 				List<Checklist> chklstList = projectDAO.selectChklstListByWorkNo(work.getWorkNo());
@@ -448,22 +536,14 @@ public class ProjectServiceImpl implements ProjectService {
 				work.setAttachmentList(attachList);
 				work.setWorkCommentList(commentList);
 				
-			}
+			} 
 			
-			//2-3. 업무리스트에 업무의 리스트 담기 
+			//2-3. 업무리스트에 담기 
 			wl.setWorkList(workList);
+			wl.setCompletedWorkCnt(cnt);
 			
 		}//end of for
 		
-		//2-3. 완료된 업무 수 구하기
-		for(int i=0; i<worklistList.size(); i++) {
-			Worklist wl = worklistList.get(i);
-			int worklistNo = wl.getWorklistNo();
-			int cnt = 0; 
-			
-			cnt = projectDAO.selectTotalWorkCompleteYn(worklistNo);
-			wl.setCompletedWorkCnt(cnt);
-		}
 		
 		//1-2. 프로젝트에 업무리스트의 리스트 담기
 		p.setWorklistList(worklistList);
@@ -492,28 +572,106 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public Worklist selectWorklistOne(int worklistNo) {
+	public Worklist selectWorklistOne(int projectNo, int worklistNo) {
 		
-		//1. 업무리스트 조회
-		Worklist wl = projectDAO.selectWorklistOne(worklistNo);
+		//1-1.프로젝트 객체 가져오기
+		Project p = projectDAO.selectProjectOne(projectNo);
 		
-		if(wl==null)
+		if(p==null)
+			throw new ProjectException("프로젝트 조회 오류!");
+		
+		//1-2.프로젝트 멤버 리스트
+		List<Member> projectMemberList = p.getProjectMemberList();
+		List<String> pMemberIdList = new ArrayList<>();
+		for(Member m: projectMemberList) {
+			String memberId = m.getMemberId();
+			pMemberIdList.add(memberId);
+		}
+		
+		
+		//2-1. 업무리스트 조회
+		Worklist wlList = projectDAO.selectWorklistOne(worklistNo);
+		
+		if(wlList==null)
 			throw new ProjectException("업무리스트 조회 오류!");
 		
-		//2.업무리스트 안의 업무 조회
-		List<Work> list = projectDAO.selectWorkListByWorklistNo(worklistNo);
 		
-		if(list==null)
+		//3-1.업무리스트 안의 업무 조회
+		List<Work> workList = projectDAO.selectWorkListByWorklistNo(worklistNo);
+		
+		if(workList==null)
 			throw new ProjectException("업무의 리스트 조회 오류!");
 		
-		//3. 완료된 업무 수 구하기
+		
+		//3-2. 업무 안의 체크리스트/첨부파일/코멘트 가져오기
+		for(int j=0; j<workList.size(); j++) {
+			Work work = workList.get(j);
+			
+			List<Member> workChargedMemberList = work.getWorkChargedMemberList(); //업무 배정된 멤버 리스트
+			List<String> chargedMemberIdList = new ArrayList<>(); //업무 배정된 멤버의 아이디만 담은 리스트
+			for(Member m: workChargedMemberList) {
+				String memberId = m.getMemberId();
+				chargedMemberIdList.add(memberId);
+			}
+			
+			//4-1.업무 번호로 체크리스트 가져오기
+			List<Checklist> chklstList = projectDAO.selectChklstListByWorkNo(work.getWorkNo());
+			//체크리스트 작성자, 배정된 멤버 객체 구하기
+			for(Checklist chklst: chklstList) {
+				Member writerMember = projectDAO.selectMemberOneByMemberId(chklst.getChecklistWriter());
+				Member chargedMember = null;
+				
+				int idx = chargedMemberIdList.indexOf(chklst.getChecklistChargedMemberId());
+				if(idx != -1)
+					chargedMember = workChargedMemberList.get(idx);
+				
+				chklst.setChecklistWriterMember(writerMember); //체크리스트 작성자
+				chklst.setChecklistChargedMember(chargedMember); //체크리스트에 배정된 멤버
+			}
+			
+			//4-2.업무 번호로 파일첨부 가져오기
+			List<Attachment> attachList = projectDAO.selectAttachListByWorkNo(work.getWorkNo());
+			//파일첨부 작성자 객체 구하기
+			for(Attachment attach: attachList) {
+				String writerId = attach.getAttachmentWriterId();
+				Member writerMember = null;
+				
+				int idx = pMemberIdList.indexOf(writerId);
+				if(idx != -1) 
+					writerMember = projectMemberList.get(idx);
+				
+				attach.setAttachmentWriterMember(writerMember);
+			}
+			
+			//4-3.업무 번호로 코멘트 가져오기
+			List<WorkComment> commentList = projectDAO.selectCommentListByWorkNo(work.getWorkNo());
+			//코멘트 작성자 객체 구하기
+			for(WorkComment comment: commentList) {
+				String writerId = comment.getWorkCommentWriterId();
+				Member writerMember = null;
+				
+				int idx = pMemberIdList.indexOf(writerId);
+				if(idx != -1) 
+					writerMember = projectMemberList.get(idx);
+				
+				comment.setWorkCommentWriterMember(writerMember);
+			}
+			
+			//4-4.업무에 담기
+			work.setChecklistList(chklstList);
+			work.setAttachmentList(attachList);
+			work.setWorkCommentList(commentList);
+		}
+		
+		//3-3. 완료된 업무 수 구하기
 		int cnt = projectDAO.selectTotalWorkCompleteYn(worklistNo); 
 		
-		//3. 업무리스트에 담기
-		wl.setCompletedWorkCnt(cnt);
-		wl.setWorkList(list);
+		//2-2. 업무리스트에 담기
+		wlList.setWorkList(workList);
+		wlList.setCompletedWorkCnt(cnt);
+		wlList.setWorkList(workList);
 		
-		return wl;
+		return wlList;
 	}
 
 	@Override
@@ -532,6 +690,36 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		if(result==0)
 			throw new ProjectException("파일삭제 오류!");
+		
+		return result;
+	}
+
+	@Override
+	public int deleteChecklistByWorkNo(int workNo, int cntChk) {
+		int result = projectDAO.deleteChecklistByWorkNo(workNo);
+		
+		if(result!=cntChk)
+			throw new ProjectException("체크리스트 삭제 오류!");
+		
+		return result;
+	}
+
+	@Override
+	public int deleteCommentByWorkNo(int workNo, int cntComment) {
+		int result = projectDAO.deleteCommentByWorkNo(workNo);
+		
+		if(result!=cntComment)
+			throw new ProjectException("코멘트 삭제 오류!");
+		
+		return result;
+	}
+
+	@Override
+	public int deleteAttachByWorkNo(int workNo, int cntFile) {
+		int result = projectDAO.deleteAttachByWorkNo(workNo);
+		
+		if(result!=cntFile)
+			throw new ProjectException("파일 삭제 오류!");
 		
 		return result;
 	}

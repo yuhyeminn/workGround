@@ -166,4 +166,24 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.delete("project.deleteFile", attachNo);
 	}
 
+	@Override
+	public int deleteChecklistByWorkNo(int workNo) {
+		return sqlSession.delete("project.deleteChecklistByWorkNo", workNo);
+	}
+
+	@Override
+	public int deleteCommentByWorkNo(int workNo) {
+		return sqlSession.delete("project.deleteCommentByWorkNo", workNo);
+	}
+
+	@Override
+	public int deleteAttachByWorkNo(int workNo) {
+		return sqlSession.delete("project.deleteAttachByWorkNo", workNo);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectCntWork(int projectNo) {
+		return sqlSession.selectList("project.selectCntWork", projectNo);
+	}
+
 }

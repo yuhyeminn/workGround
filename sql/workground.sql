@@ -509,6 +509,7 @@ insert into attachment values(seq_attachment.nextval,6,13,'테스트.txt','test.
 insert into attachment values(seq_attachment.nextval,142,8,'야구.JPG','fs.JPG',sysdate);
 insert into attachment values(seq_attachment.nextval,7,11,'신청서.hwp','application.hwp',sysdate);
 
+
 commit;
 
 --================================================
@@ -538,7 +539,8 @@ select * from work_charged_members;
 select * from checklist;
 select * from work_comment;
 select * from attachment;
-select * from work where work_no = 6;
+select * from work where work_no = 205;
+
 
 --------------------------------------------------
 --notice/community테이블 관련 select문

@@ -22,6 +22,30 @@
 	<c:set var="projectManager" value="${projectManager=project.projectWriter}" />
 </c:if>
 
+<script>
+$(function(){
+	let btn = document.querySelector("#btn-cancelSearch");
+	btn.addEventListener('click', ()=>{
+		location.href = '${pageContext.request.contextPath}/project/projectView.do?projectNo=${project.projectNo}';
+	});
+}());
+</script>
+
+		<!-- SEARCH FORM -->
+        <form id="workSearchFrm" class="form-inline">
+	        <div class="input-group input-group-sm">
+	            <input class="form-control form-control-navbar" name="searchWorkKeyword" type="search" placeholder="업무 검색" value="${keywordBefore}" aria-label="Search">
+	            <div class="input-group-append">
+	            <button class="btn btn-navbar" type="button" id="btn-searchWork">
+	                <i class="fas fa-search"></i>
+	            </button>
+	            </div>
+	        </div>
+	        <button type="button" id="btn-cancelSearch"><i class="fas fa-window-close"></i></button>
+        </form>
+        
+        <div id="wlList-wrapper">
+        <!-- 업무리스트 -->
         <c:forEach items="${wlList}" var="wl" varStatus="wlVs">
         <section class="worklist" id="worklist-${wl.worklistNo}">
             <!-- 업무리스트 타이틀 -->
@@ -447,3 +471,5 @@
 </section><!-- /.worklist -->
 
 <div class="clear"></div>
+
+</div><!-- /.wlList-wrapper -->
