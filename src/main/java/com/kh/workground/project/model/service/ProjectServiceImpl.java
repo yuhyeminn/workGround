@@ -516,4 +516,24 @@ public class ProjectServiceImpl implements ProjectService {
 		return wl;
 	}
 
+	@Override
+	public int updateWorkCompleteYn(Map<String, Object> param) {
+		int result = projectDAO.updateWorkCompleteYn(param);
+		
+		if(result==0)
+			throw new ProjectException("업무완료 업데이트 오류!");
+		
+		return result;
+	}
+
+	@Override
+	public int deleteFile(int attachNo) {
+		int result = projectDAO.deleteFile(attachNo);
+		
+		if(result==0)
+			throw new ProjectException("파일삭제 오류!");
+		
+		return result;
+	}
+
 }

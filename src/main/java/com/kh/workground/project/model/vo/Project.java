@@ -26,7 +26,7 @@ public class Project implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private int projectNo;
-	private String projectWriter;
+	private String projectWriter; //프로젝트 작성자
 	private String projectTitle;
 	private String privateYn;
 	private String projectDesc;
@@ -42,5 +42,4 @@ public class Project implements Serializable {
 	private List<Worklist> worklistList; //프로젝트 안의 업무리스트들
 	private String projectStarYn; //프로젝트 중요표시 여부
 
-	
 }

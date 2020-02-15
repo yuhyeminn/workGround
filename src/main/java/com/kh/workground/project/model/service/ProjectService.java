@@ -39,4 +39,8 @@ public interface ProjectService {
 	String selectProjectWriter(int projectNo);
 
 	Worklist selectWorklistOne(int worklistNo);
+
+	int updateWorkCompleteYn(Map<String, Object> param);
+
+	int deleteFile(int attachNo);
 }

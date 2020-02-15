@@ -9,9 +9,26 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
-<jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
+<jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 <link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
+
+<!-- 프로젝트 관리자 -->
+<c:set var="projectManager" value=""/>
+<c:set var="isprojectManager" value="false"/>
+<c:forEach var="pm" items="${project.projectMemberList}">
+	<c:if test="${pm.managerYn eq 'Y'}">
+		<c:set var="projectManager" value="${projectManager=pm.memberId}" />
+	</c:if>
+	<c:if test="${pm.memberId eq memberLoggedIn.memberId }">
+		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
+	</c:if>
+</c:forEach>
+<!-- 나의 워크패드인 경우 -->
+<c:if test="${project.privateYn=='Y'}">
+	<c:set var="projectManager" value="${projectManager=project.projectWriter}" />
+</c:if>
+
 
 <script>
 $(()=>{
@@ -25,6 +42,8 @@ $(()=>{
     
     addWork(); //새 업무 만들기
     deleteWork(); //업무 삭제하기
+
+    workComplete(); //업무 완료하기
     checklist(); //체크리스트 체크
     openCompletedWork(); //완료된 업무 펼쳐보기
     
@@ -32,7 +51,6 @@ $(()=>{
     goTabMenu(); //서브헤더 탭 링크 이동
     
     setting(); //설정창- 나중에 수정
-    
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -109,10 +127,13 @@ function searchWork(){
 			dataType: 'html',
 			type: 'GET',
 			success: data=>{
-				console.log(data);
-				
-				$(wrapper).html("");
-				$(wrapper).html(data);
+				if(data!=null){
+					$(wrapper).html("");
+					$(wrapper).html(data);
+				}
+				else{
+					alert("업무 검색에 실패했습니다 :(");
+				}
 			},
 			error: (x,s,e) => {
 				console.log(x,s,e);
@@ -150,22 +171,38 @@ function addWorklist(){
 
     //+버튼 클릭시 업무리스트 추가
     btnAdd.addEventListener('click', ()=>{
-        let formData = $(frm).serialize();
+        let title = document.querySelector("input[name=worklistTitle]");
+        
+        //유효성 검사
+        if($(title).val().trim()==""){
+        	alert("추가할 업무리스트의 이름을 입력해 주세요!");
+        	return;
+        }
+        
+        let data = {
+        		projectNo: ${project.projectNo},
+        		projectManager: '${projectManager}',
+        		worklistTitle: $(title).val().trim()
+        };
         
         $.ajax({
         	url: '${pageContext.request.contextPath}/project/addWorklist.do',
-        	data: formData,
+        	data: data,
         	dataType: 'html',
         	type: 'POST',
         	success: data=>{
-        		
-       			//초기화
-       			$(inputTitle).val("");
-       			$(addWkltFrm).hide();
-       			$(addWklt).show();
-       			
-       			//업무리스트 추가
-       			$(addWklt).before(data);
+        		if(data!=null){
+	       			//초기화
+	       			$(inputTitle).val("");
+	       			$(addWkltFrm).hide();
+	       			$(addWklt).show();
+	       			
+	       			//업무리스트 추가
+	       			$(addWklt).before(data);
+        		}
+        		else{
+        			alert("새 업무리스트 추가에 실패했습니다 :(");
+        		}
        			
         	},
         	error: (x,s,e) => {
@@ -173,31 +210,34 @@ function addWorklist(){
 			}
       
         }); 
-    });
+    }); //end of +버튼 클릭
 }
 
 //업무리스트 삭제하기
 function deleteWorklist(){
-	let btnDelModal = document.querySelectorAll(".btn-removeWorklist-modal");
 	let modal = document.querySelector("#modal-worklist-remove");
 	let delTitle = document.querySelector("#modal-del-title");
 	let btnDel = document.querySelector("#btn-removeWorklist");
 	let title;
 	let worklistNo;
 	
-	//업무리스트 x버튼 클릭시 모달창: 모달창에 업무리스트 정보 뿌리기
-	btnDelModal.forEach((obj, idx)=>{
-		obj.addEventListener('click', ()=>{
-			let val = obj.value;
-			let valArr = val.split(',');
-			title = valArr[1];
-			worklistNo = valArr[0];
-			
-			$(".modal-del-target").text("업무리스트");
-			$(delTitle).text(title); //업무리스트 타이틀 
-			$(btnDel).val('worklist-'+worklistNo); //업무리스트 번호
-		});
+	//업무리스트 x버튼 클릭
+	$(document).on('click', '.btn-removeWorklist-modal', (e)=>{
+		let btnX;		
+		if(e.target.tagName==='I') btnX = e.target.parentNode;	
+		else btnX = e.target;
+		
+		let val = btnX.value;
+		let valArr = val.split(',');
+		title = valArr[1];
+		worklistNo = valArr[0];
+		
+		//모달창에 업무리스트 정보 뿌리기
+		$(".modal-del-target").text("업무리스트");
+		$(delTitle).text(title); //업무리스트 타이틀 
+		$(btnDel).val('worklist-'+worklistNo); //업무리스트 번호  
 	});
+	
 	
 	//삭제버튼 클릭시
 	btnDel.addEventListener('click', e=>{
@@ -245,9 +285,13 @@ function addWork(){
 	let addDateArr = [];
 	let addMemberArr = [];
 	
-	//+버튼 제어
-    $btnAddArr.each((idx, obj)=>{
-    	let worklistNo = obj.value;
+	//업무추가 +버튼 클릭
+	$(document).on('click', '.btn-addWork:not(#btn-addWorklist)', (e)=>{
+		let btnPlus;		
+		if(e.target.tagName==='I') btnPlus = e.target.parentNode;	
+		else btnPlus = e.target;
+		
+		let worklistNo = btnPlus.value;
     	let btnCancel = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-cancel');
     	let btnSubmit = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-submit');
    		let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
@@ -261,219 +305,263 @@ function addWork(){
    		let memTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-memTag');
 		let workTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
 		let dPickerArr = document.querySelectorAll('.daterangepicker');
-   		
-   		//+버튼 클릭
-    	obj.addEventListener('click', ()=>{
-    		//입력창 열기
-    		$('.addWork-wrapper').removeClass('show');
-    		$(addWorkWrapper).addClass("show");
-    		$(workTitle).focus();
-    		
-   			
-    		//멤버버튼 클릭
-   			memTagArr.forEach((obj, idx)=>{
-   				obj.addEventListener('click', e=>{
-   					let className = obj.className;
-   					let classArr = className.split(" ");
-   					let memberId = classArr[2];
-   					
-   					let idx = addMemberArr.indexOf(memberId);
-   					let $hasCheck = $(obj).find('.media-body'); //체크아이콘 들어갈 태그
-   					
-   					//addMemberArr에 선택한 memberId 담기
-   					//배열에 아이디가 존재하지 않는 경우
-   					if(idx === -1) {
-   						$(obj).addClass('checked');
-   						$hasCheck.append(chkHtml);
-   						addMemberArr.push(memberId);
-   					}
-   					//배열에 이미 존재하는 경우
-   					else {
-   						$(obj).removeClass('checked');
-   						let $check = $hasCheck.find('.fa-check'); 
-   						$check.remove();
-   						addMemberArr.splice(idx, 1);
-   					}
-   				}); 
-   			}); //end of memTagArr
-   			
-   			
-   			//업무상태태그 클릭
-   			workTagArr.forEach((obj, idx)=>{
-    			obj.addEventListener('click', e=>{
-    				let $this = $(e.target);
-    				let $check = $('.drop-workTag .fa-check');
-		    		
-		    		//addTag변수에 선택한 태그코드 담기
-    				if($this.hasClass('WT1')) {
-    					//이미 선택된 태그가 아닌 경우에는 체크
-    					if(!$this.hasClass('checked')){
-	    					$this.addClass('checked');
-	    					$check.remove(); //다른 태그에 체크 아이콘 더해져있으면 지우기
-	    					$this.append(chkHtml); //체크 아이콘 추가 
-	    					addTag = "WT1";
-    					}
-    					//이미 선택된 태그는 체크 해제
-    					else{
-    						$this.removeClass('checked');
-    						$this.find('.fa-check').remove();
-    						addTag = "";
-    					}
-    				}
-    				else if($this.hasClass('WT2')) {
-    					if(!$this.hasClass('checked')){
-	    					$this.addClass('checked');
-	    					$check.remove();
-	    					$this.append(chkHtml);
-	    					addTag = "WT2";
-    					}
-    					else{
-    						$this.removeClass('checked');
-    						$this.find('.fa-check').remove();
-    						addTag = "";
-    					}
-    				}
-    				else if($this.hasClass('WT3')) {
-    					if(!$this.hasClass('checked')){
-	    					$this.addClass('checked');
-	    					$check.remove();
-	    					$this.append(chkHtml);
-	    					addTag = "WT3";
-    					}
-    					else{
-    						$this.removeClass('checked');
-    						$this.find('.fa-check').remove();
-    						addTag = "";
-    					}
-    				} //end of else if
-    				
-    			}); //end of 업무태그 click
-    		}); //업무태그 끝
-   			
-   			
-    		//날짜버튼 클릭
-   			btnAddDate.addEventListener('click', e=>{
-   				let btnAddDate = e.target.parentNode;
-   				let dp; //선택된 데이트피커
-   				
-   				dPickerArr.forEach((obj, idx)=>{
-   					if(obj.style.display==='block'){
-   						dp = obj;
-   					}
-   				});
-   				
-   				//데이트피커 요소들
-   				let $btnApply = $(dp).find('.applyBtn');
-   				let selectedVal;
-   				let addDate = e.target.parentNode.parentNode; //추가될 버튼 담길 요소
-   				
-   				//적용버튼 클릭 시
-   				$btnApply.on('click', ()=>{
-   					//날짜 뽑아내기
-   					selectedVal = $(dp).find('.drp-selected').text();
-   					let startArr = selectedVal.split(' - ')[0].split('/');
-   					let endArr = selectedVal.split(' - ')[1].split('/');
-   					
-   					let startDate = startArr[0]+"월 "+startArr[1]+"일";
-   					let endDate = endArr[0]+"월 "+endArr[1]+"일";
-   					
-   					let startSql = startArr[2]+"-"+startArr[0]+"-"+startArr[1];
-   					let endSql = endArr[2]+"-"+endArr[0]+"-"+endArr[1];
-   					
-   					//배열에 담기
-   					addDateArr.push(startSql);
-   					addDateArr.push(endSql);
-   					
-    				//추가될 버튼 요소
-    				let dateHtml = '<button type="button" class="btn-cancelDate">'+startDate+' - '+endDate+'<i class="fas fa-times"></i></button>';
-    				
-    				//데이트피커버튼 지우고  
-    				$(btnAddDate).remove();
-    				$(addDate).append(dateHtml);
-    				
-    				let $btnCancelDate = $(addDate).find('.btn-cancelDate');
-    				
-    				//날짜 지우기
-    				$btnCancelDate.on('click', ()=>{
-    					addDateArr.length = 0; //배열 초기화
-    					$btnCancelDate.remove();
-    					$(addDate).append(btnAddDate);
-    				});
-    				
-   				}); //end of click $btnApply
-   				
-   			}); //날짜 버튼끝
-   			
-   			
-   			//만들기버튼 클릭
-   			btnSubmit.addEventListener('click', e=>{
-   				let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]').value;
-   				let wlSection = document.querySelector('#worklist-'+worklistNo);
-   				
-   				let data = {
-   						projectWriter: '${project.projectWriter}',
-   						worklistNo: worklistNo,
-   						workTitle: workTitle,
-   						workChargedMember: addMemberArr,
-   						workTag: addTag,
-   						workDate: addDateArr
-   				};
-   				
-   				$.ajax({
-   					url: '${pageContext.request.contextPath}/project/insertWork.do',
-   					data: data,
-   					dataType: 'html',
-   					type: 'POST',
-   					success: data=>{
-   						console.log(data);
-   						
-   						//입력창 닫기
-   			    		$(workTitle).val("");
-   			    		$(addWorkWrapper).removeClass("show");
-   			    		
-   						$(wlSection).html(data);
-   					},
-   					error: (x,s,e) => {
-   						console.log(x,s,e);
-   					}
-   				}); 
-   			}) //end of 만들기 버튼
-   			
-   			
-   			//취소버튼 클릭
-   			btnCancel.addEventListener('click', e=>{
-   				$(workTitle).val("");
-   				$(addWorkWrapper).removeClass("show");
-   			});
-   			
-    	}); //end of +버튼 클릭
-    }); // end of +버튼 제어 끝
+		
+		//입력창 열기
+		$('.addWork-wrapper').removeClass('show');
+		$(addWorkWrapper).addClass("show");
+		$(workTitle).focus();
+		
+		//취소버튼에 worklistNo 담기
+		btnCancel.value = worklistNo;
+		
+		
+		//멤버버튼 클릭
+		memTagArr.forEach((obj, idx)=>{
+			obj.addEventListener('click', e=>{
+				let className = obj.className;
+				let classArr = className.split(" ");
+				let memberId = classArr[2];
+				
+				let idx = addMemberArr.indexOf(memberId);
+				let $hasCheck = $(obj).find('.media-body'); //체크아이콘 들어갈 태그
+				
+				//addMemberArr에 선택한 memberId 담기
+				//배열에 아이디가 존재하지 않는 경우
+				if(idx === -1) {
+					$(obj).addClass('checked');
+					$hasCheck.append(chkHtml);
+					addMemberArr.push(memberId);
+				}
+				//배열에 이미 존재하는 경우
+				else {
+					$(obj).removeClass('checked');
+					let $check = $hasCheck.find('.fa-check'); 
+					$check.remove();
+					addMemberArr.splice(idx, 1);
+				}
+			}); 
+			
+		}); //end of 멤버태그 클릭
+		
+		
+		//업무상태태그 클릭
+		workTagArr.forEach((obj, idx)=>{
+			obj.addEventListener('click', e=>{
+				let $this = $(e.target);
+				let $check = $('.drop-workTag .fa-check');
+	    		
+	    		//addTag변수에 선택한 태그코드 담기
+				if($this.hasClass('WT1')) {
+					//이미 선택된 태그가 아닌 경우에는 체크
+					if(!$this.hasClass('checked')){
+    					$this.addClass('checked');
+    					$check.remove(); //다른 태그에 체크 아이콘 더해져있으면 지우기
+    					$this.append(chkHtml); //체크 아이콘 추가 
+    					addTag = "WT1";
+					}
+					//이미 선택된 태그는 체크 해제
+					else{
+						$this.removeClass('checked');
+						$this.find('.fa-check').remove();
+						addTag = "";
+					}
+				}
+				else if($this.hasClass('WT2')) {
+					if(!$this.hasClass('checked')){
+    					$this.addClass('checked');
+    					$check.remove();
+    					$this.append(chkHtml);
+    					addTag = "WT2";
+					}
+					else{
+						$this.removeClass('checked');
+						$this.find('.fa-check').remove();
+						addTag = "";
+					}
+				}
+				else if($this.hasClass('WT3')) {
+					if(!$this.hasClass('checked')){
+    					$this.addClass('checked');
+    					$check.remove();
+    					$this.append(chkHtml);
+    					addTag = "WT3";
+					}
+					else{
+						$this.removeClass('checked');
+						$this.find('.fa-check').remove();
+						addTag = "";
+					}
+				} //end of else if
+			});
+		}); //end of 업무상태태그 클릭
+		
+		
+		//날짜버튼 클릭
+		btnAddDate.addEventListener('click', e=>{
+			let btnAddDate = e.target.parentNode;
+			let dp; //선택된 데이트피커
+			
+			dPickerArr.forEach((obj, idx)=>{
+				if(obj.style.display==='block'){
+					dp = obj;
+				}
+			});
+			
+			//데이트피커 요소들
+			let $btnApply = $(dp).find('.applyBtn');
+			let selectedVal;
+			let addDate = e.target.parentNode.parentNode; //추가될 버튼 담길 요소
+				
+			//적용버튼 클릭 시
+			$btnApply.on('click', ()=>{
+					//날짜 뽑아내기
+					selectedVal = $(dp).find('.drp-selected').text();
+					let startArr = selectedVal.split(' - ')[0].split('/');
+					let endArr = selectedVal.split(' - ')[1].split('/');
+					
+					let startDate = startArr[0]+"월 "+startArr[1]+"일";
+					let endDate = endArr[0]+"월 "+endArr[1]+"일";
+					
+					let startSql = startArr[2]+"-"+startArr[0]+"-"+startArr[1];
+					let endSql = endArr[2]+"-"+endArr[0]+"-"+endArr[1];
+					
+					//배열에 담기
+					addDateArr.push(startSql);
+					addDateArr.push(endSql);
+					
+				//추가될 버튼 요소
+				let dateHtml = '<button type="button" class="btn-cancelDate">'+startDate+' - '+endDate+'<i class="fas fa-times"></i></button>';
+				
+				//데이트피커버튼 지우고  
+				$(btnAddDate).remove();
+				$(addDate).append(dateHtml);
+				
+				let $btnCancelDate = $(addDate).find('.btn-cancelDate');
+				
+				//날짜 지우기
+				$btnCancelDate.on('click', ()=>{
+					addDateArr.length = 0; //배열 초기화
+					$btnCancelDate.remove();
+					$(addDate).append(btnAddDate);
+				});
+				
+			}); //end of click $btnApply
+				
+		}); //end of 날짜버튼 클릭
+		
+		
+		//만들기버튼 클릭
+		btnSubmit.addEventListener('click', e=>{
+			let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
+			let wlSection = document.querySelector('#worklist-'+worklistNo);
+			
+			//유효성 검사
+			if($(workTitle).val().trim()==""){
+				alert("새 업무의 이름을 입력해 주세요!");
+				return;
+			}
+				
+			let data = {
+					projectManager: '${projectManager}',
+					worklistNo: worklistNo,
+					workTitle: $(workTitle).val().trim(),
+					workChargedMember: addMemberArr,
+					workTag: addTag,
+					workDate: addDateArr
+			}
+			console.log(data);
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/project/insertWork.do',
+				data: data,
+				dataType: 'html',
+				type: 'POST',
+				success: data=>{
+					if(data!=null){
+						//입력창 닫기
+			    		$(workTitle).val("");
+			    		$(addWorkWrapper).removeClass("show");
+			    		
+						$(wlSection).html(data);
+					}
+					else{
+						alert("새 업무 만들기에 실패했습니다 :(");
+					}
+				},
+				error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+			});  
+		}) //end of 만들기 버튼클릭
+		
+		
+		//취소버튼 클릭
+		btnCancel.addEventListener('click', e=>{
+			$(workTitle).val("");
+			addTag = "";
+			addMemberArr.length = 0; 
+			addDateArr.length = 0; 
+			
+			
+			//날짜 선택한 경우
+			//$btnCancelDate.remove();
+			//$(addDate).append(btnAddDate);
+			
+			$(addWorkWrapper).removeClass("show");
+			
+		}); 
+		
+	}); //end of 업무추가 +버튼 클릭
+	
+	
+	//취소버튼 클릭
+	/* $(document).on('click', '.btn-addWork-cancel', (e)=>{
+		let btnCancel;		
+		if(e.target.tagName==='I') btnCancel = e.target.parentNode;	
+		else btnCancel = e.target;
+		console.log(btnCancel);
+		
+		let worklistNo = btnCancel.value;
+		let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
+		let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
+		
+		$(workTitle).val("");
+		addTag = "";
+		addMemberArr.length = 0; 
+		addDateArr.length = 0; 
+		
+		$(addWorkWrapper).removeClass("show");
+	}); */
 }
 
 //업무 삭제하기
 function deleteWork(){
-	let menu = document.querySelector("#menu-delWork");
+	let loggedInMemberId = '${memberLoggedIn.memberId}';
+	let projectManager = '${projectManager}';
 	
+	let menu = document.querySelector("#menu-delWork");
 	let modal = document.querySelector("#modal-worklist-remove");
 	let delTitle = document.querySelector("#modal-del-title");
 	let btnDel = document.querySelector("#btn-removeWorklist");
 	
 	let work; 
 	
-	//업무 우클릭시 삭제 드롭다운 메뉴 열기
-	$(".work-item").contextmenu(function(e){
-		e.preventDefault();
-		
-		let x = e.pageX + 'px';
-		let y = (e.pageY-100) + 'px';
-		
-		menu.style.display = 'block';
-		menu.style.left = x;
-		menu.style.top = y;	
-		
-		//내가 클릭한 업무
-		work = e.currentTarget; 
-	});
+	//업무 우클릭시 삭제 드롭다운 메뉴 열기: 관리자, 프로젝트팀장만 가능
+	if(loggedInMemberId=='admin' || loggedInMemberId==projectManager){
+		$(document).on('contextmenu', '.work-item', e=>{
+			e.preventDefault();
+			
+			let x = e.pageX + 'px';
+			let y = (e.pageY-100) + 'px';
+			
+			menu.style.display = 'block';
+			menu.style.left = x;
+			menu.style.top = y;	
+			
+			//내가 클릭한 업무
+			work = e.currentTarget; 
+		});
+	}
 	
 	//업무 삭제 클릭: 모달에 정보 뿌리기 
 	menu.addEventListener('click', (e)=>{
@@ -489,150 +577,235 @@ function deleteWork(){
 	btnDel.addEventListener('click', e=>{
 		let val = e.target.value
 		let workNo = val.split('-')[1]*1;
-		let $delWork = $("#"+workNo);
+		
+		let wlSection = work.parentNode.parentNode.parentNode;
+ 		let worklistNo = wlSection.id.split('-')[1]*1; 
+		
+		let data = {
+			worklistNo: worklistNo,
+			workNo: workNo,
+			projectManager: '${projectManager}'
+		}
 		
 		//업무리스트와 구분
 		if(val.split('-')[0] == 'work'){
 			$.ajax({
 	        	url: '${pageContext.request.contextPath}/project/deleteWork.do',
-	        	data: {workNo: workNo},
-	        	dataType: 'json',
+	        	data: data,
+	        	dataType: 'html',
 	        	type: 'POST',
 	        	success: data=>{
-	        		console.log(data);
-	        		
-	        		//삭제 성공시 모달창 닫기
-	        		if(data.result===1){
-	        			$(modal).modal('hide');
-	        			
-		        		//해당 요소 지우기
-		        		$delWork.remove();
+	        		if(data!=null){
+		        		$(wlSection).html(data);
+		        		$(modal).modal('hide');
 	        		}
-	        		
+	        		else{
+						alert("업무 삭제에 실패했습니다 :(");	        			
+	        		}
 	        	},
 	        	error: (x,s,e) => {
 					console.log(x,s,e);
 				}
 	        }); 
-		}
+		} 
 		
 	}); //end of btnDel click 
-	
 	
 	document.addEventListener('click', ()=>{
 		menu.style.display = 'none';
 	});
 }
 
+//업무 완료하기
+function workComplete(){
+	let loggedInMemberId = '${memberLoggedIn.memberId}';
+	let loggedInMemberName = '${memberLoggedIn.memberName}';
+	let projectManager = '${projectManager}';
+	
+	$(document).on('click', '.btn-checkWork', (e)=>{
+		let btnChk;		
+		if(e.target.tagName==='I') btnChk = e.target.parentNode;	
+		else btnChk = e.target;
+		
+		let workNo = btnChk.value;
+		let $workSection = $("section#"+workNo);
+		let workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
+		let isValid = false;
+		
+		//1.유효성 검사
+		//1-1.업무 배정된 멤버가 있는 경우
+		if(workChargedMemIdArr[0]!==""){
+			workChargedMemIdArr.forEach(id=>{
+				if(loggedInMemberId===id) isValid = true;
+			});
+			if(loggedInMemberId==='admin' || loggedInMemberId===projectManager) 
+				isValid = true;
+		}
+		//1-1.업무 배정된 멤버가 없는 경우
+		else{
+			if(loggedInMemberId==='admin' || loggedInMemberId===projectManager) 
+				isValid = true;
+		}
+		
+		
+		//2.업무 완료 여부
+		let yn = "N";
+		if(isValid){
+			//완료된 업무인 경우 
+			if($workSection.hasClass('completed')) yn = "Y";
+			
+			let $wlSection = $workSection.parent().parent().parent();
+			let worklistNo = $wlSection.attr('id').split('-')[1];
+			
+			let data = {
+				projectManager: projectManager,
+				completeYn: yn,
+				worklistNo: worklistNo*1,
+				workNo: workNo*1
+			};
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/project/updateWorkCompleteYn.do',
+				data: data,
+				dataTyp: 'html',
+				type: 'POST',
+				success: data=>{
+					if(data!=null){
+						$wlSection.html(data);
+					}
+					else{
+						if(yn==='N')
+							alert("업무 완료에 실패했습니다 :(");
+						else
+							alert("업무완료 해제에 실패했습니다 :(");
+					}
+				},
+				error: (x,s,e)=>{
+					console.log(x,s,e);
+				}
+			});
+		}//end of if	
+		
+	}); //end of 업무완료버튼 클릭
+}
+
 //체크리스트 체크
 function checklist(){
 	let loggedInMemberId = '${memberLoggedIn.memberId}';
 	let loggedInMemberName = '${memberLoggedIn.memberName}';
-	let projectAdminId = '${project.projectWriter}';
-    let btnCheckArr = document.querySelectorAll(".btn-check");
-    
-    btnCheckArr.forEach((obj, idx)=>{
-    	obj.addEventListener('click', ()=>{
-    		let workNo = obj.value.split(",")[0];
-    		let chkNo = obj.value.split(",")[1];
-    		
-    		let $workSection = $("section#"+workNo);
-    		let $tr = $(obj.parentNode.parentNode);
-    		let $tdChecklist = $(obj.parentNode.nextSibling.nextSibling);
-    		let $icoChk = $(obj.firstChild);
-    		
-    		let workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
-    		let chkChargedMemId = obj.nextSibling.nextSibling.value;
-    		let isValid = false;
-    		
-    		
-    		//1.유효성 검사
-    		//체크리스트에 배정된 멤버가 있다면
-    		if(chkChargedMemId!==""){
-    			//체크리스트에 배정된 멤버, 프로젝트 팀장, admin만 클릭 가능
-    			if(loggedInMemberId===chkChargedMemId || loggedInMemberId===projectAdminId || loggedInMemberId==='admin'){
-    				isValid = true;
-    			}
-    			else{
-    				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
-    				return;
-    			}
-    		}
-    		//체크리스트에 배정된 멤버가 없다면, 업무에 배정된 멤버인지
-    		else{
-    			let chkbool = false;
-    			workChargedMemIdArr.forEach(id=>{
-    				if(loggedInMemberId===id) chkbool = true;
-    			});
-    			
-    			if(chkbool===true || loggedInMemberId===projectAdminId || loggedInMemberId==='admin'){
-    				isValid = true;
-    			}
-    			else{
-    				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
-    				return;
-    			}
-    		}	
-    		
-    		//2.체크리스트 완료 여부
-    		let yn = "N";
-    		if(isValid){
-    			//완료된 체크리스트인 경우 
-    			if($tr.hasClass('completed')) yn = "Y";
-    			
-    			let data = {
-    				completeYn: yn,
-    				checklistNo: chkNo
-    			};
-    			
-    			$.ajax({
-    				url: '${pageContext.request.contextPath}/project/updateChklistCompleteYn.do',
-    				data: data,
-    				dataType: 'json',
-    				type: 'POST',
-    				success: data=>{
-    					console.log(data);	
+	let projectManager = '${projectManager}';
+
+    $(document).on('click', '.btn-check:not(.btn-checkWork)', (e)=>{
+    	let btnChk;		
+		if(e.target.tagName==='I') btnChk = e.target.parentNode;	
+		else btnChk = e.target;
+		
+		let val = btnChk.value;
+		let workNo = val.split(",")[0];
+		let chkNo = val.split(",")[1];
+		
+		let $workSection = $("section#"+workNo);
+		let $tr = $(btnChk.parentNode.parentNode);
+		let $tdChecklist = $(btnChk.parentNode.nextSibling.nextSibling);
+		let $icoChk = $(btnChk.firstChild);
+		
+		let workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
+		let chkChargedMemId = btnChk.nextSibling.nextSibling.value;
+		let isValid = false;
+		
+		
+		//1.유효성 검사
+		//체크리스트에 배정된 멤버가 있다면
+		if(chkChargedMemId!==""){
+			//체크리스트에 배정된 멤버, 프로젝트 팀장, admin만 클릭 가능
+			if(loggedInMemberId===chkChargedMemId || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
+				isValid = true;
+			}
+			else{
+				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
+				return;
+			}
+		}
+		//체크리스트에 배정된 멤버가 없다면, 업무에 배정된 멤버인지
+		else{
+			let chkbool = false;
+			workChargedMemIdArr.forEach(id=>{
+				if(loggedInMemberId===id) chkbool = true;
+			});
+			
+			if(chkbool===true || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
+				isValid = true;
+			}
+			else{
+				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
+				return;
+			}
+		}
+		
+		
+		//2.체크리스트 완료 여부
+		let yn = "N";
+		if(isValid){
+			//완료된 체크리스트인 경우 
+			if($tr.hasClass('completed')) yn = "Y";
+			
+			let data = {
+				completeYn: yn,
+				checklistNo: chkNo
+			};
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/project/updateChklistCompleteYn.do',
+				data: data,
+				dataType: 'json',
+				type: 'POST',
+				success: data=>{
+					console.log(data);	
+					
+					//업데이트 성공한 경우
+					if(data.result===1){
+    					$tr.toggleClass('completed');
     					
-    					//업데이트 성공한 경우
-    					if(data.result===1){
-	    					$tr.toggleClass('completed');
-	    					
-	    					//완료된 체크리스트인 경우 
-	    					if($tr.hasClass('completed')){
-	    				        //체크박스 변경
-	    				        $icoChk.removeClass('far fa-square');
-	    				        $icoChk.addClass('fas fa-check-square');
-	
-	    				        //리스트에 줄 긋기
-	    				        $tdChecklist.css('text-decoration', 'line-through');
-	    				    }
-	    					//미완료된 체크리스트인 경우
-	    				    else{
-	   				           //체크박스 변경
-	   				           $icoChk.removeClass('fas fa-check-square');
-	   				        	$icoChk.addClass('far fa-square');
-	
-	   				           //리스트에 줄 해제
-	   				           $tdChecklist.css('text-decoration', 'none');
-	    				    }
-    					}
-    					
-    				},
-    				error: (x,s,e) => {
-   						console.log(x,s,e);
-   					}
-    			});
-    	        
-    		}
-    	}); //end of .btn-check click
-    }); //end of btnCheckArr.forEach
+    					//완료된 체크리스트인 경우 
+    					if($tr.hasClass('completed')){
+    				        //체크박스 변경
+    				        $icoChk.removeClass('far fa-square');
+    				        $icoChk.addClass('fas fa-check-square');
+
+    				        //리스트에 줄 긋기
+    				        $tdChecklist.css('text-decoration', 'line-through');
+    				    }
+    					//미완료된 체크리스트인 경우
+    				    else{
+   				           //체크박스 변경
+   				           $icoChk.removeClass('fas fa-check-square');
+   				        	$icoChk.addClass('far fa-square');
+
+   				           //리스트에 줄 해제
+   				           $tdChecklist.css('text-decoration', 'none');
+    				    }
+					}
+					
+				},
+				error: (x,s,e) => {
+						console.log(x,s,e);
+				}
+			});
+		} //end of if 
+		
+    }); //end of $(document).on('click', '.btn-check'
 }
 
 //완료된 업무 펼쳐보기
 function openCompletedWork(){
 	let $btnShow = $(".btn-showCompletedWork");
-	$btnShow.on('click', function(){
-		let worklistNo = this.value;
+	
+	$(document).on('click', '.btn-showCompletedWork', e=>{
+		let btnShow;		
+		if(e.target.tagName==='I') btnShow = e.target.parentNode;	
+		else btnShow = e.target;
+		
+		let worklistNo = btnShow.value;
 		let wlSection = document.querySelector("#worklist-"+worklistNo);
 		let completed = $(wlSection).find('.workCompleted-wrapper');
 		
@@ -860,19 +1033,14 @@ function setting(){
             <div class="worklist-title">
                 <h5>${wl.worklistTitle}</h5>
                 
-                <!-- 업무 생성/업무리스트 삭제: admin, 대표, 프로젝트 팀장에게만 보임 -->
-                <c:if test="${'admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || project.projectWriter==memberLoggedIn.memberId}">
+                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
+                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
                 <div class="worklist-title-btn">
 	                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
 	                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
                 </div>
                 </c:if>
                 
-                <!-- 진행 중인 업무 -->
-                <div class="worklist-titleInfo-top">
-                    <p>진행 중인 업무 ${fn:length(wl.workList)-wl.completedWorkCnt}개</p>
-                </div>
-
                 <!-- 새 업무 만들기 -->
                 <div class="addWork-wrapper">
 	                <form class="addWorkFrm">
@@ -887,7 +1055,7 @@ function setting(){
 		                        <div class="add-member dropdown">
 			                        <button type="button" class="nav-link btn-addWorkMember" data-toggle="dropdown"><i class="fas fa-user-plus"></i></button>
 			                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="test-member-ajax">
-			                            <c:forEach items="${pMemList}" var="m">
+			                            <c:forEach items="${inMemList}" var="m">
 							            <a href="javascript:void(0)" class="dropdown-item drop-memTag ${m.memberId}">
 							                <div class="media">
 								                <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">
@@ -932,6 +1100,10 @@ function setting(){
 	                </form>
                 </div>
 
+            	<!-- 진행 중인 업무 -->
+                <div class="worklist-titleInfo-top">
+                    <p>진행 중인 업무 ${fn:length(wl.workList)-wl.completedWorkCnt}개</p>
+                </div>
             </div><!-- /.worklist-title -->
             
             <!-- 업무리스트 컨텐츠 -->
@@ -963,7 +1135,7 @@ function setting(){
 		                <!-- 업무 타이틀 -->
 		                <div class="work-title">
 		                    <h6>
-		                    	<button type="button" class="btn-check btn-checkWork"><i class="far fa-square"></i></button>
+		                    	<button type="button" class="btn-check btn-checkWork" value="${w.workNo}"><i class="far fa-square"></i></button>
 		                    	${w.workTitle}
 		                    </h6>
 		                    <div class="work-importances">
@@ -1083,10 +1255,17 @@ function setting(){
 	
 		                <!-- 커버 이미지 -->
 		                <c:if test="${w.attachmentList!=null && !empty w.attachmentList}">
-		                <div class="work-coverImage">
-		                    <img src="${pageContext.request.contextPath}/resources/img/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="test image">
-		                </div>
+			                <c:forTokens items="${fn:toLowerCase(w.attachmentList[0].renamedFilename)}" var="token" delims="." varStatus="vs">
+	                        <c:if test="${vs.last}">
+	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
+	                   	 		<div class="work-coverImage">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/img/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 		</div>
+	                   	 		</c:if>
+	                   	 	</c:if>
+	                        </c:forTokens>
 		                </c:if>
+		                
 	                </section><!-- /.work-item -->
 	            	</c:if>	
 	                </c:forEach>
@@ -1097,7 +1276,7 @@ function setting(){
                 	<c:forEach items="${workList}" var="w" varStatus="wVs">
             		<c:if test="${w.workCompleteYn=='Y'}">
                 	<!-- 업무 -->
-	                <section class="work-item" role="button" tabindex="0" id="${w.workNo}">
+	                <section class="work-item completed" role="button" tabindex="0" id="${w.workNo}">
 	                	<input type="hidden" id="hiddenworklistTitle" value="${wl.worklistTitle}"/>
 	                	
 						<!-- 업무배정된 멤버아이디 구하기 -->
@@ -1117,7 +1296,7 @@ function setting(){
 		                <!-- 업무 타이틀 -->
 		                <div class="work-title">
 		                    <h6>
-		                    	<button type="button" class="btn-check btn-checkWork"><i class="fas fa-check-square"></i></button>
+		                    	<button type="button" class="btn-check btn-checkWork" value="${w.workNo}"><i class="fas fa-check-square"></i></button>
 		                    	${w.workTitle}
 		                    </h6>
 		                    <div class="work-importances">
@@ -1216,10 +1395,17 @@ function setting(){
 	
 		                <!-- 커버 이미지 -->
 		                <c:if test="${w.attachmentList!=null && !empty w.attachmentList}">
-		                <div class="work-coverImage">
-		                    <img src="${pageContext.request.contextPath}/resources/img/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="test image">
-		                </div>
+			                <c:forTokens items="${fn:toLowerCase(w.attachmentList[0].renamedFilename)}" var="token" delims="." varStatus="vs">
+	                        <c:if test="${vs.last}">
+	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
+	                   	 		<div class="work-coverImage">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/img/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 		</div>
+	                   	 		</c:if>
+	                   	 	</c:if>
+	                        </c:forTokens>
 		                </c:if>
+		                
 	                </section><!-- /.work-item -->
                 	</c:if>	
                 	</c:forEach>
@@ -1239,7 +1425,7 @@ function setting(){
         <c:if test="${'Y'==project.privateYn || ('N'==project.privateYn && ('admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || project.projectWriter==memberLoggedIn.memberId)) }">
         <section id="add-wklt-wrapper" class="worklist add-worklist" role="button" tabindex="0">
             <!-- 타이틀 -->
-            <div class="worklist-title">
+            <div class="worklist-title add-wklt">
                 <h5><i class="fas fa-plus"></i> 업무리스트 추가</h5>
                 <div class="clear"></div>
             </div><!-- /.worklist-title -->
@@ -1249,9 +1435,8 @@ function setting(){
         <!-- 업무리스트 추가 폼 -->
         <section id="add-wkltfrm-wrapper" class="worklist add-worklist" role="button" tabindex="0">
             <!-- 타이틀 -->
-            <div class="worklist-title">
+            <div class="worklist-title add-wklt">
                 <form id="addWorklistFrm">
-                	<input type="hidden" name="projectNo" value="${project.projectNo}" required/>
                     <input type="text" name="worklistTitle" placeholder="업무리스트 이름" required/>
                     <div class="worklist-title-btn">
                         <button type="button" id="btn-addWorklist" class="btn-addWork">
@@ -1276,10 +1461,9 @@ function setting(){
 <!-- /.content-wrapper -->
 
 <!-- 업무 삭제 드롭다운 -->
-<!-- <div id="menu-delWork" class="dropdown"> -->
-    <div id="menu-delWork" class="dropdown-menu dropdown-menu-right">
-        <a href="#" id="dropdown-work-remove" class="dropdown-item dropdown-file-remove" data-toggle="modal" data-target="#modal-worklist-remove">업무 삭제</a>
-    </div>
+<div id="menu-delWork" class="dropdown-menu dropdown-menu-right">
+    <a href="#" id="dropdown-work-remove" class="dropdown-item dropdown-file-remove" data-toggle="modal" data-target="#modal-worklist-remove">업무 삭제</a>
+</div>
 <!-- </div> -->
 
 <!-- 업무리스트/업무삭제 모달 -->

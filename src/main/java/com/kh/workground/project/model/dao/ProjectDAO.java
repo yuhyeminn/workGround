@@ -65,5 +65,9 @@ public interface ProjectDAO {
 
 	Worklist selectWorklistOne(int worklistNo);
 
+	int updateWorkCompleteYn(Map<String, Object> param);
+
+	int deleteFile(int attachNo);
+
 
 }

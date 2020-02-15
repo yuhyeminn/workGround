@@ -244,11 +244,22 @@
 		select * from worklist where worklist_no = #{worklistNo}
 	</select>
 	
+	<!-- updateWorkCompleteYn.do: 업무완료여부 업데이트 -->
+	<update id="updateWorkCompleteYn" parameterType="hashMap">
+		update work set work_complete_yn = #{completeYn} 
+		<if test="realEndDate!=null">
+			, work_realenddate = to_date(#{realEndDate}, 'yyyy-mm-dd')
+		</if>
+		<if test="realEndDate==null">
+			, work_realenddate = null
+		</if>
+		where work_no = #{workNo}
+	</update>
 	
-	
-	
-	
-	
+	<!-- deleteFile.do: 파일 삭제 -->
+	<delete id="deleteFile">
+		delete from attachment where attachment_no = #{attachNo}
+	</delete>
 	
 	
 	
