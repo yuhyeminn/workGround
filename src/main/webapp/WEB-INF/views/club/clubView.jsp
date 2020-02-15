@@ -650,6 +650,7 @@ function fileDownload(oName, rName, clubNo) {
 														    <input type="hidden" name="memberId" value="${clubPlanAttendee.memberId }">
                     									    <input type="hidden" name="clubPlanAttendeeNo" value="${clubPlanAttendee.clubPlanAttendeeNo }">
                     									    <input type="hidden" name="clubNo" value="${club.clubNo}">
+                    									    <input type="hidden" name="where" value="1">
 							                                <button type="submit" class="btn btn-tool"><i class="fas fa-times" style="color: black;"></i></button>
 							                              </form>
 							                            </div>
@@ -666,9 +667,10 @@ function fileDownload(oName, rName, clubNo) {
 										</div>
 										<div class="modal-footer">
 										  <form name="insertClubPlanAttendanceFrm" action="${pageContext.request.contextPath }/club/insertClubPlanAttendee.do" method="POST">
-										    <input type="hidden" name="clubPlanNo" value=${clubPlan.clubPlanNo } />
-										    <input type="hidden" name="memberId" value=${memberLoggedIn.memberId } />
-										    <input type="hidden" name="clubNo" value=${club.clubNo } />
+										    <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
+										    <input type="hidden" name="memberId" value="${memberLoggedIn.memberId }" />
+										    <input type="hidden" name="clubNo" value="${club.clubNo }" />
+										    <input type="hidden" name="where" value="1" />
 											<button type="submit" class="btn btn-info float-right">
 												<i class="fas fa-plus"></i>
 											</button>
@@ -678,6 +680,7 @@ function fileDownload(oName, rName, clubNo) {
 											<form name="deleteClubPlanFrm" action="${pageContext.request.contextPath }/club/deleteClubPlan.do" method="POST">
 											  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
 											  <input type="hidden" name="clubNo" value="${club.clubNo }" />
+											  <input type="hidden" name="where" value="1" />
 											  <button type="submit" class="btn btn-danger" onclick="return confirmDelete();">삭제</button>
 											</form>
 										  </c:if>
@@ -706,6 +709,7 @@ function fileDownload(oName, rName, clubNo) {
 										<form name="clubPlanUpdateFrm" action="${pageContext.request.contextPath }/club/clubPlanUpdate.do" method="post">
 											<input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
 											<input type="hidden" name="clubNo" value="${clubPlan.clubNo }" />
+											<input type="hidden" name="where" value="1" />
 											<div class="modal-body">
 												<div class="form-group">
 													<label for="inputName">일정</label> 
