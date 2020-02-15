@@ -12,8 +12,8 @@
             <div class="worklist-title">
                 <h5>${wl.worklistTitle}</h5>
                 
-                <!-- 업무 생성/업무리스트 삭제: admin, 대표, 프로젝트 팀장에게만 보임 -->
-                <c:if test="${'admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || wl.projectWriter==memberLoggedIn.memberId}">
+                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
+                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
                 <div class="worklist-title-btn">
 	                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
 	                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>

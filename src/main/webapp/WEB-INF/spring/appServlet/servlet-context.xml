@@ -23,12 +23,15 @@
 	</beans:bean>
 	
 	<!-- #14.1 jsonView Bean 및 viewResolver 등록 -->
+	<!-- #18. 파일 다운로드 viewResolver 등록 -->
 	<!-- 요청한 viewName과 실제bean이름을 매핑해주는 BeanNameViewResolver를 사용함. -->
     <!-- bean아이디는 viewResolver로 반드시 지정. 처리순서를 1로 우선처리되도록함. -->
     <beans:bean id="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
         <beans:property name="order" value="1"/>
     </beans:bean>   
 	<beans:bean id="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView"/>
+	<beans:bean id="downloadView" class="com.kh.workground.common.util.DownloadView"/>
+
 	
 	<!-- 스프링컨테이너에 bean 등록: 지정한 패키지를 포함, 하위의 모든 @Component어노테이션이 붙은 클래스를 bean으로 생성 관리함.
 								bean의 이름은 소문자로 시작하는 클래스명이다. -->

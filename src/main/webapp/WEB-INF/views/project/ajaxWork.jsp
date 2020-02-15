@@ -11,8 +11,8 @@
             <div class="worklist-title">
                 <h5>${wl.worklistTitle}</h5>
                 
-                <!-- 업무 생성/업무리스트 삭제: admin, 대표, 프로젝트 팀장에게만 보임 -->
-                <c:if test="${'admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || wl.projectWriter==memberLoggedIn.memberId}">
+                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
+                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
                 <div class="worklist-title-btn">
 	                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
 	                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
@@ -114,7 +114,7 @@
 		                <!-- 업무 타이틀 -->
 		                <div class="work-title">
 		                    <h6>
-		                    	<button type="button" class="btn-check btn-checkWork"><i class="far fa-square"></i></button>
+		                    	<button type="button" class="btn-check btn-checkWork" value="${w.workNo}"><i class="far fa-square"></i></button>
 		                    	${w.workTitle}
 		                    </h6>
 		                    <div class="work-importances">
@@ -234,9 +234,15 @@
 	
 		                <!-- 커버 이미지 -->
 		                <c:if test="${w.attachmentList!=null && !empty w.attachmentList}">
-		                <div class="work-coverImage">
-		                    <img src="${pageContext.request.contextPath}/resources/img/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="test image">
-		                </div>
+			                <c:forTokens items="${fn:toLowerCase(w.attachmentList[0].renamedFilename)}" var="token" delims="." varStatus="vs">
+	                        <c:if test="${vs.last}">
+	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
+	                   	 		<div class="work-coverImage">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/img/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 		</div>
+	                   	 		</c:if>
+	                   	 	</c:if>
+	                        </c:forTokens>
 		                </c:if>
 	                </section><!-- /.work-item -->
 	            	</c:if>	
@@ -248,7 +254,7 @@
                 	<c:forEach items="${workList}" var="w" varStatus="wVs">
             		<c:if test="${w.workCompleteYn=='Y'}">
                 	<!-- 업무 -->
-	                <section class="work-item" role="button" tabindex="0" id="${w.workNo}">
+	                <section class="work-item completed" role="button" tabindex="0" id="${w.workNo}">
 	                	<input type="hidden" id="hiddenworklistTitle" value="${wl.worklistTitle}"/>
 	                	
 						<!-- 업무배정된 멤버아이디 구하기 -->
@@ -268,7 +274,7 @@
 		                <!-- 업무 타이틀 -->
 		                <div class="work-title">
 		                    <h6>
-		                    	<button type="button" class="btn-check btn-checkWork"><i class="fas fa-check-square"></i></button>
+		                    	<button type="button" class="btn-check btn-checkWork" value="${w.workNo}"><i class="fas fa-check-square"></i></button>
 		                    	${w.workTitle}
 		                    </h6>
 		                    <div class="work-importances">
@@ -367,9 +373,15 @@
 	
 		                <!-- 커버 이미지 -->
 		                <c:if test="${w.attachmentList!=null && !empty w.attachmentList}">
-		                <div class="work-coverImage">
-		                    <img src="${pageContext.request.contextPath}/resources/img/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="test image">
-		                </div>
+			                <c:forTokens items="${fn:toLowerCase(w.attachmentList[0].renamedFilename)}" var="token" delims="." varStatus="vs">
+	                        <c:if test="${vs.last}">
+	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
+	                   	 		<div class="work-coverImage">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/img/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 		</div>
+	                   	 		</c:if>
+	                   	 	</c:if>
+	                        </c:forTokens>
 		                </c:if>
 	                </section><!-- /.work-item -->
                 	</c:if>	
