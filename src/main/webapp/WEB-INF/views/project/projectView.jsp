@@ -50,7 +50,7 @@ $(()=>{
     tabActive(); //서브헤더 탭 활성화
     goTabMenu(); //서브헤더 탭 링크 이동
     
-    setting(); //설정창- 나중에 수정
+    //setting(); //설정창- 나중에 수정
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -708,6 +708,7 @@ function checklist(){
 		let $tr = $(btnChk.parentNode.parentNode);
 		let $tdChecklist = $(btnChk.parentNode.nextSibling.nextSibling);
 		let $icoChk = $(btnChk.firstChild);
+		let $spanCntComp = $workSection.find('.chklt-cnt-completed');
 		
 		let workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
 		let chkChargedMemId = btnChk.nextSibling.nextSibling.value;
@@ -764,9 +765,10 @@ function checklist(){
 					
 					//업데이트 성공한 경우
 					if(data.result===1){
+						let cntComp = $spanCntComp.text()*1;
     					$tr.toggleClass('completed');
     					
-    					//완료된 체크리스트인 경우 
+    					//체크리스트 완료한 경우
     					if($tr.hasClass('completed')){
     				        //체크박스 변경
     				        $icoChk.removeClass('far fa-square');
@@ -774,15 +776,24 @@ function checklist(){
 
     				        //리스트에 줄 긋기
     				        $tdChecklist.css('text-decoration', 'line-through');
+    				        
+    				        //체크리스트 완료 카운트 변경
+    				        cntComp += 1;
+    				        $spanCntComp.text(cntComp);
+    				        
     				    }
-    					//미완료된 체크리스트인 경우
+    					//체크리스트 완료 해제한 경우
     				    else{
    				           //체크박스 변경
    				           $icoChk.removeClass('fas fa-check-square');
-   				        	$icoChk.addClass('far fa-square');
+   				           $icoChk.addClass('far fa-square');
 
    				           //리스트에 줄 해제
    				           $tdChecklist.css('text-decoration', 'none');
+   				           
+	   				      	//체크리스트 완료 카운트 변경
+	   				      	cntComp -= 1;
+	   				        $spanCntComp.text(cntComp);
     				    }
 					}
 					
@@ -1233,12 +1244,15 @@ function setting(){
 						
 		                <!-- 기타 아이콘 모음 -->
 		                <div class="work-etc">
-		                	<!-- 체크리스트/코멘트/첨부파일 수 -->
+		                    <!-- 체크리스트/코멘트/첨부파일 수 -->
 		                	<c:if test="${fn:length(w.checklistList)==0}">
 		                    	<span class="ico"><i class="far fa-list-alt"></i> 0</span>
 		                    </c:if>
 		                    <c:if test="${fn:length(w.checklistList)>0}">
-		                    	<span class="ico"><i class="far fa-list-alt"></i> ${chkCnt}/${fn:length(w.checklistList)}</span>
+		                    	<span class="ico chklt-cnt">
+		                    		<i class="far fa-list-alt"></i> 
+		                    		<span class="chklt-cnt-completed">${chkCnt}</span>/<span class="chklt-cnt-total">${fn:length(w.checklistList)}</span>
+		                    	</span>
 		                    </c:if>
 		                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
 		                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
@@ -1378,7 +1392,10 @@ function setting(){
 		                    	<span class="ico"><i class="far fa-list-alt"></i> 0</span>
 		                    </c:if>
 		                    <c:if test="${fn:length(w.checklistList)>0}">
-		                    	<span class="ico"><i class="far fa-list-alt"></i> ${chkCnt}/${fn:length(w.checklistList)}</span>
+		                    	<span class="ico chklt-cnt">
+		                    		<i class="far fa-list-alt"></i> 
+		                    		<span class="chklt-cnt-completed">${chkCnt}</span>/<span class="chklt-cnt-total">${fn:length(w.checklistList)}</span>
+		                    	</span>
 		                    </c:if>
 		                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
 		                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
