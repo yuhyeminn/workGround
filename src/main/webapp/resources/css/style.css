@@ -154,13 +154,14 @@ button:active, button:focus{outline: none;}
 .worklist-title-btn button{width: 26px; border: 0; background: transparent; color: #fff; font-size: .88rem;}
 .worklist-title-btn button:hover, .worklist-title-btn button:active{background: rgb(24, 76, 113);}
 .worklist-title-btn button:last-of-type{margin-left: .3rem;}
+/* 업무 체크버튼 */
+.btn-checkWork{font-size: 1rem; margin-right: .3rem; padding: 0 !important;}
 /* 진행 중인 업무 */
 .worklist-titleInfo-top, .worklist-titleInfo-bottom{padding: 0 .6rem; background: #2c6a95; color: #d4d6db; font-size: .75rem; line-height: 2; clear: both;}
 .worklist-titleInfo-bottom{height: 26px; background: #f3f4f5; color: #696f7a;}
 .worklist-titleInfo-bottom span{float:left;}
 .btn-showCompletedWork{float: right; color: #696f7a; text-decoration: underline;}
 .btn-showCompletedWork:focus, .btn-showCompletedWork:active{color: #323742;} 
-.btn-checkWork{font-size: 1rem;}
 /* 완료된 업무 */
 .workCompleted-wrapper{display: block;}
 .workCompleted-wrapper.hide{display: none;}
@@ -287,6 +288,7 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 #tbl-projectAttach .dropdown-menu{min-width: 5rem; padding: 0; color: #464c59; font-size: .85rem;}
 #tbl-projectAttach .dropdown-divider{margin: 0;}
 #tbl-projectAttach .dropdown-item{padding: .4rem 1rem;}
+#tbl-projectAttach .dropdown-item:active, #tbl-projectAttach .dropdown-item:focus{color: #212529;}
 #tbl-projectAttach .dropdown-menu a:first-of-type:hover{background: rgba(0,0,0,.075);}
 .dropdown-file-remove{color: #dc3545;}
 .dropdown-file-remove:hover{background: #dc3545; color: #fff;}

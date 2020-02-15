@@ -501,15 +501,15 @@ insert into work_comment values(seq_work_comment.nextval, 3, 9,2,'오늘 안에 
 insert into work_comment values(seq_work_comment.nextval, 7, 10,1,'네 알겠습니다!',default,null);
 insert into work_comment values(seq_work_comment.nextval, 7, 11,1,'넵!',default,null);
 --업무 파일첨부
-insert into attachment values(seq_attachment.nextval,2,3,'test.jpg','test.jpg',sysdate);
-insert into attachment values(seq_attachment.nextval,3,10,'test.jpg','test.jpg',sysdate);
-insert into attachment values(seq_attachment.nextval,3,12,'ff.JPG','ff.JPG',sysdate);
-insert into attachment values(seq_attachment.nextval,6,13,'test.jpg','test.jpg',sysdate);
-insert into attachment values(seq_attachment.nextval,7,8,'fs.JPG','fs.JPG',sysdate);
+insert into attachment values(seq_attachment.nextval,2,3,'순무.jpg','test.jpg',sysdate);
+insert into attachment values(seq_attachment.nextval,3,10,'순무.jpg','test.jpg',sysdate);
+insert into attachment values(seq_attachment.nextval,3,12,'짱구.JPG','ff.JPG',sysdate);
+insert into attachment values(seq_attachment.nextval,5,8,'가이드.pdf','guide_java.pdf',sysdate); 
+insert into attachment values(seq_attachment.nextval,6,13,'테스트.txt','test.txt',sysdate);
+insert into attachment values(seq_attachment.nextval,142,8,'야구.JPG','fs.JPG',sysdate);
+insert into attachment values(seq_attachment.nextval,7,11,'신청서.hwp','application.hwp',sysdate);
 
 commit;
-
-
 
 --================================================
 --select문
@@ -520,9 +520,6 @@ select * from job;
 select * from department;
 select * from member;    
 
-update project_members set member_id = 'kh2020122' where project_no = to_number('2') and manager_yn = 'Y';
-update member set password='1234' where member_id='kh2020115';
-commit;
 --------------------------------------------------
 --project테이블 관련 select문
 --------------------------------------------------
@@ -536,11 +533,12 @@ select * from project_important;
 --------------------------------------------------
 select * from worklist;
 select * from work_tag;
-select * from work;
+select * from work where worklist_no = 321;
 select * from work_charged_members;
 select * from checklist;
 select * from work_comment;
 select * from attachment;
+select * from work where work_no = 6;
 
 --------------------------------------------------
 --notice/community테이블 관련 select문

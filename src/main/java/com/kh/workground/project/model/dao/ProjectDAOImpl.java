@@ -156,4 +156,14 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.selectOne("project.selectWorklistOne", worklistNo);
 	}
 
+	@Override
+	public int updateWorkCompleteYn(Map<String, Object> param) {
+		return sqlSession.update("project.updateWorkCompleteYn", param);
+	}
+
+	@Override
+	public int deleteFile(int attachNo) {
+		return sqlSession.delete("project.deleteFile", attachNo);
+	}
+
 }
