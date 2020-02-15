@@ -351,3 +351,6 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 #custom-content-below-profile .post{color: #464c59; font-size: .88rem;}
 
 
+/* 검색 취소버튼 */
+#btn-cancelSearch{margin-top: -3px; color: #d4d6db; font-size: 2rem;}
+#btn-cancelSearch:hover, #btn-cancelSearch:active, #btn-cancelSearch:focus{color: #8d919a;}

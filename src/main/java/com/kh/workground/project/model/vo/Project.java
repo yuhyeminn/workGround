@@ -41,5 +41,8 @@ public class Project implements Serializable {
 	private List<Member> projectMemberList; //프로젝트에 포함된 팀원 리스트
 	private List<Worklist> worklistList; //프로젝트 안의 업무리스트들
 	private String projectStarYn; //프로젝트 중요표시 여부
+	private int totalProjectWorkCnt; //총 업무 수
+	private int totalProjectCompletedWorkCnt; //총 완료된 업무 수
+	private int completePercent; //완료 퍼센트 
 
 }

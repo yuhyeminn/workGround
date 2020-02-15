@@ -212,10 +212,10 @@ function sortByStatus(statusCodeElem){
 	                        </span>
                         </div>
                         <div class="progress-group card-progress">
-	                        <span class="progress-title"><span class="percent">11%</span> 완료</span>
-	                        <span class="progress-title float-right"><span>1</span>/<span>9</span> 개 업무</span>
+	                        <span class="progress-title"><span class="percent">${p.completePercent}%</span> 완료</span>
+	                        <span class="progress-title float-right"><span>${p.totalProjectCompletedWorkCnt}</span>/<span>${p.totalProjectWorkCnt}</span> 개 업무</span>
 	                        <div class="progress progress-sm">
-	                            <div class="progress-bar bg-info" style="width: 11%"></div>
+	                            <div class="progress-bar bg-info" style="width: ${p.completePercent}%"></div>
 	                        </div>
                         </div>
                     </div>
@@ -245,10 +245,10 @@ function sortByStatus(statusCodeElem){
                         <div class="card-title text-center"><h5>${listByInclude[0].projectTitle}</h5></div>
                         <!-- 프로젝트 상태  -->
                         <div class="progress-group card-progress">
-	                        <span class="progress-title"><span class="percent">11%</span> 완료</span>
-	                        <span class="progress-title float-right"><span>1</span>/<span>9</span> 개 업무</span>
+	                        <span class="progress-title"><span class="percent">${listByInclude[0].completePercent}%</span> 완료</span>
+	                        <span class="progress-title float-right"><span>${listByInclude[0].totalProjectCompletedWorkCnt}</span>/<span>${listByInclude[0].totalProjectWorkCnt}</span> 개 업무</span>
 	                        <div class="progress progress-sm">
-	                            <div class="progress-bar bg-info" style="width: 11%"></div>
+	                            <div class="progress-bar bg-info" style="width: ${listByInclude[0].completePercent}%"></div>
 	                        </div>
                         </div>
                     </div>
@@ -290,10 +290,10 @@ function sortByStatus(statusCodeElem){
                         	</span>
                     </div>
                     <div class="progress-group card-progress">
-                        <span class="progress-title"><span class="percent">11%</span> 완료</span>
-                        <span class="progress-title float-right"><span>1</span>/<span>9</span> 개 업무</span>
+                        <span class="progress-title"><span class="percent">${p.completePercent}%</span> 완료</span>
+                        <span class="progress-title float-right"><span>${p.totalProjectCompletedWorkCnt}</span>/<span>${p.totalProjectWorkCnt}</span> 개 업무</span>
                         <div class="progress progress-sm">
-                        <div class="progress-bar bg-info" style="width: 11%"></div>
+                        <div class="progress-bar bg-info" style="width: ${p.completePercent}%"></div>
                         </div>
                     </div>
                     </div><!-- /.card-body -->

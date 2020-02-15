@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kh.workground.member.model.vo.Member;
+import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
 import com.kh.workground.project.model.vo.Worklist;
@@ -38,9 +39,16 @@ public interface ProjectService {
 
 	String selectProjectWriter(int projectNo);
 
-	Worklist selectWorklistOne(int worklistNo);
+	Worklist selectWorklistOne(int projectNo, int worklistNo);
 
 	int updateWorkCompleteYn(Map<String, Object> param);
 
 	int deleteFile(int attachNo);
+
+	int deleteChecklistByWorkNo(int workNo, int cntChk);
+
+	int deleteCommentByWorkNo(int workNo, int cntComment);
+
+	int deleteAttachByWorkNo(int workNo, int cntFile);
+
 }

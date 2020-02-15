@@ -26,7 +26,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
+import com.kh.workground.project.model.vo.Attachment;
+import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
+import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
@@ -235,6 +238,7 @@ public class ProjectController {
 	
 	@PostMapping("/project/insertWork.do")
 	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="projectManager") String projectManager,
+										   @RequestParam(value="projectNo") int projectNo, 
 									       @RequestParam(value="worklistNo") int worklistNo, 
 										   @RequestParam(value="workTitle") String workTitle,
 										   @RequestParam(value="workChargedMember[]", required=false) List<String> workChargedMember,
@@ -261,7 +265,7 @@ public class ProjectController {
 			int result = projectService.insertWork(param);
 			
 			//1-3. 업무가 추가된 업무리스트 가져오기
-			Worklist wl = projectService.selectWorklistOne(worklistNo);
+			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
 			
 			mav.addObject("wl", wl);
 			mav.addObject("projectManager", projectManager);
@@ -317,6 +321,7 @@ public class ProjectController {
 			Project p = projectService.searchWork(projectNo, keyword);
 			
 			//2.뷰모델 처리
+			mav.addObject("keywordBefore", keyword);
 			mav.addObject("project", p);
 			mav.addObject("wlList", p.getWorklistList());
 			mav.setViewName("/project/ajaxWorkSearch");
@@ -330,15 +335,33 @@ public class ProjectController {
 	}
 	
 	@PostMapping("/project/deleteWork.do")
-	public ModelAndView deleteWork(ModelAndView mav, @RequestParam int worklistNo, @RequestParam int workNo, @RequestParam String projectManager) {
+	public ModelAndView deleteWork(ModelAndView mav, @RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo,
+									@RequestParam int cntChk, @RequestParam int cntComment, @RequestParam int cntFile,
+									@RequestParam String projectManager) {
 		
 		try {
-			//1.업무로직
-			//1-1.업무삭제
-			int result = projectService.deleteWork(workNo);
+			//1.workNo를 참조하고 있는 체크리스트, 코멘트, 파일 삭제
+			int delChkResult = 0;
+			int delCommentResult = 0;
+			int delAttachResult = 0;
+			
+			if(cntChk>0) {
+				logger.debug("cntChk>0");
+				delChkResult = projectService.deleteChecklistByWorkNo(workNo, cntChk);
+			}
+			if(cntComment>0)
+				delCommentResult = projectService.deleteCommentByWorkNo(workNo, cntComment);
+			if(cntFile>0)
+				delAttachResult = projectService.deleteAttachByWorkNo(workNo, cntFile);
+			
+			//2.업무 삭제
+			int result = 0;
+			if(delChkResult==cntChk && delCommentResult==cntComment && delAttachResult==cntFile) {
+				result = projectService.deleteWork(workNo);
+			}
 			
 			//1-3. 업무가 삭제된 업무리스트 가져오기
-			Worklist wl = projectService.selectWorklistOne(worklistNo);
+			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
 			
 			mav.addObject("wl", wl);
 			mav.addObject("projectManager", projectManager);
@@ -355,7 +378,7 @@ public class ProjectController {
 	@PostMapping("/project/updateWorkCompleteYn.do")
 	public ModelAndView updateWorkCompleteYn(ModelAndView mav, 
 											 @RequestParam String projectManager, @RequestParam String completeYn, 
-											 @RequestParam int worklistNo, @RequestParam int workNo) {
+											 @RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo) {
 		
 		try {
 			//1.업무로직
@@ -381,7 +404,7 @@ public class ProjectController {
 			int result = projectService.updateWorkCompleteYn(param);
 			
 			//1-3.변동된 worklist가져오기
-			Worklist wl = projectService.selectWorklistOne(worklistNo);
+			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
 			
 			
 			//2.뷰모델 처리

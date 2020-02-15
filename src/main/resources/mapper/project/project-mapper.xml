@@ -77,6 +77,20 @@
 		order by project_no desc
 	</select>
 	
+	<!-- projectList 뿌리기 : 총업무수/완료된 업무수 조회 -->
+	<select id="selectCntWork" resultMap="selectCntWorkMap">
+		select W.work_complete_yn yn, count(*) cnt
+		from (select P.project_no, WL.worklist_no
+			  from project P left join worklist WL on P.project_no = WL.project_no) V 
+								  join work W on V.worklist_no = W.worklist_no
+		where project_no=#{projectNo}
+		group by W.work_complete_yn
+	</select>
+	<resultMap type="hashMap" id="selectCntWorkMap">
+		<result column="yn" property="yn"/>
+		<result column="cnt" property="cnt"/>
+	</resultMap>
+	
 	<!-- projectList 뿌리기 : 중요 표시된 프로젝트 번호 조회 -->
 	<select id="selectImportantProjectNo" resultType="_int">
 		select project_no from project_important where member_id=#{memberId} order by project_no desc
@@ -261,9 +275,20 @@
 		delete from attachment where attachment_no = #{attachNo}
 	</delete>
 	
+	<!-- deleteWork.do: 참조하고 있는 체크리스트 삭제 -->
+	<delete id="deleteChecklistByWorkNo">
+		delete from checklist where work_no = #{workNo}
+	</delete>
 	
+	<!-- deleteWork.do: 참조하고 있는 코멘트 삭제 -->
+	<delete id="deleteCommentByWorkNo">
+		delete from work_comment where work_no = #{workNo}
+	</delete>
 	
-	
+	<!-- deleteWork.do: 참조하고 있는 파일 삭제 -->
+	<delete id="deleteAttachByWorkNo">
+		delete from attachment where work_no = #{workNo}
+	</delete>
 	
 	
 	
