@@ -77,5 +77,7 @@ public interface ProjectDAO {
 
 	List<Map<String, Object>> selectCntWork(int projectNo);
 
+	List<Member> selectProjectMemberListByQuitYn(int projectNo);
+
 
 }

@@ -186,4 +186,9 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.selectList("project.selectCntWork", projectNo);
 	}
 
+	@Override
+	public List<Member> selectProjectMemberListByQuitYn(int projectNo) {
+		return sqlSession.selectList("project.selectProjectMemberListByQuitYn", projectNo);
+	}
+
 }

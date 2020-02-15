@@ -264,10 +264,15 @@ public class ProjectController {
 			//1-2.추가
 			int result = projectService.insertWork(param);
 			
-			//1-3. 업무가 추가된 업무리스트 가져오기
+			//1-3.업무리스트 가져오기
 			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
 			
+			//1-4.프로젝트에 속한 멤버
+			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
+			
+			//2.뷰모델 처리
 			mav.addObject("wl", wl);
+			mav.addObject("inMemList", inMemList);
 			mav.addObject("projectManager", projectManager);
 			mav.setViewName("/project/ajaxWork");
 			
@@ -363,7 +368,11 @@ public class ProjectController {
 			//1-3. 업무가 삭제된 업무리스트 가져오기
 			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
 			
+			//1-4.프로젝트에 속한 멤버
+			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
+			
 			mav.addObject("wl", wl);
+			mav.addObject("inMemList", inMemList);
 			mav.addObject("projectManager", projectManager);
 			mav.setViewName("/project/ajaxWork");
 			
@@ -406,9 +415,12 @@ public class ProjectController {
 			//1-3.변동된 worklist가져오기
 			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
 			
+			//1-4.프로젝트에 속한 멤버
+			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
 			
 			//2.뷰모델 처리
 			mav.addObject("wl", wl);
+			mav.addObject("inMemList", inMemList);
 			mav.addObject("projectManager", projectManager);
 			mav.setViewName("/project/ajaxWork");
 			
@@ -473,7 +485,6 @@ public class ProjectController {
 		
 		return map;
 	}
-	
 	
 	
 	

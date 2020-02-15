@@ -222,6 +222,13 @@
                              	  left join view_member VM on WCM.charged_member_id = VM.member_id
 	</select>
 	
+	<!-- insertWork.do: 프로젝트 속한 멤버 조회 -->
+	<select id="selectProjectMemberListByQuitYn" resultType="member">
+		select VM.*
+		from (select * from project_members 
+		where project_no = 5 and project_quit_yn = 'N') V left join view_member VM on V.member_id = VM.member_id
+	</select>
+	
 	<!-- updateChklistCompleteYn.do: 체크리스트 완료여부 업데이트 -->
 	<update id="updateChklistCompleteYn" parameterType="hashMap">
 		update checklist set complete_yn = #{completeYn} 

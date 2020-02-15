@@ -387,14 +387,20 @@ public class ProjectServiceImpl implements ProjectService {
 		//날짜 넣기
 		List<String> dateList = (List<String>)param.get("workDate");
 		if(dateList!=null && !dateList.isEmpty()) {
-			String start = dateList.get(0);
-			String end = dateList.get(1);
-			//시작일을 지정한 경우
-			if(start!=null) 
+			String start = "";
+			String end = "";
+			//시작일만 지정한 경우
+			if(dateList.size()==1) {
+				start = dateList.get(0);
 				work.setWorkStartDate(java.sql.Date.valueOf(start));
-			//마감일을 지정한 경우
-			if(end!=null && !end.equals(start)) 
+			}
+			//마감일도 지정한 경우 
+			else {
+				start = dateList.get(0);
+				end = dateList.get(1);
+				work.setWorkStartDate(java.sql.Date.valueOf(start));
 				work.setWorkEndDate(java.sql.Date.valueOf(end));
+			}
 		}
 		
 		//2.업무 insert
@@ -722,6 +728,16 @@ public class ProjectServiceImpl implements ProjectService {
 			throw new ProjectException("파일 삭제 오류!");
 		
 		return result;
+	}
+
+	@Override
+	public List<Member> selectProjectMemberListByQuitYn(int projectNo) {
+		List<Member> list = projectDAO.selectProjectMemberListByQuitYn(projectNo);
+		
+		if(list==null)
+			throw new ProjectException("프로젝트 멤버 조회 오류!");
+		
+		return list;
 	}
 
 }

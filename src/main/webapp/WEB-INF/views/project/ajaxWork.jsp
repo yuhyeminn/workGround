@@ -38,7 +38,7 @@
 		                        <div class="add-member dropdown">
 			                        <button type="button" class="nav-link btn-addWorkMember" data-toggle="dropdown"><i class="fas fa-user-plus"></i></button>
 			                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-			                            <c:forEach items="${pMemList}" var="m">
+			                            <c:forEach items="${inMemList}" var="m">
 							            <a href="javascript:void(0)" class="dropdown-item drop-memTag ${m.memberId}">
 							                <div class="media">
 								                <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">

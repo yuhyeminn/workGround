@@ -58,7 +58,7 @@ margin: 0 auto;
 <script>
 $(function(){
 	sidebarActive(); //사이드바 비활성화
-	tabActive(); //서브헤더 탭 활성화
+	//tabActive(); //서브헤더 탭 활성화
 	//goTabMenu(); //서브헤더 탭 링크 이동
 });
 
@@ -86,20 +86,7 @@ function tabActive(){
 
     $("#tab-whole").addClass("active");
 }
-
 </script>
-
-<!-- Navbar Project -->
-<nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project navbar-projectView">
-    <!-- Middle navbar links -->
-    <ul id="navbar-tab" class="navbar-nav">
-        <li id="tab-whole" class="nav-item"><button type="button">통합검색</button></li>
-        <li id="tab-project" class="nav-item"><button type="button">프로젝트</button></li>
-        <li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
-        <li id="tab-member" class="nav-item"><button type="button">멤버</button></li>
-    </ul>
-</nav>
-<!-- /.navbar -->
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper navbar-light">

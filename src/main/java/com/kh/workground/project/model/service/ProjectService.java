@@ -51,4 +51,6 @@ public interface ProjectService {
 
 	int deleteAttachByWorkNo(int workNo, int cntFile);
 
+	List<Member> selectProjectMemberListByQuitYn(int projectNo);
+
 }
