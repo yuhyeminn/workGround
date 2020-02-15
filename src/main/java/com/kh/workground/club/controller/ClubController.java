@@ -182,8 +182,10 @@ public class ClubController {
 		try {
 			List<ClubMember> memberList = clubService.selectClubMemberList(clubNo);
 			logger.info("memberList{}", memberList);
+			Club club = clubService2.selectClub(clubNo);
 
 			mav.addObject("memberList", memberList);
+			mav.addObject("club", club);
 			mav.addObject("clubNo", clubNo);
 			mav.addObject("searchKeyword", "no");
 

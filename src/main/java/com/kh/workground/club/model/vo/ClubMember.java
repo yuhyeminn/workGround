@@ -34,6 +34,7 @@ public class ClubMember implements Serializable {
 		
 	//직급 이름 가상컬럼
 	private String jobTitle;
+	
 	//멤버 정보 가상컬럼
 	private List<Member> clubMemberList;
 	

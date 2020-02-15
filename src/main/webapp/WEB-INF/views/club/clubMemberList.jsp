@@ -34,6 +34,12 @@
 	font-size: .7rem;
 }
 
+.btn-manager{
+	width: 45px !important;
+	margin: 0 auto;
+	font-size: .7rem;
+}
+
 #tbl-projectAttach.member-table .dropdown-item {
 	font-size: .8rem;
 }
@@ -75,6 +81,7 @@ $(function(){
 	
 	sidebarActive(); //사이드바 활성화
 	tabActive(); //서브헤더 탭 활성화
+
 });
 
 //사이드바 활성화
@@ -241,10 +248,26 @@ function clubView(clubNo) {
 						<tbody id="member-body">
 							<c:forEach items="${memberList}" var="m">
 								<tr>
-									<td><c:if test="${fn:contains(m.clubManagerYN,'Y')}">
-											<button type="button"
-												class="btn btn-block btn-outline-warning btn-xs btn-admin">관리자</button>
-										</c:if></td>
+									<td>
+										<c:if test="${fn:contains(m.clubManagerYN,'Y')}">
+											
+											<c:choose>
+									
+												<c:when test="${club.clubManagerId eq m.clubMemberList[0].memberId}">
+												<button type="button"
+													class="btn btn-block btn-outline-warning btn-xs btn-admin">회장</button>
+												</c:when>
+												
+												<c:otherwise>
+												<button type="button"
+													class="btn btn-block btn-outline-danger btn-xs btn-manager">관리자</button>
+												</c:otherwise>
+											</c:choose>
+										
+										</c:if>
+										
+										
+									</td>
 									<td onclick="goMemberProfile('${m.empId}');"><img
 										src="${pageContext.request.contextPath }/resources/img/profile/${m.clubMemberList[0].renamedFileName}"
 										alt="User Avatar" class="img-circle img-profile ico-profile">
