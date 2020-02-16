@@ -20,4 +20,38 @@
 						  date_of_birth= #{dateOfBirth}
 	    where member_id = #{memberId}
 	</update>
+	
+	<select id="selectMemberListAll" resultType="member">
+		select * from view_member 
+		where member_id != 'admin' order by dept_code, job_code, member_id 
+	</select>
+
+	<update id="updateProfileImg">
+		update member set original_filename = #{originalFileName},
+						  renamed_filename = #{renamedFileName}
+		where member_id = #{memberId} 
+	</update>
+
+	<update id="updateEmail">
+		update member set email = #{email}
+		where member_id = #{memberId} 
+	</update>
+
+	<update id="updatePhone">
+		update member set phone = #{phone}
+		where member_id = #{memberId} 
+	</update>
+
+	<update id="deleteMember">
+		update member set password = null,
+						  original_filename = 'default.jpg',
+						  renamed_filename = 'default.jpg'
+		where member_id = #{memberId} 
+	</update>
+
+	<update id="updatePassword">
+		update member set password = #{password}
+		where member_id = #{memberId} 
+	</update>
+	
 </mapper>
