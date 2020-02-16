@@ -6,6 +6,7 @@ import java.util.Map;
 import com.kh.workground.member.model.vo.Member;
 
 public interface MemberService {
+	//
 
 	Member selectOneMember(String memberId);
 

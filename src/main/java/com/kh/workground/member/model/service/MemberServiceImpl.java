@@ -13,6 +13,7 @@ import com.kh.workground.member.model.vo.Member;
 
 @Service
 public class MemberServiceImpl implements MemberService {
+	//
 
 	@Autowired
 	MemberDAO memberDAO;
