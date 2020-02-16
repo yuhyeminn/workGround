@@ -130,6 +130,7 @@
 			</div>
 			<form name="clubPlanInsertFrm" action="${pageContext.request.contextPath }/club/clubPlanInsert.do" method="post">
 				<input type="hidden" name="clubNo" value="${club.clubNo }" />
+				<input type="hidden" name="memberId" value="${memberLoggedIn.memberId }" />
 				<div class="modal-body">
 					<div class="form-group">
 						<label for="inputName">일정</label> 
@@ -202,7 +203,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form name="clubNoticeInsertFrm" action="${pageContext.request.contextPath }/club/insertClubNotice.do" method="POST">
+			<form name="clubNoticeInsertFrm" action="${pageContext.request.contextPath }/club/insertClubNotice.do" enctype="multipart/form-data" method="POST">
 				<input type="hidden" name="clubNo" value="${club.clubNo }" />
 				<input type="hidden" name="memberId" value="${memberLoggedIn.memberId }" />
 				<div class="modal-body">
@@ -210,6 +211,16 @@
 						<label for="inputClientCompany">제목</label>
 						<input type="text" name="clubNoticeTitle" class="form-control" placeholder="제목을 입력하세요.">
 					</div>
+					<div class="form-group">
+						<label for="exampleInputFile">파일</label>
+						<div class="input-group">
+							<div class="custom-file">
+								<input type="file" class="custom-file-input" name=upFile id="exampleInputFile"> 
+								<label class="custom-file-label" for="exampleInputFile">파일을 선택하세요.</label>
+							</div>
+						</div>
+					</div>
+					
 					<div class="form-group">
 						<label for="inputClientCompany">공지내용</label>
 						<div class="card-body pad">

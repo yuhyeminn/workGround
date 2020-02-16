@@ -49,4 +49,10 @@ public interface ClubDAO2 {
 
 	int insertClubNoticeComment(ClubNoticeComment clubNoticeComment);
 
+	List<ClubPlanAttendee> selectAllClubPlanAttendeeList(int clubNo);
+
+	int deleteClubPlanAttendee(int clubPlanNo);
+
+	int deleteClubNoticeComment(int clubNoticeCommentNo);
+
 }

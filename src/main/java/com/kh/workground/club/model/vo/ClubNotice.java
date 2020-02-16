@@ -27,6 +27,8 @@ public class ClubNotice implements Serializable {
 	private int clubNo;
 	private int clubMemberNo;
 	private Date clubNoticeDate;
+	private String clubNoticeOriginal;
+	private String clubNoticeRenamed;
 	
 	//가상컬럼
 	private String memberName;
