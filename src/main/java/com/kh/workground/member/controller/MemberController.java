@@ -273,6 +273,7 @@ public class MemberController {
 //		logger.debug("사용자입력 name={}", upFile.getName());
 //		logger.debug("fileName={}", upFile.getOriginalFilename());
 //		logger.debug("size={}", upFile.getSize());
+		//테스트테스트
 		
 		String saveDirectory = request.getSession()
 				  			  		  .getServletContext()
