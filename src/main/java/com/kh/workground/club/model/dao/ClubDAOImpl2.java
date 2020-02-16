@@ -111,6 +111,36 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 		return sqlSession.insert("club.insertClubNoticeComment", clubNoticeComment);
 	}
 
+	@Override
+	public List<ClubPlanAttendee> selectAllClubPlanAttendeeList(int clubNo) {
+		return sqlSession.selectList("club.selectAllClubPlanAttendeeList", clubNo);
+	}
+
+	@Override
+	public int deleteClubPlanAttendee(int clubPlanNo) {
+		return sqlSession.delete("club.deleteClubPlan", clubPlanNo);
+	}
+
+	@Override
+	public int deleteClubNoticeComment(int clubNoticeCommentNo) {
+		return sqlSession.delete("club.deleteClubNoticeComment", clubNoticeCommentNo);
+	}
+
+	@Override
+	public List<ClubPhoto> searchClubPhotoList(Map<String, String> param) {
+		return sqlSession.selectList("club.searchClubPhotoList", param);
+	}
+
+	@Override
+	public List<ClubNotice> searchClubNoticeList(Map<String, String> param) {
+		return sqlSession.selectList("club.searchClubNoticeList", param);
+	}
+
+	@Override
+	public List<ClubPlan> searchClubPlanList(Map<String, String> param) {
+		return sqlSession.selectList("club.searchClubPlanList", param);
+	}
+
 
 
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.vo.Project;
+import com.kh.workground.project.model.vo.Work;
 
 public interface ProjectService2 {
 
@@ -13,5 +14,13 @@ public interface ProjectService2 {
 	List<Member> selectMemberListByDeptCode(Member memberLoggedIn);
 
 	Map<String, List<Project>> selectProjectListByStatusCode(Map<String, Object> param);
+
+	Project selectProjectOneForSetting(int projectNo, boolean isIncludeManager);
+
+	List<Member> selectProjectManagerByDept(String projectWriter);
+
+	Work selectOneWorkForSetting(int workNo);
+
+	Member selectMemberOneByMemberId(String memberId);
 
 }

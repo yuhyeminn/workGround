@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
+import com.kh.workground.club.model.vo.ClubPlan;
 
 @Repository
 public class ClubDAOImpl implements ClubDAO {
@@ -63,6 +64,55 @@ public class ClubDAOImpl implements ClubDAO {
 
 		return sqlSession.selectList("club.selectClubMemberList",clubNo);
 	}
+
+	@Override
+	public int deleteClubMember(int clubMemberNo) {
+		return sqlSession.delete("club.deleteClubMember",clubMemberNo);
+	}
+
+	@Override
+	public int updateClubManager(Map param) {
+		return sqlSession.update("club.updateClubManager",param);
+	}
+
+	@Override
+	public int approveClubMember(Map param) {
+
+		return sqlSession.update("club.approveClubMember",param);
+	}
+
+	@Override
+	public List<ClubMember> searchClubMember(Map param) {
+		return sqlSession.selectList("club.searchClubMember",param);
+	}
+
+	@Override
+	public List<ClubPlan> selectClubPlanList(int clubNo) {
+		return sqlSession.selectList("club.selectClubPlanList",clubNo);
+	}
+
+	@Override
+	public ClubPlan selectOneClubPlan(int clubPlanNo) {
+
+		return sqlSession.selectOne("club.selectOneClubPlan",clubPlanNo);
+	}
+
+	@Override
+	public List<Club> selectAllClubListByCategory(Map param) {
+		return sqlSession.selectList("club.selectAllClubListByCategory",param);
+	}
+
+	@Override
+	public List<Club> selectAllMyClubListByCategory(Map param) {
+		return sqlSession.selectList("club.selectAllMyClubListByCategory",param);
+	}
+
+	@Override
+	public List<Club> selectAllStandByClubListByCategory(Map param) {
+		return sqlSession.selectList("club.selectAllStandByClubListByCategory",param);
+	}
+
+
 
 
 }

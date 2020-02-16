@@ -76,6 +76,24 @@ left: .5rem;
 .comment-submit:hover, .comment-reply:hover{background: #007bff;}
 .comment-delete:hover{background: #dc3545;}
 .comment-level2{margin-left: 3rem;}
+
+.control-sidebar {
+      display: block;
+      top: 92px !important;
+      overflow: hidden;
+      background-color: #fff;
+      box-shadow: -1px 6px 10px 0 rgba(0, 0, 0, .2);
+      color: #696f7a;
+    }
+
+.control-sidebar,
+.control-sidebar::before {
+  bottom: calc(3.5rem + 1px);
+  display: none;
+  right: -475px;
+  width: 475px;
+  transition: right .3s ease-in-out, display .3s ease-in-out;
+}
 </style>
 
 <script>
@@ -117,6 +135,10 @@ $(function(){
 
 function memberList(clubNo){
 	location.href = "${pageContext.request.contextPath}/club/clubMemberList.do?clubNo="+clubNo;
+}
+
+function clubFileList(clubNo) {
+	location.href = "${pageContext.request.contextPath}/club/clubFileList.do?clubNo="+clubNo;
 }
 
 //사이드바 활성화
@@ -175,20 +197,21 @@ function validate() {
 	return true;
 }
 
-$(()=> {
+/* $(()=> {
 	var clubPlanNo = $("#clubPlanNo").val();
 	//console.log(clubPlanNo);
 
-	$("#clubPlanCard").on("click", ()=> {
+	$(".clubPlanCard").on("click", ()=> {
 		
 		$.ajax({
-			url: "${pageContext.request.contextPath}/club/selectClubPlanList.do", 
+			url: "${pageContext.request.contextPath}/club/selectClubPlanAttendeeList.do", 
 			data: {clubPlanNo: clubPlanNo}, 
 			dataType: "json", 
 			success: data=> {
 				console.log(data);
 				
 				let html = '';
+				let clubPlanNo = '';
 				$(data).each((idx, a)=>{
                     html += '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">';
                     html += '<div class="col-12">';
@@ -204,10 +227,14 @@ $(()=> {
                     html += '</form>';
                     html += '</div></div></div>'; 
                   	
+                    clubPlanNo = a.clubPlanNo;
                     //console.log(a.memberId);
 				});
 				
-				$("#attendeeList").html(html);
+				console.log(clubPlanNo);
+				console.log("#attendeeList"+clubPlanNo);
+				
+				$("#attendeeList"+clubPlanNo).html(html);
 				
 				//console.log($("#attendeeList"));
 			}, 
@@ -216,7 +243,7 @@ $(()=> {
 			}
 		});
 	});
-});
+}); */
 
 function deleteClubPlanAttendee() {
 		console.log($(this));
@@ -226,8 +253,19 @@ function deleteClubPlanAttendee() {
 	}
 }
 
+function confirmDelete() {
+	if(!confirm("정말로 삭제하시겠습니까?")) return false;
+	return true;
+}
+
 function loginAlert() {
 	alert("로그인 후 이용하실 수 있습니다.");
+}
+
+function fileDownload(oName, rName, clubNo) {
+	oName = encodeURIComponent(oName);
+	
+	location.href = "${pageContext.request.contextPath}/club/clubFileDownload.do?clubNo="+clubNo+"&oName="+oName+"&rName="+rName;
 }
 </script>
 
@@ -236,10 +274,10 @@ function loginAlert() {
 	class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
 	<!-- Left navbar links -->
 	<!-- SEARCH FORM -->
-	<form id="noticeSearchFrm" class="form-inline">
+	<form id="noticeSearchFrm" class="form-inline" action="${pageContext.request.contextPath }/club/searchClubContent.do" method="POST">
 		<div class="input-group input-group-sm">
-			<input class="form-control form-control-navbar" type="search"
-				placeholder="oo동호회 검색" aria-label="Search">
+			<input class="form-control form-control-navbar" type="search" placeholder="${club.clubName } 검색" aria-label="Search" name="keyword">
+			<input type="hidden" name="clubNo" value="${club.clubNo }" />
 			<div class="input-group-append">
 				<button class="btn btn-navbar" type="submit">
 					<i class="fas fa-search"></i>
@@ -251,19 +289,19 @@ function loginAlert() {
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
-		<li id="tab-calendar" class="nav-item"><button type="button">일정</button></li>
-		<c:if test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
+		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+'${club.clubNo}'">일정</button></li>
+		<c:if test="${memberLoggedIn.memberId == 'admin' or isManager}">
 			<li id="tab-member" class="nav-item">
 			<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button></li>
 		</c:if>
-		<li id="tab-attachment" class="nav-item"><button type="button">파일</button></li>
+		<li id="tab-attachment" class="nav-item"><button type="button" onclick="clubFileList('${club.clubNo}');">파일</button></li>
 	</ul>
 
 	<!-- Right navbar links -->
 	<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
 		<!-- 동호회 대화 -->
 		<li class="nav-item">
-			<button type="button" class="btn btn-block btn-default btn-xs nav-link">
+			<button type="button" class="btn btn-block btn-default btn-xs nav-link" data-widget="control-sidebar" data-slide="true">
 				<i class="far fa-comments"></i> 동호회 대화
 			</button>
 		</li>
@@ -274,53 +312,19 @@ function loginAlert() {
 			<i class="far fa-user"></i> 6
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile" />
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
+			  <c:if test="${not empty clubMemberList }">
+			  <c:forEach items="${clubMemberList }" var="clubMember">
+				<a href="${pageContext.request.contextPath }/member/memberView.do?memberId=${clubMember.empId }" class="dropdown-item"> <!-- Message Start -->
+				  <div class="media">
+				  	<img src="${pageContext.request.contextPath}/resources/img/profile/${clubMember.clubMemberList[0].renamedFileName }"
+				  		 alt="User Avatar" class="img-circle img-profile ico-profile" />
+				  	<div class="media-body">
+				  		<p class="memberName">${clubMember.clubMemberList[0].memberName }</p>
+				  	</div>
+				  </div> <!-- Message End -->
 				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<div class="media-body">
-								<p class="memberName">Brad Diesel</p>
-							</div>
-						</div>
-					</div> <!-- Message End -->
-				</a> 
-				<a href="#" class="dropdown-item"> <!-- Message Start -->
-					<div class="media">
-						<img src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-							 alt="User Avatar" class="img-circle img-profile ico-profile">
-						<div class="media-body">
-							<p class="memberName">Brad Diesel</p>
-						</div>
-					</div> <!-- Message End -->
-				</a>
+			  </c:forEach>
+			  </c:if>
 			</div>
 		</li>
 
@@ -483,7 +487,7 @@ function loginAlert() {
 				  <!-- clubPhotoModal -->
 				  <div class="modal fade cd-example-modal-lg" id="clubPhoto${vs.index }"
 					   tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-					<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 					  <div class="modal-content card card-outline card-info">
 						<div class="modal-header">
 						  <h5 class="modal-title" id="exampleModalLongTitle">${clubPhoto.clubPhotoTitle }</h5>
@@ -505,12 +509,12 @@ function loginAlert() {
 							</div>
 						</div>
 						<div class="modal-footer">
-						<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubPhoto.memberId }">
+						<c:if test="${not empty memberLoggedIn and (memberLoggedIn.memberId == clubPhoto.memberId or isManager)}">
 						  <form name="deleteClubPhotoFrm" action="${pageContext.request.contextPath }/club/deleteClubPhoto.do" method="POST">
 							<input type="hidden" name="clubNo" value="${club.clubNo }" />
 							<input type="hidden" name="clubPhotoNo" value=${clubPhoto.clubPhotoNo } />
 							<input type="hidden" name="clubPhotoRenamed" value=${clubPhoto.clubPhotoRenamed } />
-							<button type="submit" class="btn btn-danger">삭제</button>
+							<button type="submit" class="btn btn-danger" onclick="return confirmDelete();">삭제</button>
 						  </form>
 						</c:if>
 						  <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
@@ -564,7 +568,7 @@ function loginAlert() {
 						<c:forEach items="${clubPlanList }" var="clubPlan" varStatus="vs">
 						  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" id="clubPlanNo" />
 							<div class="col-12 col-sm-6 col-md-3">
-								<div class="card mywork" data-toggle="modal" id="clubPlanCard"
+								<div class="card mywork clubPlanCard" data-toggle="modal" id="clubPlanCard${clubPlan.clubPlanNo }"
 									data-target="#clubPlanView${vs.index }">
 									<div class="card-body">
 										<!-- 타이틀 -->
@@ -573,7 +577,7 @@ function loginAlert() {
 										</div>
 										<!-- 날짜정보 -->
 										<div class="card-status">
-											<span class="btn btn-block btn-sm bg-success">${clubPlan.clubPlanState }</span>
+											<span class="btn btn-block btn-sm bg-${clubPlan.clubPlanColor }">${clubPlan.clubPlanState }</span>
 											<span class="end-date"><i class="far fa-calendar-alt"></i>
 												${clubPlan.clubPlanStart }</span>
 										</div>
@@ -617,7 +621,7 @@ function loginAlert() {
 											</div>
 											<div class="form-group">
 												<label for="inputStatus">상태</label> 
-												<span class="btn btn-block btn-sm bg-success"
+												<span class="btn btn-block btn-sm bg-${clubPlan.clubPlanColor }"
 													style="margin-left: 10px; width: 70px;">
 													${clubPlan.clubPlanState }
 												</span>
@@ -632,17 +636,29 @@ function loginAlert() {
 											</div>
 											<div class="form-group">
 												<label for="inputProjectLeader">참석자</label>
-												  <div id="attendeeList" id="attendeeList">
+												  <div class="attendeeList" id="attendeeList${clubPlan.clubPlanNo }">
 												  </div>
-												  <%-- <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">
+												  <c:if test="${not empty clubPlanAttendeeList }">
+												  <c:forEach items="${clubPlanAttendeeList }" var="clubPlanAttendee">
+												  <c:if test="${clubPlanAttendee.clubPlanNo == clubPlan.clubPlanNo }">
+												  <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">
 							                        <div class="col-12"> 
-							                            <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-							                            <h6 class="h6">이주현</h6>
+							                            <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/${clubPlanAttendee.renamedFileName}" alt="Message User Image">
+							                            <h6 class="h6">${clubPlanAttendee.memberName }</h6>
 							                            <div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">
-							                              <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button>
+							                              <form name="deleteClubPlanAttendeeFrm" action="${pageContext.request.contextPath}/club/deleteClubPlanAttendee.do" method="POST">
+														    <input type="hidden" name="memberId" value="${clubPlanAttendee.memberId }">
+                    									    <input type="hidden" name="clubPlanAttendeeNo" value="${clubPlanAttendee.clubPlanAttendeeNo }">
+                    									    <input type="hidden" name="clubNo" value="${club.clubNo}">
+                    									    <input type="hidden" name="where" value="1">
+							                                <button type="submit" class="btn btn-tool"><i class="fas fa-times" style="color: black;"></i></button>
+							                              </form>
 							                            </div>
 							                        </div> 
-							                      </div> --%>
+							                      </div>
+												  </c:if>
+												  </c:forEach>
+												  </c:if>
 													<!-- 프로필 사진 -->
 													<%-- <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg"
 														 alt="User Avatar" class="img-circle elevation-2"
@@ -651,14 +667,23 @@ function loginAlert() {
 										</div>
 										<div class="modal-footer">
 										  <form name="insertClubPlanAttendanceFrm" action="${pageContext.request.contextPath }/club/insertClubPlanAttendee.do" method="POST">
-										    <input type="hidden" name="clubPlanNo" value=${clubPlan.clubPlanNo } />
-										    <input type="hidden" name="memberId" value=${memberLoggedIn.memberId } />
-										    <input type="hidden" name="clubNo" value=${club.clubNo } />
+										    <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
+										    <input type="hidden" name="memberId" value="${memberLoggedIn.memberId }" />
+										    <input type="hidden" name="clubNo" value="${club.clubNo }" />
+										    <input type="hidden" name="where" value="1" />
 											<button type="submit" class="btn btn-info float-right">
 												<i class="fas fa-plus"></i>
 											</button>
 										  </form>
+										  <c:if test="${not empty memberLoggedIn and (clubPlan.memberId == memberLoggedIn.memberId or isManager)}">
 											<button type="button" class="btn btn-info" data-target="#plan-modify${vs.index }" data-dismiss="modal" data-toggle="modal">수정</button>
+											<form name="deleteClubPlanFrm" action="${pageContext.request.contextPath }/club/deleteClubPlan.do" method="POST">
+											  <input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
+											  <input type="hidden" name="clubNo" value="${club.clubNo }" />
+											  <input type="hidden" name="where" value="1" />
+											  <button type="submit" class="btn btn-danger" onclick="return confirmDelete();">삭제</button>
+											</form>
+										  </c:if>
 											<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
 										</div>
 									</div>
@@ -684,6 +709,7 @@ function loginAlert() {
 										<form name="clubPlanUpdateFrm" action="${pageContext.request.contextPath }/club/clubPlanUpdate.do" method="post">
 											<input type="hidden" name="clubPlanNo" value="${clubPlan.clubPlanNo }" />
 											<input type="hidden" name="clubNo" value="${clubPlan.clubNo }" />
+											<input type="hidden" name="where" value="1" />
 											<div class="modal-body">
 												<div class="form-group">
 													<label for="inputName">일정</label> 
@@ -714,13 +740,15 @@ function loginAlert() {
 												<script>
 												$(()=> {
 													$("#clubPlanUpdateDate${vs.index }").daterangepicker({
-														startDate: ${clubPlan.clubPlanStart}, 
 														singleDatePicker: true,
 													    showDropdowns: true, 
+													    startOfWeek: 'monday', 
+													    setDate: '${clubPlan.clubPlanStart}', 
 													    locale: {
-														    format: 'YYYY-MM-DD'
+														    format: 'YYYY-MM-DD' 
 													    }
 													  });
+													/* $("#clubPlanUpdateDate${vs.index }").daterangepicker('setDate', ${clubPlan.clubPlanStart}); */
 												});
 												</script>
 												<div class="form-group">
@@ -794,9 +822,8 @@ function loginAlert() {
 										<h5>${clubNotice.clubNoticeTitle }</h5>
 									</div>
 									<!-- 프로필 사진 -->
-									<img
-										src="${pageContext.request.contextPath}/resources/img/profile/${clubNotice.renamedFileName }"
-										alt="User Avatar" class="img-circle img-profile">
+									<img src="${pageContext.request.contextPath}/resources/img/profile/${clubNotice.renamedFileName }"
+										 alt="User Avatar" class="img-circle img-profile">
 									<!-- 타이틀 -->
 									<div class="card-title text-center">
 										<h5>${clubNotice.memberName }/${clubNotice.memberId }</h5>
@@ -829,6 +856,12 @@ function loginAlert() {
 									<div class="form-group">
 										<br />
 									</div>
+									<c:if test="${clubNotice.clubNoticeRenamed ne null }">
+									  <div class="form-group" onclick="fileDownload('${clubNotice.clubNoticeOriginal}', '${clubNotice.clubNoticeRenamed }', '${club.clubNo }');">
+									  	<i class="far fa-file"></i>
+									    ${clubNotice.clubNoticeOriginal }
+									  </div>
+									</c:if>
 									<div class="form-group">
 										${clubNotice.clubNoticeContent }
 									</div>
@@ -836,7 +869,7 @@ function loginAlert() {
 										<br />
 									</div>
 									<!-- NoticeModalComment -->
-									<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
+									<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글</div>
 						            <div class="card-footer card-comments">
 									
 									<c:if test="${not empty clubNoticeCommentList }">
@@ -848,8 +881,12 @@ function loginAlert() {
 						                  <div class="comment-text">
 						                    <span class="username">${clubNoticeComment.memberName }<span class="text-muted float-right">${clubNoticeComment.clubNoticeCommentDate }</span></span>
 						                    <span>${clubNoticeComment.clubNoticeCommentContent }</span>
-						                    <c:if test="${not empty memberLoggedIn and clubNoticeComment.memberId==memberLoggedIn.memberId }">
-						                      <button class="comment-delete float-right">삭제</button>
+						                    <c:if test="${not empty memberLoggedIn and (clubNoticeComment.memberId==memberLoggedIn.memberId or isManager) }">
+						                      <form name="deleteClubNoticeCommentFrm" action="${pageContext.request.contextPath }/club/deleteClubNoticeComment.do" method="POST">
+						                        <input type="hidden" name="clubNoticeCommentNo" value="${clubNoticeComment.clubNoticeCommentNo }" />
+						                        <input type="hidden" name="clubNo" value="${club.clubNo }" />
+						                        <button type="submit" class="comment-delete float-right" onclick="return confirmDelete();">삭제</button>
+						                      </form>
 						                    </c:if>
 						                  </div>
 						                </div>
@@ -879,11 +916,12 @@ function loginAlert() {
 						            </div> 
 								</div>
 								<div class="modal-footer">
-									<c:if test="${not empty memberLoggedIn and memberLoggedIn.memberId == clubNotice.memberId }">
+									<c:if test="${not empty memberLoggedIn and (memberLoggedIn.memberId == clubNotice.memberId or isManager) }">
 									<form name="deleteClubNoticeFrm" action="${pageContext.request.contextPath}/club/deleteClubNotice.do" method="POST">
 										<input type="hidden" name="clubNo" value="${club.clubNo }" />
 										<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
-										<button type="submit" class="btn btn-danger" >삭제</button>
+										<input type="hidden" name="clubNoticeRenamed" value="${clubNotice.clubNoticeRenamed }" />
+										<button type="submit" class="btn btn-danger" onclick="return confirmDelete();" >삭제</button>
 									</form>
 									<button type="button" class="btn btn-info"
 										data-dismiss="modal" data-toggle="modal"
@@ -906,7 +944,7 @@ function loginAlert() {
 										<span aria-hidden="true">&times;</span>
 									</button>
 								</div>
-								<form name="clubNoticeUpdateFrm" action="${pageContext.request.contextPath }/club/clubNoticeUpdate.do" method="POST">
+								<form name="clubNoticeUpdateFrm" action="${pageContext.request.contextPath }/club/clubNoticeUpdate.do" enctype="multipart/form-data" method="POST">
 									<input type="hidden" name="clubNoticeNo" value="${clubNotice.clubNoticeNo }" />
 									<input type="hidden" name="clubNo" value="${clubNotice.clubNo }" />
 									<div class="modal-body">
@@ -915,6 +953,29 @@ function loginAlert() {
 											<input type="text" id="inputClientCompany" class="form-control" name="clubNoticeTitle"
 												   placeholder="제목을 입력하세요." value="${clubNotice.clubNoticeTitle }" />
 										</div>
+										  <div class="form-group">
+										  	<label for="exampleInputFile">파일</label>
+										  	<div class="input-group">
+								                <!-- <input type="file" class="form-control-file" id="exampleFormControlFile1" name="updateFile"> -->
+										  		<div class="custom-file">
+										  			<input type="file" class="custom-file-input" name=upFile id="exampleInputFile"> 
+										  			<label class="custom-file-label" for="exampleInputFile">파일을 선택하세요.</label>
+										  		</div>
+										  	</div>
+										  	<div class="input-group">
+								                <span class="fname">기존 첨부파일 : ${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""}</span>
+								                <input type="hidden" name="clubNoticeOriginal" value="${clubNotice.clubNoticeOriginal!=null?clubNotice.clubNoticeOriginal:""} "/>
+								                <input type="hidden" name="clubNoticeRenamed" value="${clubNotice.clubNoticeRenamed!=null?clubNotice.clubNoticeRenamed:""} "/>
+											</div>
+											<div class="input-group">
+												<c:if test="${clubNotice.clubNoticeRenamed ne null }">
+								               		<span class="deleteFileSpan">
+									               		<input type="checkbox" name="delFileChk" id="delFileChk" />
+									               		<label for="delFileChk">첨부파일삭제</label>	               		
+								               		</span>
+												</c:if>
+										  	</div>
+										  </div>
 										<div class="form-group">
 											<label for="inputClientCompany">공지내용</label> 
 											<div class="card-body pad">
@@ -958,5 +1019,104 @@ function loginAlert() {
 </div>
 <!-- /.content-wrapper -->
 
+<aside class="control-sidebar project-setting" style="display: block;">
+    <!-- Control sidebar content goes here -->
+    <div class="p-3">
+      <div class="card-header">
+                            <div class="post">
+                                <div class="user-block">
+                                    <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="user image">
+                                    <span class="username">
+                                        <h3>동호회이름</h3>
+                                    </span>
+                                </div>
+                            </div>
+                        </div><!-- /.card-header -->
+                        <div class="card-body">        
+                            <!-- Conversations are loaded here -->
+                            <div class="direct-chat-messages" style="height:25rem">
+                            <!-- Message. Default to the left -->
+                                <div class="direct-chat-msg">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-left">다른동호회멤버&nbsp;&nbsp;</span>
+                                        <span class="direct-chat-timestamp float-left">2:00 pm</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        Is this template really for free? That's unbelievable!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div>
+                                <!-- /.direct-chat-msg -->
+                        
+                                <!-- Message to the right -->
+                                <div class="direct-chat-msg right">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-right">나</span>
+                                        <span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user2-160x160.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        You better believe it!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div> 
 
+                                <div class="direct-chat-msg">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-left">이주현&nbsp;&nbsp;</span>
+                                        <span class="direct-chat-timestamp float-left">2:00 pm</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        Is this template really for free? That's unbelievable!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div>
+
+                                <div class="direct-chat-msg right">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-right">김효정</span>
+                                        <span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user2-160x160.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        You better believe it!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div> 
+
+                                <div class="direct-chat-msg">
+                                    <div class="direct-chat-infos clearfix">
+                                        <span class="direct-chat-name float-left">이주현&nbsp;&nbsp;</span>
+                                        <span class="direct-chat-timestamp float-left">2:00 pm</span>
+                                    </div>
+                                    <!-- /.direct-chat-infos -->
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+                                    <!-- /.direct-chat-img -->
+                                    <div class="direct-chat-text">
+                                        Is this template really for free? That's unbelievable!
+                                    </div>
+                                    <!-- /.direct-chat-text -->
+                                </div>
+                                <!-- /.direct-chat-msg -->
+                            </div><!-- /.direct-chat-messages -->
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-body pad">
+                            <div class="mb-3">
+                                <textarea class="textarea" placeholder="Place some text here"
+                                        style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                            </div>
+                        </div>
+    </div>
+  </aside>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

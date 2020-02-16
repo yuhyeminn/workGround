@@ -1,11 +1,6 @@
 <%@page import="com.kh.workground.member.model.vo.Member"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%
-	/* Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-	System.out.println("memberLoggedIn="+memberLoggedIn); */
-	//application.setAttribute("memberLoggedIn", memberLoggedIn);
-%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -87,7 +82,31 @@
   <script src="https://cdn.syncfusion.com/ej2/ej2-lists/dist/global/ej2-lists.min.js" type="text/javascript"></script>
   <script src="https://cdn.syncfusion.com/ej2/ej2-popups/dist/global/ej2-popups.min.js" type="text/javascript"></script>
   <script src="https://cdn.syncfusion.com/ej2/ej2-dropdowns/dist/global/ej2-dropdowns.min.js" type="text/javascript"></script>
-  
+  <!-- jQuery UI -->
+<script
+	src="${pageContext.request.contextPath}/resources/plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- fullCalendar 2.2.5 -->
+<script
+	src="${pageContext.request.contextPath}/resources/plugins/moment/moment.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar/main.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-daygrid/main.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-timegrid/main.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-interaction/main.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-bootstrap/main.min.js"></script>
+<!-- fullCalendar -->
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/plugins/fullcalendar/main.min.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-daygrid/main.min.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-timegrid/main.min.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-bootstrap/main.min.css">
   <!-- Page Script -->
   <script>
   //목록 슬라이드토글

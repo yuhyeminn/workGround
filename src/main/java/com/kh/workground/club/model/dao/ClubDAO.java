@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
+import com.kh.workground.club.model.vo.ClubPlan;
 
 public interface ClubDAO {
 
@@ -26,6 +27,27 @@ public interface ClubDAO {
 
 	List<ClubMember> selectClubMemberList(int clubNo);
 
+	int deleteClubMember(int clubMemberNo);
+
+	int updateClubManager(Map param);
+
+	int approveClubMember(Map param);
+
+	List<ClubMember> searchClubMember(Map param);
+
+	List<ClubPlan> selectClubPlanList(int clubNo);
+
+	ClubPlan selectOneClubPlan(int clubPlanNo);
+
+	List<Club> selectAllClubListByCategory(Map param);
+
+	List<Club> selectAllMyClubListByCategory(Map param);
+
+	List<Club> selectAllStandByClubListByCategory(Map param);
+
+	
+
+	
 
 
 }

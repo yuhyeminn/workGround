@@ -7,11 +7,25 @@
 	<!-- sh start -->
 
 	<select id="selectAllClubList" resultMap="clubCollectionMap">
-		select C.*, P.*,(select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn
+		select C.*, 
+			   P.*,
+			   (select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn,
+			   (select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
 		from (select * from club order by ${sort} asc) C
 			left join club_photo P
 				on C.club_no = P.club_no
 	</select>
+	
+	<select id="selectAllClubListByCategory" resultMap="clubCollectionMap">
+		select C.*, 
+			   P.*,
+			   (select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn,
+			   (select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
+		from (select * from club where club_category like '%'|| #{category} || '%' order by ${sort} asc) C
+			left join club_photo P
+				on C.club_no = P.club_no
+	</select>
+	
 	<insert id="insertNewClub">
 		insert into club
 		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingCycle},#{clubMeetingDate},#{clubCategory},#{clubManagerId})
@@ -33,17 +47,33 @@
 		values(seq_club_member_no.nextval,#{memberId},#{clubNo},'N','N')
 	</insert>
 	<select id="selectAllMyClubList" resultMap="clubCollectionMap">
-		select C.*, P.*
+		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
 		from (select * from club where club_no in
 			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'Y') order by ${sort} asc) C
 		left join club_photo P on C.club_no = P.club_no
 	</select>
+	
+	<select id="selectAllMyClubListByCategory" resultMap="clubCollectionMap">
+		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
+		from (select * from club where club_no in
+			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'Y' and club_category like '%'|| #{category} || '%' ) order by ${sort} asc) C
+		left join club_photo P on C.club_no = P.club_no
+	</select>
+	
 	<select id="selectAllStandByClubList" resultMap="clubCollectionMap">
-		select C.*, P.*
+		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
 		from (select * from club where club_no in
 			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'N') order by ${sort} asc) C
 		left join club_photo P on C.club_no = P.club_no
 	</select>
+	
+	<select id="selectAllStandByClubListByCategory" resultMap="clubCollectionMap">
+		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
+		from (select * from club where club_no in
+			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'N' and club_category like '%'|| #{category} || '%') order by ${sort} asc) C
+		left join club_photo P on C.club_no = P.club_no
+	</select>
+	
 	<resultMap type="club" id="clubCollectionMap">
 		<id column="club_no" property="clubNo"></id>
 		<result column="club_name" property="clubName"></result>
@@ -54,6 +84,7 @@
 		<result column="club_category" property="clubCategory"></result>
 		<result column="club_manager_id" property="clubManagerId"></result>
 		<result column="club_approve_YN" property="clubApproveYN"></result>
+		<result column="club_manager_yn" property="clubManagerYN"></result>
 		<collection property="clubPhotoList" ofType="clubPhoto">
 			<id column="club_photo_no" property="clubPhotoNo"></id>
 			<result column="club_photo_title" property="clubPhotoTitle"></result>
@@ -90,6 +121,64 @@
 			<result column="renamed_filename" property="renamedFileName"></result>
 		</collection>
 	</resultMap>
+	<delete id="deleteClubMember">
+		delete from club_member
+		where club_member_no = #{clubMemberNo}
+	</delete>
+	<update id="updateClubManager">
+		update club_member
+		set club_manager_yn = 'Y'
+		where club_code = #{clubNo} and emp_id = #{memberId}
+	</update>
+	<update id="approveClubMember">
+		update club_member
+		set club_approve_yn = 'Y'
+		where club_code = #{clubNo} and emp_id = #{memberId}
+	</update>
+	<select id="searchClubMember" resultMap="clubMemberCollectionMap">
+		select *
+		from (select C.*, M.*, (select dept_title from department where dept_code = M.dept_code) dept_title, (select job_title from job where M.job_code = job_code) job_title
+			 from (select * from club_member where club_code = #{clubNo}) C
+		left join member M on C.emp_id = M.member_id) A
+		where A.member_id like '%'|| #{keyword} || '%'
+			 or A.email like '%'|| #{keyword} || '%'
+			 or A.member_name like '%'|| #{keyword} || '%'
+			 or A.dept_title like '%'|| #{keyword} || '%'
+			 or A.job_title like '%'|| #{keyword} || '%'
+	</select>
+	<select id="selectOneClubPlan" resultMap="clubPlanCollectionMap">
+		select P.*,  A.*, M.member_id as member_id_2, M.renamed_filename, M.member_name
+		from (select * from club_plan) P
+		left join club_plan_attendee A on A.club_plan_no = P.club_plan_no
+		left join club_member C on A.club_member_no = C.club_member_no
+		left join member M on M.member_id = C.emp_id
+		where P.club_plan_no = #{clubPlanNo}
+		order by A.club_plan_attendee_date desc
+	</select>
+	<resultMap type="clubPlan" id="clubPlanCollectionMap">
+		<id column="club_plan_no" property="clubPlanNo"></id>
+		<result column="club_plan_title" property="clubPlanTitle"></result>
+		<result column="club_plan_content" property="clubPlanContent"></result>
+		<result column="club_plan_start" property="clubPlanStart"></result>
+		<result column="club_plan_state" property="clubPlanState"></result>
+		<result column="club_plan_color" property="clubPlanColor"></result>
+		<result column="club_plan_place" property="clubPlanPlace"></result>
+		<result column="club_plan_manager" property="clubPlanManager"></result>
+		<result column="club_no" property="clubNo"></result>
+		<result column="member_id" property="memberId"></result>
+		<result column="club_manager_yn" property="clubManagerYN"></result>
+		<result column="club_member_name" property="clubMemberName"></result>
+		<collection property="planAttendeeList" ofType="clubPlanAttendee">
+			<id column="club_plan_attendee_no" property="clubPlanAttendeeNo"></id>
+			<result column="club_plan_no" property="clubPlanNo"></result>
+			<result column="club_member_no" property="clubMemberNo"></result>
+			<result column="club_plan_attendee_date" property="clubPlanAttendeeDate"></result>
+			<result column="renamed_filename" property="renamedFileName"></result>
+			<result column="member_id_2" property="memberId"></result>
+			<result column="member_name" property="memberName"></result>
+		</collection>
+	</resultMap>
+	
 
 	<!-- sh end -->
 
@@ -100,9 +189,11 @@
 	</select>
 
 	<select id="selectClubPlanList" resultType="clubPlan">
-		select * from club_plan
-		where club_no = #{clubNo} and extract(month from club_plan_start) = extract(month from sysdate)
-		order by club_plan_start, club_plan_no asc
+		select * 
+		from club_plan P 
+    		left join club_member M on P.club_no = M.club_code and P.member_id = M.emp_id 
+		where P.club_no = #{clubNo} and extract(month from club_plan_start) = extract(month from sysdate)
+		order by club_plan_start asc
 	</select>
 
 	<update id="updateClubPlan">
@@ -112,7 +203,8 @@
 			club_plan_start = #{clubPlanStart},
 			club_plan_state = #{clubPlanState},
 			club_plan_place = #{clubPlanPlace},
-			club_plan_manager = #{clubPlanManager}
+			club_plan_manager = #{clubPlanManager}, 
+			club_plan_color = #{clubPlanColor}
 		where club_plan_no = #{clubPlanNo}
 	</update>
 
@@ -130,9 +222,11 @@
 			   #{clubPlanContent},
 			   #{clubPlanStart},
 			   #{clubPlanState},
+			   #{clubPlanColor}, 
 			   #{clubPlanPlace},
 			   #{clubPlanManager},
-			   #{clubNo})
+			   #{clubNo}, 
+			   #{memberId})
 	</insert>
 	
 	<select id="selectClubNoticeList" resultType="clubNotice">
@@ -147,7 +241,9 @@
 	<update id="clubNoticeUpdate">
 		update club_notice 
 		set club_notice_title = #{clubNoticeTitle}, 
-			club_notice_content = #{clubNoticeContent} 
+			club_notice_content = #{clubNoticeContent} , 
+			club_notice_original = #{clubNoticeOriginal}, 
+			club_notice_renamed= #{clubNoticeRenamed} 
 		where club_notice_no = #{clubNoticeNo}
 	</update>
 	
@@ -158,7 +254,9 @@
 			   #{clubNoticeContent}, 
 			   #{clubNo}, 
 			   #{clubMemberNo}, 
-			   default)
+			   default, 
+			   #{clubNoticeOriginal}, 
+			   #{clubNoticeRenamed})
 	</insert>
 	
 	<select id="selectOneClubMember" resultType="clubMember">
@@ -235,5 +333,59 @@
 			   #{clubNoticeCommentRef}, 
 			   #{clubNo})
 	</insert>
+	
+	<select id="selectAllClubPlanAttendeeList" resultType="clubPlanAttendee">
+		select A.* , M.member_id, M.renamed_filename, M.member_name 
+		from club_plan_attendee A 
+			left join club_member C on A.club_member_no = C.club_member_no
+    		left join member M on C.emp_id = M.member_id
+		order by A.club_plan_attendee_date desc
+	</select>
+	
+	<delete id="deleteClubPlan">
+		delete from club_plan 
+		where club_plan_no = #{clubPlanNo}
+	</delete>
+	
+	<delete id="deleteClubNoticeComment">
+		delete from club_notice_comment 
+		where club_notice_comment_no = #{clubNoticeCommentNo}
+	</delete>
+	
+	<select id="searchClubPhotoList" resultType="clubPhoto">
+		select *
+		from club_photo P
+			left join club_member C on P.club_member_no = C.club_member_no 
+			left join member M on C.emp_id = M.member_id 
+		where club_no = ${clubNo} and
+			  (club_photo_title like '%'|| #{keyword} || '%'
+			  or club_photo_original like '%'|| #{keyword} || '%')
+		order by club_photo_date desc
+	</select>
+	
+	<select id="searchClubNoticeList" resultType="clubNotice">
+		select *
+		from club_notice N
+			left join club_member C on N.club_member_no = C.club_member_no 
+			left join member M on C.emp_id = M.member_id 
+		where club_no = ${clubNo} 
+			  and (club_notice_title like '%'|| #{keyword} || '%'
+			  or club_notice_original like '%'|| #{keyword} || '%'
+			  or club_notice_content like '%'|| #{keyword} || '%')
+		order by club_notice_date desc
+	</select>
+	
+	<select id="searchClubPlanList" resultType="clubPlan">
+		select *
+		from club_plan P left join club_member M on P.club_no = M.club_code and P.member_id = M.emp_id 
+		where P.club_no = #{clubNo} 
+			  and extract(month from club_plan_start) = extract(month from sysdate) 
+			  and (club_plan_title like '%'|| #{keyword} || '%'
+			  or P.club_plan_content like '%'|| #{keyword} || '%'
+			  or P.club_plan_state like '%'|| #{keyword} || '%'
+			  or P.club_plan_place like '%'|| #{keyword} || '%'
+			  or P.club_plan_manager like '%'|| #{keyword} || '%')
+		order by P.club_plan_start asc
+	</select>
 	<!-- br end -->
 </mapper>
