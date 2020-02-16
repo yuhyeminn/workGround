@@ -651,20 +651,13 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			List<ClubPhoto> clubPhotoList = clubService2.selectClubPhotoList(clubNo);
 //			logger.debug("clubPhotoList={}", clubPhotoList);
 			List<ClubNotice> clubNoticeList = clubService2.selectClubNoticeList(clubNo);
-			logger.debug("clubNoticeList={}", clubNoticeList);
+//			logger.debug("clubNoticeList={}", clubNoticeList);
 			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
 //			logger.debug("clubMemberList={}", clubMemberList);
-			List<Object> clubFileList = new ArrayList<>();
-			for(ClubPhoto p : clubPhotoList)
-				clubFileList.add(p);
-			for(ClubNotice n : clubNoticeList)
-				clubFileList.add(n);
-			logger.debug("clubFileList={}", clubFileList);
 			
 			mav.addObject("club", club);
 			mav.addObject("clubPhotoList", clubPhotoList);
 			mav.addObject("clubNoticeList", clubNoticeList);
-			mav.addObject("clubFileList", clubFileList);
 			mav.addObject("clubMemberList", clubMemberList);
 			mav.setViewName("club/clubFileList");
 			
@@ -715,6 +708,105 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			}
 			bos.close();
 			bis.close();
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			
+			throw e;
+		}
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/searchClubFile.do")
+	public ModelAndView searchClubFile(ModelAndView mav, 
+									   @RequestParam("keyword") String keyword, 
+									   @RequestParam("clubNo") int clubNo) {
+		try {
+			Club club = clubService2.selectClub(clubNo);
+			
+			Map<String, String> param = new HashMap<>();
+			param.put("keyword", keyword);
+			param.put("clubNo", clubNo+"");
+			logger.debug("param={}", param);
+			
+			List<ClubPhoto> clubPhotoList = clubService2.searchClubPhotoList(param);
+			logger.debug("clubPhotoList={}", clubPhotoList);
+			List<ClubNotice> clubNoticeList = clubService2.searchClubNoticeList(param);
+			logger.debug("clubNoticeList={}", clubNoticeList);
+			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
+			
+			mav.addObject("club", club);
+			mav.addObject("clubPhotoList", clubPhotoList);
+			mav.addObject("clubNoticeList", clubNoticeList);
+			mav.addObject("clubMemberList", clubMemberList);
+			mav.setViewName("club/clubFileList");
+			
+		} catch (Exception e) {
+			logger.debug(e.getMessage(), e);
+			throw e;
+		}
+		
+		return mav;
+	}
+	
+	@RequestMapping("/club/searchClubContent.do")
+	public ModelAndView searchClubContent(ModelAndView mav, 
+										  @RequestParam("clubNo") int clubNo, 
+										  @RequestParam("keyword") String keyword, 
+										  HttpServletRequest request) {
+		try {
+//			logger.info("clubNo={}",clubNo);
+			
+			Club club = clubService2.selectClub(clubNo);
+//			logger.info("club={}", club);
+			
+			Map<String, String> param = new HashMap<>();
+			param.put("clubNo", clubNo+"");
+			param.put("keyword", keyword);
+			logger.debug("param={}", param);
+			
+			List<ClubPlan> clubPlanList = clubService2.searchClubPlanList(param);
+			logger.debug("clubPlanList={}", clubPlanList);
+			List<ClubNotice> clubNoticeList = clubService2.searchClubNoticeList(param);
+			logger.debug("clubNoticeList={}", clubNoticeList);
+			List<ClubPhoto> clubPhotoList = clubService2.searchClubPhotoList(param);
+			logger.debug("clubPhotoList={}", clubPhotoList);
+			List<ClubNoticeComment> clubNoticeCommentList = clubService2.selectClubNoticeCommentList(clubNo);
+			logger.debug("clubNoticeCommentList={}", clubNoticeCommentList);
+			List<ClubPlanAttendee> clubPlanAttendeeList = clubService2.selectAllClubPlanAttendeeList(clubNo);
+			logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
+			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
+			logger.debug("clubMemberList={}", clubMemberList);
+			
+			Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
+			logger.debug("memberLoggedIn={}", memberLoggedIn);
+			
+			Map<String, String> param2 = new HashMap<>();
+			param2.put("clubNo", clubNo+"");
+			param2.put("memberId", memberLoggedIn.getMemberId());
+			ClubMember clubMember = clubService2.selectOneClubMember(param2);
+			logger.debug("clubMember={}", clubMember);
+			
+			boolean isManager = false;
+//			logger.debug("clubManagerYN={}", clubMember.getClubManagerYN());
+			if("admin".equals(memberLoggedIn.getMemberId()) || 'Y'==clubMember.getClubManagerYN().charAt(0)) {
+				isManager = true;
+			}
+//			logger.debug("isManager={}", isManager);
+			
+			mav.addObject("club", club);
+			mav.addObject("clubPlanList", clubPlanList);
+			mav.addObject("clubNoticeList", clubNoticeList);
+			mav.addObject("clubPhotoList", clubPhotoList);
+			mav.addObject("clubNoticeCommentList", clubNoticeCommentList);
+			mav.addObject("clubPlanAttendeeList", clubPlanAttendeeList);
+			mav.addObject("clubMemberList", clubMemberList);
+			mav.addObject("clubPhotoCount", clubPhotoList.size());
+			mav.addObject("clubPlanCount", clubPlanList.size());
+			mav.addObject("clubNoticeCount", clubNoticeList.size());
+			mav.addObject("isManager", isManager);
+			mav.setViewName("club/clubView");
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

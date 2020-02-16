@@ -274,10 +274,10 @@ function fileDownload(oName, rName, clubNo) {
 	class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
 	<!-- Left navbar links -->
 	<!-- SEARCH FORM -->
-	<form id="noticeSearchFrm" class="form-inline">
+	<form id="noticeSearchFrm" class="form-inline" action="${pageContext.request.contextPath }/club/searchClubContent.do" method="POST">
 		<div class="input-group input-group-sm">
-			<input class="form-control form-control-navbar" type="search"
-				placeholder="oo동호회 검색" aria-label="Search">
+			<input class="form-control form-control-navbar" type="search" placeholder="${club.clubName } 검색" aria-label="Search" name="keyword">
+			<input type="hidden" name="clubNo" value="${club.clubNo }" />
 			<div class="input-group-append">
 				<button class="btn btn-navbar" type="submit">
 					<i class="fas fa-search"></i>
