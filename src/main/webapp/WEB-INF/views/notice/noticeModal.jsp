@@ -6,7 +6,7 @@
 
 <!-- 전체 공지 상세보기 모달 -->
 <c:forEach items="${noticeList}" var="n" varStatus="nvs">
-	<div class="modal fade" id="noticeViewModal${nvs.count}" tabindex="-1" role="dialog" aria-labelledby="noticeViewModalLabel${nvs.count }" aria-hidden="true">
+	<div class="modal fade" id="noticeViewModal${n.noticeNo}" tabindex="-1" role="dialog" aria-labelledby="noticeViewModal${n.noticeNo}" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -104,11 +104,11 @@
 
 <!-- 부서별 공지 상세보기 모달 -->
 <c:forEach items="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}" var="deptn" varStatus="deptnvs">
-	<div class="modal fade" id="myDeptNoticeViewModal${deptnvs.count}" tabindex="-1" role="dialog" aria-labelledby="myDeptNoticeViewModalLabel${deptnvs.count}" aria-hidden="true">
+	<div class="modal fade" id="myDeptNoticeViewModal${deptn.noticeNo}" tabindex="-1" role="dialog" aria-labelledby="myDeptNoticeViewModal${deptn.noticeNo}" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h5 class="modal-title"><span id="myDept"><i class="fas fa-user"></i> &nbsp;${memberLoggedIn.deptCode=='D1'?"기획":memberLoggedIn.deptCode=='D2'?"디자인":"개발" }</span>&nbsp; 부서별 공지</h5>
+	        <h5 class="modal-title"><span id="myDept"><i class="fas fa-user"></i> &nbsp;${memberLoggedIn.deptCode=='D1'?"기획":memberLoggedIn.deptCode=='D2'?"디자인":"개발" }</span>&nbsp; 부서 게시글</h5>
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
@@ -188,11 +188,11 @@
 
 <!-- 게시판 상세보기 모달 -->
 <c:forEach items="${communityList}" var="c" varStatus="cvs">
-	<div class="modal fade" id="boardViewModal${cvs.count}" tabindex="-1" role="dialog" aria-labelledby="boardModalLabel${cvs.count }" aria-hidden="true">
+	<div class="modal fade" id="boardViewModal${c.commuNo}" tabindex="-1" role="dialog" aria-labelledby="boardViewModal${c.commuNo}" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h5 class="modal-title"><i class="fas fa-sticky-note"></i>&nbsp; 자유게시판</h5>
+	        <h5 class="modal-title"><i class="fas fa-sticky-note"></i>&nbsp; 커뮤니티</h5>
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
@@ -333,7 +333,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 공지 작성</h5>
+        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 부서 게시글 작성</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -357,7 +357,7 @@
               		 readonly/>
             </div>
             <div class="form-group">
-              <label for="inputName">공지 제목</label>
+              <label for="inputName">게시글 제목</label>
               <input type="text" id="inputName" name="noticeTitle" class="form-control" required>
             </div>
             <div class="form-group" style="display:none;">
@@ -369,7 +369,7 @@
               <input type="text" class="form-control" maxlength="35" placeholder="35자 이내로 입력하세요.">
             </div> -->
             <div class="form-group">
-              <label for="inputDescription">공지 내용</label>
+              <label for="inputDescription">게시글 내용</label>
               <textarea class="textarea" name="noticeContent" required></textarea>
             </div>
             <div class="form-group">
@@ -391,7 +391,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 게시글 작성</h5>
+          <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 커뮤니티 게시글 작성</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -436,7 +436,7 @@
 <!-- 관리자: 전체공지만 수정 / 부서별공지는 내가속한 부서에서 수정 -->
 <!-- 부서별 옵션: 내가속한 부서만 selected 그 외엔 disabled -->
 <c:forEach items="${noticeList}" var="n" varStatus="nvs">
-	<div class="modal fade" id="updateNoticeModal${nvs.count}" tabindex="-1" role="dialog" aria-labelledby="updateNoticeModalLabel" aria-hidden="true">
+	<div class="modal fade" id="updateNoticeModal${n.noticeNo}" tabindex="-1" role="dialog" aria-labelledby="updateNoticeModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -501,11 +501,11 @@
 </c:forEach>
 <!-- 내가 속한 부서 공지 수정 모달 -->
 <c:forEach items="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}" var="deptn" varStatus="deptnvs">
-	<div class="modal fade" id="updateDeptNoticeModal${deptnvs.count}" tabindex="-1" role="dialog" aria-labelledby="updateNoticeModalLabel" aria-hidden="true">
+	<div class="modal fade" id="updateDeptNoticeModal${deptn.noticeNo}" tabindex="-1" role="dialog" aria-labelledby="updateNoticeModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 공지 수정</h5>
+	        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 부서 게시글 수정</h5>
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
@@ -529,7 +529,7 @@
 		              	   readonly/>
             	 </div>
 	              <div class="form-group">
-	                <label for="inputName">공지 제목</label>
+	                <label for="inputName">게시글 제목</label>
 	                <input type="text" id="inputName" class="form-control" value="${deptn.noticeTitle}" name="noticeTitle" required>
 	              </div>
 	              <div class="form-group" style="display:none;">
@@ -541,7 +541,7 @@
 	                <input type="text" class="form-control" maxlength="35" placeholder="35자 이내로 입력하세요." value="파이널 프로젝트가 본격적으로 시작되었습니다! 다들 화이팅!">
 	              </div> -->
 	              <div class="form-group">
-	                <label for="inputDescription">공지 내용</label>
+	                <label for="inputDescription">게시글 내용</label>
 	                <textarea class="textarea" name="noticeContent" required>${deptn.noticeContent}</textarea>
 	              </div>
 	              <div class="form-group">
@@ -570,11 +570,11 @@
 </c:forEach>
 <!-- 게시판 수정 모달 -->
 <c:forEach items="${communityList}" var="c" varStatus="cvs">
-	<div class="modal fade" id="updateCommuModal${cvs.count}" tabindex="-1" role="dialog" aria-labelledby="updateBoardModalLabel" aria-hidden="true">
+	<div class="modal fade" id="updateCommuModal${c.commuNo}" tabindex="-1" role="dialog" aria-labelledby="updateBoardModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 게시글 수정</h5>
+	        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 커뮤니티 게시글 수정</h5>
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
