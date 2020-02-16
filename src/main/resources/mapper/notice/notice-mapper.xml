@@ -54,27 +54,27 @@
 	</resultMap>
 
 
-	<!-- 전체 공지 + 댓글 조회 / 정렬 -->
+	<!-- 전체 공지 + 댓글 조회 -->
 	<select id="selectNoticeList" resultMap="noticeMap">
-		select * from view_noticeMemberNoticeComment where dept_code is null order by ${sort}, notice_comment_no
+		select * from view_noticeMemberNoticeComment where dept_code is null order by notice_no desc, notice_comment_no
 	</select>
 
 	<!-- 부서별 공지 + 댓글 조회 -->
 	<select id="selectPlanningDeptNoticeList" resultMap="noticeMap">
-		select * from view_noticeMemberNoticeComment where dept_code = 'D1' order by ${sort}, notice_comment_no
+		select * from view_noticeMemberNoticeComment where dept_code = 'D1' order by notice_no desc, notice_comment_no
 	</select>
 
 	<select id="selectDesignDeptNoticeList" resultMap="noticeMap">
-		select * from view_noticeMemberNoticeComment where dept_code = 'D2' order by ${sort}, notice_comment_no
+		select * from view_noticeMemberNoticeComment where dept_code = 'D2' order by notice_no desc, notice_comment_no
 	</select>
 
 	<select id="selectDevelopmentDeptNoticeList" resultMap="noticeMap">
-		select * from view_noticeMemberNoticeComment where dept_code  = 'D3' order by ${sort}, notice_comment_no
+		select * from view_noticeMemberNoticeComment where dept_code  = 'D3' order by notice_no desc, notice_comment_no
 	</select>
 	
 	<!-- 게시판 + 댓글 조회 -->
 	<select id="selectCommunityList" resultMap="communityMap">
-		select * from view_commuMemberCommuComment order by ${sort}, commu_comment_no
+		select * from view_commuMemberCommuComment order by commu_no desc, commu_comment_no
 	</select>
 
 	
@@ -160,40 +160,6 @@
 	<delete id="deleteCommunityComment">
 		delete from community_comment where commu_comment_no = #{commuCommentNo}
 	</delete>
-	
-	<!-- 게시글 검색 -->
-	<select id="searchNoticeList" resultMap="noticeMap">
-		select * 
-		from view_noticeMemberNoticeComment 
-		where dept_code is null and (member_name like '%${searchKeyword}%' or notice_title like '%${searchKeyword}%' or notice_content like'%${searchKeyword}%') 
-		order by ${sort}, notice_comment_no
-	</select>
-	<select id="searchPlanningDeptNoticeList" resultMap="noticeMap">
-		select * 
-		from view_noticeMemberNoticeComment 
-		where dept_code = 'D1' and (member_name like '%${searchKeyword}%' or notice_title like '%${searchKeyword}%' or notice_content like'%${searchKeyword}%') 
-		order by ${sort}, notice_comment_no
-	</select>
-	<select id="searchDesignDeptNoticeList" resultMap="noticeMap">
-		select * 
-		from view_noticeMemberNoticeComment 
-		where dept_code = 'D2' and (member_name like '%${searchKeyword}%' or notice_title like '%${searchKeyword}%' or notice_content like'%${searchKeyword}%') 
-		order by ${sort}, notice_comment_no
-	</select>
-	<select id="searchDevelopmentDeptNoticeList" resultMap="noticeMap">
-		select * 
-		from view_noticeMemberNoticeComment 
-		where dept_code = 'D3' and (member_name like '%${searchKeyword}%' or notice_title like '%${searchKeyword}%' or notice_content like'%${searchKeyword}%') 
-		order by ${sort}, notice_comment_no
-	</select>
-	
-	<select id="searchCommunityList" resultMap="communityMap">
-		select * 
-		from view_commuMemberCommuComment 
-		where member_name like '%${searchKeyword}%' or commu_title like '%${searchKeyword}%' or commu_content like'%${searchKeyword}%' 
-		order by ${sort}, commu_comment_no
-	</select>
-
 	
 
 </mapper>
