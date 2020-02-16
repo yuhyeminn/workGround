@@ -241,8 +241,8 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item">
             <a href="${pageContext.request.contextPath}/notice/noticeList.do" id="sidebar-notice" class="nav-link active">
-              <i class="nav-icon far fa-sticky-note"></i>
-              <p>공지</p>
+              <i class="nav-icon far fas fa-bullhorn"></i>
+              <p>게시판</p>
             </a>
           </li>
           <li class="nav-item">
