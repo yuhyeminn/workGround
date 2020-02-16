@@ -168,7 +168,6 @@ function sortByStatus(statusCodeElem){
 	            <div class="col-12 col-sm-6 col-md-3">
 	                <div class="card card-hover">
 	                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
-	                <%-- <a href="${pageContext.request.contextPath}/project/projectView.do"> --%>
 	                    <div class="card-body">
 	                    <div class="card-title">
 	                        <h5>${p.projectTitle}</h5>
