@@ -80,6 +80,7 @@ function sidebarActive(){
 	
 	$("#sidebar-club").addClass("active");
 }
+
 function clubFunc(){
 	$("#all-club-intro").html(''); //데이터 없을 경우 비우기 위함.
 	$("#my-club-list").html(''); //데이터 없을 경우 비우기 위함.
@@ -105,7 +106,7 @@ function clubFunc(){
 		    				+'</div>';
 		    	
 		    	//삭제하기 버튼
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if( (list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{
 			    	allClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
 		    			   	   +'onclick="delClubFunc('+list.clubNo+')">'
@@ -144,7 +145,7 @@ function clubFunc(){
 		 
 		    	allClubHtml+='</div>';
 		    	//동호회 수정
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{	
 		    		allClubHtml+='<button type="button" id="up-btn" onclick="updateClubModal('+list.clubNo+')">'
     				+'<i class="fas fa-edit"></i></button>';
@@ -153,6 +154,8 @@ function clubFunc(){
 		    	
 		    	allClubHtml+='<div class="category">'
 		    				+'<span class="club-category">'+list.clubCategory+'</span></div></div></div></div>';
+		    				
+
 	
 		    });
 			//새 동호회 부분
@@ -170,7 +173,7 @@ function clubFunc(){
 						  +'<div class="card-title">'+list.clubName+'</div>';
 						
 				//삭제버튼 부분
-				if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin'){
+				if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin'){
 
 					myClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
 	    			   	   	  +'onclick="delClubFunc('+list.clubNo+')">'
@@ -192,7 +195,7 @@ function clubFunc(){
 		    	myClubHtml+='</div>';
 		    	
 		    	//수정버튼
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{	
 		    		myClubHtml+='<button type="button" id="up-btn" onclick="updateClubModal('+list.clubNo+')">'
     				+'<i class="fas fa-edit"></i></button>';
@@ -217,7 +220,7 @@ function clubFunc(){
 		    				+'</div>';
 		    	
 		    	//삭제하기 버튼
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{
 		    		standByClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
 		    			   	   +'onclick="delClubFunc('+list.clubNo+')">'
@@ -238,7 +241,7 @@ function clubFunc(){
 		    	}
 		    	standByClubHtml+='</div>';
 		    	//동호회 수정
-		    	if(list.clubManagerId == '${memberLoggedIn.memberId}'||'${memberLoggedIn.memberId}' == 'admin')
+		    	if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{	
 		    		standByClubHtml+='<button type="button" id="up-btn" onclick="updateClubModal('+list.clubNo+')">'
     				+'<i class="fas fa-edit"></i></button>';
@@ -417,55 +420,52 @@ function clubFunc(){
 								</div>
 								<div class="modal-body">
 
-									<div id="modal-image-slider" class="carousel slide"
+									<div id="modal-image-slider-${club.clubNo }" class="carousel slide"
 										data-ride="carousel">
 
 										<div class="carousel-inner">
-
-											<c:choose>
-
-												<c:when
-													test="${club.clubPhotoList[0].clubPhotoRenamed ne null}">
+	
+												<c:if
+													test="${not empty club.clubPhotoList[0].clubPhotoRenamed}">
 
 													<div class="carousel-item active">
 														<img class="d-block w-100"
-															src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[0].clubPhotoRenamed}"
+															src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 															alt="First slide">
 													</div>
-												</c:when>
+												</c:if>
 
-												<c:otherwise>
+												<c:if test="${empty club.clubPhotoList[0].clubPhotoRenamed}">
 													<div class="carousel-item active">
 														<img class="d-block w-100"
 															src="${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"
 															alt="First slide">
 													</div>
 
-												</c:otherwise>
-											</c:choose>
+												</c:if>
 											<c:if
-												test="${club.clubPhotoList[1].clubPhotoRenamed ne null}">
+												test="${not empty club.clubPhotoList[1].clubPhotoRenamed}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[1].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[1].clubPhotoRenamed}"
 														alt="Second slide">
 												</div>
 											</c:if>
 											<c:if
-												test="${club.clubPhotoList[2].clubPhotoRenamed ne null}">
+												test="${not empty club.clubPhotoList[2].clubPhotoRenamed}">
 												<div class="carousel-item">
 													<img class="d-block w-100"
-														src="${pageContext.request.contextPath}/resources/upload/club/21/${club.clubPhotoList[2].clubPhotoRenamed}"
+														src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[2].clubPhotoRenamed}"
 														alt="Third slide">
 												</div>
 											</c:if>
 										</div>
 
-										<a class="carousel-control-prev" href="#modal-image-slider"
+										<a class="carousel-control-prev" href="#modal-image-slider-${club.clubNo }"
 											role="button" data-slide="prev"> <span
 											class="carousel-control-prev-icon" aria-hidden="true"></span>
 											<span class="sr-only">Previous</span>
-										</a> <a class="carousel-control-next" href="#modal-image-slider"
+										</a> <a class="carousel-control-next" href="#modal-image-slider-${club.clubNo }"
 											role="button" data-slide="next"> <span
 											class="carousel-control-next-icon" aria-hidden="true"></span>
 											<span class="sr-only">Next</span>
@@ -846,8 +846,6 @@ function clubFunc(){
 		<!-- /.content -->
 	</div>
 	<!-- /.content-wrapper -->
-
-
 
 
 

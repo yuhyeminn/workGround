@@ -69,5 +69,15 @@ public interface ProjectDAO {
 
 	int deleteFile(int attachNo);
 
+	int deleteChecklistByWorkNo(int workNo);
+
+	int deleteCommentByWorkNo(int workNo);
+
+	int deleteAttachByWorkNo(int workNo);
+
+	List<Map<String, Object>> selectCntWork(int projectNo);
+
+	List<Member> selectProjectMemberListByQuitYn(int projectNo);
+
 
 }

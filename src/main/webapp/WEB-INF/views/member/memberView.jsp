@@ -30,8 +30,8 @@ function toggleContent(obj){
         <div class="container-fluid">
             <!-- 탭 -->
             <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
-            	<!-- 설정탭은 본인만 볼 수 있도록 -->
-            	<c:if test="${memberId == memberLoggedIn.memberId}">
+            	<!-- 설정탭은 admin, 본인만 볼 수 있도록 -->
+            	<c:if test="${memberId == memberLoggedIn.memberId || 'admin' == memberLoggedIn.memberId}">
                 <li class="nav-item">
                 	<c:if test="${active=='setting'}">
                     <a class="nav-link active" id="custom-content-below-setting-tab" data-toggle="pill" href="#custom-content-below-setting" role="tab" aria-controls="custom-content-below-setting" aria-selected="true">설정</a>
@@ -54,7 +54,7 @@ function toggleContent(obj){
             <div class="tab-content" id="custom-content-below-tabContent">
                 <!-- 설정 -->
                 <!-- 설정탭은 본인만 볼 수 있도록 -->
-            <c:if test="${memberId == memberLoggedIn.memberId}">
+            <c:if test="${memberId == memberLoggedIn.memberId || 'admin' == memberLoggedIn.memberId}">
             <c:if test="${active=='setting'}">
                 <div class="tab-pane fade show active" id="custom-content-below-setting" role="tabpanel" aria-labelledby="custom-content-below-setting-tab">
             </c:if>

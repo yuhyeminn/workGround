@@ -11,7 +11,9 @@
 <fmt:requestEncoding value="utf-8" />
 
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
+
 <link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
+<script src="${pageContext.request.contextPath}/resources/js/projectView.js"></script>
 
 <!-- 프로젝트 관리자 -->
 <c:set var="projectManager" value=""/>
@@ -58,19 +60,6 @@ $(()=>{
 //multiselect.js파일에서 사용할 contextPath 전역변수
 var contextPath = "${pageContext.request.contextPath}";
 
-//사이드바 활성화
-function sidebarActive(){
-	let navLinkArr = document.querySelectorAll(".sidebar .nav-link");
-	
-	navLinkArr.forEach((obj, idx)=>{
-		let $obj = $(obj);
-		if($obj.hasClass('active'))
-			$obj.removeClass('active');
-	});
-	
-	$("#sidebar-project").addClass("active");
-}
-
 //프로젝트 별 해제/등록
 function projectStar(){
     let btnStar = document.querySelector("#btn-star .fa-star");
@@ -101,23 +90,23 @@ function projectStar(){
         });
         
     });
-}
+} 
 
 //업무 검색
 function searchWork(){
-	let wrapper = document.querySelector("#wlList-wrapper");
-	let frm = document.querySelector("#workSearchFrm");
-	let input = document.querySelector("input[name=searchWorkKeyword]");
-	let btn = document.querySelector("#btn-searchWork");
 	
-	btn.addEventListener('click', ()=>{
+	$(document).on('click', '#btn-searchWork', (e)=>{
+		let wrapper = document.querySelector(".container-fluid");
+		let frm = document.querySelector("#workSearchFrm");
+		let input = document.querySelector("input[name=searchWorkKeyword]");
+		let btn = document.querySelector("#btn-searchWork");
 		let keyword = $(input).val().trim();
-		
+
 		//유효성 검사
 		if(keyword==""){
 			alert("검색 키워드를 입력해 주세요!");
 		}
-			
+		
 		let data = {
 				projectNo: ${project.projectNo},
 				keyword: keyword,
@@ -140,7 +129,8 @@ function searchWork(){
 			error: (x,s,e) => {
 				console.log(x,s,e);
 			}
-		}); 
+		});
+		
 	});
 }
 
@@ -186,6 +176,8 @@ function addWorklist(){
         		projectManager: '${projectManager}',
         		worklistTitle: $(title).val().trim()
         };
+        
+        console.log(data);
         
         $.ajax({
         	url: '${pageContext.request.contextPath}/project/addWorklist.do',
@@ -277,9 +269,6 @@ function deleteWorklist(){
 
 //새 업무 만들기
 function addWork(){
-	//날짜 설정
-    $('.btn-addWorkDate').daterangepicker();
-	
 	let $btnAddArr = $('.btn-addWork').not('#btn-addWorklist');
     let chkHtml = '<i class="fas fa-check"></i>'; //체크 아이콘 
 	
@@ -287,14 +276,18 @@ function addWork(){
 	let addDateArr = [];
 	let addMemberArr = [];
 	
+	let worklistNo;
+	let btnCancel;
+	
 	//업무추가 +버튼 클릭
 	$(document).on('click', '.btn-addWork:not(#btn-addWorklist)', (e)=>{
 		let btnPlus;		
 		if(e.target.tagName==='I') btnPlus = e.target.parentNode;	
 		else btnPlus = e.target;
 		
-		let worklistNo = btnPlus.value;
-    	let btnCancel = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-cancel');
+		worklistNo = btnPlus.value*1;
+    	btnCancel = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-cancel');
+    	
     	let btnSubmit = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-submit');
    		let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
    		let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
@@ -303,18 +296,16 @@ function addWork(){
    		let btnAddMem = document.querySelector('#worklist-'+worklistNo+' .btn-addWorkMember');
    		let btnAddTag = document.querySelector('#worklist-'+worklistNo+' .btn-addWorkTag');
    		let btnAddDate = document.querySelector('#worklist-'+worklistNo+' .btn-addWorkDate'); 
+   		$(btnAddDate).daterangepicker();//날짜 설정
    		
    		let memTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-memTag');
 		let workTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
-		let dPickerArr = document.querySelectorAll('.daterangepicker');
+		
 		
 		//입력창 열기
 		$('.addWork-wrapper').removeClass('show');
 		$(addWorkWrapper).addClass("show");
 		$(workTitle).focus();
-		
-		//취소버튼에 worklistNo 담기
-		btnCancel.value = worklistNo;
 		
 		
 		//멤버버튼 클릭
@@ -349,106 +340,92 @@ function addWork(){
 		//업무상태태그 클릭
 		workTagArr.forEach((obj, idx)=>{
 			obj.addEventListener('click', e=>{
-				let $this = $(e.target);
+				let $this = $(obj);
 				let $check = $('.drop-workTag .fa-check');
-	    		
-	    		//addTag변수에 선택한 태그코드 담기
-				if($this.hasClass('WT1')) {
-					//이미 선택된 태그가 아닌 경우에는 체크
-					if(!$this.hasClass('checked')){
-    					$this.addClass('checked');
-    					$check.remove(); //다른 태그에 체크 아이콘 더해져있으면 지우기
-    					$this.append(chkHtml); //체크 아이콘 추가 
-    					addTag = "WT1";
-					}
-					//이미 선택된 태그는 체크 해제
-					else{
-						$this.removeClass('checked');
-						$this.find('.fa-check').remove();
-						addTag = "";
-					}
+				let strIdx = obj.className.indexOf('W');
+				let status = obj.className.substr(strIdx, 3);
+				
+				//이미 선택된 태그가 아닌 경우에는 체크
+				if(status!==addTag){
+					addTag = "";
+					addTag = status;
+					
+					$check.remove(); //다른 태그 체크 아이콘 지우기
+					$this.append(chkHtml); //체크 아이콘 추가 
 				}
-				else if($this.hasClass('WT2')) {
-					if(!$this.hasClass('checked')){
-    					$this.addClass('checked');
-    					$check.remove();
-    					$this.append(chkHtml);
-    					addTag = "WT2";
-					}
-					else{
-						$this.removeClass('checked');
-						$this.find('.fa-check').remove();
-						addTag = "";
-					}
+				//이미 선택된 태그는 체크 해제
+				else{
+					addTag = "";
+					$this.find('.fa-check').remove();
 				}
-				else if($this.hasClass('WT3')) {
-					if(!$this.hasClass('checked')){
-    					$this.addClass('checked');
-    					$check.remove();
-    					$this.append(chkHtml);
-    					addTag = "WT3";
-					}
-					else{
-						$this.removeClass('checked');
-						$this.find('.fa-check').remove();
-						addTag = "";
-					}
-				} //end of else if
 			});
 		}); //end of 업무상태태그 클릭
 		
 		
 		//날짜버튼 클릭
 		btnAddDate.addEventListener('click', e=>{
-			let btnAddDate = e.target.parentNode;
-			let dp; //선택된 데이트피커
-			
-			dPickerArr.forEach((obj, idx)=>{
-				if(obj.style.display==='block'){
-					dp = obj;
-				}
-			});
+			let btnWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-btnLeft'); 
+			let addWrapper = document.querySelector('#worklist-'+worklistNo+' .add-date'); 
+			let dPicker = document.querySelector('.daterangepicker');
+			dPicker.style.display = 'block';
 			
 			//데이트피커 요소들
-			let $btnApply = $(dp).find('.applyBtn');
-			let selectedVal;
-			let addDate = e.target.parentNode.parentNode; //추가될 버튼 담길 요소
-				
+			let $btnApply = $(dPicker).find('.applyBtn');
+			let $btnCancel = $(dPicker).find('.cancelBtn');
+			
+			
+			//취소버튼 클릭 시
+			$btnCancel.on('click', ()=>{
+				dPicker.style.display = 'none';
+			});
+			
 			//적용버튼 클릭 시
 			$btnApply.on('click', ()=>{
-					//날짜 뽑아내기
-					selectedVal = $(dp).find('.drp-selected').text();
-					let startArr = selectedVal.split(' - ')[0].split('/');
-					let endArr = selectedVal.split(' - ')[1].split('/');
-					
-					let startDate = startArr[0]+"월 "+startArr[1]+"일";
-					let endDate = endArr[0]+"월 "+endArr[1]+"일";
-					
-					let startSql = startArr[2]+"-"+startArr[0]+"-"+startArr[1];
-					let endSql = endArr[2]+"-"+endArr[0]+"-"+endArr[1];
-					
-					//배열에 담기
+				dPicker.style.display = 'none';
+				$(dPicker).find('.active').removeClass().addClass('available');
+				$(dPicker).find('.start-date').removeClass().addClass('available');
+				$(dPicker).find('.end-date').removeClass().addClass('available');
+				$(dPicker).find('.in-range').removeClass().addClass('available');
+				
+				//날짜 뽑아내기
+				let selectedVal = $(dPicker).find('.drp-selected').text();
+				let startArr = selectedVal.split(' - ')[0].split('/');
+				let endArr = selectedVal.split(' - ')[1].split('/');
+				
+				let startDate = startArr[0]+"월 "+startArr[1]+"일"; //html용
+				let endDate = endArr[0]+"월 "+endArr[1]+"일";
+				
+				let startSql = startArr[2]+"-"+startArr[0]+"-"+startArr[1]; //db용
+				let endSql = endArr[2]+"-"+endArr[0]+"-"+endArr[1];
+				
+				addDateArr.length = 0;
+				let btnHtml; //추가될 버튼 요소
+				//시작일과 마감일이 같은 경우 시작일만 적용
+				if(startSql===endSql){
+					btnHtml = '<button type="button" class="btn-cancelDate">'+startDate+'<i class="fas fa-times"></i></button>';
+					addDateArr.push(endSql);
+				}
+				else{
+					btnHtml = '<button type="button" class="btn-cancelDate">'+startDate+' - '+endDate+'<i class="fas fa-times"></i></button>';
 					addDateArr.push(startSql);
 					addDateArr.push(endSql);
-					
-				//추가될 버튼 요소
-				let dateHtml = '<button type="button" class="btn-cancelDate">'+startDate+' - '+endDate+'<i class="fas fa-times"></i></button>';
+				}
 				
-				//데이트피커버튼 지우고  
+				//데이트피커버튼 지우고 선택한 날짜버튼 추가  
 				$(btnAddDate).remove();
-				$(addDate).append(dateHtml);
+				$(addWrapper).html(btnHtml);
 				
-				let $btnCancelDate = $(addDate).find('.btn-cancelDate');
+				let btnCancelDate = document.querySelector('#worklist-'+worklistNo+' .btn-cancelDate'); 
+				console.log(addDateArr); //취소하고 만드는 만큼 반복됨
 				
 				//날짜 지우기
-				$btnCancelDate.on('click', ()=>{
+				$(btnCancelDate).on('click', ()=>{
 					addDateArr.length = 0; //배열 초기화
-					$btnCancelDate.remove();
-					$(addDate).append(btnAddDate);
+					$(btnCancelDate).remove();
+					$(addWrapper).html(btnAddDate);
 				});
 				
 			}); //end of click $btnApply
-				
 		}); //end of 날짜버튼 클릭
 		
 		
@@ -465,6 +442,7 @@ function addWork(){
 				
 			let data = {
 					projectManager: '${projectManager}',
+					projectNo: ${project.projectNo},
 					worklistNo: worklistNo,
 					workTitle: $(workTitle).val().trim(),
 					workChargedMember: addMemberArr,
@@ -480,11 +458,11 @@ function addWork(){
 				type: 'POST',
 				success: data=>{
 					if(data!=null){
-						//입력창 닫기
-			    		$(workTitle).val("");
-			    		$(addWorkWrapper).removeClass("show");
-			    		
 						$(wlSection).html(data);
+						
+						addTag = "";
+						addMemberArr.length = 0;
+						addDateArr.length = 0;
 					}
 					else{
 						alert("새 업무 만들기에 실패했습니다 :(");
@@ -493,7 +471,7 @@ function addWork(){
 				error: (x,s,e) => {
 					console.log(x,s,e);
 				}
-			});  
+			}); 
 		}) //end of 만들기 버튼클릭
 		
 		
@@ -514,6 +492,9 @@ function addWork(){
 		}); 
 		
 	}); //end of 업무추가 +버튼 클릭
+	
+	
+	
 	
 	
 	//취소버튼 클릭
@@ -565,32 +546,43 @@ function deleteWork(){
 		});
 	}
 	
+	let workNo;
+	let title;
+	let cntChk;
+	let cntComment;
+	let cntFile;
+	
 	//업무 삭제 클릭: 모달에 정보 뿌리기 
 	menu.addEventListener('click', (e)=>{
-		let workNo = work.id;
-		let title = $('#'+workNo).find('h6').text();
+		workNo = work.id*1;
+		title = $('#'+workNo).find('h6').text();
+		cntChk = $(work).find('.chklt-cnt-total').text()*1;
+		cntComment = $(work).find('.comment-cnt').text()*1;
+		cntFile = $(work).find('.attach-cnt').text()*1;
 		
 		$(".modal-del-target").text("업무");
 		$(delTitle).text(title); //업무 타이틀 
-		$(btnDel).val('work-'+workNo); //업무 번호
+		$(btnDel).val('work');
 	});
 	
 	//삭제버튼 클릭시
 	btnDel.addEventListener('click', e=>{
-		let val = e.target.value
-		let workNo = val.split('-')[1]*1;
-		
+		let title = e.target.value;
 		let wlSection = work.parentNode.parentNode.parentNode;
  		let worklistNo = wlSection.id.split('-')[1]*1; 
-		
+ 		
 		let data = {
+			projectNo: ${project.projectNo},
 			worklistNo: worklistNo,
 			workNo: workNo,
+			cntChk: cntChk,
+			cntComment: cntComment,
+			cntFile: cntFile,
 			projectManager: '${projectManager}'
 		}
 		
 		//업무리스트와 구분
-		if(val.split('-')[0] == 'work'){
+		if(title==='work'){
 			$.ajax({
 	        	url: '${pageContext.request.contextPath}/project/deleteWork.do',
 	        	data: data,
@@ -663,6 +655,7 @@ function workComplete(){
 			let data = {
 				projectManager: projectManager,
 				completeYn: yn,
+				projectNo: ${project.projectNo},
 				worklistNo: worklistNo*1,
 				workNo: workNo*1
 			};
@@ -1056,9 +1049,10 @@ function updateTitle(){
         <li id="tab-analysis" class="nav-item"><button type="button" id="btn-tab-analysis">분석</button></li>
         <li id="tab-attachment" class="nav-item"><button type="button" id="btn-tab-attach">파일</button></li>
     </ul>
-
+	
     <!-- Right navbar links -->
     <ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
+	<c:if test="${project.privateYn=='N'}">
         <!-- 프로젝트 대화 -->
         <li class="nav-item">
             <button type="button" class="btn btn-block btn-default btn-xs nav-link">
@@ -1066,8 +1060,6 @@ function updateTitle(){
             </button>
         </li>
 	
-		<c:if test=""></c:if>
-		
         <!-- 프로젝트 멤버 -->
         <li id="nav-member" class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
@@ -1093,6 +1085,7 @@ function updateTitle(){
             	<i class="fas fa-cog"></i>
             </button>
         </li>
+    </c:if>
     </ul>
 </nav>
 <!-- /.navbar -->
@@ -1183,13 +1176,12 @@ function updateTitle(){
 		                        <!-- 날짜 설정 -->
 		                        <div class="add-date">
 			                        <button type="button" class="btn-addWorkDate"><i class="far fa-calendar-alt"></i></button>
-			                        <!-- <button type="button" class="btn-cancelDate">2월 12일 - 2월 14일 <i class="fas fa-times"></i></button> -->
 		                        </div>
 		                    </div>
 	
 		                    <!-- 취소/만들기 버튼 -->
 		                    <div class="addWork-btnRight">
-		                        <button type="button" class="btn-addWork-cancel">취소</button>
+		                        <button type="button" class="btn-addWork-cancel" value="${wl.worklistNo}">취소</button>
 		                        <button type="button" class="btn-addWork-submit">만들기</button>
 		                    </div>
 	                    </div>
@@ -1482,8 +1474,8 @@ function updateTitle(){
 		                    		<span class="chklt-cnt-completed">${chkCnt}</span>/<span class="chklt-cnt-total">${fn:length(w.checklistList)}</span>
 		                    	</span>
 		                    </c:if>
-		                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
-		                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+		                    <span class="ico"><i class="far fa-comment"></i> <span class="comment-cnt">${fn:length(w.workCommentList)}</span></span>
+		                    <span class="ico"><i class="fas fa-paperclip"></i> <span class="attach-cnt">${fn:length(w.attachmentList)}</span></span>
 		                    
 		                    <!-- 업무 배정된 멤버 -->
 		                    <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">
