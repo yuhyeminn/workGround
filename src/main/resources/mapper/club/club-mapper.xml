@@ -351,5 +351,41 @@
 		delete from club_notice_comment 
 		where club_notice_comment_no = #{clubNoticeCommentNo}
 	</delete>
+	
+	<select id="searchClubPhotoList" resultType="clubPhoto">
+		select *
+		from club_photo P
+			left join club_member C on P.club_member_no = C.club_member_no 
+			left join member M on C.emp_id = M.member_id 
+		where club_no = ${clubNo} and
+			  (club_photo_title like '%'|| #{keyword} || '%'
+			  or club_photo_original like '%'|| #{keyword} || '%')
+		order by club_photo_date desc
+	</select>
+	
+	<select id="searchClubNoticeList" resultType="clubNotice">
+		select *
+		from club_notice N
+			left join club_member C on N.club_member_no = C.club_member_no 
+			left join member M on C.emp_id = M.member_id 
+		where club_no = ${clubNo} 
+			  and (club_notice_title like '%'|| #{keyword} || '%'
+			  or club_notice_original like '%'|| #{keyword} || '%'
+			  or club_notice_content like '%'|| #{keyword} || '%')
+		order by club_notice_date desc
+	</select>
+	
+	<select id="searchClubPlanList" resultType="clubPlan">
+		select *
+		from club_plan P left join club_member M on P.club_no = M.club_code and P.member_id = M.emp_id 
+		where P.club_no = #{clubNo} 
+			  and extract(month from club_plan_start) = extract(month from sysdate) 
+			  and (club_plan_title like '%'|| #{keyword} || '%'
+			  or P.club_plan_content like '%'|| #{keyword} || '%'
+			  or P.club_plan_state like '%'|| #{keyword} || '%'
+			  or P.club_plan_place like '%'|| #{keyword} || '%'
+			  or P.club_plan_manager like '%'|| #{keyword} || '%')
+		order by P.club_plan_start asc
+	</select>
 	<!-- br end -->
 </mapper>
