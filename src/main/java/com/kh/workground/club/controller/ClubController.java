@@ -45,6 +45,7 @@ public class ClubController {
 			Map map = new HashMap<>();
 			map.put("memberId", memberId);
 			map.put("sort", "club_enroll_date");
+			map.put("category", "%_%");
 
 			// 모달창을 띄우기 위해 정보를 보낸다.
 			List<Club> clubList = clubService.selectAllClubList(map); // 전체 동호회
@@ -61,7 +62,9 @@ public class ClubController {
 	}
 
 	@GetMapping("/club/clubListBySort.do")
-	public Map<String, List> clubListBySortAndCategroy(@RequestParam("sort") String sort, HttpSession session) {
+	public Map<String, List> clubListBySortAndCategroy(@RequestParam("sort") String sort,
+													   @RequestParam("category") String category,
+													  HttpSession session) {
 
 		Map<String, List> map = new HashMap<>();
 
@@ -71,16 +74,31 @@ public class ClubController {
 
 			Map param = new HashMap<>();
 			param.put("memberId", memberId);
-
+			
+			List<Club> clubList = null;
+			List<Club> myClubList = null;
+			List<Club> standByClubList = null;
+			
 			if (sort.equals("이름순")) {
 				param.put("sort", "club_name");
 			} else {
 				param.put("sort", "club_enroll_date");
 			}
+			
+			if(category.equals("전체")) {
+				clubList = clubService.selectAllClubList(param); // 전체 동호회
+				myClubList = clubService.selectAllMyClubList(param); // 가입한 동호회
+				standByClubList = clubService.selectAllStandByClubList(param); // 승인 대기중인 동호회
+			}
+			else {
+				param.put("category",category);
+				clubList = clubService.selectAllClubListByCategory(param); // 전체 동호회
+				myClubList = clubService.selectAllMyClubListByCategory(param); // 가입한 동호회
+				standByClubList = clubService.selectAllStandByClubListByCategory(param); // 승인 대기중인 동호회
+				
+			}
 
-			List<Club> clubList = clubService.selectAllClubList(param); // 전체 동호회
-			List<Club> myClubList = clubService.selectAllMyClubList(param); // 가입한 동호회
-			List<Club> standByClubList = clubService.selectAllStandByClubList(param); // 승인 대기중인 동호회
+		
 
 			map.put("clubList", clubList);
 			map.put("myClubList", myClubList);

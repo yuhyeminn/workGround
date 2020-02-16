@@ -15,6 +15,17 @@
 			left join club_photo P
 				on C.club_no = P.club_no
 	</select>
+	
+	<select id="selectAllClubListByCategory" resultMap="clubCollectionMap">
+		select C.*, 
+			   P.*,
+			   (select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn,
+			   (select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
+		from (select * from club where club_category like '%'|| #{category} || '%' order by ${sort} asc) C
+			left join club_photo P
+				on C.club_no = P.club_no
+	</select>
+	
 	<insert id="insertNewClub">
 		insert into club
 		values(seq_club_no.nextval,#{clubName},sysdate,#{clubIntroduce},#{clubMeetingCycle},#{clubMeetingDate},#{clubCategory},#{clubManagerId})
@@ -42,12 +53,27 @@
 		left join club_photo P on C.club_no = P.club_no
 	</select>
 	
+	<select id="selectAllMyClubListByCategory" resultMap="clubCollectionMap">
+		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
+		from (select * from club where club_no in
+			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'Y' and club_category like '%'|| #{category} || '%' ) order by ${sort} asc) C
+		left join club_photo P on C.club_no = P.club_no
+	</select>
+	
 	<select id="selectAllStandByClubList" resultMap="clubCollectionMap">
 		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
 		from (select * from club where club_no in
 			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'N') order by ${sort} asc) C
 		left join club_photo P on C.club_no = P.club_no
 	</select>
+	
+	<select id="selectAllStandByClubListByCategory" resultMap="clubCollectionMap">
+		select C.*, P.*,(select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
+		from (select * from club where club_no in
+			 (select club_code from club_member where emp_id=#{memberId} and club_approve_yn = 'N' and club_category like '%'|| #{category} || '%') order by ${sort} asc) C
+		left join club_photo P on C.club_no = P.club_no
+	</select>
+	
 	<resultMap type="club" id="clubCollectionMap">
 		<id column="club_no" property="clubNo"></id>
 		<result column="club_name" property="clubName"></result>

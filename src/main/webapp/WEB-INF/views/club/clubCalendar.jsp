@@ -292,7 +292,11 @@ $(function () {
 		</ul>
 
 		<!-- Right navbar links -->
+	
+		
 		<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
+		
+			
 			<!-- 동호회 대화 -->
 			<li class="nav-item">
 				<button type="button"

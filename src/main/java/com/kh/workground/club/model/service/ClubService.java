@@ -39,6 +39,12 @@ public interface ClubService {
 
 	ClubPlan selectOneClubPlan(int clubPlanNo);
 
+	List<Club> selectAllClubListByCategory(Map param);
+
+	List<Club> selectAllMyClubListByCategory(Map param);
+
+	List<Club> selectAllStandByClubListByCategory(Map param);
+
 	
 
 

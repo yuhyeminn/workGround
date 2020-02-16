@@ -9,8 +9,11 @@
 
 <script>
 var sort; 
+var category;
+
 $( document ).ready(function() {
 	sort = $("#drop-sort a").html();
+	category = $("#drop-category a").html();
 	clubFunc();
 });
 
@@ -19,6 +22,13 @@ $(document).on('click', '#drop-sort a', function() {
 	sort = $(this).text();
     clubFunc();
 }); 
+
+$(document).on('click', '#drop-category a', function() {
+	$("#drop-sort-category").text($(this).text());
+	category = $(this).text();
+    clubFunc();
+}); 
+
 
 $(function(){
  
@@ -90,7 +100,8 @@ function clubFunc(){
 		
 		url: "${pageContext.request.contextPath}/club/clubListBySort.do",
 		dataType: "json",
-		data:{"sort" : sort},
+		data:{"sort" : sort,
+			  "category" : category},
 		type: "GET",
 		success: data => {
 			console.log(data);
@@ -361,7 +372,22 @@ function clubFunc(){
 <!-- Navbar Club -->
 <nav
 	class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
+		<ul class="navbar-nav" > 
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="drop-sort-category">
+            	전체<span class="caret"></span>
+        </a>
+        <div class="dropdown-menu" id="drop-category">
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">전체</a>
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">사회</a>
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">문학</a>
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">음식</a>
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">취미</a>
+        </div>
+        </li>
+    </ul>
 	<!-- Left navbar links -->
+
 
 	<!-- Right navbar links -->
 	<ul class="navbar-nav ml-auto navbar-nav-sort">
