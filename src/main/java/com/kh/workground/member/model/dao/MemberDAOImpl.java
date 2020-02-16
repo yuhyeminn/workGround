@@ -8,6 +8,7 @@ import com.kh.workground.member.model.vo.Member;
 
 @Repository
 public class MemberDAOImpl implements MemberDAO {
+	//
 	@Autowired
 	SqlSessionTemplate sqlSession;
 
