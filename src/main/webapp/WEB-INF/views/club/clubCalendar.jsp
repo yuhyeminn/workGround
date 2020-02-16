@@ -33,6 +33,32 @@ $(function(){
 	
 });
 
+//사이드바 활성화
+function sidebarActive(){
+	let navLinkArr = document.querySelectorAll(".sidebar .nav-link");
+	
+	navLinkArr.forEach((obj, idx)=>{
+		let $obj = $(obj);
+		if($obj.hasClass('active'))
+			$obj.removeClass('active');
+	});
+	
+	$("#sidebar-club").addClass("active");
+}
+
+//서브헤더 탭 active
+function tabActive(){
+  let tabArr = document.querySelectorAll("#navbar-tab li");
+
+  tabArr.forEach((obj, idx)=>{
+      let $obj = $(obj);
+      if($obj.hasClass('active')){
+          $obj.removeClass('active');
+      }
+  });
+
+  $("#tab-calendar").addClass("active");
+}
 	
 $(function () {
 
