@@ -410,10 +410,48 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 	@Override
 	public Map<String, Object> insertWorkComment(WorkComment wc) {
 		Map<String, Object> result = new HashMap<>();
+		//workNo으로 프로젝트 멤버 테이블의 번호 가져오기
+		Map<String, String> param = new HashMap<>();
+		param.put("memberId", wc.getWorkCommentWriterId());
+		param.put("workNo", Integer.toString(wc.getWorkNo()));
+		int member_no = projectDAO.selectProjectMemberNo(param);
+		if(member_no<0) throw new ProjectException("프로젝트 멤버 번호 가져오기 오류!");
+		
+		wc.setWorkCommentWriterNo(member_no);
+		
 		int isUpdated = projectDAO.insertWorkComment(wc);
+		
 		if(isUpdated==0) throw new ProjectException("업무 코멘트 추가 오류!");
 		result.put("isUpdated", isUpdated>0?true:false);
 		
+		//댓글 쓴 멤버 객체 가져오기
+		Member member = projectDAO.selectMemberOneByMemberId(wc.getWorkCommentWriterId());
+		if(member == null)throw new ProjectException("멤버 객체 가져오기 오류!");
+		result.put("member", member);
+		result.put("comment", wc);
+		
+		return result;
+	}
+
+	@Override
+	public int deleteWorkComment(int commentNo) {
+		int result = projectDAO.deleteWorkComment(commentNo);
+		if(result==0) throw new ProjectException("업무 코멘트 삭제 오류!");
+		return result;
+	}
+
+	@Override
+	public int insertWorkFile(Attachment attach) {
+		Map<String, String> param = new HashMap<>();
+		param.put("memberId", attach.getAttachmentWriterId());
+		param.put("workNo", Integer.toString(attach.getWorkNo()));
+		int member_no = projectDAO.selectProjectMemberNo(param);
+		if(member_no<0) throw new ProjectException("프로젝트 멤버 번호 가져오기 오류!");
+		
+		attach.setAttachmentWriterNo(member_no);
+		
+		int result = projectDAO.insertWorkFile(attach);
+		if(result==0) throw new ProjectException("업무 파일 업로드 오류!");
 		
 		return result;
 	}

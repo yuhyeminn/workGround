@@ -493,10 +493,6 @@ function addWork(){
 		
 	}); //end of 업무추가 +버튼 클릭
 	
-	
-	
-	
-	
 	//취소버튼 클릭
 	/* $(document).on('click', '.btn-addWork-cancel', (e)=>{
 		let btnCancel;		

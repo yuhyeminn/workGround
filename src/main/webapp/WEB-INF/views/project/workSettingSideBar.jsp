@@ -38,7 +38,7 @@
 	</c:if>
 </c:forEach>
 
-<section id="${work.workNo }">
+<section id="${work.workNo }" style="height:100%;overflow-y:scroll">
 	<!-- 업무배정된 멤버아이디 구하기 -->
 	<c:set var="workCharedMemId" value=""/>
 	<c:forEach items="${work.workChargedMemberList}" var="m" varStatus="wcmVs">
@@ -388,18 +388,24 @@
         <div class="comment-wrapper">
             <div class="comment-box work-comment-box">
             <c:if test="${work.workCommentList!=null && !empty work.workCommentList}">
-            <div class="card-footer card-comments">
+            <div class="card-footer card-comments work-comments-box">
             
               <c:forEach items="${work.workCommentList}" var="wc">
               <c:set var="writer" value="${wc.workCommentWriterMember}" />
               
-                <div class="card-comment work-comment <c:if test="${wc.workCommentLevel == 2 }">comment-level2</c:if>" id="${wc.workCommentNo}">
+              <c:if test="${wc.workCommentLevel == 2 }"> 
+              	<div class="card-comment comment-level2 work-ref-${wc.workCommentRef}" id="${wc.workCommentNo}">
+              </c:if>
+              <c:if test="${wc.workCommentLevel == 1 }">
+              	<div class="card-comment work-comment" id="${wc.workCommentNo}">
+              </c:if>
+                
                 <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${writer.renamedFileName}" alt="User Image">
                 <div class="comment-text">
                     <span class="username"><span class="comment-writer">${writer.memberName}</span><span class="text-muted float-right">${wc.workCommentEnrollDate }</span></span>
                     <span class="comment-content">${wc.workCommentContent}</span>
                     <c:if test="${memberLoggedIn.memberId eq writer.memberId || memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin'}">
-                    <button class="comment-delete float-right">삭제</button>
+                    <button class="comment-delete work-comment-delete float-right" value="${wc.workCommentNo}">삭제</button>
                     </c:if>
                     <c:if test="${memberLoggedIn.memberId eq 'adim' || isProjectMember}">
                     <c:if test="${wc.workCommentLevel == 1 }">
@@ -408,12 +414,11 @@
                     </c:if>
                 </div>
                 </div>
-                
               </c:forEach>
             </div>
             </c:if>
             <c:if test="${work.workCommentList==null || empty work.workCommentList}">
-           		<div style="text-align:center;margin-top: 106px;">
+           		<div id="null-comment-box" style="text-align:center;margin-top: 106px;">
 	           		<img src="https://d30795irbdecem.cloudfront.net/assets/comment-empty-state@2x-d1554722.png" style="width:20rem;">
 	           		<p style="font-size:10px; color:lightgray;">Comments are great for focusing conversation on the task at hand.</p>
            		</div>
@@ -445,19 +450,22 @@
         </div>
         <!--/. end 코멘트 tab-->
 
+
         <!-- #########################################################파일 탭 -->
         <div class="tab-pane fade file-tab-pane " id="custom-content-above-file" role="tabpanel" aria-labelledby="custom-content-above-file-tab">
             <div class="file-wrapper">
             <div class="container-fluid"> 
                 <!-- 파일 첨부 -->
-                <form action="">
+                <form id="workFileForm" method="post" enctype="multipart/form-data">
                 <div class="input-group work-file-upload-box">
-                    <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="workInputFile" aria-describedby="inputGroupFileAddon04">
+                	<input type="hidden" name="workNo" value="${work.workNo }" />
+                	<input type="hidden" name="memberId" value="${memberLoggedIn.memberId}" />
+                    <div class="custom-file work-custom-file">
+                    <input type="file" class="custom-file-input" id="workInputFile" name="workFile" aria-describedby="inputGroupFileAddon04">
                     <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
                     </div>
                     <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04" style="font-size:12px;">파일 첨부</button>
+                    <button class="btn btn-outline-secondary" type="button" id="upload-file-btn" style="font-size:12px;">파일 첨부</button>
                     </div>
                 </div>
                 </form>
@@ -534,7 +542,9 @@
 	updateWorkLocation();
 	updateChkChargedMember();
 	deleteChecklist();
-	insertComment();
+	insertWorkComment();
+	deleteWorkComment();
+	uploadWorkFile();
  });
  
  
@@ -827,7 +837,7 @@ function updateWorkMember(){
 	 })
  }
  
- function insertComment(){
+ function insertWorkComment(){
 	 $(document).on('click',".work-comment-reply", function(){
 		 var refNo = $(this).val();
 		 var refWriter = $(".work-comment#"+refNo+" span.comment-writer").text();
@@ -844,31 +854,114 @@ function updateWorkMember(){
 	 
 	 $(document).on('click','.cancel-comment-ref', function(){
 		 $(".reply-work-ref-wrapper").hide();
-		 $(".enroll-comment-inform .comment-level").val('1');
-		 $(".enroll-comment-inform .comment-ref").val('');
+		 $(".enroll-comment-inform #comment-level").val('1');
+		 $(".enroll-comment-inform #comment-ref").val('');
 	 })
 	 
 	 $(".comment-submit").on('click', function(){
 		 var workNo = '${work.workNo}';
-		 var commentComment = $("div.enroll-comment-inform textarea").val();
+		 var commentContent = $("div.enroll-comment-inform textarea").val();
 		 var commentWriter = $("#comment-writer").val();
 		 var commentLevel = $("#comment-level").val();
 		 var commentRef = $("#comment-ref").val();
 		 
-		 console.log(commentComment);
-		 console.log(commentWriter);
-		 console.log(commentLevel);
-		 console.log(commentRef);
-		 
+		 //오늘 날짜 뿌려질 것..
+		 var now = new Date();
+	     var year= now.getFullYear();
+	     var mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+	     var day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+	     var today = year + '-' + mon + '-' + day;
+
 		 $.ajax({
 			 url:"${pageContext.request.contextPath}/project/insertWorkComment.do",
-			 data: {workNo:workNo,commentComment:commentComment,
-				    commentWriter:commentWriter,commentLevel:commentLevel,commentRef:commentRef},
+			 data: {workNo:workNo,commentContent:commentContent,commentWriter:commentWriter,commentLevel:commentLevel,commentRef:commentRef},
 			 dataType:"json",
 			 success: data=>{
 				 if(data.isUpdated){
-
+					 var comment = data.comment;
+					 var member = data.member;
+					 var html;
+					 if(comment.workCommentLevel == 2){
+						 html ='<div class="card-comment work-comment comment-level2 work-ref-"'+comment.workCommentRef+' id="'+comment.workCommentNo+'">';
+					 }else{
+						 html ='<div class="card-comment work-comment" id="'+comment.workCommentNo+'">';
+					 }
+					 
+					 html +='<img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/'+member.renamedFileName+'" alt="User Image">'
+		                  +'<div class="comment-text"><span class="username"><span class="comment-writer">'+member.memberName+'</span><span class="text-muted float-right">'+today+'</span></span>'
+		                  +'<span class="comment-content">'+comment.workCommentContent+'</span>'
+		                  +'<button class="comment-delete work-comment-delete float-right" value="'+comment.workCommentNo+'">삭제</button>';
+		             
+		             if(comment.workCommentLevel == 1) html +='<button class="comment-reply work-comment-reply float-right" value="'+comment.workCommentNo+'">답글</button>';   
+		             html+='</div></div>';
+		             
+		             if($(".work-comments-box").length>0){
+		            	 if(comment.workCommentLevel == 1){
+			            	 $(".work-comments-box").append(html);
+			             }
+			             else{
+			            	 if($(".work-ref-"+comment.workCommentRef).length>0) $(".work-ref-"+comment.workCommentRef+":last").after(html);
+			            	 else $(".work-comment#"+comment.workCommentRef).after(html);
+			             }
+		             }else{
+		            	 $("#null-comment-box").remove();
+		            	 var chtml='<div class="card-footer card-comments work-comments-box">'+html+'</div>';
+		            	 $(".work-comment-box").html(chtml);
+		             }
+		               
 				 }
+				 $("div.enroll-comment-inform textarea").val('');
+				 $(".cancel-comment-ref").click();
+				 
+			 },
+			 error:(jqxhr, textStatus, errorThrown)=>{
+				 console.log(jqxhr, textStatus, errorThrown);
+			 } 
+		 });
+	 })
+ }
+ 
+ function deleteWorkComment(){
+	 $(document).on('click',".work-comment-delete", function(){
+		 var commentNo = $(this).val();
+		 $.ajax({
+			 url:"${pageContext.request.contextPath}/project/deleteWorkComment.do",
+			 data: {commentNo:commentNo},
+			 dataType:"json",
+			 success: data=>{
+				 if(data.isUpdated){
+					 $(".work-comments-box .card-comment#"+commentNo).remove();
+					 if($(".work-ref-"+commentNo).length>0){
+						 $(".work-ref-"+commentNo).remove();
+					 }
+					 if($(".work-comments-box .card-comment").length==0){
+						 $(".work-comments-box").remove();
+						 var html ='<div id="null-comment-box" style="text-align:center;margin-top: 106px;"><img src="https://d30795irbdecem.cloudfront.net/assets/comment-empty-state@2x-d1554722.png" style="width:20rem;">'
+						 			+'<p style="font-size:10px; color:lightgray;">Comments are great for focusing conversation on the task at hand.</p></div>';
+						 $(".work-comment-box").append(html);
+					 }
+				 } 
+			 },
+			 error:(jqxhr, textStatus, errorThrown)=>{
+				 console.log(jqxhr, textStatus, errorThrown);
+			 } 
+		 });
+	 });
+ }
+ 
+ function uploadWorkFile(){
+	 $(".upload-file-btn").on('click',function(){
+		 var formData = new FormData($('#workFileForm')[0]);
+		 $.ajax({
+			 type: "POST", 
+			 enctype: 'multipart/form-data', // 필수 
+			 url: "${pageContext.request.contextPath}/project/uploadWorkFile.do",
+			 data: formData,
+			 processData: false, // 필수 
+			 contentType: false, // 필수
+			 cache: false, 
+			 success: data=>{
+
 			 },
 			 error:(jqxhr, textStatus, errorThrown)=>{
 				 console.log(jqxhr, textStatus, errorThrown);

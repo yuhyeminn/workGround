@@ -22,7 +22,7 @@
 		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
 	</c:if>
 </c:forEach>
-
+<section style="height:100%;overflow-y:scroll">
 <div class="div-close" role="button" tabindex="0">
     <i class="fas fa-times close-sidebar"></i>
 </div>
@@ -254,7 +254,7 @@
             </c:if>
         </div>
         </div>
-        
+     </section>   
 <script>
 $(()=>{
 	var projectNo = '${project.projectNo}';

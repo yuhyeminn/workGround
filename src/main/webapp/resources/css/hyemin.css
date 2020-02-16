@@ -1,3 +1,8 @@
+.work-custom-file:hover {
+    height: 2.3rem;
+    transform: none;
+}
+
 .reply-work-ref-writer{background: #17a2b8; color: white;padding: 2px;border-radius: 5px;margin-right: 5px;}
 .reply-work-ref-content{float: right;width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;display: inline-block;}
 .reply-work-ref{background: #f8f9fa;padding: 7px 5px;margin-bottom: 10px;border-radius: 5px;font-size: 14px;width: 95%;display: inline-block;}

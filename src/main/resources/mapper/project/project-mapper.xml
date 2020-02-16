@@ -590,17 +590,34 @@
 			update ${type} set ${type}_title= #{title} where ${type}_no = to_number(#{no})
 	</update>
 	
+	<!-- insertWorkComment.do : 프로젝트 멤버 테이블 넘버 가져오기 -->
+	<select id="selectProjectMemberNo" resultType="_int">
+		select project_members_no from project_members where project_no=(select project_no from work w left join worklist wl on w.worklist_no = wl.worklist_no where w.work_no=to_number(#{workNo})) and member_id=#{memberId}
+	</select>
+	
 	<!-- insertWorkComment.do : 코멘트 추가 -->
 	<insert id="insertWorkComment">
-	insert into work_comment 
-	values(seq_work_comment.nextval,#{wc.workNo},
-			select project_members_no from project_members where project_no=(select project_no from work w left join worklist wl on w.worklist_no = wl.worklist_no where w.work_no=#{wc.workNo}) and member_id=#{wc.workCommentWriterId},
-			#{wc.workCommentLevel},#{wc.workComment},
-			#{wc.workCommentContent},default,#{wc.workCommentRef});
-			
+	<if test="workCommentRef != null and workCommentRef !=''">
+		insert into work_comment 
+		values(seq_work_comment.nextval,#{workNo},#{workCommentWriterNo},#{workCommentLevel},#{workCommentContent},default,#{workCommentRef})
+	</if>
+	<if test="workCommentRef == null or workCommentRef ==''">
+		insert into work_comment 
+		values(seq_work_comment.nextval,#{workNo},#{workCommentWriterNo},#{workCommentLevel},#{workCommentContent},default,null)
+	</if>
 		<selectKey keyProperty="workCommentNo" resultType="_int" order="AFTER">
 			select seq_work_comment.currval from dual
 		</selectKey>
+	</insert>
+	
+	<!-- deleteWorkComment.do : 코멘트 삭제 -->
+	<delete id="deleteWorkComment">
+		delete from work_comment where work_comment_no = #{commentNo}
+	</delete>
+	
+	<!-- insertWorkFile.do : 업무 파일 업로드 -->
+	<insert id="insertWorkFile">
+		insert into attachment values (seq_attachment.nextval,#{workNo},#{attachmentWriterNo},#{originalFilename},#{renamedFilename},default)
 	</insert>
 	
 	<resultMap id="memberResultMap" type="member">

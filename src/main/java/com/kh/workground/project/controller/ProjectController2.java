@@ -1,8 +1,12 @@
 package com.kh.workground.project.controller;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +21,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService2;
+import com.kh.workground.project.model.vo.Attachment;
 import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
@@ -596,25 +603,90 @@ public class ProjectController2 {
 	@ResponseBody
 	public Map<String, Object> insertWorkComment(@RequestParam int workNo, @RequestParam String commentContent,
 			@RequestParam String commentWriter, @RequestParam int commentLevel, @RequestParam String commentRef){
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> result = new HashMap<>();
 		try {
 			WorkComment wc = new WorkComment();
 			wc.setWorkNo(workNo);
 			wc.setWorkCommentContent(commentContent);
 			wc.setWorkCommentWriterId(commentWriter);
 			wc.setWorkCommentLevel(commentLevel);
-			if(commentLevel == 1) commentRef=null;
-			wc.setWorkCommentRef(Integer.parseInt(commentRef));
+			if(commentLevel == 2) wc.setWorkCommentRef(Integer.parseInt(commentRef));
 			
-			logger.debug("workComment={}",wc);
-			Map<String, Object> result = projectService.insertWorkComment(wc);
-			
+			result = projectService.insertWorkComment(wc);
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("업무 제목 수정 오류!");
 		}
-		
+		return result;
+	}
+	
+	@RequestMapping("/project/deleteWorkComment.do")
+	@ResponseBody
+	public Map<String, Object> deleteWorkComment(@RequestParam int commentNo){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			
+			int result = projectService.deleteWorkComment(commentNo);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated);
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 코멘트 삭제 오류!");
+		}
+		return map;
+	}
+	
+	@RequestMapping("/project/uploadWorkFile.do")
+	@ResponseBody
+	public Map<String, Object> uploadWorkFile(MultipartHttpServletRequest request){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/project");
+			MultipartFile f = request.getFile("workFile");
+			Attachment attach = new Attachment();
+			
+			//동적으로 directory 생성하기
+			File dir = new File(saveDirectory);
+			if(dir.exists() == false)
+				dir.mkdir();
+			
+			//MultipartFile 객체 파일 업로드 처리 시작 /////////////
+				if(!f.isEmpty()) {
+					//파일명 재생성
+					String originalFileName = f.getOriginalFilename();
+					String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+					int rndNum = (int)(Math.random()*1000);
+					String renamedFileName = sdf.format(new Date())+"_"+rndNum+ext;
+					
+					//	서버 컴퓨터에 파일 저장
+					try {
+						f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+					
+					} catch (IllegalStateException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+					attach.setOriginalFilename(originalFileName);
+					attach.setRenamedFilename(renamedFileName);
+					attach.setAttachmentWriterId(request.getParameter("memberId"));
+					attach.setWorkNo(Integer.parseInt(request.getParameter("workNo")));
+				}
+			//MultipartFile 객체 파일 업로드 처리 끝 /////////////
+			
+			//2. 업무로직
+			int result = projectService.insertWorkFile(attach);
+			
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 파일 업로드 오류!");
+		}
 		return map;
 	}
 }

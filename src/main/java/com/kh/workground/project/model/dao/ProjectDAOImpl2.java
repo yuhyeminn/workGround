@@ -203,4 +203,19 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 		return sqlSession.insert("project.insertWorkComment",wc);
 	}
 
+	@Override
+	public int selectProjectMemberNo(Map<String, String> param) {
+		return sqlSession.selectOne("project.selectProjectMemberNo",param);
+	}
+
+	@Override
+	public int deleteWorkComment(int commentNo) {
+		return sqlSession.delete("project.deleteWorkComment",commentNo);
+	}
+
+	@Override
+	public int insertWorkFile(Attachment attach) {
+		return sqlSession.insert("project.insertWorkFile",attach);
+	}
+
 }

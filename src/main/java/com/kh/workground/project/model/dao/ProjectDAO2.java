@@ -81,4 +81,10 @@ public interface ProjectDAO2 {
 
 	int insertWorkComment(WorkComment wc);
 
+	int selectProjectMemberNo(Map<String, String> param);
+
+	int deleteWorkComment(int commentNo);
+
+	int insertWorkFile(Attachment attach);
+
 }
