@@ -51,6 +51,8 @@ $(()=>{
     goTabMenu(); //서브헤더 탭 링크 이동
     
     setting(); //설정창- 나중에 수정
+    updateDesc(); //업무, 프로젝트 설명 수정
+    updateTitle(); //업무, 프로젝트 제목 수정
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -944,6 +946,86 @@ function setting(){
         console.log($("#workEndDate").val());
     });
 }
+//프로젝트 설명 수정, 업무 설명 수정
+function updateDesc(){
+  	 $(document).on('click',".add-description",function(){
+  		 $(this).hide();
+  		 $(".edit-description").show();
+  		 $("#desc").focus();
+  	 });
+  	 $(document).on('click',".update-description",function(){
+  		 var desc = $("#desc").val();
+  		 var no = $(this).attr("id");
+  		 var type;
+  		 if($(this).hasClass('wr-desc')) type = 'work';
+  		 else type= 'project';
+  		 
+  		 $.ajax({
+  			
+  			 url:"${pageContext.request.contextPath}/project/updateDesc.do",
+  			 data: {desc:desc,no:no,type:type},
+  			 dataType:"json",
+  			 success: data=>{
+  				 if(data.isUpdated){
+ 					 $(".edit-description").hide();
+ 					 if(desc != '' && desc != null){
+ 						var html = '<div class="row setting-row add-description"><span style="color:#696f7a">'+desc+'</span></div>';
+ 					 }
+ 					 else{
+ 						var html = '<div class="row setting-row add-description"><span>설명 추가</span></div>';
+ 					 }
+ 					 $(".add-description").remove();
+ 					 $(".p-setting-container").prepend(html);
+ 				 }
+  			 },
+  			 error:(jqxhr, textStatus, errorThrown)=>{
+  				 console.log(jqxhr, textStatus, errorThrown);
+  			 } 
+  		 }) 
+  	 })
+   }
+function updateTitle(){
+	$(document).on('click',".update-side-title",function(){
+ 		 $(this).hide();
+ 		 $(".edit-side-title").show();
+ 		 $("#title").focus();
+ 	 });
+	$(document).on('click',".update-title-btn",function(){
+ 		 var title = $("#title").val();
+ 		 var no = $(this).attr("id");
+ 		 var type;
+ 		 if($(this).hasClass('wr-title')) type = 'work';
+ 		 else type= 'project';
+ 		 
+ 		 if(title == '' || title == null){alert('제목을 입력하세요.');return;}
+ 		 
+ 		 $.ajax({
+ 			 url:"${pageContext.request.contextPath}/project/updateTitle.do",
+ 			 data: {title:title,no:no,type:type},
+ 			 dataType:"json",
+ 			 success: data=>{
+ 				if(data.isUpdated){
+ 					 $(".edit-side-title").hide();
+ 					 var html = '<p class="setting-side-title update-side-title">'+title+'<button class="update-title"><i class="fas fa-pencil-alt"></i></button></p>';
+ 					 
+ 					 $(".update-side-title").remove();
+ 					 $("div.p-3").prepend(html);
+ 					 if(type=='project'){
+ 						$("#header-project-title").text(title);
+ 					 }
+ 					 else{
+ 						$(".work-item#"+no+" .work-title h6>span").text(title);
+ 					 }
+ 				 }
+ 			 },
+ 			 error:(jqxhr, textStatus, errorThrown)=>{
+ 				 console.log(jqxhr, textStatus, errorThrown);
+ 			 } 
+ 		 }) 
+ 	 })
+	
+	
+}
 </script>		
 
 <!-- Navbar Project -->
@@ -963,7 +1045,7 @@ function setting(){
         	<i class="far fa-star"></i>
         	</c:if>
         </button>
-        ${project.projectTitle}
+        <span id="header-project-title">${project.projectTitle}</span>
     </li>
     </ul>
 
@@ -1150,7 +1232,7 @@ function setting(){
 		                <div class="work-title">
 		                    <h6>
 		                    	<button type="button" class="btn-check btn-checkWork" value="${w.workNo}"><i class="far fa-square"></i></button>
-		                    	${w.workTitle}
+		                    	<span id="work-workTitle">${w.workTitle}</span>
 		                    </h6>
 		                    <div class="work-importances">
 		                    <c:set var="point" value="${w.workPoint}" />

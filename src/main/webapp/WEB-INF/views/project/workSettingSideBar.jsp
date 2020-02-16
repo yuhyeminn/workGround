@@ -51,7 +51,21 @@
     </div>
     <!-- Control sidebar content goes here -->
     <div class="p-3">
-    <span class="setting-side-title">${work.workTitle}</span>
+    	<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
+		    <p class="setting-side-title update-side-title">
+		    ${work.workTitle}
+		      <button class="update-title"><i class="fas fa-pencil-alt"></i></button>
+		    </p>
+		    <p class="setting-side-title edit-side-title">
+		   	  <input type="text" value="${work.workTitle}" placeholder="업무 제목을 입력하세요." id="title"/>
+		      <button class="update-title-btn wr-title" id="${work.workNo }"><i class="fas fa-pencil-alt"></i></button>
+		    </p>
+	    </c:if>
+	    <c:if test="${!isprojectManager && memberLoggedIn.memberId ne 'admin' && !isChargedMember}">
+		    <p class="setting-side-title">
+		    ${work.workTitle}
+		    </p>
+	    </c:if>
     <p class="setting-contents-inform">
         <span>#${work.workNo }</span>
         <span class="setting-contents-date">작성일 ${work.workStartDate }</span>
@@ -85,8 +99,8 @@
 			            </div>
 		          </c:if>
 		          		<div class="row setting-row edit-description">
-			            	<input type="text" value="${work.workDesc}" placeholder="업무 설명을 입력하세요." id="workDesc"/>
-			            	<button style="color: #696f7a;width: 35px;" class="update-work-description"><i class="fas fa-pencil-alt"></i></button>
+			            	<input type="text" value="${work.workDesc}" placeholder="업무 설명을 입력하세요." id="desc"/>
+			            	<button class="update-description wr-desc" id="${work.workNo }"><i class="fas fa-pencil-alt"></i></button>
 			            </div>
 	           	</c:if>
 	           	<!-- 권한 없을 때 -->
@@ -372,45 +386,59 @@
         <!-- #####################################################코멘트 탭-->
         <div class="tab-pane fade" id="custom-content-above-comment" role="tabpanel" aria-labelledby="custom-content-above-comment-tab">
         <div class="comment-wrapper">
-            <div class="comment-box">
+            <div class="comment-box work-comment-box">
             <c:if test="${work.workCommentList!=null && !empty work.workCommentList}">
             <div class="card-footer card-comments">
             
               <c:forEach items="${work.workCommentList}" var="wc">
               <c:set var="writer" value="${wc.workCommentWriterMember}" />
               
-                <div class="card-comment <c:if test="${wc.workCommentLevel == 2 }">comment-level2</c:if>">
+                <div class="card-comment work-comment <c:if test="${wc.workCommentLevel == 2 }">comment-level2</c:if>" id="${wc.workCommentNo}">
                 <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${writer.renamedFileName}" alt="User Image">
                 <div class="comment-text">
-                    <span class="username">${writer.memberName}<span class="text-muted float-right">${wc.workCommentEnrollDate }</span></span>
-                    <span>${wc.workCommentContent}</span>
+                    <span class="username"><span class="comment-writer">${writer.memberName}</span><span class="text-muted float-right">${wc.workCommentEnrollDate }</span></span>
+                    <span class="comment-content">${wc.workCommentContent}</span>
                     <c:if test="${memberLoggedIn.memberId eq writer.memberId || memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin'}">
                     <button class="comment-delete float-right">삭제</button>
                     </c:if>
                     <c:if test="${memberLoggedIn.memberId eq 'adim' || isProjectMember}">
-                    <button class="comment-reply float-right">답글</button>
+                    <c:if test="${wc.workCommentLevel == 1 }">
+                      <button class="comment-reply work-comment-reply float-right" value="${wc.workCommentNo}">답글</button>
+                    </c:if>
                     </c:if>
                 </div>
                 </div>
+                
               </c:forEach>
             </div>
             </c:if>
             <c:if test="${work.workCommentList==null || empty work.workCommentList}">
            		<div style="text-align:center;margin-top: 106px;">
-           		<img src="https://d30795irbdecem.cloudfront.net/assets/comment-empty-state@2x-d1554722.png" style="width:20rem;">
-           		<p style="font-size:10px; color:lightgray;">Comments are great for focusing conversation on the task at hand.</p>
+	           		<img src="https://d30795irbdecem.cloudfront.net/assets/comment-empty-state@2x-d1554722.png" style="width:20rem;">
+	           		<p style="font-size:10px; color:lightgray;">Comments are great for focusing conversation on the task at hand.</p>
            		</div>
             </c:if>
             </div>
             <!-- 댓글 작성 -->
-            <div class="card-footer">
-            <form action="#" method="post">
-                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">
+            <div class="card-footer enroll-comment">
+            	<div class="reply-work-ref-wrapper">
+	            	<i class="fa fa-reply fa-flip-horizontal"></i>
+	                <div class="reply-work-ref">
+	                	<button class="cancel-comment-ref" style="float:right;color:#696f7a;"><i class="fas fa-times"></i></button>
+	                	<span class="reply-work-ref-writer"></span>
+	                	<span class="reply-work-ref-content"></span>
+	                </div>
+             	</div>
+             <div class="enroll-comment-inform">
+                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}">
                 <div class="img-push">
-                <input type="text" class="form-control form-control-sm comment-text-area" placeholder="코멘트를 입력하세요.">
-                <input class="comment-submit" type="submit" value="등록">
+                <textarea class="form-control form-control-sm comment-text-area" id=""  placeholder="코멘트를 입력하세요."></textarea>
+                <input type="hidden" id="comment-writer" value="${memberLoggedIn.memberId}"/>
+                <input type="hidden" id="comment-level" value="1"/>
+                <input type="hidden" id="comment-ref" value="" />
+                <button class="comment-submit">등록</button>
                 </div>
-            </form>
+              </div>
             </div> 
         </div> 
         <!--/. end comment-wrapper--> 
@@ -506,7 +534,7 @@
 	updateWorkLocation();
 	updateChkChargedMember();
 	deleteChecklist();
-	updateWorkDesc();
+	insertComment();
  });
  
  
@@ -799,30 +827,47 @@ function updateWorkMember(){
 	 })
  }
  
- function updateWorkDesc(){
-	 var workNo = '${work.workNo}';
-	 $(document).on('click',".add-description",function(){
-		 $(this).hide();
-		 $(".edit-description").show();
-		 $("#workDesc").focus();
+ function insertComment(){
+	 $(document).on('click',".work-comment-reply", function(){
+		 var refNo = $(this).val();
+		 var refWriter = $(".work-comment#"+refNo+" span.comment-writer").text();
+		 var refContent = $(".work-comment#"+refNo+" span.comment-content").text();
+		 
+		 $(".reply-work-ref-writer").text(refWriter);
+		 $(".reply-work-ref-content").text(refContent);
+		 
+		 $(".enroll-comment-inform #comment-level").val('2');
+		 $(".enroll-comment-inform #comment-ref").val(refNo);
+		 
+		 $(".reply-work-ref-wrapper").show();
 	 });
-	 $(document).on('click',".update-work-description",function(){
-		 var workDesc = $("#workDesc").val();
+	 
+	 $(document).on('click','.cancel-comment-ref', function(){
+		 $(".reply-work-ref-wrapper").hide();
+		 $(".enroll-comment-inform .comment-level").val('1');
+		 $(".enroll-comment-inform .comment-ref").val('');
+	 })
+	 
+	 $(".comment-submit").on('click', function(){
+		 var workNo = '${work.workNo}';
+		 var commentComment = $("div.enroll-comment-inform textarea").val();
+		 var commentWriter = $("#comment-writer").val();
+		 var commentLevel = $("#comment-level").val();
+		 var commentRef = $("#comment-ref").val();
+		 
+		 console.log(commentComment);
+		 console.log(commentWriter);
+		 console.log(commentLevel);
+		 console.log(commentRef);
+		 
 		 $.ajax({
-			 url:"${pageContext.request.contextPath}/project/updateWorkDesc.do",
-			 data: {workNo:workNo,workDesc:workDesc},
+			 url:"${pageContext.request.contextPath}/project/insertWorkComment.do",
+			 data: {workNo:workNo,commentComment:commentComment,
+				    commentWriter:commentWriter,commentLevel:commentLevel,commentRef:commentRef},
 			 dataType:"json",
 			 success: data=>{
 				 if(data.isUpdated){
-					 $(".edit-description").hide();
-					 if(workDesc != '' && workDesc != null){
-						var html = '<div class="row setting-row add-description"><span style="color:#696f7a">'+workDesc+'</span></div>';
-					 }
-					 else{
-						var html = '<div class="row setting-row add-description"><span>설명 추가</span></div>';
-					 }
-					 $(".add-description").remove();
-					 $(".p-setting-container").prepend(html);
+
 				 }
 			 },
 			 error:(jqxhr, textStatus, errorThrown)=>{

@@ -543,15 +543,33 @@
 		delete from checklist where checklist_no = #{checklistNo}
 	</delete>
 	
-	<!-- updateWorkDesc.do : 업무 설명 수정 -->
-	<update id="updateWorkDesc">
-		<if test="workDesc != '' and workDesc != null">
-			update work set work_desc= #{workDesc} where work_no = to_number(#{workNo})
+	<!-- updateDesc.do : 업무, 프로젝트 설명 수정 -->
+	<update id="updateDesc">
+		<if test="desc != '' and desc != null">
+			update ${type} set ${type}_desc= #{desc} where ${type}_no = to_number(#{no})
 		</if>
-		<if test="workDesc =='' or workDesc == null">
-			update work set work_desc= null where work_no = to_number(#{workNo})
+		<if test="desc =='' or desc == null">
+			update ${type} set ${type}_desc= null where ${type}_no = to_number(#{no})
 		</if>
 	</update>
+	
+	<!-- updateTitle.do : 업무, 프로젝트 타이틀 수정 -->
+	<update id="updateTitle">
+			update ${type} set ${type}_title= #{title} where ${type}_no = to_number(#{no})
+	</update>
+	
+	<!-- insertWorkComment.do : 코멘트 추가 -->
+	<insert id="insertWorkComment">
+	insert into work_comment 
+	values(seq_work_comment.nextval,#{wc.workNo},
+			select project_members_no from project_members where project_no=(select project_no from work w left join worklist wl on w.worklist_no = wl.worklist_no where w.work_no=#{wc.workNo}) and member_id=#{wc.workCommentWriterId},
+			#{wc.workCommentLevel},#{wc.workComment},
+			#{wc.workCommentContent},default,#{wc.workCommentRef});
+			
+		<selectKey keyProperty="workCommentNo" resultType="_int" order="AFTER">
+			select seq_work_comment.currval from dual
+		</selectKey>
+	</insert>
 	
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>

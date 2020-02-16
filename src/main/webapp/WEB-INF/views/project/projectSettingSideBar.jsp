@@ -27,8 +27,21 @@
     <i class="fas fa-times close-sidebar"></i>
 </div>
 <div class="p-3">
-	    <i class="fas fa-star"></i>
-	    <span class="setting-side-title">${project.projectTitle}</span>
+	    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin'}">
+		    <p class="setting-side-title update-side-title">
+		    ${project.projectTitle}
+		      <button class="update-title"><i class="fas fa-pencil-alt"></i></button>
+		    </p>
+		    <p class="setting-side-title edit-side-title">
+		   	  <input type="text" value="${project.projectTitle}" placeholder="프로젝트 제목을 입력하세요." id="title"/>
+		      <button class="update-title-btn pr-title" id="${project.projectNo }"><i class="fas fa-pencil-alt"></i></button>
+		    </p>
+	    </c:if>
+	    <c:if test="${!isprojectManager && memberLoggedIn.memberId ne 'admin'}">
+		    <p class="setting-side-title">
+		    ${project.projectTitle}
+		    </p>
+	    </c:if>
 	    <p class="setting-contents-inform">
 	        <span>#${project.projectNo}</span>
 	        <span>작성자 ${projectWriter.memberName }</span>
@@ -51,15 +64,19 @@
 			            </div>
 		          </c:if>
 		          <c:if test="${project.projectDesc != null and project.projectDesc != '' }">
-			            <div class="row setting-row project-description">
+			            <div class="row setting-row  add-description">
 			            	<span style='color:#696f7a'>${project.projectDesc }</span>
 			            </div>
 		          </c:if>
+		          		<div class="row setting-row edit-description">
+			            	<input type="text" value="${project.projectDesc}" placeholder="프로젝트 설명을 입력하세요." id="desc"/>
+			            	<button class="update-description pr-desc" id="${project.projectNo }"><i class="fas fa-pencil-alt"></i></button>
+			            </div>
 	           	</c:if>
 	           	<!-- 권한 없을 때 -->
 	           	<c:if test="${!isprojectManager && memberLoggedIn.memberId ne 'admin'}">
 	           	  <c:if test="${project.projectDesc == null or project.projectDesc == ''}">
-			             <div class="row setting-row add-description">
+			             <div class="row setting-row project-description">
 			            	<span>설명 없음</span>
 			             </div>
 		          </c:if>

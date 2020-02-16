@@ -7,6 +7,7 @@ import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.WorkComment;
 
 public interface ProjectService2 {
 
@@ -52,6 +53,10 @@ public interface ProjectService2 {
 
 	int deleteChecklist(int checklistNo);
 
-	int updateWorkDesc(Map<String, String> param);
+	int updateDesc(Map<String, String> param);
+
+	int updateTitle(Map<String, String> param);
+
+	Map<String, Object> insertWorkComment(WorkComment wc);
 
 }

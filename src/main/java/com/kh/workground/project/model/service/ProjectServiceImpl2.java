@@ -394,9 +394,27 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 	}
 
 	@Override
-	public int updateWorkDesc(Map<String, String> param) {
-		int result = projectDAO.updateWorkDesc(param);
-		if(result==0) throw new ProjectException("업무 설명 수정 오류!");
+	public int updateDesc(Map<String, String> param) {
+		int result = projectDAO.updateDesc(param);
+		if(result==0) throw new ProjectException("설명 수정 오류!");
+		return result;
+	}
+
+	@Override
+	public int updateTitle(Map<String, String> param) {
+		int result = projectDAO.updateTitle(param);
+		if(result==0) throw new ProjectException("제목 수정 오류!");
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> insertWorkComment(WorkComment wc) {
+		Map<String, Object> result = new HashMap<>();
+		int isUpdated = projectDAO.insertWorkComment(wc);
+		if(isUpdated==0) throw new ProjectException("업무 코멘트 추가 오류!");
+		result.put("isUpdated", isUpdated>0?true:false);
+		
+		
 		return result;
 	}
 

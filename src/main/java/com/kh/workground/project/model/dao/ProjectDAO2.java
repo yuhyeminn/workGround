@@ -75,6 +75,10 @@ public interface ProjectDAO2 {
 
 	int deleteChecklist(int checklistNo);
 
-	int updateWorkDesc(Map<String, String> param);
+	int updateDesc(Map<String, String> param);
+
+	int updateTitle(Map<String, String> param);
+
+	int insertWorkComment(WorkComment wc);
 
 }

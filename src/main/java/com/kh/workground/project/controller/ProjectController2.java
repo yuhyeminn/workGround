@@ -25,6 +25,7 @@ import com.kh.workground.project.model.service.ProjectService2;
 import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.WorkComment;
 
 @Controller
 public class ProjectController2 {
@@ -545,17 +546,18 @@ public class ProjectController2 {
 		return map;
 	}
 	
-	@RequestMapping("/project/updateWorkDesc.do")
+	@RequestMapping("/project/updateDesc.do")
 	@ResponseBody
-	public Map<String, Object> updateWorkDesc(@RequestParam String workNo, @RequestParam String workDesc){
+	public Map<String, Object> updateDesc(@RequestParam String no, @RequestParam String desc, @RequestParam String type){
 		Map<String, Object> map = new HashMap<>();
 		try {
 			
 			Map<String, String> param = new HashMap<>();
-			param.put("workNo", workNo);
-			param.put("workDesc", workDesc);
+			param.put("no", no);
+			param.put("type", type);
+			param.put("desc", desc);
 			
-			int result = projectService.updateWorkDesc(param);
+			int result = projectService.updateDesc(param);
 			
 			boolean isUpdated = result>0?true:false;
 			map.put("isUpdated",isUpdated);
@@ -564,6 +566,55 @@ public class ProjectController2 {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("업무 설명 수정 오류!");
 		}
+		return map;
+	}
+	
+	@RequestMapping("/project/updateTitle.do")
+	@ResponseBody
+	public Map<String, Object> updateTitle(@RequestParam String no, @RequestParam String title, @RequestParam String type){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			
+			Map<String, String> param = new HashMap<>();
+			param.put("no", no);
+			param.put("type", type);
+			param.put("title", title);
+			
+			int result = projectService.updateTitle(param);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated);
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 제목 수정 오류!");
+		}
+		return map;
+	}
+	
+	@RequestMapping("/project/insertWorkComment.do")
+	@ResponseBody
+	public Map<String, Object> insertWorkComment(@RequestParam int workNo, @RequestParam String commentContent,
+			@RequestParam String commentWriter, @RequestParam int commentLevel, @RequestParam String commentRef){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			WorkComment wc = new WorkComment();
+			wc.setWorkNo(workNo);
+			wc.setWorkCommentContent(commentContent);
+			wc.setWorkCommentWriterId(commentWriter);
+			wc.setWorkCommentLevel(commentLevel);
+			if(commentLevel == 1) commentRef=null;
+			wc.setWorkCommentRef(Integer.parseInt(commentRef));
+			
+			logger.debug("workComment={}",wc);
+			Map<String, Object> result = projectService.insertWorkComment(wc);
+			
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 제목 수정 오류!");
+		}
+		
 		return map;
 	}
 }

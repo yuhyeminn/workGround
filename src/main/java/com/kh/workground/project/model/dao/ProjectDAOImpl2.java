@@ -189,8 +189,18 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	}
 
 	@Override
-	public int updateWorkDesc(Map<String, String> param) {
-		return sqlSession.update("project.updateWorkDesc",param);
+	public int updateDesc(Map<String, String> param) {
+		return sqlSession.update("project.updateDesc",param);
+	}
+
+	@Override
+	public int updateTitle(Map<String, String> param) {
+		return sqlSession.update("project.updateTitle",param);
+	}
+
+	@Override
+	public int insertWorkComment(WorkComment wc) {
+		return sqlSession.insert("project.insertWorkComment",wc);
 	}
 
 }
