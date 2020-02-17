@@ -1,21 +1,22 @@
 package com.kh.workground.notice.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.kh.workground.notice.model.vo.Community;
 import com.kh.workground.notice.model.vo.Notice;
 
 public interface NoticeDAO {
 
-	List<Notice> selectNoticeList();
+	List<Notice> selectNoticeList(Map<String, String> noticeMap);
 
-	List<Notice> selectPlanningDeptNoticeList();
+	List<Notice> selectPlanningDeptNoticeList(Map<String, String> noticeMap);
 
-	List<Notice> selectDesignDeptNoticeList();
+	List<Notice> selectDesignDeptNoticeList(Map<String, String> noticeMap);
 	
-	List<Notice> selectDevelopmentDeptNoticeList();
+	List<Notice> selectDevelopmentDeptNoticeList(Map<String, String> noticeMap);
 
-	List<Community> selectCommunityList();
+	List<Community> selectCommunityList(Map<String, String> commuMap);
 	
 	int insertNotice(Notice notice);
 
@@ -29,5 +30,23 @@ public interface NoticeDAO {
 
 	int updateCommunity(Community commu);
 	
+	int insertNoticeComment(Map<String, Object> noticeCommentMap);
+
+	int deleteNoticeComment(int noticeCommentNo);
+
+	int insertCommunityComment(Map<String, Object> communityCommentMap);
+
+	int deleteCommunityComment(int communityCommentNo);
+
+	List<Notice> searchNoticeList(Map<String, String> noticeMap);
+
+	List<Community> searchCommunityList(Map<String, String> commuMap);
+
+	List<Notice> searchPlanningDeptNoticeList(Map<String, String> noticeMap);
+
+	List<Notice> searchDesignDeptNoticeList(Map<String, String> noticeMap);
+
+	List<Notice> searchDevelopmentDeptNoticeList(Map<String, String> noticeMap);
+
 	
 }
