@@ -107,8 +107,8 @@ public class ProjectDAOImpl implements ProjectDAO {
 	}
 
 	@Override
-	public int insertWorklist(Map<String, Object> param) {
-		return sqlSession.insert("project.insertWorklist", param);
+	public int insertWorklist(Worklist wl) {
+		return sqlSession.insert("project.insertWorklist", wl);
 	}
 
 	@Override
@@ -131,6 +131,64 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.selectOne("project.selectWorkOne");
 	}
 
+	@Override
+	public int updateChklistCompleteYn(Map<String, Object> param) {
+		return sqlSession.update("project.updateChklistCompleteYn", param);
+	}
 
+	@Override
+	public List<Work> selectWorkListBySearchKeyword(Map<String, Object> param) {
+		return sqlSession.selectList("project.selectWorkListBySearchKeyword", param);
+	}
+
+	@Override
+	public int deleteWork(int workNo) {
+		return sqlSession.delete("project.deleteWork", workNo);
+	}
+
+	@Override
+	public String selectProjectWriter(int projectNo) {
+		return sqlSession.selectOne("project.selectProjectWriter", projectNo);
+	}
+
+	@Override
+	public Worklist selectWorklistOne(int worklistNo) {
+		return sqlSession.selectOne("project.selectWorklistOne", worklistNo);
+	}
+
+	@Override
+	public int updateWorkCompleteYn(Map<String, Object> param) {
+		return sqlSession.update("project.updateWorkCompleteYn", param);
+	}
+
+	@Override
+	public int deleteFile(int attachNo) {
+		return sqlSession.delete("project.deleteFile", attachNo);
+	}
+
+	@Override
+	public int deleteChecklistByWorkNo(int workNo) {
+		return sqlSession.delete("project.deleteChecklistByWorkNo", workNo);
+	}
+
+	@Override
+	public int deleteCommentByWorkNo(int workNo) {
+		return sqlSession.delete("project.deleteCommentByWorkNo", workNo);
+	}
+
+	@Override
+	public int deleteAttachByWorkNo(int workNo) {
+		return sqlSession.delete("project.deleteAttachByWorkNo", workNo);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectCntWork(int projectNo) {
+		return sqlSession.selectList("project.selectCntWork", projectNo);
+	}
+
+	@Override
+	public List<Member> selectProjectMemberListByQuitYn(int projectNo) {
+		return sqlSession.selectList("project.selectProjectMemberListByQuitYn", projectNo);
+	}
 
 }

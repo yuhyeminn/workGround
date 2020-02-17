@@ -9,7 +9,7 @@
 		<id column="project_no" property="projectNo"></id>
 		<result column="project_writer" property="projectWriter"></result>
 		<result column="project_title" property="projectTitle"></result>
-		<result column="private_yn" property="projectYn"></result>
+		<result column="private_yn" property="privateYn"></result>
 		<result column="project_desc" property="projectDesc"></result>
 		<result column="project_startdate" property="projectStartDate"></result>
 		<result column="project_enddate" property="projectEndDate"></result>
@@ -32,6 +32,7 @@
 			<result column="manager_id" property="managerId"></result>
 			<result column="original_filename" property="originalFileName"></result>
 			<result column="renamed_filename" property="renamedFileName"></result>
+			<result column="manager_yn" property="managerYn"></result>
 			<result column="project_quit_yn" property="projectQuitYn"></result>
 		</collection>
 	</resultMap>
@@ -64,6 +65,7 @@
 			<result column="manager_id" property="managerId"></result>
 			<result column="original_filename" property="originalFileName"></result>
 			<result column="renamed_filename" property="renamedFileName"></result>
+			<result column="manager_yn" property="managerYn"></result>
 			<result column="project_quit_yn" property="projectQuitYn"></result>
 		</collection>
 	</resultMap>
@@ -74,6 +76,20 @@
 		where private_yn = 'N' and dept_code = #{deptCode}
 		order by project_no desc
 	</select>
+	
+	<!-- projectList 뿌리기 : 총업무수/완료된 업무수 조회 -->
+	<select id="selectCntWork" resultMap="selectCntWorkMap">
+		select W.work_complete_yn yn, count(*) cnt
+		from (select P.project_no, WL.worklist_no
+			  from project P left join worklist WL on P.project_no = WL.project_no) V 
+								  join work W on V.worklist_no = W.worklist_no
+		where project_no=#{projectNo}
+		group by W.work_complete_yn
+	</select>
+	<resultMap type="hashMap" id="selectCntWorkMap">
+		<result column="yn" property="yn"/>
+		<result column="cnt" property="cnt"/>
+	</resultMap>
 	
 	<!-- projectList 뿌리기 : 중요 표시된 프로젝트 번호 조회 -->
 	<select id="selectImportantProjectNo" resultType="_int">
@@ -142,11 +158,11 @@
 		select * from view_member where member_id = #{memberId}
 	</select>
 	
-	<!-- projectView 뿌리기 : 업무리스트번호로 진행 중인 업무 수 조회 -->
+	<!-- projectView 뿌리기 : 업무리스트번호로 완료된 업무 수 조회 -->
 	<select id="selectTotalWorkCompleteYn" resultType="_int">
 		select count(*) total_work_complete_yn
 		from worklist WL left join Work W on WL.worklist_no = W.worklist_no
-		where WL.worklist_no = #{worklistNo} and W.work_complete_yn = 'N'
+		where WL.worklist_no = #{worklistNo} and W.work_complete_yn = 'Y'
 	</select>
 	
 	<!-- projectView 뿌리기 : 프로젝트 중요표시 여부 조회 -->
@@ -174,6 +190,9 @@
 	<!-- addWorklist.do: 업무리스트 추가-->
 	<insert id="insertWorklist" parameterType="hashMap">
 		insert into worklist values(seq_worklist.nextval, #{projectNo}, #{worklistTitle})
+		<selectKey keyProperty="worklistNo" resultType="_int" order="AFTER">
+			select seq_worklist.currval from dual
+		</selectKey>
 	</insert>
 	
 	<!-- deleteWorklist.do: 업무리스트 삭제-->
@@ -203,25 +222,80 @@
                              	  left join view_member VM on WCM.charged_member_id = VM.member_id
 	</select>
 	
+	<!-- insertWork.do: 프로젝트 속한 멤버 조회 -->
+	<select id="selectProjectMemberListByQuitYn" resultType="member">
+		select VM.*
+		from (select * from project_members 
+		where project_no = 5 and project_quit_yn = 'N') V left join view_member VM on V.member_id = VM.member_id
+	</select>
 	
+	<!-- updateChklistCompleteYn.do: 체크리스트 완료여부 업데이트 -->
+	<update id="updateChklistCompleteYn" parameterType="hashMap">
+		update checklist set complete_yn = #{completeYn} 
+		<if test="endDate!=null">
+			, checklist_enddate = to_date(#{endDate}, 'yyyy-mm-dd')
+		</if>
+		<if test="endDate==null">
+			, checklist_enddate = null
+		</if>
+		where checklist_no = #{checklistNo}
+	</update>
 	
+	<!-- searchWork.do: 업무 검색 -->
+	<select id="selectWorkListBySearchKeyword" parameterType="hashMap" resultMap="workListCollectionMap">
+		select V.*, WCM.work_charged_members_no, VM.*
+		from (select * from view_workTag where worklist_no = #{worklistNo}
+         		order by work_no desc) V left join work_charged_members WCM on V.work_no = WCM.work_no
+                                         left join view_member VM on WCM.charged_member_id = VM.member_id
+		where work_title like '%'||#{keyword}||'%'
+	</select>
 	
+	<!-- deleteWork.do: 업무 삭제 -->
+	<delete id="deleteWork">
+		delete from work where work_no = #{workNo}
+	</delete>
 	
+	<!-- insertWorklist.do: 업무리스트 추가후 ajax로 뿌릴 때 프로젝트 작성자 필요 -->
+	<select id="selectProjectWriter" resultType="string">
+		select project_writer from project where project_no = #{projectNo}
+	</select>
 	
+	<!-- insertWork.do: 업무 추가후 ajax로 뿌릴 때 업무리스트 통채로 필요-->
+	<select id="selectWorklistOne" resultType="worklist">
+		select * from worklist where worklist_no = #{worklistNo}
+	</select>
 	
+	<!-- updateWorkCompleteYn.do: 업무완료여부 업데이트 -->
+	<update id="updateWorkCompleteYn" parameterType="hashMap">
+		update work set work_complete_yn = #{completeYn} 
+		<if test="realEndDate!=null">
+			, work_realenddate = to_date(#{realEndDate}, 'yyyy-mm-dd')
+		</if>
+		<if test="realEndDate==null">
+			, work_realenddate = null
+		</if>
+		where work_no = #{workNo}
+	</update>
 	
+	<!-- deleteFile.do: 파일 삭제 -->
+	<delete id="deleteFile">
+		delete from attachment where attachment_no = #{attachNo}
+	</delete>
 	
+	<!-- deleteWork.do: 참조하고 있는 체크리스트 삭제 -->
+	<delete id="deleteChecklistByWorkNo">
+		delete from checklist where work_no = #{workNo}
+	</delete>
 	
+	<!-- deleteWork.do: 참조하고 있는 코멘트 삭제 -->
+	<delete id="deleteCommentByWorkNo">
+		delete from work_comment where work_no = #{workNo}
+	</delete>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	<!-- deleteWork.do: 참조하고 있는 파일 삭제 -->
+	<delete id="deleteAttachByWorkNo">
+		delete from attachment where work_no = #{workNo}
+	</delete>
 	
 	
 	
@@ -295,7 +369,7 @@
 	<!-- addProject.do : 프로젝트팀원 테이블에 팀원 추가 -->
 	<insert id="insertProjectMember">
 		insert into project_members
-		values(seq_project_members.nextval,to_number(#{projectNo}),#{projectMember},default)
+		values(seq_project_members.nextval,to_number(#{projectNo}),#{projectMember},default,default)
 	</insert>
 	
 	<!-- addProject.do : 프로젝트 생성 시 기본 3개 업무리스트 추가 -->
@@ -307,9 +381,9 @@
 		</foreach>)A
 	</insert>
 	
-	<!-- projectDeptMember.do : 부서 사람들 조회 -->
-	<select id="selectMemberListByDeptCode" resultType="member">
-		select * from view_member where dept_code = #{deptCode} and member_id!=#{memberId} order by member_id
+	<!-- projectTeamMember.do : 같은 팀 사람들 조회 -->
+	<select id="selectMemberListByManagerId" resultType="member">
+		select * from view_member where manager_Id = #{projectWriter} order by member_id
 	</select>
 	
 	<!-- projectListByStatusCode.do : 상태코드별 부서 전체 프로젝트(최근 프로젝트) 조회 -->
@@ -336,14 +410,14 @@
 		</if>
 	</select>
 	
-	<!-- projectSetting.do : 프로젝트 설정 사이드바에서 조회할 프로젝트 정보 조회 . 프로젝트멤버는 팀장 제외하고 조회-->
+	<!-- projectSetting.do : 프로젝트 설정 사이드바에서 조회할 프로젝트 정보 조회 .-->
 	<select id="selectProjectOneForSetting" resultMap="viewProjectMemberCollectionMap">
-		select * from view_projectMember where project_no = #{projectNo}
+		select * from view_projectMember where project_no = #{projectNo} and project_quit_yn = 'N'
 	</select>
 	
 	<!-- projectManagerSetting.do : 프로젝트 관리 위임을 위한 프로젝트 관리자와 같은 부서 내 팀장 리스트 조회 -->
 	<select id="selectProjectManagerByDept" resultType="member">
-		select * from view_member where dept_code = (select dept_code from view_member where member_id=#{projectWriter}) and job_title='팀장'
+		select * from view_member where dept_code = (select dept_code from view_member where member_id=#{projectManager}) and job_title='팀장'
 	</select>
 	
 	<!-- workSetting.do : workNo로 work조회 -->
@@ -353,4 +427,216 @@
                             left join view_member VM on WCM.charged_member_id = VM.member_id
 		where V.work_no = #{workNo}
 	</select>
+	
+	<!-- workSetting.do : 업무별 attachmentList조회 (작성자 멤버 객체 까지)-->
+	<select id="selectAttachmentListByWorkNo" resultMap="attachmentMemberMap">
+		select A.*, VM.*
+		from attachment A join project_members PM on A.attachment_writer_no = PM.project_members_no left join view_member VM on PM.member_id = VM.member_id
+		where A.work_no = #{workNo}
+		order by A.attachment_no desc
+	</select>
+	<resultMap type="attachment" id="attachmentMemberMap">
+		<id column="attachment_no" property="attachmentNo"></id>
+		<result column="attachment_writer_no" property="attachmentWriterNo"></result>
+		<result column="original_filename" property="originalFilename"></result>
+		<result column="renamed_filename" property="renamedFilename"></result>
+		<result column="attachment_enrolldate" property="attachmentEnrollDate"></result>
+		<collection property="attachmentWriterMember" resultMap="memberResultMap"/>
+	</resultMap>
+	
+	<!--  workSetting.do : 업무별 workCommentList조회(작성자 멤버 객체까지) =>계층형 쿼리-->
+	<select id="selectWorkCommentListByWorkNo" resultMap="workCommentMemberMap">
+		select WC.*, M.*
+		from work_comment WC join project_members PM on WC.work_comment_writer_no = PM.project_members_no left join member M on PM.member_id = M.member_id
+		where 1=1 and WC.work_no = #{workNo}
+		start with work_comment_level = 1
+		connect by work_comment_ref = prior work_comment_no
+		order siblings by work_comment_no asc
+	</select>
+	<resultMap type="workComment" id="workCommentMemberMap">
+		<id column="work_comment_no" property="workCommentNo"></id>
+		<result column="work_comment_writer_no" property="workCommentWriterNo"></result>
+		<result column="work_comment_level" property="workCommentLevel"></result>
+		<result column="work_comment_content" property="workCommentContent"></result>
+		<result column="work_comment_enrolldate" property="workCommentEnrollDate"></result>
+		<result column="work_comment_ref" property="workCommentRef"></result>
+		<collection property="workCommentWriterMember" resultMap="memberResultMap"/>
+	</resultMap>
+	
+	<!-- updateStatusCode.do : 프로젝트 상태코드 변경 -->
+	<update id="updateStatusCode">
+		<if test="statusCode !='' and statusCode != null">
+			update project set project_status_code = to_char(#{statusCode}) where project_no = to_number(#{projectNo})
+		</if>
+		<if test="statusCode =='' or statusCode == null">
+			update project set project_status_code = null where project_no = to_number(#{projectNo})
+		</if>
+	</update>
+	
+	<!-- updateProjectDate.do : 프로젝트 날짜관련 수정(시작,마감,완료) -->
+	<update id="updateProjectDate">
+		<if test="date != null and date != ''">
+		update project set ${dateType} = to_date(#{date},'YYYY/MM/DD') where project_no = to_number(#{projectNo})
+		</if>
+		<if test="date == null or date ==''">
+		update project set ${dateType} = null where project_no = to_number(#{projectNo})
+		</if>
+	</update>
+	
+	<!-- updateProjectMember.do : 해당 projectNo의 팀원 리스트(이전에 나갔었던 사람까지 포함. 팀장 제외)-->
+	<select id="selectProjectMemberIdList" resultType="member">
+		select PM.member_id, PM.project_quit_yn from project_members PM left join member M on PM.member_id = M.member_id where project_no=#{projectNo} and manager_yn = 'N'
+	</select>
+	
+	<!-- 프로젝트 멤버 project_quit_yn 수정 -->
+	<update id="updateProjectQuit">
+		update project_members set project_quit_yn = #{quitYN} where project_no=#{projectNo} and manager_yn = 'N'
+		<if test="projectMember != '' and projectMember !=null">
+			and member_id=#{projectMember}
+		</if>
+	</update>
+	
+	<!-- updateProjectManager.do : 프로젝트 관리자 수정 -->
+	<update id="updateProjectManager">
+		update project_members set member_id = #{updateManager} where project_no=to_number(#{projectNo}) and manager_yn = 'Y'
+	</update>
+	
+	<!-- updateWorkMember.do : 업무 배정 멤버 추가 -->
+	<insert id="insertWorkMember">
+		insert into work_charged_members values(seq_work_charged_members.nextval,to_number(#{workNo}),#{memberId})
+	</insert>
+	
+	<!-- updateWorkMember.do : 업무 배정 멤버 삭제 -->
+	<insert id="deleteWorkMember">
+		delete from work_charged_members where work_no=#{workNo} 
+		<if test="memberId != '' and memberId != null">
+			and charged_member_id=#{memberId}
+		</if>
+	</insert>
+	
+	<!-- updateWorkTag.do : 업무 태그 변경 -->
+	<update id="updateWorkTag">
+		<if test="workTag != null and workTag != ''">
+		update work set work_tag_code= to_char(#{workTag}) where work_no = to_number(#{workNo})
+		</if>
+		<if test="workTag == null or workTag == ''">
+		update work set work_tag_code= null where work_no = to_number(#{workNo})
+		</if>
+	</update>
+	
+	<!-- updateWorkPoint.do : 업무 포인트 변경 -->
+	<update id="updateWorkPoint">
+		update work set work_point = #{workPoint} where work_no=#{workNo}
+	</update>
+	
+	<update id="updateWorkDate">
+		<if test="date != null and date != ''">
+		update work set ${dateType} = to_date(#{date}, 'YYYY/MM/DD') where work_no = to_number(#{workNo})
+		</if>
+		<if test="date == null or date ==''">
+		update work set ${dateType} = null where work_no = to_number(#{workNo})
+		</if>
+	</update>
+	
+	<!-- 체크리스트 추가 -->
+	<insert id="insertCheckList">
+		insert into checklist values (seq_checklist.nextval, #{workNo}, #{checklistWriter},null,#{checklistContent},default,null,'N')
+		<selectKey keyProperty="checklistNo" resultType="_int" order="AFTER">
+			select seq_checklist.currval from dual
+		</selectKey>
+	</insert>
+	
+	<!-- insertChecklist.do : 뷰단 처리를 위한 insert한 체크리스트 객체 하나 가져오기 -->
+	<select id="selectOneChecklist" resultMap="checklistMap">
+		select C.*, WM.charged_member_id
+		from checklist C left join work_charged_members WM on C.checklist_charged_members_no = WM.work_charged_members_no
+		where C.checklist_no = #{checklistNo}
+	</select>
+	
+	<!-- updateWorkLocation.do : 업무 이동 -->
+	<update id="updateWorkLocation">
+		update work set worklist_no = #{worklistNo} where work_no = #{workNo}
+	</update>
+	
+	<!-- updateChkChargedMember.do : 체크리스트 배정 멤버 수정 -->
+	<update id="updateChkChargedMember">
+		update checklist 
+		<if test="memberId != null and memberId != ''">
+			set checklist_charged_members_no=(select work_charged_members_no from work_charged_members where charged_member_id=#{memberId} and work_no = to_number(#{workNo})) 
+		</if>
+		<if test="memberId == null or memberId == '' ">
+			set checklist_charged_members_no = null
+		</if>
+		where checklist_no = to_number(#{checklistNo})
+	</update>	
+	
+	<!-- deleteChecklist.do : 체크리스트 삭제 -->
+	<delete id="deleteChecklist">
+		delete from checklist where checklist_no = #{checklistNo}
+	</delete>
+	
+	<!-- updateDesc.do : 업무, 프로젝트 설명 수정 -->
+	<update id="updateDesc">
+		<if test="desc != '' and desc != null">
+			update ${type} set ${type}_desc= #{desc} where ${type}_no = to_number(#{no})
+		</if>
+		<if test="desc =='' or desc == null">
+			update ${type} set ${type}_desc= null where ${type}_no = to_number(#{no})
+		</if>
+	</update>
+	
+	<!-- updateTitle.do : 업무, 프로젝트 타이틀 수정 -->
+	<update id="updateTitle">
+			update ${type} set ${type}_title= #{title} where ${type}_no = to_number(#{no})
+	</update>
+	
+	<!-- insertWorkComment.do : 프로젝트 멤버 테이블 넘버 가져오기 -->
+	<select id="selectProjectMemberNo" resultType="_int">
+		select project_members_no from project_members where project_no=(select project_no from work w left join worklist wl on w.worklist_no = wl.worklist_no where w.work_no=to_number(#{workNo})) and member_id=#{memberId}
+	</select>
+	
+	<!-- insertWorkComment.do : 코멘트 추가 -->
+	<insert id="insertWorkComment">
+	<if test="workCommentRef != null and workCommentRef !=''">
+		insert into work_comment 
+		values(seq_work_comment.nextval,#{workNo},#{workCommentWriterNo},#{workCommentLevel},#{workCommentContent},default,#{workCommentRef})
+	</if>
+	<if test="workCommentRef == null or workCommentRef ==''">
+		insert into work_comment 
+		values(seq_work_comment.nextval,#{workNo},#{workCommentWriterNo},#{workCommentLevel},#{workCommentContent},default,null)
+	</if>
+		<selectKey keyProperty="workCommentNo" resultType="_int" order="AFTER">
+			select seq_work_comment.currval from dual
+		</selectKey>
+	</insert>
+	
+	<!-- deleteWorkComment.do : 코멘트 삭제 -->
+	<delete id="deleteWorkComment">
+		delete from work_comment where work_comment_no = #{commentNo}
+	</delete>
+	
+	<!-- insertWorkFile.do : 업무 파일 업로드 -->
+	<insert id="insertWorkFile">
+		insert into attachment values (seq_attachment.nextval,#{workNo},#{attachmentWriterNo},#{originalFilename},#{renamedFilename},default)
+	</insert>
+	
+	<resultMap id="memberResultMap" type="member">
+		<id column="member_id" property="memberId"></id>
+			<result column="password" property="password"></result>
+			<result column="member_name" property="memberName"></result>
+			<result column="email" property="email"></result>
+			<result column="phone" property="phone"></result>
+			<result column="date_of_birth" property="dateOfBirth"></result>
+			<result column="dept_code" property="deptCode"></result>
+			<result column="dept_title" property="deptTitle"></result>
+			<result column="job_code" property="jobCode"></result>
+			<result column="job_title" property="jobTitle"></result>
+			<result column="quit_yn" property="quitYn"></result>
+			<result column="manager_id" property="managerId"></result>
+			<result column="original_filename" property="originalFileName"></result>
+			<result column="renamed_filename" property="renamedFileName"></result>
+			<result column="manager_yn" property="managerYn"></result>
+			<result column="project_quit_yn" property="projectQuitYn"></result>
+	</resultMap>
+
 </mapper>

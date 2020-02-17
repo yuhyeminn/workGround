@@ -109,6 +109,25 @@
 	href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-bootstrap/main.min.css">
   <!-- Page Script -->
   <script>
+  $(function(){
+	 //전체 검색
+	 $("#btn-totalSearch").on('click', ()=>{
+		 let input = document.querySelector('input[name=totalSearchKeyword]');
+		 let keyword = $(input).val().trim();
+		 console.log(input);
+		 console.log(keyword);
+		 
+		 //유효성 검사
+		 if(keyword==""){
+			 alert("검색어를 입력해 주세요!");
+			 return;
+		 }
+		 
+		 location.href='${pageContext.request.contextPath}/search/searchList.do?keyword='+keyword;
+		 
+	 });
+  });
+  
   //목록 슬라이드토글
   function toggleList(obj){
     $(obj).next().slideToggle();
@@ -130,10 +149,10 @@
     <!-- SEARCH FORM -->
     <form class="form-inline ml-3">
       <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" placeholder="KHJAVA Co. 검색" aria-label="Search">
+        <input class="form-control form-control-navbar" type="search" name="totalSearchKeyword" placeholder="KHJAVA Co. 검색" aria-label="Search">
         <div class="input-group-append">
           <!-- <button class="btn btn-navbar" type="submit"> -->
-          <button class="btn btn-navbar" type="button" onclick="location.href='${pageContext.request.contextPath}/search/searchList.do'">
+          <button class="btn btn-navbar" type="button" id="btn-totalSearch">
             <i class="fas fa-search"></i>
           </button>
         </div>

@@ -35,6 +35,6 @@ public class Member implements Serializable {
 	private String originalFileName;
 	private String renamedFileName;
 	
+	private String managerYn; //프로젝트 멤버 테이블
 	private String projectQuitYn; //프로젝트 멤버 테이블
-	
 }

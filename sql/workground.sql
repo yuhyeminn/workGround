@@ -177,9 +177,8 @@ create table work(
     constraint ck_wokr_work_complete_yn check (work_complete_yn in ('Y','N')),
     constraint fk_work_work_no_ref foreign key(work_no_ref) references work(work_no) on delete cascade
 );
-select * from work;
-delete from work where work_no = 65;
-commit;
+--alter table work drop column 
+
 -----------------------------------------------------------------------
 --work테이블 시퀀스 생성
 -----------------------------------------------------------------------
@@ -204,7 +203,6 @@ CREATE SEQUENCE seq_work_charged_members;
 -----------------------------------------------------------------------
 --checklist 테이블
 -----------------------------------------------------------------------
---on delete set null 추가함 다시 만들기!!!
 create table checklist(
     checklist_no number not null,
     work_no number not null,
@@ -240,7 +238,6 @@ create table work_comment(
     constraint fk_work_comment_work_no foreign key (work_no) references work(work_no) on delete cascade,
     constraint fk_work_comment_ref foreign key (work_comment_ref) references work_comment(work_comment_no) on delete cascade
 );
-
 
 -----------------------------------------------------------------------
 --work_comment테이블 시퀀스 생성
@@ -471,8 +468,11 @@ insert into work values(seq_work.nextval, 4, '기능 정리하기', '기능 정�
 insert into work values(seq_work.nextval, 4, '테이블 설계하기', null, 5, sysdate-4, sysdate-2, null, default, 'WT1', null);
 insert into work values(seq_work.nextval, 4, '깃 클론 하기', 'danbiilee/workGround 클론하세요!', 2, sysdate-4, null, null, default, null, null);
 insert into work values(seq_work.nextval, 4, '.gitignore파일 만들기', null, 1, sysdate-4, sysdate-3, sysdate-3, 'Y', 'WT3', null);
+insert into work values(seq_work.nextval, 4, '완료된 업무 보기', null, 2, sysdate, sysdate, sysdate, 'Y', null, null);
+insert into work values(seq_work.nextval, 5, '테이블 수정 그만', '그만 고치자 제발......', 5, sysdate-3, sysdate+5, sysdate, 'Y', 'WT3', null);
 insert into work values(seq_work.nextval, 5, '테이블 만들기', 'insert문까지 얼른 끝냅시다', 5, sysdate-8, sysdate+2, null, default, 'WT3', null);
-insert into work values(seq_work.nextval, 6, '.gitignore파일 만들기', null, 0, sysdate-4, sysdate-3, sysdate-3, 'Y', 'WT3', 6);
+insert into work values(seq_work.nextval, 6, '완료된 업무 페이지 수정', 'view다시 뿌려야 해...', 5, sysdate-3, sysdate+2, null, default, 'WT1', null);
+insert into work values(seq_work.nextval, 6, '업무 검색기능', null, 0, sysdate-2, sysdate+1, sysdate-1, 'Y', null, null);
 -- 업무 배정된 멤버
 insert into work_charged_members values(seq_work_charged_members.nextval, 1, 'kh2020115');
 insert into work_charged_members values(seq_work_charged_members.nextval, 1, 'kh2020116');
@@ -492,6 +492,7 @@ insert into checklist values(seq_checklist.nextval,3,'kh2020122',121,'프로젝�
 insert into checklist values(seq_checklist.nextval,3,'kh2020122',121,'업무설정 기능 정리',default,null,'N');
 insert into checklist values(seq_checklist.nextval,3,'kh2020122',5,'파일첨부 기능 정리',default,null,'N');
 insert into checklist values(seq_checklist.nextval,7,'kh2020122',101,'on delete null잘 되나!?',default,null,'N');
+insert into checklist values(seq_checklist.nextval,7,'kh2020122',null,'테이블 수정 그만',default,null,'N');
 --업무 코멘트
 insert into work_comment values(seq_work_comment.nextval, 2, 5,1,'뭐드시나요?',default,null);
 insert into work_comment values(seq_work_comment.nextval, 2, 6,2,'뭐드시나요?',default,2);
@@ -500,15 +501,16 @@ insert into work_comment values(seq_work_comment.nextval, 3, 9,2,'오늘 안에 
 insert into work_comment values(seq_work_comment.nextval, 7, 10,1,'네 알겠습니다!',default,null);
 insert into work_comment values(seq_work_comment.nextval, 7, 11,1,'넵!',default,null);
 --업무 파일첨부
-insert into attachment values(seq_attachment.nextval,2,3,'test.jpg','test.jpg',sysdate);
-insert into attachment values(seq_attachment.nextval,3,10,'test.jpg','test.jpg',sysdate);
-insert into attachment values(seq_attachment.nextval,3,12,'ff.JPG','ff.JPG',sysdate);
-insert into attachment values(seq_attachment.nextval,6,13,'test.jpg','test.jpg',sysdate);
-insert into attachment values(seq_attachment.nextval,7,8,'fs.JPG','fs.JPG',sysdate);
+insert into attachment values(seq_attachment.nextval,2,3,'순무.jpg','test.jpg',sysdate);
+insert into attachment values(seq_attachment.nextval,3,10,'순무.jpg','test.jpg',sysdate);
+insert into attachment values(seq_attachment.nextval,3,12,'짱구.JPG','ff.JPG',sysdate);
+insert into attachment values(seq_attachment.nextval,5,8,'가이드.pdf','guide_java.pdf',sysdate); 
+insert into attachment values(seq_attachment.nextval,6,13,'테스트.txt','test.txt',sysdate);
+insert into attachment values(seq_attachment.nextval,142,8,'야구.JPG','fs.JPG',sysdate);
+insert into attachment values(seq_attachment.nextval,7,11,'신청서.hwp','application.hwp',sysdate);
+
 
 commit;
-
-
 
 --================================================
 --select문
@@ -517,7 +519,7 @@ commit;
 --------------------------------------------------
 select * from job;
 select * from department;
-select * from member;                                                                                                                                                                         
+select * from member;    
 
 --------------------------------------------------
 --project테이블 관련 select문
@@ -532,17 +534,21 @@ select * from project_important;
 --------------------------------------------------
 select * from worklist;
 select * from work_tag;
-select * from work;
+select * from work where worklist_no = 321;
 select * from work_charged_members;
 select * from checklist;
 select * from work_comment;
 select * from attachment;
+select * from work where work_no = 205;
+
 
 --------------------------------------------------
 --notice/community테이블 관련 select문
 --------------------------------------------------
 select * from notice;
 select * from community;
+
+
 
 
 --================================================
@@ -567,7 +573,7 @@ from project P left join project_status PS on P.project_status_code = PS.project
 --================================================
 create or replace view view_projectMember as
 select V.*, M.password, M.member_name, M.email, M.phone, M.date_of_birth, M.dept_code, M.job_code, M.quit_yn, M.manager_id, M.original_filename, M.renamed_filename, M.dept_title, M.job_title
-from (select P.*, PM.member_id, PM.project_quit_yn
+from (select P.*, PM.manager_yn,  PM.member_id, PM.project_quit_yn 
       from view_project P left join project_members PM on P.project_no = PM.project_no
       order by P.project_no desc) V 
       left join view_member M on V.member_id = M.member_id;
@@ -597,15 +603,25 @@ from community C left join member M on C.commu_writer = M.member_id;
 --drop view view_communityMember;
 --select * from view_communityMember;
 
+
 --================================================
 --트리거: 회원가입시 내 워크패드 생성
 --================================================
-create or replace trigger trg_member_register
+create or replace trigger trg_member_workpad
     after
     update on member
     for each row
+declare
+    vold_password varchar2(300) := :old.password;
+    vnew_password varchar2(300) := :new.password;
 begin
-    insert into project values(seq_project.nextval, :old.member_id, '나의 워크패드', 'Y', null, null, null, null, null);
+    --회원가입 한 경우
+    if vold_password = null then 
+        insert into project values(seq_project.nextval, :old.member_id, '나의 워크패드', 'Y', null, null, null, null, null);
+    --계정삭제 한 경우
+    elsif vnew_password = null then 
+        delete from project where project_writer = :old.member_id and private_yn = 'Y';
+    end if;
 end;
 /
 

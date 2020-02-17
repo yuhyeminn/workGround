@@ -1,16 +1,22 @@
 package com.kh.workground.project.controller;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,8 +26,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
+import com.kh.workground.project.model.vo.Attachment;
+import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
-import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
@@ -79,7 +87,7 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/projectView.do")
-	public ModelAndView projectView(ModelAndView mav, HttpSession session, @RequestParam int projectNo, 
+	public ModelAndView projectView(ModelAndView mav, HttpSession session, HttpServletRequest requset, @RequestParam int projectNo, 
 									@RequestParam(defaultValue="work", required=false) String tab) {
 		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
@@ -90,49 +98,58 @@ public class ProjectController {
 			//1-1. 해당 프로젝트 조회
 			Project p = projectService.selectProjectWorklistAll(projectNo, loggedInMemberId);
 			
-			//1-2. 프로젝트에 내가 속해있는지 여부
-			boolean bool = false;
-			List<Member> list = p.getProjectMemberList();
-			
-			for(Member m: list) {
-				String memId = m.getMemberId();
-				String yn = m.getProjectQuitYn();
-				if(loggedInMemberId.equals(memId) && yn.equals("N"))
-					bool = true;
-			}
-			
-			
-			//1-3.프로젝트 속함 여부에 따라 분기
-			if(bool) {
-				//프로젝트에 포함되어 있는 멤버리스트 다시 구하기
-				List<Member> inMemList = new ArrayList<>();
-				
-				for(Member m: list){
-					String yn = m.getProjectQuitYn();
-					if(yn.equals("N"))
-						inMemList.add(m);
-				}
-				
+			//1-2. 나의 워크패드인 경우/아닌 경우에 따라 분기
+			if("Y".equals(p.getPrivateYn())) {
 				//2. 뷰모델 처리
 				mav.addObject("project", p);
-				mav.addObject("allMemList", list);
-				mav.addObject("inMemList", inMemList);
 				mav.addObject("wlList", p.getWorklistList());
-				
-				logger.debug("allMemList={}", list);
-				logger.debug("inMemList={}", inMemList);
-				
-				//서브헤더 탭에 따라 분기
-				if("work".equals(tab))
-					mav.setViewName("/project/projectView");
-				else if("attach".equals(tab))
-					mav.setViewName("/project/projectAttachmentAjax");
+				mav.setViewName("/project/projectView");
 			}
 			else {
-				mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
-				mav.addObject("loc", "/project/projectList.do");
-				mav.setViewName("/common/msg");
-			}
+				//1-3. 프로젝트에 내가 속해있는지 여부
+				boolean bool = false;
+				List<Member> list = p.getProjectMemberList();
+				List<Member> inMemList = new ArrayList<>();
+				
+				for(Member m: list) {
+					String memId = m.getMemberId();
+					String yn = m.getProjectQuitYn();
+					if(loggedInMemberId.equals(memId) && yn.equals("N"))
+						bool = true;
+				}
+				
+				//프로젝트 속함 여부에 따라 분기
+				if(bool) {
+					//프로젝트에 포함되어 있는 멤버리스트 다시 구하기
+					for(Member m: list){
+						String yn = m.getProjectQuitYn();
+						if(yn.equals("N"))
+							inMemList.add(m);
+					}
+					
+					//2. 뷰모델 처리
+					mav.addObject("project", p);
+					mav.addObject("allMemList", list);
+					mav.addObject("inMemList", inMemList);
+					mav.addObject("wlList", p.getWorklistList());
+					
+					//서브헤더 탭에 따라 분기
+					if("work".equals(tab))
+						mav.setViewName("/project/projectView");
+					else if("attach".equals(tab))
+						mav.setViewName("/project/projectAttachment");
+					else if("timeline".equals(tab))
+						mav.setViewName("/project/projectTimeline");
+					
+				}
+				else {
+					String[] urlArr = requset.getHeader("referer").split("/");
+					mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
+					mav.addObject("loc", "/"+urlArr[4]+"/"+urlArr[5]);
+					mav.setViewName("/common/msg");
+				}
+				
+			} //end of 나의 워크패드가 아닌 경우 
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -181,9 +198,7 @@ public class ProjectController {
 	}
 	
 	@PostMapping("/project/addWorklist.do")
-	@ResponseBody
-	public Map<String, Integer> insertWorklist(@RequestParam int projectNo, @RequestParam String worklistTitle) {
-		Map<String, Integer> map = new HashMap<>();
+	public ModelAndView insertWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam String worklistTitle, @RequestParam String projectManager) {
 		
 		try {
 			//1.업무로직
@@ -191,22 +206,26 @@ public class ProjectController {
 			param.put("projectNo", projectNo);
 			param.put("worklistTitle", worklistTitle);
 			
-			int result = projectService.insertWorklist(param);
-			map.put("result", result);
+			//1-1. 업무리스트 추가하고, 그 업무리스트 가져오기 
+			Worklist wl = projectService.insertWorklist(param);
+			
+			//2.뷰모델 처리
+			mav.addObject("wl", wl);
+			mav.addObject("projectManager", projectManager);
+			mav.setViewName("/project/ajaxWorklist");
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("업무리스트 생성 오류!");
 		}
 		
-		return map;
+		return mav;
 	}
 	
 	@PostMapping("/project/deleteWorklist.do")
 	@ResponseBody
 	public Map<String, Integer> deleteWorklist(@RequestParam int worklistNo) {
 		Map<String, Integer> map = new HashMap<>();
-		logger.debug("worklistNo={}", worklistNo);
 		
 		try {
 			//1.업무로직
@@ -221,20 +240,14 @@ public class ProjectController {
 		return map;
 	}
 	
-	@PostMapping("/project/insertWork")
-	@ResponseBody
-	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="worklistNo") int worklistNo, 
+	@PostMapping("/project/insertWork.do")
+	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="projectManager") String projectManager,
+										   @RequestParam(value="projectNo") int projectNo, 
+									       @RequestParam(value="worklistNo") int worklistNo, 
 										   @RequestParam(value="workTitle") String workTitle,
 										   @RequestParam(value="workChargedMember[]", required=false) List<String> workChargedMember,
 										   @RequestParam(value="workTag", required=false) String workTag,
 										   @RequestParam(value="workDate[]", required=false) List<String> workDate){
-		
-		//Map<String, Object> map = new HashMap<>();
-		logger.debug("worklistNo={}", worklistNo);
-		logger.debug("workTitle={}", workTitle);
-		logger.debug("workChargedMember={}", workChargedMember);
-		logger.debug("workTag={}", workTag);
-		logger.debug("workDate={}", workDate);
 		
 		try {
 			//1.업무로직
@@ -255,26 +268,237 @@ public class ProjectController {
 			//1-2.추가
 			int result = projectService.insertWork(param);
 			
-			//1-3.방금 추가된 업무 객체 가져오기 
-			Work work = projectService.selectWorkOne();
-			//logger.debug("work={}", work);
+			//1-3.업무리스트 가져오기
+			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
 			
-			//map.put("result", result);
-			//map.put("work", work);
-			mav.addObject("w", work);
-			mav.setViewName("/project/addWorkAjax");
+			//1-4.프로젝트에 속한 멤버
+			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
+			
+			//2.뷰모델 처리
+			mav.addObject("wl", wl);
+			mav.addObject("inMemList", inMemList);
+			mav.addObject("projectManager", projectManager);
+			mav.setViewName("/project/ajaxWork");
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("새 업무 만들기 오류!");
 		}
 		
-		//return map;
 		return mav;
 	}
 	
+	@PostMapping("/project/updateChklistCompleteYn.do")
+	@ResponseBody
+	public Map<String, Integer> updateChklistCompleteYn(@RequestParam String completeYn, @RequestParam int checklistNo) {
+		Map<String, Integer> map = new HashMap<>();
+		
+		try {
+			Map<String, Object> param = new HashMap<>();
+			param.put("checklistNo", checklistNo);
+			
+			//체크리스트 완료하는 경우
+			if("N".equals(completeYn)) {
+				Date today = new Date();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				
+				param.put("completeYn", "Y");
+				param.put("endDate", sdf.format(today));
+			}
+			//체크리스트 완료 해제하는 경우
+			else {
+				param.put("completeYn", "N");
+				param.put("endDate", null);
+			}
+				
+			//업무로직
+			int result = projectService.updateChklistCompleteYn(param);
+			map.put("result", result);	
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("체크리스트 완료여부 업데이트 오류!");
+		}
+		return map;
+	}
+	
+	@RequestMapping("/project/searchWork")
+	public ModelAndView searchWork(ModelAndView mav, @RequestParam int projectNo, @RequestParam String keyword, @RequestParam String memberId) {
+		
+		try {
+			//1.업무로직
+			Project p = projectService.searchWork(projectNo, keyword);
+			
+			//2.뷰모델 처리
+			mav.addObject("keywordBefore", keyword);
+			mav.addObject("project", p);
+			mav.addObject("wlList", p.getWorklistList());
+			mav.setViewName("/project/ajaxWorkSearch");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 검색 오류!");
+		}
+		
+		return mav;
+	}
+	
+	@PostMapping("/project/deleteWork.do")
+	public ModelAndView deleteWork(ModelAndView mav, @RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo,
+									@RequestParam int cntChk, @RequestParam int cntComment, @RequestParam int cntFile,
+									@RequestParam String projectManager) {
+		
+		try {
+			//1.workNo를 참조하고 있는 체크리스트, 코멘트, 파일 삭제
+			int delChkResult = 0;
+			int delCommentResult = 0;
+			int delAttachResult = 0;
+			
+			if(cntChk>0) {
+				logger.debug("cntChk>0");
+				delChkResult = projectService.deleteChecklistByWorkNo(workNo, cntChk);
+			}
+			if(cntComment>0)
+				delCommentResult = projectService.deleteCommentByWorkNo(workNo, cntComment);
+			if(cntFile>0)
+				delAttachResult = projectService.deleteAttachByWorkNo(workNo, cntFile);
+			
+			//2.업무 삭제
+			int result = 0;
+			if(delChkResult==cntChk && delCommentResult==cntComment && delAttachResult==cntFile) {
+				result = projectService.deleteWork(workNo);
+			}
+			
+			//1-3. 업무가 삭제된 업무리스트 가져오기
+			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
+			
+			//1-4.프로젝트에 속한 멤버
+			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
+			
+			mav.addObject("wl", wl);
+			mav.addObject("inMemList", inMemList);
+			mav.addObject("projectManager", projectManager);
+			mav.setViewName("/project/ajaxWork");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무리스트 삭제 오류!");
+		}
+		
+		return mav;
+	}
+	
+	@PostMapping("/project/updateWorkCompleteYn.do")
+	public ModelAndView updateWorkCompleteYn(ModelAndView mav, 
+											 @RequestParam String projectManager, @RequestParam String completeYn, 
+											 @RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo) {
+		
+		try {
+			//1.업무로직
+			//1-1.파라미터 담기
+			Map<String, Object> param = new HashMap<>();
+			param.put("workNo", workNo);
+			
+			//업무 완료하는 경우
+			if("N".equals(completeYn)) {
+				Date today = new Date();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				
+				param.put("completeYn", "Y");
+				param.put("realEndDate", sdf.format(today));
+			}
+			//완료 해제하는 경우
+			else {
+				param.put("completeYn", "N");
+				param.put("realEndDate", null);
+			}
+			
+			//1-2.완료여부 업데이트하기
+			int result = projectService.updateWorkCompleteYn(param);
+			
+			//1-3.변동된 worklist가져오기
+			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
+			
+			//1-4.프로젝트에 속한 멤버
+			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
+			
+			//2.뷰모델 처리
+			mav.addObject("wl", wl);
+			mav.addObject("inMemList", inMemList);
+			mav.addObject("projectManager", projectManager);
+			mav.setViewName("/project/ajaxWork");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무완료 업데이트 오류!");
+		}
+		
+		return mav;
+	}
+	
+	@RequestMapping("/project/downloadFile.do")
+	public ModelAndView downloadFile(HttpServletRequest request, HttpServletResponse response,
+									 @RequestParam String oName, @RequestParam String rName) throws Exception {
+		
+		//1.파일 찾기
+		String saveDir = request.getSession().getServletContext().getRealPath("/resources/img/project");
+		File downloadFile = new File(saveDir+File.separator+rName);
+		
+		if(!downloadFile.canRead())
+			throw new ProjectException("다운로드할 파일을 찾을 수 없습니다!");
+		
+		//2.뷰모델처리
+		ModelMap model = new ModelMap();
+		model.put("downloadFile", downloadFile);
+		model.put("oName", oName);
+		
+		return new ModelAndView("downloadView", "model", model);
+	}
+	
+	@PostMapping("/project/deleteFile")
+	@ResponseBody
+	public Map<String, String> deleteFile(HttpServletRequest request, @RequestParam int attachNo, @RequestParam String rName){
+		Map<String, String> map = new HashMap<>();
+		
+		try {
+			//1.파일삭제
+			String saveDir = request.getSession().getServletContext().getRealPath("/resources/img/project");
+			File delFile = new File(saveDir+File.separator+rName);
+			
+			boolean bool = delFile.delete();
+			int result = 0;
+			
+			//2.업무로직
+			//파일삭제 성공한 경우
+			if(bool) {
+				result = projectService.deleteFile(attachNo);
+				if(result==1)
+					map.put("result", "success");
+				else
+					map.put("result", "fail");
+			}
+			//파일삭제 실패한 경우
+			else {
+				map.put("result", "fail");
+			}
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("파일삭제 오류!");
+		}
+		
+		return map;
+	}
+	
+	
+	
+	
+	
+	
+	
 	@RequestMapping("/project/projectAnalysis.do")
 	public ModelAndView projectAnalysis(ModelAndView mav) {
+		
 		
 		mav.setViewName("/project/projectAnalysis");
 		

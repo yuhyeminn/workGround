@@ -11,9 +11,11 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.controller.ProjectController2;
+import com.kh.workground.project.model.vo.Attachment;
 import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
+import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 
 @Repository
@@ -44,8 +46,8 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	}
 
 	@Override
-	public List<Member> selectMemberListByDeptCode(Member memberLoggedIn) {
-		return sqlSession.selectList("project.selectMemberListByDeptCode", memberLoggedIn);
+	public List<Member> selectMemberListByManagerId(String projectWriter) {
+		return sqlSession.selectList("project.selectMemberListByManagerId", projectWriter);
 	}
 
 	@Override
@@ -74,8 +76,8 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	}
 
 	@Override
-	public List<Member> selectProjectManagerByDept(String projectWriter) {
-		return sqlSession.selectList("project.selectProjectManagerByDept",projectWriter);
+	public List<Member> selectProjectManagerByDept(String projectManager) {
+		return sqlSession.selectList("project.selectProjectManagerByDept",projectManager);
 	}
 
 	@Override
@@ -100,6 +102,120 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	public List<Worklist> selectWorklistListByProjectNo(int projectNo) {
 		return sqlSession.selectList("project.selectWorklistListbyProjectNo", projectNo);
 	}
-	
+
+	@Override
+	public int updateStatusCode(Map<String, Object> param) {
+		return sqlSession.update("project.updateStatusCode", param);
+	}
+
+	@Override
+	public List<Attachment> selectAttachmentListByWorkNo(int workNo) {
+		return sqlSession.selectList("project.selectAttachmentListByWorkNo",workNo);
+	}
+
+	@Override
+	public List<WorkComment> selectWorkCommentListByWorkNo(int workNo) {
+		return sqlSession.selectList("project.selectWorkCommentListByWorkNo",workNo);
+	}
+
+	@Override
+	public int updateProjectDate(Map<String, String> param) {
+		return sqlSession.update("project.updateProjectDate", param);
+	}
+
+	@Override
+	public List<Member> selectProjectMemberIdList(int projectNo) {
+		return sqlSession.selectList("project.selectProjectMemberIdList", projectNo);
+	}
+
+	@Override
+	public int updateProjectQuit(Map<String, String> param) {
+		return sqlSession.update("project.updateProjectQuit", param);
+	}
+
+	@Override
+	public int updateProjectManager(Map<String, String> param) {
+		return sqlSession.update("project.updateProjectManager",param);
+	}
+
+	@Override
+	public int insertWorkMember(Map<String, String> param) {
+		return sqlSession.insert("project.insertWorkMember",param);
+	}
+
+	@Override
+	public int deleteWorkMember(Map<String, String> param) {
+		return sqlSession.delete("project.deleteWorkMember",param);
+	}
+
+	@Override
+	public int updateWorkTag(Map<String, Object> param) {
+		return sqlSession.update("project.updateWorkTag",param);
+	}
+
+	@Override
+	public int updateWorkPoint(Map<String, Integer> param) {
+		return sqlSession.update("project.updateWorkPoint",param);
+	}
+
+	@Override
+	public int updateWorkDate(Map<String, String> param) {
+		return sqlSession.update("project.updateWorkDate",param);
+	}
+
+	@Override
+	public int insertCheckList(Checklist chk) {
+		return sqlSession.insert("project.insertCheckList",chk);
+	}
+
+	@Override
+	public Checklist selectOneChecklist(int checklistNo) {
+		return sqlSession.selectOne("project.selectOneChecklist",checklistNo);
+	}
+
+	@Override
+	public int updateWorkLocation(Map<String, Integer> param) {
+		return sqlSession.update("project.updateWorkLocation",param);
+	}
+
+	@Override
+	public int updateChkChargedMember(Map<String, String> param) {
+		return sqlSession.update("project.updateChkChargedMember",param);
+	}
+
+	@Override
+	public int deleteChecklist(int checklistNo) {
+		return sqlSession.delete("project.deleteChecklist",checklistNo);
+	}
+
+	@Override
+	public int updateDesc(Map<String, String> param) {
+		return sqlSession.update("project.updateDesc",param);
+	}
+
+	@Override
+	public int updateTitle(Map<String, String> param) {
+		return sqlSession.update("project.updateTitle",param);
+	}
+
+	@Override
+	public int insertWorkComment(WorkComment wc) {
+		return sqlSession.insert("project.insertWorkComment",wc);
+	}
+
+	@Override
+	public int selectProjectMemberNo(Map<String, String> param) {
+		return sqlSession.selectOne("project.selectProjectMemberNo",param);
+	}
+
+	@Override
+	public int deleteWorkComment(int commentNo) {
+		return sqlSession.delete("project.deleteWorkComment",commentNo);
+	}
+
+	@Override
+	public int insertWorkFile(Attachment attach) {
+		return sqlSession.insert("project.insertWorkFile",attach);
+	}
 
 }

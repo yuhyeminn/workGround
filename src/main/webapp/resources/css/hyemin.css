@@ -1,3 +1,26 @@
+.work-custom-file:hover {
+    height: 2.3rem;
+    transform: none;
+}
+
+.reply-work-ref-writer{background: #17a2b8; color: white;padding: 2px;border-radius: 5px;margin-right: 5px;}
+.reply-work-ref-content{float: right;width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;display: inline-block;}
+.reply-work-ref{background: #f8f9fa;padding: 7px 5px;margin-bottom: 10px;border-radius: 5px;font-size: 14px;width: 95%;display: inline-block;}
+.reply-work-ref-wrapper{display:none}
+
+
+#desc{border: none;padding: 5px;width: 80%;}
+#title{border: none;width: 80%;background:#e7e7e7;}
+.edit-description{display:none;}
+.update-description:hover{color:black;}
+.update-description{color: #696f7a;width:30px;}
+.update-title{color: #696f7a;width:30px;float:right;font-size:14px;display:none}
+.update-side-title:hover{background: #e7e7e7;cursor: pointer;}
+.update-side-title:hover .update-title{display:initial;}
+.update-title-btn{color: #696f7a;width:30px;float:right;font-size:14px;}
+.edit-side-title{display:none;background:#e7e7e7;}
+
+
 .wrapper{background: #f8f9fa;}
 
 .add-project button{color:white;border:none;padding:0.35rem 0.5rem;margin-right:1rem;border-radius: 0.25rem;}
@@ -274,13 +297,13 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
     width: 475px;
     transition: right .3s ease-in-out,display .3s ease-in-out;
 }
-.setting-side-title{font-size:18px; font-weight: bold; margin-left:5px;}
-.setting-contents-inform{font-size:.8rem;margin-left:25px;}
+.setting-side-title{font-size:18px; font-weight: bold; margin-left:10px;}
+.setting-contents-inform{font-size:.8rem;margin-left:10px;}
 .setting-contents-inform .setting-contents-date{color:rgb(180, 183, 185);}
 .project-setting-tabs .nav-item{width:100%}
 .project-setting-tabs .nav-item button{width:100%}
-.p-setting-container{padding:20px;}
-.setting-row{padding:10px;}
+.p-setting-container{padding: 0px 20px;}
+.setting-row{padding:15px 0px;}
 .add-description{color:#17a2b8;}
 .add-description:hover{background: #e7e7e7;cursor: pointer;}
 .tab-content{background:#f3f4f5; font-size:15px;height:100%;}
@@ -331,10 +354,12 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .checklist-box-row .tbl-checklist td{font-size: 14px;}
   .checklist-box-row .tbl-checklist td img{width:25px;margin-right: .5rem;}
   .checklist-box-row .tbl-checklist td div.ico-profile{width:25px;height:25px;margin-right: .5rem;text-align: center;background-color: #e7e7e7;}
-  .checklist-box-row .tbl-checklist tfoot{border-top: 3px double rgb(248, 188, 182);}
+  #chk-add-tr{border-top: 3px double rgb(248, 188, 182);}
   .btn-add-checklist{padding: .3rem .5rem;background: transparent;color: #d4d6db;}
-  #checklist-content{border:none;font-size: 16px;width: 365px;}
+  #checklist-content{border:none;font-size: 16px;width: 20rem;}
   #checklist-content:focus {outline:none;}
+  .delete-checklist{color:gray;display:none;}
+  .checklist-box-row .tbl-checklist tr:hover .delete-checklist{display:initial;}
 
   /* Middle navbar links */
   .setting- button{display: inline-block; height: 46px; padding: 0 .8rem; border: 0; color: #696f7a; font-size: .85rem; background: transparent;}
@@ -342,14 +367,14 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .setting-navbar-tab button:active, .navbar-tab button:focus{outline: none; border-bottom: 2px solid #007bff; color: #007bff;}
    
   /*업무 코멘트 탭*/
-  .comment-box{height:500px;overflow-y: scroll;border:1px solid #e7e7e7;font-size:14px;}
+  .comment-box{height:500px;overflow-y: scroll;/* border:1px solid #e7e7e7; */font-size:14px;}
   .comment-level2{margin-left: 3rem;}
   .comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93);}
-  .comment-text-area{display: inline-block; width: 85%; height: 2rem; margin-right: .3rem;}
+  .comment-text-area{display: inline-block; width: 83%; height: 2rem; margin-right: .3rem;}
   .comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
   .comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
-  .comment-submit{border: 0; background: darkgray; border-radius: 3px; width: 3rem; height: 2rem; color: white;}
-  .comment-submit:hover, .comment-delete:hover, .comment-reply:hover{background: #007bff;}
+  .comment-submit{border: 0;background: darkgray;border-radius: 3px;width: 3.5rem;height: 3.3rem;color: white;float: right;}
+  .comment-submit:hover, .comment-delete:hover, .comment-reply:hover{background-color:#17a2b8;}
 
   /* 업무 파일 탭*/
   .work-file-upload-box{margin-bottom:20px;font-size:14px;}
