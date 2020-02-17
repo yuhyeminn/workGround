@@ -577,6 +577,8 @@ from (select P.*, PM.manager_yn,  PM.member_id, PM.project_quit_yn
       from view_project P left join project_members PM on P.project_no = PM.project_no
       order by P.project_no desc) V 
       left join view_member M on V.member_id = M.member_id;
+<<<<<<< HEAD
+=======
 
 --================================================
 --뷰: work + work_tag
@@ -602,6 +604,7 @@ select C.*, M.member_name, M.renamed_filename
 from community C left join member M on C.commu_writer = M.member_id; 
 --drop view view_communityMember;
 --select * from view_communityMember;
+>>>>>>> master
 
 
 --================================================

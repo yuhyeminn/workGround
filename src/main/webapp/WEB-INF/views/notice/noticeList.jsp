@@ -37,10 +37,10 @@ div.modal-dialog{max-width: 50%;}
 .noticeView, .deptNoticeView, .boardView{margin-bottom: 1rem;}
 .user-block{float: none;}
 .view-img{width: 100%; display: block; margin: 0 auto;}
-.deptNoticeView>.view-title, .boardView>.view-title{margin-bottom: .5rem;}
+.noticeView>.view-title, .deptNoticeView>.view-title, .boardView>.view-title{margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 1px solid lightgray;}
 p.view-title{font-size: 1.2rem; font-weight: bold;}
 p.view-content{margin: 1rem 1rem 2.5rem;}
-.comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93);}
+.comment-count{margin: 2.5rem 0 0.5rem; color: rgb(93, 93, 93);}
 .comment-text-area{display: inline-block; width: 90%; height: 2rem; margin-right: .3rem;}
 .comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
 .comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
@@ -55,14 +55,60 @@ p.view-content{margin: 1rem 1rem 2.5rem;}
 
 .fname{background: white; position: relative; bottom: 1.5rem; left: 4.6rem; padding-right:10rem;}
 .deleteFileSpan{position: absolute; left: 2.4rem; bottom: 0.8rem;}
+/* 답글 텍스트 */
+form.comment-level2{margin: 1rem 0 1rem 7rem;}
+.comment-submit-level2{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white; height: 2rem; width: 2.5rem}
+.comment-submit-level2:hover{background: #007bff;}
+div.level-2-border{border-bottom: 1px solid #e9ecef;}
+/*검색*/
+div#searchLine{color: rgba(0,0,0,.5); margin: 1rem 0 -0.5rem; font-size: 1.2rem; padding: 0; display:none;font-size: 1rem; font-weight: bold;}
+#searchLine>h6, span#searchCount{font-size: 1rem; font-weight: bold;}
+
 </style>
 
 <script>
+var nowSearchKeyword = '';
+
 $(function(){
-  // Summernote
-  $('.textarea').summernote();
+	
+	// Summernote
+  	$('.textarea').summernote();
   
-  sidebarActive(); //사이드바 활성화
+  	sidebarActive(); //사이드바 활성화
+  
+  	//첨부파일 수정 시
+	$("[name=updateFile]").change(function(){
+		console.log($(this).val());
+		console.log($(".fname"));
+		var filename = $(this).val();
+		if($(this).val() != ""){
+			console.log("zz");
+	 		//$(".fname").hide();
+	 		$(".fname").html(filename.substring(filename.lastIndexOf("\\")+1));
+			$("#delFileChk").hide().next().hide();
+		}else{
+			$(".fname").show();
+			console.log("aa");
+			$("#delFileChk").show().next().show();
+		}
+	})
+	
+ 	var sortMenu = $("#sort-now").text().trim();
+  	sortByMenu(sortMenu);
+	
+	//정렬(업데이트순/이름순) 클릭 시
+	$("#sort-menu a").click(function(){
+		$("#sort-now").text($(this).text());
+		
+		//검색어가 있다면 noticeSearch에서 정렬까지 처리
+		if(nowSearchKeyword != ''){
+			noticeSearch(nowSearchKeyword);			
+		} else {
+			sortByMenu($(this).text());
+		}
+		
+	});
+  
 });
 
 //사이드바 활성화
@@ -78,37 +124,399 @@ function sidebarActive(){
 	$("#sidebar-notice").addClass("active");
 }
 
+//정렬
+function sortByMenu(sortMenu){
+
+	$.ajax({
+		url: "${pageContext.request.contextPath}/notice/noticeListBySort.do",
+		data: {sortMenu : sortMenu},
+		dataType: "json",
+		type: "GET",
+		success: data => {
+			console.log(data);
+
+			listAjax(data);
+		},
+		error: (x,s,e)=> {
+			console.log(x,s,e);
+		}
+		
+	}); //ajax
+	
+}
+
+//공지 및 게시글 검색
+function noticeSearch(searchKeyword){
+	
+	if(searchKeyword.trim().length == 0){
+		alert("검색어를 입력하지 않으셨습니다.");
+		return;
+	}
+
+	//검색창 초기화
+	$("#noticeSearchKeyword").val('');
+	//검색어 변수에 검색어 저장(정렬 시 검색어 있는지 구분하기 위해)
+	nowSearchKeyword = searchKeyword;
+	//현재 정렬 메뉴
+	var sortMenu = $("#sort-now").text().trim();
+	
+	//검색 결과 수 표시
+	$("#searchLine").css("display", "block");
+	$("#searchLine>h6").css("display", "inline");
+	$("#searchLine>h6").text("'"+searchKeyword+"' 검색결과 ");
+	
+	$.ajax({ 
+		url: "${pageContext.request.contextPath}/notice/searchNoticeList.do",
+		data: {searchKeyword : searchKeyword, sortMenu : sortMenu},
+		dataType: "json",
+		type: "GET",
+		success: data => {
+			console.log(data);
+			
+			var searchCount = Object.keys(data.noticeList).length + Object.keys(data.deptNoticeList).length + Object.keys(data.communityList).length;
+			$("#searchCount").text('총 '+searchCount+'건');
+			
+			listAjax(data);
+			$(".btn-add").css("display", "none"); //추가 버튼 없애기
+		},
+		error: (x,s,e) => {
+			console.log(x,s,e);
+		}
+	});
+	
+}
+
+//리스트 ajax 처리
+function listAjax(data){
+	
+	$(".notice-area").html('');		
+	$(".myDeptNotice-area").html('');
+	$(".board-area").html('');	
+	
+	$(".notice-area").css("margin-bottom", "0");
+	$(".myDeptNotice-area").css("margin-bottom", "0");
+	$(".board-area").css("margin-bottom", "0");
+	
+	//#1 전체공지(noticeList)
+	//$(".notice-area").html
+	let noticeHtml = '';
+	
+	//헤더
+	noticeHtml += '<div class="header-line"><h6><i class="fas fa-exclamation-circle"></i>&nbsp; 전체 공지 '
+					+'<span class="header-count">('+Object.keys(data.noticeList).length+')</span>'
+					+'<i class="fas fa-plus-square btn-add" data-toggle="modal" data-target="#addNoticeModal"';	
+	if('${memberLoggedIn.jobTitle}' == '관리자'){
+		noticeHtml += 'style = "display:block";></i></h6></div>';
+	}
+	else{
+		noticeHtml += 'style = "display:none";></i></h6></div>';
+	}
+	
+	//슬라이드 바
+	noticeHtml += '<div id="notice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">'
+					+'<ol class="carousel-indicators">';
+	//리스트 null 아닐 시 첫 번째 바는 무조건 나옴
+	if(data.noticeList != null){
+		noticeHtml += '<li data-target="#notice_indicators" data-slide-to="0" class="active"></li>';
+	}
+	
+	for(var i=1; i< Math.ceil(Object.keys(data.noticeList).length/4); i++){
+		noticeHtml += '<li data-target="#notice_indicators" data-slide-to="'+i+'"></li>';
+	}
+	
+	noticeHtml += '</ol><div class="carousel-inner">';
+	
+	$.each(data.noticeList, (idx, list)=>{
+		
+		if(idx+1 == 1){
+			noticeHtml += '<div class="row card-content carousel-item active">'; 
+		}
+		
+		if((idx+1)%4 == 1 && (idx+1) != 1){
+			noticeHtml += '<div class="row card-content carousel-item">'; 
+		}
+		
+		//카드부분
+		noticeHtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card">';
+		//: 버튼
+		noticeHtml += '<div class="dropleft">'
+						+'<button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"';
+		if('${memberLoggedIn.memberId}' == 'admin'){
+			noticeHtml += 'style = "display:block";>';
+		}
+		else{
+			noticeHtml += 'style = "display:none";>';
+		}
+		noticeHtml += '<i class="fas fa-ellipsis-v"></i></button>';
+
+		//수정, 삭제 메뉴
+		noticeHtml += '<div class="dropdown-menu">'
+						+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal'+list.noticeNo+'">공지 수정</a>'
+						+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item">공지 삭제</a>'
+						+'</div></div>';
+		
+		//카드 바디
+		noticeHtml += '<div class="card-body" data-toggle="modal" data-target="#noticeViewModal'+list.noticeNo+'">';
+		//이미지
+		if(list.noticeRenamedFileName != null && list.noticeRenamedFileName.trim().length != 0){
+			noticeHtml += '<img src="${pageContext.request.contextPath}/resources/upload/notice/'+list.noticeRenamedFileName+'" class="card-img-top">';
+		}
+		
+		//카드 제목, 내용
+		noticeHtml += '<h5 class="card-title">'+list.noticeTitle+'</h5>'
+						+'<p class="card-text">'+list.noticeContent+'</p></div></div></div>';
+		
+		if((idx+1)%4 == 0 || (idx+1) == Object.keys(data.noticeList).length){
+			noticeHtml += '</div>';
+		}
+		
+	});//$.each(noticeList)
+	
+	//슬라이드 화살표
+	noticeHtml += '</div><i class="fas fa-angle-left slide-arrow slide-arrow-left" data-target="#notice_indicators" data-slide="prev"></i>';
+	noticeHtml += '<i class="fas fa-angle-right slide-arrow slide-arrow-right" data-target="#notice_indicators" data-slide="next"></i></div>';
+	
+	
+	//#2 부서 게시글(deptNoticeList)
+	//$(".myDeptNotice-area").html
+	let deptNoticeHtml = '';
+	
+	//헤더
+	deptNoticeHtml += '<div class="header-line"><h6><span id="myDept"><i class="fas fa-user"></i> &nbsp;'
+	if('${memberLoggedIn.deptCode}' == 'D1'){
+		deptNoticeHtml += '기획</span>&nbsp; 기획부 게시글 ';
+	} else if('${memberLoggedIn.deptCode}' == 'D2'){
+		deptNoticeHtml += '디자인</span>&nbsp; 디자인부 게시글 ';
+	} else {
+		deptNoticeHtml += '개발</span>&nbsp; 개발부 게시글 ';
+	}
+	
+	deptNoticeHtml += '<span class="header-count">('+Object.keys(data.deptNoticeList).length+')</span>'
+						+'<i class="fas fa-plus-square btn-add" data-toggle="modal" data-target="#addNoticeForDeptModal"></i></h6></div>';
+	
+	//슬라이드 바
+	deptNoticeHtml += '<div id="myDeptNotice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">'
+					+'<ol class="carousel-indicators">';
+	//리스트 null 아닐 시 첫 번째 바는 무조건 나옴
+	if(data.deptNoticeList != null && Object.keys(data.deptNoticeList).length != 0){
+		deptNoticeHtml += '<li data-target="#myDeptNotice_indicators" data-slide-to="0" class="active"></li>';
+	}
+	
+	for(var i=1; i< Math.ceil(Object.keys(data.deptNoticeList).length/4); i++){
+		deptNoticeHtml += '<li data-target="#myDeptNotice_indicators" data-slide-to="'+i+'"></li>';
+	}
+	
+	deptNoticeHtml += '</ol><div class="carousel-inner">';
+	
+	
+	$.each(data.deptNoticeList, (idx, list)=>{
+		
+		if(idx+1 == 1){
+			deptNoticeHtml += '<div class="row card-content carousel-item active">'; 
+		}
+		
+		if((idx+1)%4 == 1 && (idx+1) != 1){
+			deptNoticeHtml += '<div class="row card-content carousel-item">'; 
+		}	
+
+		//카드부분
+		deptNoticeHtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card">';
+		//: 버튼
+		deptNoticeHtml += '<div class="dropleft">'
+						+'<button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"';
+		if('${memberLoggedIn.memberId}' == list.noticeWriter || '${memberLoggedIn.memberId}' == 'admin'){
+			deptNoticeHtml += 'style = "display:block";>';
+		}
+		else{
+			deptNoticeHtml += 'style = "display:none";>';
+		}
+		
+		deptNoticeHtml += '<i class="fas fa-ellipsis-v"></i></button>';
+
+ 		//수정, 삭제 메뉴
+		deptNoticeHtml += '<div class="dropdown-menu">'
+						+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateDeptNoticeModal'+list.noticeNo+'">게시글 수정</a>'
+						+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item">게시글 삭제</a>'
+						+'</div></div>';
+		
+		//카드 바디
+		deptNoticeHtml += '<div class="card-body" data-toggle="modal" data-target="#myDeptNoticeViewModal'+list.noticeNo+'">';
+		//이미지
+		if(list.noticeRenamedFileName != null && list.noticeRenamedFileName.trim().length != 0){
+			deptNoticeHtml += '<img src="${pageContext.request.contextPath}/resources/upload/notice/'+list.noticeRenamedFileName+'" class="card-img-top">';
+		}
+		
+		//카드 제목, 내용
+		deptNoticeHtml += '<h5 class="card-title">'+list.noticeTitle+'</h5>'
+						+'<p class="card-text">'+list.noticeContent+'</p></div></div></div>';
+		
+		if((idx+1)%4 == 0 || (idx+1) == Object.keys(data.deptNoticeList).length){
+			deptNoticeHtml += '</div>';
+		}
+		
+	}); //$.each(deptNoticeList)
+	
+	//슬라이드 화살표
+	deptNoticeHtml += '</div><i class="fas fa-angle-left slide-arrow slide-arrow-left" data-target="#myDeptNotice_indicators" data-slide="prev"></i>';
+	deptNoticeHtml += '<i class="fas fa-angle-right slide-arrow slide-arrow-right" data-target="#myDeptNotice_indicators" data-slide="next"></i></div>';
+
+	
+
+	//#3 커뮤니티(communityList)
+	//$(".board-area").html
+	let communityHtml = '';
+	
+	//헤더
+	communityHtml += '<div class="header-line"><h6><i class="fas fa-sticky-note"></i>&nbsp; 커뮤니티 '
+					+'<span class="header-count">('+Object.keys(data.communityList).length+')</span>'
+					+'<i class="fas fa-plus-square btn-add" data-toggle="modal" data-target="#addBoardModal"></i></h6></div>';	
+	//슬라이드 바
+	communityHtml += '<div id="board_indicators" class="carousel slide" data-ride="carousel" data-interval="false">'
+					+'<ol class="carousel-indicators">';
+	//리스트 null 아닐 시 첫 번째 바는 무조건 나옴
+	if(data.communityList != null){
+		communityHtml += '<li data-target="#board_indicators" data-slide-to="0" class="active"></li>';
+	}
+	
+	for(var i=1; i< Math.ceil(Object.keys(data.communityList).length/4); i++){
+		communityHtml += '<li data-target="#board_indicators" data-slide-to="'+i+'"></li>';
+	}
+	
+	communityHtml += '</ol><div class="carousel-inner">';
+	
+	$.each(data.communityList, (idx, list)=>{
+		
+		if(idx+1 == 1){
+			communityHtml += '<div class="row card-content carousel-item active">'; 
+		}
+		
+		if((idx+1)%4 == 1 && (idx+1) != 1){
+			communityHtml += '<div class="row card-content carousel-item">'; 
+		}	
+
+		//카드부분
+		communityHtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card">';
+		//: 버튼
+		communityHtml += '<div class="dropleft">'
+						+'<button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"';
+		if('${memberLoggedIn.memberId}' == list.commuWriter || '${memberLoggedIn.memberId}' == 'admin'){
+			communityHtml += 'style = "display:block";>';
+		}
+		else{
+			communityHtml += 'style = "display:none";>';
+		}
+		
+		communityHtml += '<i class="fas fa-ellipsis-v"></i></button>';
+
+ 		//수정, 삭제 메뉴
+		communityHtml += '<div class="dropdown-menu">'
+						+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateCommuModal'+list.commuNo+'">게시글 수정</a>'
+						+'<a href="javascript:void(0)" onclick="deleteChkforCommu('+list.commuNo+')" class="dropdown-item">게시글 삭제</a>'
+						+'</div></div>';
+		
+		//카드 바디
+		communityHtml += '<div class="card-body" data-toggle="modal" data-target="#boardViewModal'+list.commuNo+'">';
+		//이미지
+		if(list.commuRenamedFileName != null && list.commuRenamedFileName.trim().length != 0){
+			communityHtml += '<img src="${pageContext.request.contextPath}/resources/upload/community/'+list.commuRenamedFileName+'" class="card-img-top">';
+		}
+		
+		//카드 제목, 내용
+		communityHtml += '<h5 class="card-title">'+list.commuTitle+'</h5>'
+						+'<p class="card-text">'+list.commuContent+'</p></div></div></div>';
+		
+		if((idx+1)%4 == 0 || (idx+1) == Object.keys(data.communityList).length){
+			communityHtml += '</div>';
+		}
+		
+	}); //$.each(communityList)
+	
+	//슬라이드 화살표
+	communityHtml += '</div><i class="fas fa-angle-left slide-arrow slide-arrow-left" data-target="#board_indicators" data-slide="prev"></i>';
+	communityHtml += '<i class="fas fa-angle-right slide-arrow slide-arrow-right" data-target="#board_indicators" data-slide="next"></i></div>';
+
+	if(Object.keys(data.noticeList).length != 0){
+		$(".notice-area").html(noticeHtml);		
+		$(".notice-area").css("margin-bottom", "3rem");
+	}
+	
+	if(Object.keys(data.deptNoticeList).length != 0){
+		$(".myDeptNotice-area").html(deptNoticeHtml);
+		$(".myDeptNotice-area").css("margin-bottom", "3rem");
+	}
+	
+	if(Object.keys(data.communityList).length != 0){
+		$(".board-area").html(communityHtml);	
+		$(".board-area").css("margin-bottom", "3rem");
+	}
+	
+}
+
+
 function deleteChk(noticeNo){
 	var result = confirm("게시글을 삭제하시겠습니까?"); 
 	if(result == true){
 		location.href = "${pageContext.request.contextPath}/notice/deleteNotice.do?noticeNo="+noticeNo;
 	}
 }
+
 function deleteChkforCommu(commuNo){
 	var result = confirm("게시글을 삭제하시겠습니까?"); 
 	if(result == true){
 		location.href = "${pageContext.request.contextPath}/notice/deleteCommunity.do?commuNo="+commuNo;
 	}
 }
+
+//답글 클릭 시
+/* function addLevel2(level1_id){
+	var area_level1 = level1_id;
+	alert(area_level1);
+} */
+
+
+//공지 댓글 삭제
+function deleteNoticeComment(noticeCommentNo){
+	if(!confirm("댓글을 삭제하시겠습니까?"))
+		return;
+	location.href = "${pageContext.request.contextPath}/notice/noticeCommentDelete.do?noticeCommentNo="+noticeCommentNo;
+}
+
+//게시판 댓글 삭제
+function deleteCommunityComment(communityCommentNo){
+	if(!confirm("댓글을 삭제하시겠습니까?"))
+		return;
+	location.href = "${pageContext.request.contextPath}/community/communityCommentDelete.do?communityCommentNo="+communityCommentNo;
+
+}
+
+//댓글 유효성 검사
+function checkComment(commentContent){
+	if(commentContent.trim() == 0){
+		alert("댓글을 입력하지 않으셨습니다!");
+		return false;
+	}
+	return true;
+} 
+
 </script>
+
 
 <!-- #############주현 할 일############
 [할 일]
+#댓글 -> ajax? / 대댓글?#
 @ - 관리자: 모든 게시물 수정/삭제 가능?
-- 게시글 작성자 기본 프로필
-- 수정 모달창 forEach / 카드 안에 수정모달창 index주기
 - 카드 내용 ...
-- 댓글
-- 댓글 작성자  프로필 없을 경우 기본 이미지
-- 관리자 기획부가 맞는 건지?
 - 이미지 없을 때 내용 가운데로?
 - DB 내용 정리
 - 상세보기 작성자 클릭 시 프로필 이동?
 @ - **부서별공지, 자유게시판 작성자 이름으로
 @ - 슬라이드 바 개수 맞추기!!
-- 공지 수정 창 추가: #updateDeptNoticeModal${deptnvs.count}
-- 바가 헤더 앞으로 나옴
+- 바가 헤더 앞으로 나옴 / 카드 호버시 안 움직임
+@- 바 누르는 거 이상함
  -->
+ 
+ <!-- @@
+  공지 이름 / 아이콘 바꾸기  / 예외처리 -->
 
 <!-- 효정 할 일
 -수정 시, 기존파일 보이게 하기
@@ -120,9 +528,10 @@ function deleteChkforCommu(commuNo){
   <!-- SEARCH FORM -->
   <form id="noticeSearchFrm" class="form-inline">
     <div class="input-group input-group-sm">
-      <input class="form-control form-control-navbar" type="search" placeholder="공지 및 게시판 검색" aria-label="Search">
+      <input id="noticeSearchKeyword" class="form-control form-control-navbar" type="search" placeholder="게시판 검색" aria-label="Search"
+      	     onkeypress="if(event.keyCode==13) {noticeSearch(noticeSearchKeyword.value); return false;}">
       <div class="input-group-append">
-        <button class="btn btn-navbar" type="submit">
+        <button class="btn btn-navbar" type="button" onclick="noticeSearch(noticeSearchKeyword.value)">
           <i class="fas fa-search"></i>
         </button>
       </div>
@@ -130,15 +539,15 @@ function deleteChkforCommu(commuNo){
   </form>
 
   <!-- Right navbar links -->
-  <ul class="navbar-nav ml-auto navbar-nav-sort">
+  <ul class="navbar-nav ml-auto navbar-nav-sort" id="sortUl">
     <li class="nav-item dropdown">
       정렬
-      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+      <a id="sort-now" class="nav-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
         업데이트순 <span class="caret"></span>
       </a>
-      <div class="dropdown-menu">
-        <a class="dropdown-item" tabindex="-1" href="#">업데이트순</a>
-        <a class="dropdown-item" tabindex="-1" href="#">제목순</a>
+      <div id="sort-menu" class="dropdown-menu">
+        <a class="dropdown-item" tabindex="-1" href="javascript:void(0)">업데이트순</a>
+        <a class="dropdown-item" tabindex="-1" href="javascript:void(0)">제목순</a>
       </div>
     </li>
   </ul>
@@ -151,757 +560,24 @@ function deleteChkforCommu(commuNo){
   <!-- Main content -->
   <div class="content">
     <div class="container-fluid">
+     <div id="searchLine">
+     	  <h6></h6><span id="searchCount"></span>
+     </div>
       <!-- 전체공지 -->
-      <section class="notice-area">
-        <div class="header-line">
-          <h6><i class="fas fa-exclamation-circle"></i>&nbsp; 전체 공지 <span class="header-count">(${fn:length(noticeList)})</span>
-              <i class="fas fa-plus-square" data-toggle="modal" data-target="#addNoticeModal" ${memberLoggedIn.jobTitle=='관리자'?'"style=display:block;"':"style=display:none;"}></i></h6>
-        </div><!-- /.card-header -->
-        <div id="notice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">
-          <ol class="carousel-indicators">
-<!-- 		<li data-target="#notice_indicators" data-slide-to="0" class="active"></li>
-			<li data-target="#notice_indicators" data-slide-to="1"></li>
-            <li data-target="#notice_indicators" data-slide-to="2"></li> -->
-          	<!-- 리스트 비어있지 않으면 첫 번째 바는 무조건 나옴 -->
-          	<c:if test="${noticeList != null}">
-	            <li data-target="#notice_indicators" data-slide-to="0" class="active"></li>
-          	</c:if>
-          	<!-- barCnt: 바개수 올림 (공지 개수/4 올림) -->
-			<c:set var="noticeBarCnt" value="${fn:length(noticeList)/4}"/>
-          	<c:forEach var="i" begin="1" end="${noticeBarCnt+(1-(noticeBarCnt%1))%1-1}" step="1">
-	            <li data-target="#notice_indicators" data-slide-to="i"></li>
-          	</c:forEach>
-          </ol>
-          <div class="carousel-inner">          
-            <!-- row1 -->
-            <c:forEach items="${noticeList }" var="n" varStatus="nvs">
-            	<c:if test="${nvs.count == 1}">
-              	<div class="row card-content carousel-item active">
-          	</c:if>
-          	<c:if test="${nvs.count % 4 == 1 && nvs.count != 1}">
-              	<div class="row card-content carousel-item">
-          	</c:if>
-   	        <div class="col-12 col-sm-6 col-md-3">
-   	          <div class="card">
-   	            <!-- Default droprleft button -->
-   	            <div class="dropleft">
-   	              <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${memberLoggedIn.memberId == n.noticeWriter?"style = display:block;":"style = display:none;"}><i class="fas fa-ellipsis-v"></i></button>
-   	              <div class="dropdown-menu">
-   	                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal${nvs.count}">공지 수정</a>
-   	                <%-- <a href="${pageContext.request.contextPath}/notice/deleteNotice.do?noticeNo=${n.noticeNo}" class="dropdown-item">공지 삭제</a> --%>
-   	              	<a href="javascript:void(0)" id="deleteChk" onclick="deleteChk(${n.noticeNo})" class="dropdown-item">공지 삭제</a>
-   	              </div>
-   	            </div>
-   	            <div class="card-body" data-toggle="modal" data-target="#noticeViewModal${nvs.count}">
-   	              <img src="${pageContext.request.contextPath}/resources/upload/notice/${n.noticeRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
-	   	              <h5 class="card-title">${n.noticeTitle }</h5>
-	   	              <p class="card-text">${n.noticeContent }</p>
-   	            </div>
-   	          </div><!-- /.card -->
-   	        </div>
-            	<c:if test="${nvs.count % 4 == 0 || nvs.last}">
-   				</div>
-          	</c:if>
-            </c:forEach>
-          </div> <!-- /.carousel-inner notice-carousel  -->
-          <!-- <a href="#notice_indicators" data-slide="prev"> -->
-          <i class="fas fa-angle-left slide-arrow slide-arrow-left" data-target="#notice_indicators" data-slide="prev"></i>
-          <!-- </a> -->
-          <!-- <a href="#notice_indicators" data-slide="next"> -->
-          <i class="fas fa-angle-right slide-arrow slide-arrow-right" data-target="#notice_indicators" data-slide="next"></i>
-          <!-- </a> -->
-        </div> <!--slide-->
-      </section>
+      <section class="notice-area"></section>
 
       <!-- 내가 속한 부서 공지 -->
-      <!-- 로그인한 멤버의 부서대로 리스트 불러와 deptNoticeList라는 변수에 담겠다.-->
-      <c:set var="deptNoticeList" value="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}"/>
-      <section class="myDeptNotice-area">
-        <div class="header-line" style="margin-top: 4rem;">
-          <h6><span id="myDept"><i class="fas fa-user"></i> &nbsp;${memberLoggedIn.deptCode=='D1'?"기획":memberLoggedIn.deptCode=='D2'?"디자인":"개발" }</span>
-              &nbsp; 내가 속한 부서의 공지 <span class="header-count">(${fn:length(deptNoticeList)})</span>
-              <i class="fas fa-plus-square" data-toggle="modal" data-target="#addNoticeForDeptModal"></i></h6>
-        </div><!-- /.card-header -->
-        <div id="myDeptNotice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">
-          <ol class="carousel-indicators">
-<!-- 	    <li data-target="#myDeptNotice_indicators" data-slide-to="0" class="active"></li>
-           	<li data-target="#myDeptNotice_indicators" data-slide-to="1"></li>
-            <li data-target="#myDeptNotice_indicators" data-slide-to="2"></li> -->
-            
-            <!-- 리스트 비어있지 않으면 첫 번째 바는 무조건 나옴 -->
-          	<c:if test="${deptNoticeList != null}">
-	            <li data-target="#myDeptNotice_indicators" data-slide-to="0" class="active"></li>
-          	</c:if>
-          	<!-- barCnt: 바개수 올림 (공지 개수/4 올림) -->
-			<c:set var="deptNoticeBarCnt" value="${fn:length(deptNoticeList)/4}"/>
-          	<c:forEach var="i" begin="1" end="${deptNoticeBarCnt+(1-(deptNoticeBarCnt%1))%1-1}" step="1">
-	            <li data-target="#myDeptNotice_indicators" data-slide-to="i"></li>
-          	</c:forEach>
-          </ol>
-          <div class="carousel-inner">
-            <c:forEach items="${deptNoticeList}" var="deptn" varStatus="deptnvs">
-	            <c:if test="${deptnvs.count == 1}">
-	              	<div class="row card-content carousel-item active">
-	          	</c:if>
-	          	<c:if test="${deptnvs.count % 4 == 1 && deptnvs.count != 1}">
-	              	<div class="row card-content carousel-item">
-	          	</c:if>
-	   	        <div class="col-12 col-sm-6 col-md-3">
-	   	          <div class="card">
-	   	            <!-- Default droprleft button -->
-	   	            <div class="dropleft">
-	   	              <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${memberLoggedIn.memberId==deptn.noticeWriter || memberLoggedIn.memberId=='admin'?"style=display:block;":"style=display:none;"}><i class="fas fa-ellipsis-v"></i></button>
-	   	              <div class="dropdown-menu">
-	   	                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateDeptNoticeModal${deptnvs.count}">공지 수정</a>
-	   	                <%-- <a href="${pageContext.request.contextPath}/notice/deleteNotice.do?noticeNo=${deptn.noticeNo}" class="dropdown-item">공지 삭제</a> --%>
-	   	                <a href="javascript:void(0)" id="deleteChk" onclick="deleteChk(${deptn.noticeNo})" class="dropdown-item">공지 삭제</a>
-	   	              </div>
-	   	            </div>
-	   	            <div class="card-body" data-toggle="modal" data-target="#myDeptNoticeViewModal${deptnvs.count}">
-	   	              <img src="${pageContext.request.contextPath}/resources/upload/notice/${deptn.noticeRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
-	   	              <h5 class="card-title">${deptn.noticeTitle }</h5>
-	   	              <p class="card-text">${deptn.noticeContent }</p>
-	   	            </div>
-	   	          </div><!-- /.card -->
-	   	        </div>
-	            <c:if test="${deptnvs.count % 4 == 0 || deptnvs.last}">
-	   				</div>
-	          	</c:if>
-            </c:forEach>
-          </div> <!--/.carousel inner-->
-          <!-- <a href="#notice_indicators" data-slide="prev"> -->
-          <i class="fas fa-angle-left slide-arrow slide-arrow-left" data-target="#myDeptNotice_indicators" data-slide="prev"></i>
-          <!-- </a> -->
-          <!-- <a href="#notice_indicators" data-slide="next"> -->
-          <i class="fas fa-angle-right slide-arrow slide-arrow-right" data-target="#myDeptNotice_indicators" data-slide="next"></i>
-          <!-- </a> -->
-        </div> <!--slide-->
-      </section>
+      <section class="myDeptNotice-area"></section>
 
       <!-- 자유게시판 -->
-      <section class="board-area">
-        <div class="header-line" style="margin-top: 4rem;">
-          <h6><i class="fas fa-sticky-note"></i>&nbsp; 자유게시판 <span class="header-count">(${fn:length(communityList)})</span>
-              <i class="fas fa-plus-square" data-toggle="modal" data-target="#addBoardModal"></i></h6>
-        </div><!-- /.card-header -->
-        <div id="board_indicators" class="carousel slide" data-ride="carousel" data-interval="false">
-          <ol class="carousel-indicators">
-<!--             <li data-target="#board_indicators" data-slide-to="0" class="active"></li>
-            <li data-target="#board_indicators" data-slide-to="1"></li>
-            <li data-target="#board_indicators" data-slide-to="2"></li> -->
-          	<!-- 리스트 비어있지 않으면 첫 번째 바는 무조건 나옴 -->
-          	<c:if test="${communityList != null}">
-	            <li data-target="#board_indicators" data-slide-to="0" class="active"></li>
-          	</c:if>
-          	<!-- barCnt: 바개수 올림 (공지 개수/4 올림) -->
-			<c:set var="boardBarCnt" value="${fn:length(communityList)/4}"/>
-          	<c:forEach var="i" begin="1" end="${boardBarCnt+(1-(boardBarCnt%1))%1-1}" step="1">
-	            <li data-target="#board_indicators" data-slide-to="i"></li>
-          	</c:forEach>
-          </ol>
-          <div class="carousel-inner">
-            <!-- row1 -->
-            <c:forEach items="${communityList}" var="c" varStatus="cvs">
-	            <c:if test="${cvs.count == 1}">
-	              	<div class="row card-content carousel-item active">
-	          	</c:if>
-	          	<c:if test="${cvs.count % 4 == 1 && cvs.count != 1}">
-	              	<div class="row card-content carousel-item">
-	          	</c:if>
-	   	        <div class="col-12 col-sm-6 col-md-3">
-	   	          <div class="card">
-	   	            <!-- Default droprleft button -->
-	   	            <div class="dropleft">
-	   	              <button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${memberLoggedIn.memberId==c.commuWriter || memberLoggedIn.memberId=='admin'?"style=display:block;":"style=display:none;"}><i class="fas fa-ellipsis-v"></i></button>
-	   	              <div class="dropdown-menu">
-	   	                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateCommuModal${cvs.count}">게시글 수정</a>
-	   	                <%-- <a href="${pageContext.request.contextPath}/notice/deleteCommunity.do?commuNo=${c.commuNo}" class="dropdown-item">게시글 삭제</a> --%>
-	   	                <a href="javascript:void(0)" id="deleteChk" onclick="deleteChkforCommu(${c.commuNo})" class="dropdown-item">게시글 삭제</a>
-	   	              </div>
-	   	            </div>
-	   	            <div class="card-body" data-toggle="modal" data-target="#boardViewModal${cvs.count}">
-	   	              <img src="${pageContext.request.contextPath}/resources/upload/community/${c.commuRenamedFileName}" class="card-img-top" onerror="this.style.display='none'">
-	   	              <h5 class="card-title">${c.commuTitle }</h5>
-	   	              <p class="card-text">${c.commuContent }</p>
-	   	            </div>
-	   	          </div><!-- /.card -->
-	   	        </div>
-	            <c:if test="${cvs.count % 4 == 0 || cvs.last}">
-	   				</div>
-	          	</c:if>
-            </c:forEach>
-          </div> <!--/.carousel-inner-->
-          <a href="#board_indicators" data-slide="prev">
-            <i class="fas fa-angle-left slide-arrow slide-arrow-left"></i>
-          </a>
-          <a href="#board_indicators" data-slide="next">
-            <i class="fas fa-angle-right slide-arrow slide-arrow-right"></i>
-          </a>
-        </div> <!--slide-->
-      </section>
+      <section class="board-area"></section>
 
     </div><!-- /.container-fluid -->
   </div><!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
 
-<!-- 전체 공지 상세보기 모달 -->
-<c:forEach items="${noticeList}" var="n" varStatus="nvs">
-	<div class="modal fade" id="noticeViewModal${nvs.count}" tabindex="-1" role="dialog" aria-labelledby="noticeViewModalLabel${nvs.count }" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title"><i class="fas fa-exclamation-circle"></i>&nbsp; 전체 공지</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body">
-	        <div class="noticeView">
-	          <p class="view-title">${n.noticeTitle}</p>
-	          <div style="font-size: .8rem; color: gray; margin-bottom: .5rem;">게시일 ${n.noticeDate}</div>
-	            <div class="view-body">
-	              <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/notice/${n.noticeRenamedFileName}" alt="noticeViewPhoto" onerror="this.style.display='none'">
-	              <p class="view-content">${n.noticeContent}</p>
-	            </div>
-	            <!-- /.view-body -->
-	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
-	            <div class="card-footer card-comments">
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/고양이.jpg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">이단비<span class="text-muted float-right">2020-01-25</span></span>
-	                  <span>네! 알겠습니다!</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	              <div class="card-comment comment-level2">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/차은우.jpg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">유혜민<span class="text-muted float-right">2020-01-26</span></span>
-	                  <span>넵! 알겠습니당</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	            </div>
-	            <div class="card-footer">
-	              <form action="#" method="post">
-	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName == null?'기본프로필.jpg':memberLoggedIn.renamedFileName}">
-	                <div class="img-push">
-	                  <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
-	                  <input class="comment-submit" type="submit" value="등록">
-	                </div>
-	              </form>
-	            </div> <!-- /.card-footer -->
-	          </div> <!-- /.card -->
-	      </div>
-	    </div>
-	  </div>
-	</div>
-</c:forEach>
-
-<!-- 부서별 공지 상세보기 모달 -->
-<c:forEach items="${deptNoticeList}" var="deptn" varStatus="deptnvs">
-	<div class="modal fade" id="myDeptNoticeViewModal${deptnvs.count}" tabindex="-1" role="dialog" aria-labelledby="myDeptNoticeViewModalLabel${deptnvs.count}" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title"><span id="myDept"><i class="fas fa-user"></i> &nbsp;${memberLoggedIn.deptCode=='D1'?"기획":memberLoggedIn.deptCode=='D2'?"디자인":"개발" }</span>&nbsp; 부서별 공지</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body">
-	        <div class="deptNoticeView">
-	          <p class="view-title">${deptn.noticeTitle}</p>
-	          <div class="user-block" style="margin-bottom: .5rem;">
-	            <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/${deptn.renamedFileName == null?'기본프로필.jpg':deptn.renamedFileName}" alt="User Image">
-	            <span class="username"><a href="#" style="color: black;">작성자 ${deptn.memberName}</a></span>
-	            <span class="description">게시일 ${deptn.noticeDate}</span>
-	          </div>
-	            <div class="view-body">
-	              <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/notice/${deptn.noticeRenamedFileName}" onerror="this.style.display='none'" alt="Photo">
-	              <p class="view-content">${deptn.noticeContent}</p>
-	            </div>
-	            <!-- /.view-body -->
-	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(2)</span></div>
-	            <div class="card-footer card-comments">
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/재현01.jpg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">이주현<span class="text-muted float-right">2020-01-25</span></span>
-	                  <span>네넵! 확인 완료!</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/우식01.jpeg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">김효정<span class="text-muted float-right">2020-01-26</span></span>
-	                  <span>넵 확인했습니다!</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	            </div>
-	            <div class="card-footer">
-	              <form action="#" method="post">
-	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName == null?'기본프로필.jpg':memberLoggedIn.renamedFileName}">
-	                <div class="img-push">
-	                  <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
-	                  <input class="comment-submit" type="submit" value="등록">
-	                </div>
-	              </form>
-	            </div> <!-- /.card-footer -->
-	          </div> <!-- /.card -->
-	      </div>
-	    </div>
-	  </div>
-	</div>
-</c:forEach>
 
 
-<!-- 게시판 상세보기 모달 -->
-<c:forEach items="${communityList}" var="c" varStatus="cvs">
-	<div class="modal fade" id="boardViewModal${cvs.count}" tabindex="-1" role="dialog" aria-labelledby="boardModalLabel${cvs.count }" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title"><i class="fas fa-sticky-note"></i>&nbsp; 자유게시판</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body">
-	        <div class="boardView">
-	          <p class="view-title">${c.commuTitle }</p>
-	          <div class="user-block" style="margin-bottom: .5rem;">
-	          	<img class="img-circle" src="${pageContext.request.contextPath}/resources/img/${c.renamedFileName == null?'기본프로필.jpg':c.renamedFileName}" alt="User Image">
-	            <span class="username"><a href="#" style="color: black;">작성자 ${c.memberName }</a></span>
-	            <span class="description">게시일 ${c.commuDate }</span>
-	          </div>
-	            <div class="view-body">
-	              <img class="view-img" src="${pageContext.request.contextPath}/resources/upload/community/${c.commuRenamedFileName}" alt="Photo" onerror="this.style.display='none'">
-	              <p class="view-content">${c.commuContent }</p>
-	            </div>
-	            <!-- /.view-body -->
-	            <div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글 <span>(3)</span></div>
-	            <div class="card-footer card-comments">
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/우식01.jpeg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">김효정<span class="text-muted float-right">2020-01-26</span></span>
-	                  <span>오오 감사합니당</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	              <div class="card-comment">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/박보검.png" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">주보라<span class="text-muted float-right">2020-01-27</span></span>
-	                  <span>괜찮은데요??</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	              <div class="card-comment comment-level2">
-	                <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/재현.jpg" alt="User Image">
-	                <div class="comment-text">
-	                  <span class="username">이소현<span class="text-muted float-right">2020-01-27</span></span>
-	                  <span>훨씬 편하네요~</span>
-	                  <button class="comment-delete float-right">삭제</button>
-	                  <button class="comment-reply float-right">답글</button>
-	                </div>
-	              </div>
-	            </div>
-	            <div class="card-footer">
-	              <form action="#" method="post">
-	                <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/${memberLoggedIn.renamedFileName == null?'기본프로필.jpg':memberLoggedIn.renamedFileName}">
-	                <div class="img-push">
-	                  <input type="text" class="form-control form-control-sm comment-text-area" placeholder="댓글을 입력하세요.">
-	                  <input class="comment-submit" type="submit" value="등록">
-	                </div>
-	              </form>
-	            </div> <!-- /.card-footer -->
-	          </div> <!-- /.card -->
-	      </div>
-	    </div>
-	  </div>
-	</div>
-</c:forEach>
-
-<!-- 공지 추가 모달 -->
-<!-- 관리자: 전체/부서별 공지 작성 가능 -->
-<!-- 부서별: 자기 부서는 selected / 나머지 부서 disabled -->
-<div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-labelledby="addNoticeModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 공지 작성</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form action="${pageContext.request.contextPath}/notice/noticeFormEnd.do"
-      		method="post"
-      		enctype="multipart/form-data">
-        <div class="modal-body">
-          <div class="addNotice" style="padding: 1rem;">
-            <div class="form-group">
-              <label for="inputDept">부서</label>
-              <select class="form-control custom-select" name="deptCode">
-                 <option value="all" selected>전체</option>
-				<option value="D1">기획부</option>
-                <option value="D2">디자인부</option>
-                <option value="D3">개발부</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="inputName">공지 제목</label>
-              <input type="text" id="inputName" name="noticeTitle" class="form-control" required>
-            </div>
-            <div class="form-group" style="display:none;">
-              <label for="inputName">글쓴이</label>
-              <input type="text" id="inputName" name="noticeWriter" value="${memberLoggedIn.memberId}" class="form-control">
-            </div>
-            <!-- <div class="form-group">
-              <label for="inputDescription">공지 카드 내용</label>
-              <input type="text" class="form-control" maxlength="35" placeholder="35자 이내로 입력하세요.">
-            </div> -->
-            <div class="form-group">
-              <label for="inputDescription">공지 내용</label>
-              <textarea class="textarea" name="noticeContent" required></textarea>
-            </div>
-            <div class="form-group">
-              <label for="exampleFormControlFile1">파일 첨부</label>
-              <input type="file" class="form-control-file" id="exampleFormControlFile1" name="upFile">
-            </div>
-          </div><!-- /.card-body -->
-        </div> <!--/.modal-body-->
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-outline-success">작성</button>
-          <button type="button" class="btn btn-outline-success" data-dismiss="modal">취소</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- 내가 속한 부서의 공지 추가 모달 -->
-<!-- 관리자: 전체/부서별 공지 작성 가능 -->
-<!-- 부서별: 자기 부서는 selected / 나머지 부서 disabled -->
-<div class="modal fade" id="addNoticeForDeptModal" tabindex="-1" role="dialog" aria-labelledby="addNoticeForDeptModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 공지 작성</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form action="${pageContext.request.contextPath}/notice/noticeFormEnd.do"
-      		method="post"
-      		enctype="multipart/form-data">
-        <div class="modal-body">
-          <div class="addNotice" style="padding: 1rem;">
-            <div class="form-group">
-              <label for="inputDept">부서</label>
-              <select class="form-control custom-select" name="deptCode" ${memberLoggedIn.jobTitle=='관리자'?'"style=display:block;"':"style=display:none;"}>
-                <option value="all" selected>전체</option>
-				<option value="D1" ${memberLoggedIn.deptCode=='D1'?'selected="selected"':''}>기획부</option>
-                <option value="D2" ${memberLoggedIn.deptCode=='D2'?'selected="selected"':''}>디자인부</option>
-                <option value="D3" ${memberLoggedIn.deptCode=='D3'?'selected="selected"':''}>개발부</option>
-              </select>
-              <input type="text" class="form-control"
-              		 ${memberLoggedIn.jobTitle=='관리자'?"style=display:none;":"style=display:block;"} 
-              		 value="${memberLoggedIn.deptCode=='D1'?'기획부':memberLoggedIn.deptCode=='D2'?'디자인부':'개발부'}"
-              		 readonly/>
-            </div>
-            <div class="form-group">
-              <label for="inputName">공지 제목</label>
-              <input type="text" id="inputName" name="noticeTitle" class="form-control" required>
-            </div>
-            <div class="form-group" style="display:none;">
-              <label for="inputWriter">글쓴이</label>
-              <input type="text" id="inputName" name="noticeWriter" value="${memberLoggedIn.memberId}" class="form-control">
-            </div>
-            <!-- <div class="form-group">
-              <label for="inputDescription">공지 카드 내용</label>
-              <input type="text" class="form-control" maxlength="35" placeholder="35자 이내로 입력하세요.">
-            </div> -->
-            <div class="form-group">
-              <label for="inputDescription">공지 내용</label>
-              <textarea class="textarea" name="noticeContent" required></textarea>
-            </div>
-            <div class="form-group">
-              <label for="exampleFormControlFile1">파일 첨부</label>
-              <input type="file" class="form-control-file" id="exampleFormControlFile1" name="upFile">
-            </div>
-          </div><!-- /.card-body -->
-        </div> <!--/.modal-body-->
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-outline-success">작성</button>
-          <button type="button" class="btn btn-outline-success" data-dismiss="modal">취소</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<!-- 게시판 추가 모달 -->
-<div class="modal fade" id="addBoardModal" tabindex="-1" role="dialog" aria-labelledby="addBoardModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 게시글 작성</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="${pageContext.request.contextPath}/notice/communityFormEnd.do"
-      		method="post"
-      		enctype="multipart/form-data">
-          <div class="modal-body">
-              <div class="addNotice" style="padding: 1rem;">
-                <div class="form-group">
-                  <label for="inputName">게시글 제목</label>
-                  <input type="text" id="inputName" name="commuTitle" class="form-control" maxlength="15" placeholder="15자 이내로 입력하세요." required>
-                </div>
-                <div class="form-group" style="display:none;">
-             		<label for="inputWriter">글쓴이</label>
-              		<input type="text" id="inputName" name="commuWriter" value="${memberLoggedIn.memberId}" class="form-control">
-            	</div>
-                <!-- <div class="form-group">
-                  <label for="inputDescription">게시글 카드 내용</label>
-                  <input type="text" class="form-control" maxlength="35" placeholder="35자 이내로 입력하세요.">
-                </div> -->
-                <div class="form-group">
-                  <label for="inputDescription">게시글 내용</label>
-                  <textarea class="textarea" name="commuContent" required></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="exampleFormControlFile1">파일 첨부</label>
-                  <input type="file" class="form-control-file" id="exampleFormControlFile1" name="upFile">
-                </div>
-              </div><!-- /.card-body -->
-          </div> <!--/.modal-body-->
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-outline-success">작성</button>
-            <button type="button" class="btn btn-outline-success" data-dismiss="modal">취소</button>
-          </div>
-        </form>
-      </div>
-    </div>
-</div>
-
-<!-- 공지수정 모달 -->
-<!-- 관리자: 전체공지만 수정 / 부서별공지는 내가속한 부서에서 수정 -->
-<!-- 부서별 옵션: 내가속한 부서만 selected 그 외엔 disabled -->
-<c:forEach items="${noticeList}" var="n" varStatus="nvs">
-	<div class="modal fade" id="updateNoticeModal${nvs.count}" tabindex="-1" role="dialog" aria-labelledby="updateNoticeModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 공지 수정</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <form action="${pageContext.request.contextPath}/notice/updateNotice.do?noticeNo=${n.noticeNo}"
-      			method="post"
-      			enctype="multipart/form-data">
-	        <div class="modal-body">
-	            <div class="addNotice" style="padding: 1rem;">
-	              <div class="form-group">
-	                <label for="inputDept">부서</label>
-	                <select class="form-control custom-select" name="deptCode">
-	                 	<option value="all" selected>전체</option>
-						<option value="D1">기획부</option>
-		                <option value="D2">디자인부</option>
-		                <option value="D3">개발부</option>
-              	  	</select>
-	              </div>
-	              <div class="form-group">
-	                <label for="inputName">공지 제목</label>
-	                <input type="text" id="inputName" class="form-control" value="${n.noticeTitle}" name="noticeTitle" required>
-	              </div>
-	              <div class="form-group" style="display:none;">
-		              <label for="inputWriter">글쓴이</label>
-		              <input type="text" id="inputName" name="noticeWriter" value="${memberLoggedIn.memberId}" class="form-control">
-            	  </div>
-	              <!-- <div class="form-group">
-	                <label for="inputDescription">공지 카드 내용</label>
-	                <input type="text" class="form-control" maxlength="35" placeholder="35자 이내로 입력하세요." value="파이널 프로젝트가 본격적으로 시작되었습니다! 다들 화이팅!">
-	              </div> -->
-	              <div class="form-group">
-	                <label for="inputDescription">공지 내용</label>
-	                <textarea class="textarea" name="noticeContent" required>${n.noticeContent}</textarea>
-	              </div>
-	              <div class="form-group">
-	                <label for="exampleFormControlFile1">파일 첨부</label>
-	                <input type="file" class="form-control-file" id="exampleFormControlFile1" name="updateFile">
-	                <span class="fname">${n.noticeOriginalFileName!=null?n.noticeOriginalFileName:""}</span>
-	                <input type="hidden" name="noticeOriginalFileName" value="${n.noticeOriginalFileName!=null?n.noticeOriginalFileName:""} "/>
-	                <input type="hidden" name="noticeRenamedFileName" value="${n.noticeRenamedFileName!=null?n.noticeRenamedFileName:""} "/>
-	               	<c:if test="${n.noticeOriginalFileName!=null}">
-	               		<span class="deleteFileSpan">
-		               		<input type="checkbox" name="delFileChk" id="delFileChk" />
-		               		<label for="delFileChk">첨부파일삭제</label>	               		
-	               		</span>
-	               	</c:if>
-	              </div>
-	            </div><!-- /.card-body -->
-	        </div> <!--/.modal-body-->
-	        <div class="modal-footer">
-	          <button type="submit" class="btn btn-outline-success">수정</button>
-	          <button type="button" class="btn btn-outline-success" data-dismiss="modal">취소</button>
-	        </div>
-	      </form>
-	    </div>
-	  </div>
-	</div>
-</c:forEach>
-<!-- 내가 속한 부서 공지 수정 모달 -->
-<c:forEach items="${deptNoticeList}" var="deptn" varStatus="deptnvs">
-	<div class="modal fade" id="updateDeptNoticeModal${deptnvs.count}" tabindex="-1" role="dialog" aria-labelledby="updateNoticeModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 공지 수정</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <form action="${pageContext.request.contextPath}/notice/updateNotice.do?noticeNo=${deptn.noticeNo}"
-      			method="post"
-      			enctype="multipart/form-data">
-	        <div class="modal-body">
-	            <div class="addNotice" style="padding: 1rem;">
-	              <div class="form-group">
-		              <label for="inputDept">부서</label>
-		              <select class="form-control custom-select" name="deptCode" ${memberLoggedIn.jobTitle=='관리자'?'"style=display:block;"':"style=display:none;"}>
-		                <option value="all" selected>전체</option>
-						<option value="D1" ${memberLoggedIn.deptCode=='D1'?'selected="selected"':''}>기획부</option>
-		                <option value="D2" ${memberLoggedIn.deptCode=='D2'?'selected="selected"':''}>디자인부</option>
-		                <option value="D3" ${memberLoggedIn.deptCode=='D3'?'selected="selected"':''}>개발부</option>
-		              </select>
-              		<input type="text" class="form-control"
-		              	   ${memberLoggedIn.jobTitle=='관리자'?"style=display:none;":"style=display:block;"} 
-		              	   value="${memberLoggedIn.deptCode=='D1'?'기획부':memberLoggedIn.deptCode=='D2'?'디자인부':'개발부'}"
-		              	   readonly/>
-            	 </div>
-	              <div class="form-group">
-	                <label for="inputName">공지 제목</label>
-	                <input type="text" id="inputName" class="form-control" value="${deptn.noticeTitle}" name="noticeTitle" required>
-	              </div>
-	              <div class="form-group" style="display:none;">
-		              <label for="inputWriter">글쓴이</label>
-		              <input type="text" id="inputName" name="noticeWriter" value="${memberLoggedIn.memberId}" class="form-control">
-            	  </div>
-	              <!-- <div class="form-group">
-	                <label for="inputDescription">공지 카드 내용</label>
-	                <input type="text" class="form-control" maxlength="35" placeholder="35자 이내로 입력하세요." value="파이널 프로젝트가 본격적으로 시작되었습니다! 다들 화이팅!">
-	              </div> -->
-	              <div class="form-group">
-	                <label for="inputDescription">공지 내용</label>
-	                <textarea class="textarea" name="noticeContent" required>${deptn.noticeContent}</textarea>
-	              </div>
-	              <div class="form-group">
-	                <label for="exampleFormControlFile1">파일 첨부</label>
-	                <input type="file" class="form-control-file" id="exampleFormControlFile1" name="updateFile">
-	                <span class="fname">${deptn.noticeOriginalFileName!=null?deptn.noticeOriginalFileName:""}</span>
-	                <input type="hidden" name="noticeOriginalFileName" value="${deptn.noticeOriginalFileName!=null?deptn.noticeOriginalFileName:""} "/>
-	                <input type="hidden" name="noticeRenamedFileName" value="${deptn.noticeRenamedFileName!=null?deptn.noticeRenamedFileName:""} "/>
-	               	<c:if test="${deptn.noticeOriginalFileName!=null}">
-	               		<span class="deleteFileSpan">
-		               		<input type="checkbox" name="delFileChk" id="delFileChk" />
-		               		<label for="delFileChk">첨부파일삭제</label>	               		
-	               		</span>
-	               	</c:if>
-	              </div>
-	            </div><!-- /.card-body -->
-	        </div> <!--/.modal-body-->
-	        <div class="modal-footer">
-	          <button type="submit" class="btn btn-outline-success">수정</button>
-	          <button type="button" class="btn btn-outline-success" data-dismiss="modal">취소</button>
-	        </div>
-	      </form>
-	    </div>
-	  </div>
-	</div>
-</c:forEach>
-<!-- 게시판 수정 모달 -->
-<c:forEach items="${communityList}" var="c" varStatus="cvs">
-	<div class="modal fade" id="updateCommuModal${cvs.count}" tabindex="-1" role="dialog" aria-labelledby="updateBoardModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 게시글 수정</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	       <form action="${pageContext.request.contextPath}/notice/updateCommunity.do?commuNo=${c.commuNo}"
-      			method="post"
-      			enctype="multipart/form-data">
-	        <div class="modal-body">
-	            <div class="addNotice" style="padding: 1rem;">
-	              <div class="form-group">
-                  	<label for="inputName">게시글 제목</label>
-                  	<input type="text" id="inputName" name="commuTitle" value="${c.commuTitle}" class="form-control" maxlength="15" placeholder="15자 이내로 입력하세요." required>
-                  </div>
-                  <div class="form-group" style="display:none;">
-             		<label for="inputWriter">글쓴이</label>
-              		<input type="text" id="inputName" name="commuWriter" value="${memberLoggedIn.memberId}" class="form-control">
-            	  </div>
-                  <div class="form-group">
-                    <label for="inputDescription">게시글 내용</label>
-                    <textarea class="textarea" name="commuContent" required>${c.commuContent}</textarea>
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleFormControlFile1">파일 첨부</label>
-                    <input type="file" class="form-control-file" id="exampleFormControlFile1" name="updateFile">
-	                <span class="fname">${c.commuOriginalFileName!=null?c.commuOriginalFileName:""}</span>
-	                <input type="hidden" name="commuOriginalFileName" value="${c.commuOriginalFileName!=null?c.commuOriginalFileName:""} "/>
-	                <input type="hidden" name="commuRenamedFileName" value="${c.commuRenamedFileName!=null?c.commuRenamedFileName:""} "/>
-	               	<c:if test="${c.commuOriginalFileName!=null}">
-	               		<span class="deleteFileSpan">
-		               		<input type="checkbox" name="delFileChk" id="delFileChk" />
-		               		<label for="delFileChk">첨부파일삭제</label>	               		
-	               		</span>
-	               	</c:if>
-                  </div>
-	            </div><!-- /.card-body -->
-	        </div> <!--/.modal-body-->
-	        <div class="modal-footer">
-	          <button type="submit" class="btn btn-outline-success">수정</button>
-	          <button type="button" class="btn btn-outline-success" data-dismiss="modal">취소</button>
-	        </div>
-	      </form>
-	    </div>
-	  </div>
-	</div>
-</c:forEach>
-
-<script>
-$("[name=updateFile]").change(function(){
-	console.log($(this).val());
-	console.log($(".fname"));
-	var filename = $(this).val();
-	if($(this).val() != ""){
-		console.log("zz");
- 		//$(".fname").hide();
- 		$(".fname").html(filename.substring(filename.lastIndexOf("\\")+1));
-		$("#delFileChk").hide().next().hide();
-	}else{
-		$(".fname").show();
-		console.log("aa");
-		$("#delFileChk").show().next().show();
-	}
-})
-</script>
-
+<jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
