@@ -133,6 +133,21 @@ public class ClubServiceImpl2 implements ClubService2 {
 		return clubDAO2.deleteClubNoticeComment(clubNoticeCommentNo);
 	}
 
+	@Override
+	public List<ClubPhoto> searchClubPhotoList(Map<String, String> param) {
+		return clubDAO2.searchClubPhotoList(param);
+	}
+
+	@Override
+	public List<ClubNotice> searchClubNoticeList(Map<String, String> param) {
+		return clubDAO2.searchClubNoticeList(param);
+	}
+
+	@Override
+	public List<ClubPlan> searchClubPlanList(Map<String, String> param) {
+		return clubDAO2.searchClubPlanList(param);
+	}
+
 
 
 }

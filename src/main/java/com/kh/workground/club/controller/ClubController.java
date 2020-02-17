@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.service.ClubService;
+import com.kh.workground.club.model.service.ClubService2;
 import com.kh.workground.club.model.vo.Club;
 import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubPlan;
@@ -32,6 +33,8 @@ public class ClubController {
 
 	@Autowired
 	ClubService clubService;
+	@Autowired
+	ClubService2 clubService2;
 
 	@RequestMapping("/club/clubList.do")
 	public ModelAndView clubList(ModelAndView mav, HttpSession session) {
@@ -42,6 +45,7 @@ public class ClubController {
 			Map map = new HashMap<>();
 			map.put("memberId", memberId);
 			map.put("sort", "club_enroll_date");
+			map.put("category", "%_%");
 
 			// 모달창을 띄우기 위해 정보를 보낸다.
 			List<Club> clubList = clubService.selectAllClubList(map); // 전체 동호회
@@ -58,7 +62,9 @@ public class ClubController {
 	}
 
 	@GetMapping("/club/clubListBySort.do")
-	public Map<String, List> clubListBySortAndCategroy(@RequestParam("sort") String sort, HttpSession session) {
+	public Map<String, List> clubListBySortAndCategroy(@RequestParam("sort") String sort,
+													   @RequestParam("category") String category,
+													  HttpSession session) {
 
 		Map<String, List> map = new HashMap<>();
 
@@ -68,16 +74,31 @@ public class ClubController {
 
 			Map param = new HashMap<>();
 			param.put("memberId", memberId);
-
+			
+			List<Club> clubList = null;
+			List<Club> myClubList = null;
+			List<Club> standByClubList = null;
+			
 			if (sort.equals("이름순")) {
 				param.put("sort", "club_name");
 			} else {
 				param.put("sort", "club_enroll_date");
 			}
+			
+			if(category.equals("전체")) {
+				clubList = clubService.selectAllClubList(param); // 전체 동호회
+				myClubList = clubService.selectAllMyClubList(param); // 가입한 동호회
+				standByClubList = clubService.selectAllStandByClubList(param); // 승인 대기중인 동호회
+			}
+			else {
+				param.put("category",category);
+				clubList = clubService.selectAllClubListByCategory(param); // 전체 동호회
+				myClubList = clubService.selectAllMyClubListByCategory(param); // 가입한 동호회
+				standByClubList = clubService.selectAllStandByClubListByCategory(param); // 승인 대기중인 동호회
+				
+			}
 
-			List<Club> clubList = clubService.selectAllClubList(param); // 전체 동호회
-			List<Club> myClubList = clubService.selectAllMyClubList(param); // 가입한 동호회
-			List<Club> standByClubList = clubService.selectAllStandByClubList(param); // 승인 대기중인 동호회
+		
 
 			map.put("clubList", clubList);
 			map.put("myClubList", myClubList);
@@ -179,8 +200,10 @@ public class ClubController {
 		try {
 			List<ClubMember> memberList = clubService.selectClubMemberList(clubNo);
 			logger.info("memberList{}", memberList);
+			Club club = clubService2.selectClub(clubNo);
 
 			mav.addObject("memberList", memberList);
+			mav.addObject("club", club);
 			mav.addObject("clubNo", clubNo);
 			mav.addObject("searchKeyword", "no");
 
@@ -283,7 +306,7 @@ public class ClubController {
 	}
 
 	@RequestMapping("/club/clubCalendar.do")
-	public ModelAndView selectClubSchedule(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo) {
+	public ModelAndView selectClubSchedule(ModelAndView mav,HttpSession session, @RequestParam(value = "clubNo") int clubNo) {
 		List<ClubPlan> clubPlanList = null;
 
 		try {
@@ -316,9 +339,9 @@ public class ClubController {
 
 				String color = "";
 				if ("예정".equals(clubPlanList.get(i).getClubPlanState()))
-					color = "#007bff";
-				else if ("완료".equals(clubPlanList.get(i).getClubPlanState()))
 					color = "#239d3f";
+				else if ("완료".equals(clubPlanList.get(i).getClubPlanState()))
+					color = "#eef946";
 				else if ("취소".equals(clubPlanList.get(i).getClubPlanState()))
 					color = "#ed5a5a";
 
@@ -335,8 +358,19 @@ public class ClubController {
 
 			}
 			calString += "]";
-
+			
+			//clubNo를 가지고 club_member의 manager_YN이 Y인지 관리자 여부 판단하기
+			Map param = new HashMap<>();
+			Member memberLoggedIn = (Member) session.getAttribute("memberLoggedIn");
+			param.put("memberId", memberLoggedIn.getMemberId());
+			param.put("clubNo", clubNo);
+			
+			ClubMember clubMember = clubService2.selectOneClubMember(param);
+			
 			mav.addObject("calString", calString);
+			mav.addObject("managerYN", clubMember.getClubManagerYN());
+			mav.addObject("clubNo", clubNo);
+			
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
