@@ -55,6 +55,12 @@ public interface ClubService2 {
 
 	int deleteClubNoticeComment(int clubNoticeCommentNo);
 
+	List<ClubPhoto> searchClubPhotoList(Map<String, String> param);
+
+	List<ClubNotice> searchClubNoticeList(Map<String, String> param);
+
+	List<ClubPlan> searchClubPlanList(Map<String, String> param);
+
 
 
 }

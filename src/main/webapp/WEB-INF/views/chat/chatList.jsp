@@ -45,7 +45,7 @@ left: .5rem;
 .tab-content{background: inherit;}
 </style>
 
-<script>
+<script type="text/javascript">
 $(function () {
   // Summernote
   $('.textarea').summernote();
@@ -64,8 +64,28 @@ function sidebarActive(){
 	});
 	
 	$("#sidebar-chat").addClass("active");
-}
+	
+
+	$(document).ready(function() {
+		$("#sendBtn").click(function() {
+			sendMessage();
+		});
+		$("#message").keydown(function(key) {
+			if (key.keyCode == 13) {// 엔터
+				sendMessage();
+			}
+		});
+
+		//window focus이벤트핸들러 등록
+		$(window).on("focus", function() {
+			console.log("focus");
+			lastCheck();
+		});
+	});
+
+	
 </script>
+
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
