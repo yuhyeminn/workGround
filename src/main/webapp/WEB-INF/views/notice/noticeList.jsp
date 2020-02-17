@@ -5,66 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
-
-<style>
-/* 공지, 게시판 카드 */
-#noticeSearchFrm{margin: 15px 1rem 15px;} /*공지, 게시판 검색*/
-div.content-wrapper>div.content{padding-bottom: 5rem;} /*페이지 아래 길이 늘려주기*/
-div.header-line{padding: 1rem .5rem .8rem; margin: 1rem 0 .5rem; color: rgba(0,0,0,.5);}
-div.header-line h6{font-weight: bold;}
-i.fa-plus-square{float: right; font-size: 2rem; margin-right: .5rem; cursor: pointer; color: darkgray;} /*공지, 게시판 추가 버튼*/
-i.fa-plus-square:hover{color: gray;}
-.card{height: 20rem;}
-.card-body{overflow: hidden;} /*카드내용 밖으로 넘어감 처리*/
-img.card-img-top{height: 10rem; object-fit: cover; margin-bottom: 1.5rem; border-radius: 5px;}
-.card-title{margin-bottom: .5rem; font-size: 1rem; font-weight: bold;}
-.carousel-item-next, .carousel-item-prev, .carousel-item.active{display: flex;}
-.carousel-indicators{bottom: -3rem;} 
-.carousel-indicators li{background-color: gray;}
-i.slide-arrow{color: rgb(199, 195, 195); font-size: 2rem; cursor: pointer; position: absolute; top: 45%;}
-i.slide-arrow:hover{color:gray;}
-i.slide-arrow-left{left: -2rem;}
-i.slide-arrow-right{right: -1rem;}
-.btn-moreMenu{position: absolute; border: 0; background: #00ff0000; color: darkgray; font-size: .8rem; right: .1rem; top: .3rem;} /*수정, 삭제*/
-.btn-moreMenu:hover{color: gray;}
-a.dropdown-item{color: gray;}
-span#myDept{width: 1rem; height: 1rem; border: 2px solid lightgray; background: white; border-radius: 5px; padding: 0 .3rem;}
-/* 공지, 게시판 상세보기 모달 */
-div.modal-dialog{max-width: 50%;}
-.modal-header .close{margin: -1.5rem -1rem -1.5rem auto;}
-.modal-header .close>span{font-size: 2rem;}
-.modal-title{color: #5a5454;}
-.noticeView, .deptNoticeView, .boardView{margin-bottom: 1rem;}
-.user-block{float: none;}
-.view-img{width: 100%; display: block; margin: 0 auto;}
-.noticeView>.view-title, .deptNoticeView>.view-title, .boardView>.view-title{margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 1px solid lightgray;}
-p.view-title{font-size: 1.2rem; font-weight: bold;}
-p.view-content{margin: 1rem 1rem 2.5rem;}
-.comment-count{margin: 2.5rem 0 0.5rem; color: rgb(93, 93, 93);}
-.comment-text-area{display: inline-block; width: 90%; height: 2rem; margin-right: .3rem;}
-.comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
-.comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
-.comment-submit{border: 0; background: darkgray; border-radius: 3px; width: 3rem; height: 2rem; color: white;}
-.comment-submit:hover, .comment-reply:hover{background: #007bff;}
-.comment-delete:hover{background: #dc3545;}
-.comment-level2{margin-left: 3rem;}
-.btn-outline-success{border: 0; background: darkgray; border-radius: 3px; color: white;}
-.btn-outline-success:hover{background: #007bff;}
-.note-editor.note-frame{border: 1px solid #ced4da; width: 100%; height: 100%;} /*텍스트 에디터*/
-.note-editable{height: 10rem;}
-
-.fname{background: white; position: relative; bottom: 1.5rem; left: 4.6rem; padding-right:10rem;}
-.deleteFileSpan{position: absolute; left: 2.4rem; bottom: 0.8rem;}
-/* 답글 텍스트 */
-form.comment-level2{margin: 1rem 0 1rem 7rem;}
-.comment-submit-level2{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white; height: 2rem; width: 2.5rem}
-.comment-submit-level2:hover{background: #007bff;}
-div.level-2-border{border-bottom: 1px solid #e9ecef;}
-/*검색*/
-div#searchLine{color: rgba(0,0,0,.5); margin: 1rem 0 -0.5rem; font-size: 1.2rem; padding: 0; display:none;font-size: 1rem; font-weight: bold;}
-#searchLine>h6, span#searchCount{font-size: 1rem; font-weight: bold;}
-
-</style>
+<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/notice.css">
 
 <script>
 var nowSearchKeyword = '';
