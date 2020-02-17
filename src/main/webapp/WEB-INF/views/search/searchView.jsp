@@ -1,6 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@page import="java.util.Date"%>
+<%@page import="com.kh.workground.common.util.Utils"%>
+<%
+	//페이지바 작업
+	String keyword = (String)request.getAttribute("keyword");
+	String type = (String)request.getAttribute("type");
+	int totalContents = (int)request.getAttribute("totalContents");
+	int cPage = (int)request.getAttribute("cPage");
+	int numPerPage = (int)request.getAttribute("numPerPage");
+	String url = "searchView.do?keyword="+keyword+"&type="+type; 
+	
+	String pageBar = Utils.getPageBar(totalContents, cPage, numPerPage, url);
+	
+	pageContext.setAttribute("pageBar", pageBar);
+%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
@@ -101,17 +115,21 @@ function sidebarActive(){
     <!-- Main content -->
     <div id="attachment-wrapper" class="content view">
     
-    	<c:if test="${totalNoticeList!=null && !empty totalNoticeList}">
-    	<!-- 공지 -->
+    	<c:if test="${type=='total' || type=='dept'}">
+        <!-- 공지/부서별 게시글-->
         <div class="col-md-10" >
         	 <div class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;공지 <span class="header-count">(${fn:length(totalNoticeList)})</span></h3>
-	                 <c:if test="${fn:length(totalNoticeList) > 5}">
-	                 <button type="button" class="btn-more" value="${keyword},total">모두 보기</button>
+	                 <i class="far fa-file-word"></i>&nbsp;&nbsp;
+	                 <c:if test="${type == 'total'}">
+	                  	공지 
 	                 </c:if>
+	                 <c:if test="${type == 'dept'}">
+	                  	${memberLoggedIn.deptTitle} 게시글
+	                 </c:if>
+	                 <span class="header-count">(${fn:length(list)})</span>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${totalNoticeList}" var="n" begin="0" end="4">
+	             <c:forEach items="${list}" var="n">
 	             <div class="card-body"> 
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
@@ -128,51 +146,21 @@ function sidebarActive(){
         </div>
         </c:if>
         
-        <c:if test="${deptNoticeList!=null && !empty deptNoticeList}">
-        <!-- 부서별 게시글 -->
-        <div class="col-md-10" >
-        	 <div id="dept-wrapper" class="card-wrapper">
-	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;${memberLoggedIn.deptTitle} 게시글 <span class="header-count">(${fn:length(deptNoticeList)})</span></h3>
-	                 <c:if test="${fn:length(deptNoticeList) > 5}">
-	                 <button type="button" class="btn-more" value="${keyword},dept">모두 보기</button>
-	                 </c:if>
-	             </div><!-- /.card-header -->
-	             <c:forEach items="${deptNoticeList}" var="n" begin="0" end="4">
-	             <div class="card-body">
-	                 <div class="tab-content">
-	                     <div class="active tab-pane">
-	                         <h5>${n.noticeTitle}</h5>
-	                         <div class="card-status">
-                                <span class="date">${n.noticeDate}</span>
-                                <span class="writer">${n.memberName}</span>
-                             </div>
-	                     </div>
-	                 </div>
-	             </div>
-	             </c:forEach>
-             </div>
-        </div>
-        </c:if>
-        
-        <c:if test="${commuList!=null && !empty commuList}">
+        <c:if test="${type=='commu'}">
         <!-- 커뮤니티 -->
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${fn:length(commuList)})</span></h3>
-	                 <c:if test="${fn:length(commuList) > 5}">
-	                 <button type="button" class="btn-more" value="${keyword},commu">모두 보기</button>
-	                 </c:if>
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${fn:length(list)})</span></h3>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${commuList}" var="n" begin="0" end="4">
+	             <c:forEach items="${list}" var="c">
 	             <div class="card-body">
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
-	                         <h5>${n.commuTitle}</h5>
+	                         <h5>${c.commuTitle}</h5>
 	                         <div class="card-status">
-                                <span class="date">${n.commuDate}</span>
-                                <span class="writer">${n.memberName}</span>
+                                <span class="date">${c.commuDate}</span>
+                                <span class="writer">${c.memberName}</span>
                              </div>
 	                     </div>
 	                 </div>
@@ -180,20 +168,18 @@ function sidebarActive(){
 	             </c:forEach>
              </div>
         </div>
+        ${pageBar}     
         </c:if>
         
-        <c:if test="${projectList!=null && !empty projectList}">
+        <c:if test="${type=='project'}">
         <!-- 프로젝트 -->
         <div class="col-md-10">
             <div id="project-wrapper" class="card-wrapper">
                 <div class="card-header">
-                    <h3><i class="nav-icon far fa-calendar-check"></i>&nbsp;&nbsp;프로젝트 <span class="header-count">(${fn:length(projectList)})</span></h3>
-                    <c:if test="${fn:length(projectList) > 5}">
-                    <button type="button" class="btn-more" value="${keyword},project">모두 보기</button>
-                    </c:if>
+                    <h3><i class="nav-icon far fa-calendar-check"></i>&nbsp;&nbsp;프로젝트 <span class="header-count">(${fn:length(list)})</span></h3>
                 </div><!-- /.card-header -->
                 
-                <c:forEach items="${projectList}" var="p" begin="0" end="4">
+                <c:forEach items="${list}" var="p">
                 <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
                 <div class="card-body">
                     <div class="tab-content">
@@ -250,17 +236,15 @@ function sidebarActive(){
                 </c:forEach>
             </div>
         </div> 
+        ${pageBar}     
         </c:if>
         
-        <c:if test="${clubList!=null && !empty clubList}">
+        <c:if test="${type=='club'}">
         <!-- 동호회 -->
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${fn:length(clubList)})</span></h3>
-	                 <c:if test="${fn:length(clubList) > 5}">
-	                 <button type="button" class="btn-more" value="${keyword},club">모두 보기</button>
-	                 </c:if>
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${fn:length(list)})</span></h3>
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${clubList}" var="map" begin="0" end="4">
 	             <div class="card-body">
@@ -278,19 +262,17 @@ function sidebarActive(){
 	             </c:forEach>
              </div>
         </div>
+        ${pageBar}     
         </c:if>
         
-        <c:if test="${memList!=null && !empty memList}">
+        <c:if test="${type=='member'}">
         <!-- 멤버 -->
         <div class="col-md-10">
             <div id="member-wrapper" class="card-wrapper">
                 <div class="card-header">
-                    <h3><i class="fas fa-users"></i>&nbsp;&nbsp;멤버 <span class="header-count">(${fn:length(memList)})</span></h3>
-                    <c:if test="${fn:length(memList) > 5}">
-                    <button type="button" class="btn-more" value="${keyword},member">모두 보기</button>
-                    </c:if>
+                    <h3><i class="fas fa-users"></i>&nbsp;&nbsp;멤버 <span class="header-count">(${fn:length(list)})</span></h3>
                 </div><!-- /.card-header -->
-                <c:forEach items="${memList}" var="m" begin="0" end="4">
+                <c:forEach items="${list}" var="m">
                 <a href="${pageContext.request.contextPath}/member/memberView.do?memberId=${m.memberId}">
                 <div class="card-body">
                     <div class="tab-content">
@@ -305,17 +287,10 @@ function sidebarActive(){
                 </a>
                 </c:forEach>
             </div>
-        </div>     
+        </div>
+        ${pageBar}     
         </c:if> 
         
-        <!-- 조회된 게 하나도 없을 때 -->
-       	<c:if test="${empty totalNoticeList && empty deptNoticeList && empty commuList && 
-       				 empty projectList && empty clubList && empty memList}">
-       	<div id="empty-wrapper">
-       		<img src="${pageContext.request.contextPath}/resources/img/search-empty-state.png" alt="검색결과 없음" />
-       		<p>검색 결과가 없습니다.</p>
-       	</div>
-       	</c:if>     
     </div>
     <!-- /.content -->
 </div>

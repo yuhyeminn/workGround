@@ -311,6 +311,7 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:before, table.dataTable thead .sorting_desc_disabled:after{opacity: 0;}
 #member-list h2{margin-bottom: 1.7rem; color: #464c59; font-size: 1.5rem; font-weight: 600;}
 #member-inner table{margin-bottom: 1rem !important; background: #fff; border-radius: .25rem; color: #464c59; font-size: .85rem; box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);}
+#member-inner .navbar-light{background-color: inherit;}
 #memberSearchFrm .form-control-navbar{border: 1px solid #d4d6db; border-right-width: 0;}
 #memberSearchFrm .input-group>.input-group-append>.btn{border: 1px solid #d4d6db; border-left-width: 0;}
 #memberSearchFrm{margin: .8rem 0;}
@@ -319,6 +320,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 .page-link:focus{box-shadow: none;}
 .member-table tr{cursor: pointer;}
 .member-table .btn-outline-info:hover, .btn-outline-info:not(:disabled):not(.disabled):active{color: #17a2b8; background-color: inherit;}
+.btn-admin:hover{background: inherit; color: #ffc107;}
 
 
 /* memberView.jsp */
