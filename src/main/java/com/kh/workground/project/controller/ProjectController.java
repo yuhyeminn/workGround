@@ -133,6 +133,8 @@ public class ProjectController {
 					mav.addObject("inMemList", inMemList);
 					mav.addObject("wlList", p.getWorklistList());
 					
+					
+					
 					//서브헤더 탭에 따라 분기
 					if("work".equals(tab))
 						mav.setViewName("/project/projectView");

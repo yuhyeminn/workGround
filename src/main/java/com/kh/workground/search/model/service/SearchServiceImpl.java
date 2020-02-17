@@ -92,8 +92,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public int selectMemberTotalContents() {
-		int totalContents = searchDAO.selectMemberTotalContents();
+	public int selectMemberTotalContents(String keyword) {
+		int totalContents = searchDAO.selectMemberTotalContents(keyword);
 		
 		if(totalContents<=0)
 			throw new SearchException("멤버 조회 오류!");
@@ -112,8 +112,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 	
 	@Override
-	public int selectTotalNoticeTotalContents() {
-		int totalContents = searchDAO.selectTotalNoticeTotalContents();
+	public int selectTotalNoticeTotalContents(String keyword) {
+		int totalContents = searchDAO.selectTotalNoticeTotalContents(keyword);
 		
 		if(totalContents<=0)
 			throw new SearchException("전체공지 조회 오류!");
@@ -132,8 +132,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public int selectDeptNoticeTotalContents() {
-		int totalContents = searchDAO.selectDeptNoticeTotalContents();
+	public int selectDeptNoticeTotalContents(String keyword) {
+		int totalContents = searchDAO.selectDeptNoticeTotalContents(keyword);
 		
 		if(totalContents<=0)
 			throw new SearchException("부서게시글 조회 오류!");
@@ -152,8 +152,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 	
 	@Override
-	public int selectCommuListTotalContents() {
-		int totalContents = searchDAO.selectCommuListTotalContents();
+	public int selectCommuListTotalContents(String keyword) {
+		int totalContents = searchDAO.selectCommuListTotalContents(keyword);
 		
 		if(totalContents<=0)
 			throw new SearchException("커뮤니티 조회 오류!");
@@ -172,8 +172,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public int selectProjectTotalContents() {
-		int totalContents = searchDAO.selectProjectTotalContents();
+	public int selectProjectTotalContents(String keyword) {
+		int totalContents = searchDAO.selectProjectTotalContents(keyword);
 		
 		if(totalContents<=0)
 			throw new SearchException("프로젝트 조회 오류!");
@@ -192,8 +192,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public int selectClubTotalContents() {
-		int totalContents = searchDAO.selectClubTotalContents();
+	public int selectClubTotalContents(String keyword) {
+		int totalContents = searchDAO.selectClubTotalContents(keyword);
 		
 		if(totalContents<=0)
 			throw new SearchException("동호회 조회 오류!");

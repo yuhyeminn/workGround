@@ -127,7 +127,7 @@ function sidebarActive(){
 	                 <c:if test="${type == 'dept'}">
 	                  	${memberLoggedIn.deptTitle} 게시글
 	                 </c:if>
-	                 <span class="header-count">(${fn:length(list)})</span>
+	                 <span class="header-count">(${totalContents})</span>
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${list}" var="n">
 	             <div class="card-body"> 
@@ -151,7 +151,7 @@ function sidebarActive(){
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${fn:length(list)})</span></h3>
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${totalContents})</span></h3>
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${list}" var="c">
 	             <div class="card-body">
@@ -176,7 +176,7 @@ function sidebarActive(){
         <div class="col-md-10">
             <div id="project-wrapper" class="card-wrapper">
                 <div class="card-header">
-                    <h3><i class="nav-icon far fa-calendar-check"></i>&nbsp;&nbsp;프로젝트 <span class="header-count">(${fn:length(list)})</span></h3>
+                    <h3><i class="nav-icon far fa-calendar-check"></i>&nbsp;&nbsp;프로젝트 <span class="header-count">(${totalContents})</span></h3>
                 </div><!-- /.card-header -->
                 
                 <c:forEach items="${list}" var="p">
@@ -244,7 +244,7 @@ function sidebarActive(){
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${fn:length(list)})</span></h3>
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${totalContents})</span></h3>
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${clubList}" var="map" begin="0" end="4">
 	             <div class="card-body">
@@ -270,7 +270,7 @@ function sidebarActive(){
         <div class="col-md-10">
             <div id="member-wrapper" class="card-wrapper">
                 <div class="card-header">
-                    <h3><i class="fas fa-users"></i>&nbsp;&nbsp;멤버 <span class="header-count">(${fn:length(list)})</span></h3>
+                    <h3><i class="fas fa-users"></i>&nbsp;&nbsp;멤버 <span class="header-count">(${totalContents})</span></h3>
                 </div><!-- /.card-header -->
                 <c:forEach items="${list}" var="m">
                 <a href="${pageContext.request.contextPath}/member/memberView.do?memberId=${m.memberId}">
