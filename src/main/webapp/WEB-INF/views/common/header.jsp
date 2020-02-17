@@ -258,36 +258,64 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/notice/noticeList.do" id="sidebar-notice" class="nav-link active">
-              <i class="nav-icon far fa-sticky-note"></i>
-              <p>공지</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/project/projectList.do"id="sidebar-project" class="nav-link">
-              <i class="nav-icon far fa-calendar-check"></i>
-              <p>프로젝트</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/club/clubList.do" id="sidebar-club" class="nav-link">
-              <i class="nav-icon fas fa-snowboarding"></i>
-              <p>동호회</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/member/memberList.do" id="sidebar-member" class="nav-link">
-              <i class="nav-icon fas fa-users"></i>
-              <p>멤버</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/chat/chatList.do" id="sidebar-chat" class="nav-link">
-              <i class="nav-icon far fa-comments"></i>
-              <p>대화</p>
-            </a>
-          </li>
+          <c:if test="${memberLoggedIn.memberId == 'admin'}">
+          	<li class="nav-item">
+            	<a href="${pageContext.request.contextPath}/admin/adminNoticeList.do" id="sidebar-notice" class="nav-link active">
+              	  <i class="nav-icon far fa-sticky-note"></i>
+              	  <p>공지</p>
+            	</a>
+            </li>
+            <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/admin/adminProjectList.do"id="sidebar-project" class="nav-link">
+	              <i class="nav-icon far fa-calendar-check"></i>
+	              <p>프로젝트</p>
+	            </a>
+	        </li>
+          	<li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/admin/adminClubList.do" id="sidebar-club" class="nav-link">
+	              <i class="nav-icon fas fa-snowboarding"></i>
+	              <p>동호회</p>
+	            </a>
+	        </li>
+	        <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/admin/adminMemberList.do" id="sidebar-member" class="nav-link">
+	              <i class="nav-icon fas fa-users"></i>
+	              <p>멤버</p>
+	            </a>
+	        </li>
+          </c:if>
+          <c:if test="${memberLoggedIn.memberId != 'admin'}">
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/notice/noticeList.do" id="sidebar-notice" class="nav-link active">
+	              <i class="nav-icon far fa-sticky-note"></i>
+	              <p>공지</p>
+	            </a>
+	          </li>
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/project/projectList.do"id="sidebar-project" class="nav-link">
+	              <i class="nav-icon far fa-calendar-check"></i>
+	              <p>프로젝트</p>
+	            </a>
+	          </li>
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/club/clubList.do" id="sidebar-club" class="nav-link">
+	              <i class="nav-icon fas fa-snowboarding"></i>
+	              <p>동호회</p>
+	            </a>
+	          </li>
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/member/memberList.do" id="sidebar-member" class="nav-link">
+	              <i class="nav-icon fas fa-users"></i>
+	              <p>멤버</p>
+	            </a>
+	          </li>
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/chat/chatList.do" id="sidebar-chat" class="nav-link">
+	              <i class="nav-icon far fa-comments"></i>
+	              <p>대화</p>
+	            </a>
+	          </li>
+          </c:if>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
