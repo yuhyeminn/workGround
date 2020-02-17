@@ -275,22 +275,33 @@ $(".div-close").on('click',()=>{
     }
 });
 
-$("#project_startdate").datepicker({
+$("#project_startdate").daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    locale: {
+	    format: 'YYYY-MM-DD'
+    }
+  });
+/* $("#project_startdate").datepicker({
     todayHighlight: true,
     format: 'yyyy/mm/dd',
     uiLibrary: 'bootstrap4'
     
-    });
-$("#project_enddate").datepicker({
-    todayHighlight: true,
-    format: 'yyyy/mm/dd',
-    uiLibrary: 'bootstrap4'
-    });
-$("#project_realenddate").datepicker({
-    todayHighlight: true,
-    format: 'yyyy/mm/dd',
-    uiLibrary: 'bootstrap4'
-});
+    }); */
+$("#project_enddate").daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    locale: {
+	    format: 'YYYY-MM-DD'
+    }
+  });
+$("#project_realenddate").daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    locale: {
+	    format: 'YYYY-MM-DD'
+    }
+  });
 
 $(".update-status-code").on('click',function(){
 	var statusCode = $(this).attr('id');
@@ -327,7 +338,7 @@ $(".date-update").on('click',function(){
 			data: {projectNo:projectNo, date:date, dateType:dateType},
 			dataType:"json",
 			success: data =>{
-				var dateArr = date.split('/');
+				var dateArr = date.split('-');
 				var dateView = $this.closest(".row").find(".setting-content-inform span");
 				if(date == null || date ==''){
 					var dateTypeName = $this.closest(".row").find("label").text();
@@ -346,7 +357,7 @@ function dateValidation(date,dateType){
 	/* if(date==null || date=='') {alert("날짜를 입력하세요.");return;}  날짜 null로 변경할수도 있기 때문*/
 	
 	if(dateType == 'project_startdate'){
-		var startDateArr = date.split('/');
+		var startDateArr = date.split('-');
 		var endDate = $("#projectEndDate").val();
 		var endDateArr = endDate.split('-');
 		var realEndDate = $("#projectRealEndDate").val();
@@ -363,7 +374,7 @@ function dateValidation(date,dateType){
 		}
 	}
 	if(dateType== 'project_enddate'){
-		var endDateArr = date.split('/');
+		var endDateArr = date.split('-');
 		var startDate = $("#projectStartDate").val();
 		var startDateArr = startDate.split('-');
 		var endDateCompare = new Date(endDateArr[0], parseInt(endDateArr[1])-1, endDateArr[2]);
@@ -373,7 +384,7 @@ function dateValidation(date,dateType){
 		}
 	}
 	if(dateType== 'project_realenddate'){
-		var realEndDateArr = date.split('/');
+		var realEndDateArr = date.split('-');
 		var startDate = $("#projectStartDate").val();
 		var startDateArr = startDate.split('-');
 		var realEndDateCompare = new Date(realEndDateArr[0], parseInt(realEndDateArr[1])-1, realEndDateArr[2]);

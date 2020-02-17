@@ -441,7 +441,9 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 	}
 
 	@Override
-	public int insertWorkFile(Attachment attach) {
+	public Map<String, Object> insertWorkFile(Attachment attach) {
+		Map<String, Object> result = new HashMap<>();
+		//멤버 아이디, 업무번호로 프로젝트 멤버 테이블 고유번호 가져오기
 		Map<String, String> param = new HashMap<>();
 		param.put("memberId", attach.getAttachmentWriterId());
 		param.put("workNo", Integer.toString(attach.getWorkNo()));
@@ -450,8 +452,14 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		
 		attach.setAttachmentWriterNo(member_no);
 		
-		int result = projectDAO.insertWorkFile(attach);
-		if(result==0) throw new ProjectException("업무 파일 업로드 오류!");
+		//첨부파일 insert
+		int isUpdated = projectDAO.insertWorkFile(attach);
+		if(isUpdated==0) throw new ProjectException("업무 파일 업로드 오류!");
+		result.put("isUpdated", isUpdated>0?true:false);
+		
+		//방금 insert한 첨부파일 객체 가져오기(멤버까지)
+		Attachment attachment = projectDAO.selectAttachmentOne(attach.getAttachmentNo());
+		result.put("attachment", attachment);
 		
 		return result;
 	}

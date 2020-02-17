@@ -62,6 +62,6 @@ public interface ProjectService2 {
 
 	int deleteWorkComment(int commentNo);
 
-	int insertWorkFile(Attachment attach);
+	Map<String, Object> insertWorkFile(Attachment attach);
 
 }

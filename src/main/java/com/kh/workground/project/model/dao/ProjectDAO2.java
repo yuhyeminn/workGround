@@ -87,4 +87,6 @@ public interface ProjectDAO2 {
 
 	int insertWorkFile(Attachment attach);
 
+	Attachment selectAttachmentOne(int attachmentNo);
+
 }

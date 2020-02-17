@@ -218,4 +218,9 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 		return sqlSession.insert("project.insertWorkFile",attach);
 	}
 
+	@Override
+	public Attachment selectAttachmentOne(int attachmentNo) {
+		return sqlSession.selectOne("project.selectAttachmentOne",attachmentNo);
+	}
+
 }

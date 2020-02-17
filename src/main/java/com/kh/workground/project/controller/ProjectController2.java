@@ -642,7 +642,7 @@ public class ProjectController2 {
 	@RequestMapping("/project/uploadWorkFile.do")
 	@ResponseBody
 	public Map<String, Object> uploadWorkFile(MultipartHttpServletRequest request){
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> result;
 		try {
 			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/project");
 			MultipartFile f = request.getFile("workFile");
@@ -680,13 +680,12 @@ public class ProjectController2 {
 			//MultipartFile 객체 파일 업로드 처리 끝 /////////////
 			
 			//2. 업무로직
-			int result = projectService.insertWorkFile(attach);
-			
+			result = projectService.insertWorkFile(attach);
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("업무 파일 업로드 오류!");
 		}
-		return map;
+		return result;
 	}
 }

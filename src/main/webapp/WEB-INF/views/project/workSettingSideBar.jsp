@@ -462,7 +462,7 @@
                 	<input type="hidden" name="memberId" value="${memberLoggedIn.memberId}" />
                     <div class="custom-file work-custom-file">
                     <input type="file" class="custom-file-input" id="workInputFile" name="workFile" aria-describedby="inputGroupFileAddon04">
-                    <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                    <label class="custom-file-label" for="inputGroupFile04">파일을 선택하세요.</label>
                     </div>
                     <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button" id="upload-file-btn" style="font-size:12px;">파일 첨부</button>
@@ -470,54 +470,65 @@
                 </div>
                 </form>
                 <!-- 첨부파일 테이블 -->
-                <div id="card-workAttach" class="card">
-                <div class="card-body table-responsive p-0">
-                    <table id="tbl-projectAttach" class="table table-hover text-nowrap">
-                    <thead>
-                        <tr>
+            <div id="card-projectAttach" class="table-responsive p-0">
+            <table id="tbl-projectAttach" class="table table-hover text-nowrap">
+                <thead>
+                    <tr>
                         <th>이름</th>
                         <th>공유한 날짜</th>
                         <th>공유한 사람</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <c:if test="${work.attachmentList!=null && !empty work.attachmentList}">
-                      <c:forEach items="${work.attachmentList}" var="atm">
-                        <tr>
-                        <td>
-                            <div class="img-wrapper">
-                            <img src="${pageContext.request.contextPath}/resources/img/${atm.renamedFilename}" alt="첨부파일 미리보기 이미지">
-                            </div>
-                            <div class="imgInfo-wrapper">
-                            <p class="filename">${atm.originalFilename}</p>
-                            <p class="filedir">33.8KB</p>
-                            </div>
-                        </td>
-                        <td><fmt:formatDate value="${atm.attachmentEnrollDate}" type="date" pattern="yyyy년 MM월 dd일" /></td>
-                        <td>
-                            <span>${atm.attachmentWriterMember.memberName }</span>
-                            <!-- 첨부파일 옵션 버튼 -->
-                            <div class="dropdown ">
-                            <button type="button" class="btn-file" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a href="#" class="dropdown-item">
-                                	다운로드
-                                </a>
-                                <c:if test="${memberLoggedIn.memberId eq atm.attachmentWriterMember.memberId || memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin' }">
-                                	<div class="dropdown-divider"></div>
-                                	<a href="#" class="dropdown-item dropdown-file-remove">삭제</a>
-                                </c:if>
-                            </div>
-                            </div>
-                        </td>
-                        </tr>
-                        </c:forEach>
-                        </c:if>
-                    </tbody>
-                    </table>
-                </div>
-                <!-- /.card-body -->
-                </div>
+                    </tr>
+                </thead>
+                <tbody>
+                <c:if test="${work.attachmentList!=null && !empty work.attachmentList}">
+                  <c:forEach items="${work.attachmentList}" var="a">
+                    <tr id="${a.attachmentNo}">
+                     <input type="hidden" class="oName" value="${a.originalFilename}" />
+                     <input type="hidden" class="rName" value="${a.renamedFilename}" />
+                     <td>
+                             <div class="img-wrapper">
+                             	 <c:forTokens items="${fn:toLowerCase(a.renamedFilename)}" var="token" delims="." varStatus="vs">
+                             	 <c:if test="${vs.last}">
+                             	 	<c:choose>
+                             	 		<c:when test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
+			                                 <img src="${pageContext.request.contextPath}/resources/upload/project/${a.renamedFilename}" alt="첨부파일 미리보기 이미지">
+                             	 		</c:when>
+                             	 		<c:when test="${token!='bmp' && token!='jpg' && token!='jpeg' && token!='gif' && token!='png' && token!='tif' && token!='tiff' && token!='jfif'}">
+			                                 <img src="${pageContext.request.contextPath}/resources/img/project/default-file.png" alt="첨부파일 미리보기 이미지">
+                             	 		</c:when>
+                             	 	</c:choose>
+                             	 </c:if>
+                             	 </c:forTokens>
+                             </div>
+                             <div class="imgInfo-wrapper">
+                                 <p class="filename">${a.originalFilename}</p>
+                             </div>
+                     </td>
+                     <td>${a.attachmentEnrollDate}</td>
+                     <td>
+                        <span>${a.attachmentWriterMember.memberName}</span>
+                         <!-- 첨부파일 옵션 버튼 -->
+                         <div class="dropdown ">
+                             <button type="button" class="btn-file" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
+                             <div class="dropdown-menu dropdown-menu-right">
+                                 <button type="button" class="dropdown-item btn-down" value="${a.attachmentNo}">다운로드</button>
+                                 
+                                 <!-- 파일삭제: 관리자, 프로젝트 팀장, 공유한 사람만 가능 -->
+                                 <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId || a.attachmentWriterMember.memberId==memberLoggedIn.memberId}">
+                                 <div class="dropdown-divider"></div>
+                                 <button type="button" class="dropdown-item dropdown-file-remove" value="${a.attachmentNo},${a.originalFilename},${a.renamedFilename}" data-toggle="modal" data-target="#modal-file-remove">삭제</a>
+                                 </c:if>
+                             </div>
+                         </div>
+                     </td>
+                    </tr>
+                    </c:forEach>
+		    </c:if>
+          </tbody>
+    </table>
+</div>
+                
+                
                 <!-- /.card -->
                 </div>
                 <!-- /.container-fluid -->
@@ -549,17 +560,19 @@
  
  
  function workDatePicker(){
-	 $("#work_startdate").datepicker({
-		    todayHighlight: true,
-		    format: 'yyyy/mm/dd',
-		    uiLibrary: 'bootstrap4'
-		    
-	 });
-	 $("#work_enddate").datepicker({
-		    todayHighlight: true,
-		    format: 'yyyy/mm/dd',
-		    uiLibrary: 'bootstrap4'
-		    
+	 $("#work_startdate").daterangepicker({
+		    singleDatePicker: true,
+		    showDropdowns: true,
+		    locale: {
+			    format: 'YYYY-MM-DD'
+		    }
+	});
+	 $("#work_enddate").daterangepicker({
+		    singleDatePicker: true,
+		    showDropdowns: true,
+		    locale: {
+			    format: 'YYYY-MM-DD'
+		    }
 	});
  }
  
@@ -593,8 +606,8 @@ function sideClose(){
 					data: {workNo:workNo, date:date, dateType:dateType},
 					dataType:"json",
 					success: data =>{
-						var dateArr = date.split('/');
-						var dateView = $this.closest(".row").find(".setting-content-inform p");
+						var dateArr = date.split('-');
+						var dateView = $this.closest(".row").find("p.setting-content-inform");
 						if(date == null || date ==''){
 							var dateTypeName = $this.closest(".row").find("label").text();
 							dateView.text(dateTypeName+" 없음");
@@ -613,7 +626,7 @@ function sideClose(){
 
 function workDateValidation(date,dateType){
 	 	if(dateType == 'work_startdate'){
-			var startDateArr = date.split('/');
+			var startDateArr = date.split('-');
 			var endDate = $("#workEndDate").val();
 			console.log(endDate)
 			var endDateArr = endDate.split('-');
@@ -625,7 +638,7 @@ function workDateValidation(date,dateType){
 			}
 		}
 		if(dateType== 'work_enddate'){
-			var endDateArr = date.split('/');
+			var endDateArr = date.split('-');
 			var startDate = $("#workStartDate").val();
 			console.log(startDate)
 			var startDateArr = startDate.split('-');
@@ -950,8 +963,10 @@ function updateWorkMember(){
  }
  
  function uploadWorkFile(){
-	 $(".upload-file-btn").on('click',function(){
+	 $("#upload-file-btn").on('click',function(){
+		 event.preventDefault();
 		 var formData = new FormData($('#workFileForm')[0]);
+		 console.log(formData);
 		 $.ajax({
 			 type: "POST", 
 			 enctype: 'multipart/form-data', // 필수 
@@ -961,14 +976,46 @@ function updateWorkMember(){
 			 contentType: false, // 필수
 			 cache: false, 
 			 success: data=>{
-
+				 var a = data.attachment;
+				 var rArr = (a.renamedFilename).split(".");
+				 var ext = rArr[rArr.length-1];
+				 console.log(ext);
+				 
+				 if(data.isUpdated){
+					 var html = ' <tr id="'+a.attachmentNo+'"><input type="hidden" class="oName" value="'+a.originalFilename+'" />';
+					 		  +'<input type="hidden" class="rName" value="'+a.renamedFilename+'" /><td><a href=""><div class="img-wrapper">';
+					 if(ext =='bmp' || ext =='jpg' || ext=='jpeg' || ext =='gif' || ext=='png' || ext=='tif' || ext=='tiff' || ext=='jfif'){
+						 html += '<img src="${pageContext.request.contextPath}/resources/upload/project/'+a.renamedFilename+'" alt="첨부파일 미리보기 이미지">';
+					 }
+					 else{
+						 html += '<img src="${pageContext.request.contextPath}/resources/img/project/default-file.png" alt="첨부파일 미리보기 이미지">';
+					 }
+					 html+='</div><div class="imgInfo-wrapper"><p class="filename">'+a.originalFilename+'</p></div></a></td>'
+					 	 +'<td>'+a.attachmentEnrollDate+'</td>'
+					 	 +'<td> <span>'+a.attachmentWriterMember.memberName+'</span>'
+					 	 +'<div class="dropdown "><button type="button" class="btn-file" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>'
+					 	 +'<div class="dropdown-menu dropdown-menu-right"><button type="button" class="dropdown-item btn-down" value="'+a.attachmentNo+'">다운로드</button>'
+					 	 +'<div class="dropdown-divider"></div><button type="button" class="dropdown-item dropdown-file-remove" value="'+a.attachmentNo+','+a.originalFilename+','+a.renamedFilename+'" data-toggle="modal" data-target="#modal-file-remove">삭제</a>'
+				 		 +'</div></div></td></tr>';
+				 	 $("#tbl-projectAttach tbody").append(html);
+				 }
 			 },
 			 error:(jqxhr, textStatus, errorThrown)=>{
 				 console.log(jqxhr, textStatus, errorThrown);
 			 } 
-		 })
-	 })
+		 });
+	 });
  }
+ $("[name=workFile]").on("change",function(){
+		//	파일 입력 취소
+		if($(this).prop("files")[0] === undefined){
+			$(this).next(".custom-file-label").html("파일을 선택하세요.");
+			return;
+		}
+		var fileName = $(this).prop('files')[0].name; 
+		//var fileName = $(this).val(); //크롬/Firefox 실제 컴퓨터의 경로를 노출하지 않는다.
+		$(this).next(".custom-file-label").html(fileName);
+ });
  
  </script>
  <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

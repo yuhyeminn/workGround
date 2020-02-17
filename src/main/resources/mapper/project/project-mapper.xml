@@ -618,7 +618,18 @@
 	<!-- insertWorkFile.do : 업무 파일 업로드 -->
 	<insert id="insertWorkFile">
 		insert into attachment values (seq_attachment.nextval,#{workNo},#{attachmentWriterNo},#{originalFilename},#{renamedFilename},default)
+		<selectKey keyProperty="attachmentNo" resultType="_int" order="AFTER">
+			select seq_attachment.currval from dual
+		</selectKey>
 	</insert>
+	
+	<!-- insertWorkFile.do : attachment조회 -->
+	<select id="selectAttachmentOne" resultMap="attachmentMemberMap">
+		select A.*, VM.*
+		from attachment A join project_members PM on A.attachment_writer_no = PM.project_members_no left join view_member VM on PM.member_id = VM.member_id
+		where A.attachment_no = #{attachmentNo}
+	</select>
+	
 	
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>
