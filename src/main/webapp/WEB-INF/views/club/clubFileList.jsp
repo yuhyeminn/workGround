@@ -127,10 +127,10 @@ function clubFileList(clubNo) {
 	class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
 	<!-- Left navbar links -->
 	<!-- SEARCH FORM -->
-	<form id="noticeSearchFrm" class="form-inline">
+	<form id="noticeSearchFrm" class="form-inline" action="${pageContext.request.contextPath }/club/searchClubContent.do" method="POST">
 		<div class="input-group input-group-sm">
-			<input class="form-control form-control-navbar" type="search"
-				placeholder="oo동호회 검색" aria-label="Search">
+			<input class="form-control form-control-navbar" type="search" placeholder="${club.clubName } 검색" aria-label="Search" name="keyword">
+			<input type="hidden" name="clubNo" value="${club.clubNo }" />
 			<div class="input-group-append">
 				<button class="btn btn-navbar" type="submit">
 					<i class="fas fa-search"></i>
@@ -200,9 +200,10 @@ function clubFileList(clubNo) {
         <div id="member-inner" class="table-responsive p-0">
             <!-- SEARCH FORM -->
             <div class="navbar-light">
-                <form id="memberSearchFrm" class="form-inline">
+                <form id="memberSearchFrm" class="form-inline" action="${pageContext.request.contextPath }/club/searchClubFile.do" method="POST">
                     <div class="input-group input-group-sm">
-                    <input class="form-control form-control-navbar" type="search" placeholder="파일 검색하기" aria-label="Search">
+                    <input class="form-control form-control-navbar" type="search" placeholder="파일 검색하기" aria-label="Search" name="keyword">
+                    <input type="hidden" name="clubNo" value="${club.clubNo }" />
                     <div class="input-group-append">
                         <button class="btn btn-navbar" type="submit">
                         <i class="fas fa-search"></i>
@@ -223,6 +224,7 @@ function clubFileList(clubNo) {
                     </tr>
                 </thead>
                 <tbody>
+                	<c:if test="${not empty clubPhotoList }">
                 	<c:forEach items="${clubPhotoList}" var="clubPhoto">
                     <tr>
                         <td>
@@ -235,7 +237,9 @@ function clubFileList(clubNo) {
                         <td>${clubPhoto.clubPhotoDate}</td>
                     </tr>
                     </c:forEach>
+                	</c:if>
                     <c:forEach items="${clubNoticeList }" var="clubNotice">
+                    <c:if test="${clubNotice.clubNoticeOriginal ne null }">
                     <tr>
                         <td>
                           <button type="button" class="btn btn-block btn-outline-primary btn-xs btn-admin">공지</button>
@@ -246,6 +250,7 @@ function clubFileList(clubNo) {
                         <td>${clubNotice.clubNoticeOriginal}</td>
                         <td>${clubNotice.clubNoticeDate}</td>
                     </tr>
+                    </c:if>
                     </c:forEach>
                 </tbody>
             </table>    

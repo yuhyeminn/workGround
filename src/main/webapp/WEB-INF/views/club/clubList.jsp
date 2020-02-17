@@ -9,8 +9,11 @@
 
 <script>
 var sort; 
+var category;
+
 $( document ).ready(function() {
 	sort = $("#drop-sort a").html();
+	category = $("#drop-category a").html();
 	clubFunc();
 });
 
@@ -19,6 +22,13 @@ $(document).on('click', '#drop-sort a', function() {
 	sort = $(this).text();
     clubFunc();
 }); 
+
+$(document).on('click', '#drop-category a', function() {
+	$("#drop-sort-category").text($(this).text());
+	category = $(this).text();
+    clubFunc();
+}); 
+
 
 $(function(){
  
@@ -90,7 +100,8 @@ function clubFunc(){
 		
 		url: "${pageContext.request.contextPath}/club/clubListBySort.do",
 		dataType: "json",
-		data:{"sort" : sort},
+		data:{"sort" : sort,
+			  "category" : category},
 		type: "GET",
 		success: data => {
 			console.log(data);
@@ -154,6 +165,8 @@ function clubFunc(){
 		    	
 		    	allClubHtml+='<div class="category">'
 		    				+'<span class="club-category">'+list.clubCategory+'</span></div></div></div></div>';
+		    				
+
 	
 		    });
 			//새 동호회 부분
@@ -359,7 +372,22 @@ function clubFunc(){
 <!-- Navbar Club -->
 <nav
 	class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
+		<ul class="navbar-nav" > 
+        <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="drop-sort-category">
+            	전체<span class="caret"></span>
+        </a>
+        <div class="dropdown-menu" id="drop-category">
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">전체</a>
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">사회</a>
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">문학</a>
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">음식</a>
+            <a class="dropdown-item sort-by-category"  tabindex="-1" ">취미</a>
+        </div>
+        </li>
+    </ul>
 	<!-- Left navbar links -->
+
 
 	<!-- Right navbar links -->
 	<ul class="navbar-nav ml-auto navbar-nav-sort">
@@ -418,14 +446,12 @@ function clubFunc(){
 								</div>
 								<div class="modal-body">
 
-									<div id="modal-image-slider" class="carousel slide"
+									<div id="modal-image-slider-${club.clubNo }" class="carousel slide"
 										data-ride="carousel">
 
 										<div class="carousel-inner">
-
-											<c:choose>
-
-												<c:when
+	
+												<c:if
 													test="${not empty club.clubPhotoList[0].clubPhotoRenamed}">
 
 													<div class="carousel-item active">
@@ -433,17 +459,16 @@ function clubFunc(){
 															src="${pageContext.request.contextPath}/resources/upload/club/${club.clubNo }/${club.clubPhotoList[0].clubPhotoRenamed}"
 															alt="First slide">
 													</div>
-												</c:when>
+												</c:if>
 
-												<c:otherwise>
+												<c:if test="${empty club.clubPhotoList[0].clubPhotoRenamed}">
 													<div class="carousel-item active">
 														<img class="d-block w-100"
 															src="${pageContext.request.contextPath}/resources/img/club/clubAll.JPG"
 															alt="First slide">
 													</div>
 
-												</c:otherwise>
-											</c:choose>
+												</c:if>
 											<c:if
 												test="${not empty club.clubPhotoList[1].clubPhotoRenamed}">
 												<div class="carousel-item">
@@ -462,11 +487,11 @@ function clubFunc(){
 											</c:if>
 										</div>
 
-										<a class="carousel-control-prev" href="#modal-image-slider"
+										<a class="carousel-control-prev" href="#modal-image-slider-${club.clubNo }"
 											role="button" data-slide="prev"> <span
 											class="carousel-control-prev-icon" aria-hidden="true"></span>
 											<span class="sr-only">Previous</span>
-										</a> <a class="carousel-control-next" href="#modal-image-slider"
+										</a> <a class="carousel-control-next" href="#modal-image-slider-${club.clubNo }"
 											role="button" data-slide="next"> <span
 											class="carousel-control-next-icon" aria-hidden="true"></span>
 											<span class="sr-only">Next</span>

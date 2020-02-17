@@ -96,5 +96,24 @@ public class ClubServiceImpl implements ClubService {
 		return clubDAO.selectOneClubPlan(clubPlanNo);
 	}
 
+	@Override
+	public List<Club> selectAllClubListByCategory(Map param) {
+
+		return clubDAO.selectAllClubListByCategory(param);
+	}
+
+	@Override
+	public List<Club> selectAllMyClubListByCategory(Map param) {
+		return clubDAO.selectAllMyClubListByCategory(param);
+	}
+
+	@Override
+	public List<Club> selectAllStandByClubListByCategory(Map param) {
+		return clubDAO.selectAllStandByClubListByCategory(param);
+	}
+
+
+
+
 
 }

@@ -33,58 +33,35 @@ $(function(){
 	
 });
 
-$( document ).ready(function() {
+//사이드바 활성화
+function sidebarActive(){
+	let navLinkArr = document.querySelectorAll(".sidebar .nav-link");
 	
-/* 	var clubNo = "${clubNo}";
-	$.ajax({
-		url: "${pageContext.request.contextPath}/club/selectClubPlan.do",
-		dataType: "json",
-		data:{"clubNo" : clubNo},
-		type: "GET",
-		success: data => {
-			
-			console.log(data);
-			
-		},
-		error: (x,s,e)=> {
-			console.log(x,s,e);
-		}
-	}); */
-});
+	navLinkArr.forEach((obj, idx)=>{
+		let $obj = $(obj);
+		if($obj.hasClass('active'))
+			$obj.removeClass('active');
+	});
+	
+	$("#sidebar-club").addClass("active");
+}
 
+//서브헤더 탭 active
+function tabActive(){
+  let tabArr = document.querySelectorAll("#navbar-tab li");
 
+  tabArr.forEach((obj, idx)=>{
+      let $obj = $(obj);
+      if($obj.hasClass('active')){
+          $obj.removeClass('active');
+      }
+  });
+
+  $("#tab-calendar").addClass("active");
+}
 	
 $(function () {
 
-    /* initialize the external events
-     -----------------------------------------------------------------*/
-/*     function ini_events(ele) {
-      ele.each(function () {
-
-        // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
-        // it doesn't need to have a start or end
-        var eventObject = {
-          title: $.trim($(this).text()) // use the element's text as the event title
-        }
-
-        // store the Event Object in the DOM element so we can get to it later
-        $(this).data('eventObject', eventObject)
-
-        // make the event draggable using jQuery UI
-        $(this).draggable({
-          zIndex        : 1070,
-          revert        : true, // will cause the event to go back to its
-          revertDuration: 0  //  original position after the drag
-        })
-
-      })
-    }
-
-    ini_events($('#external-events div.external-event')) */
-
-    /* initialize the calendar
-     -----------------------------------------------------------------*/
-    //Date for the calendar events (dummy data)
     var date = new Date()
     var d    = date.getDate(),
         m    = date.getMonth(),
@@ -94,24 +71,8 @@ $(function () {
     var Draggable = FullCalendarInteraction.Draggable;
 
     var containerEl = document.getElementById('external-events');
-    //var checkbox = document.getElementById('drop-remove');
     var calendarEl = document.getElementById('calendar');
 
-    // initialize the external events
-    // -----------------------------------------------------------------
-
-/*     new Draggable(containerEl, {
-      itemSelector: '.external-event',
-      eventData: function(eventEl) {
-        console.log(eventEl);
-        return {
-          title: eventEl.innerText,
-          backgroundColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-          borderColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-          textColor: window.getComputedStyle( eventEl ,null).getPropertyValue('color'),
-        };
-      }
-    }); */
 	var clubPlanList = "${clubPlanList}"; //자바스크립트 변수로 선언.
 	
     var calendar = new Calendar(calendarEl, {
@@ -138,7 +99,7 @@ $(function () {
     	  var noAndTitle = info.event.title;
     	  var arr = noAndTitle.split(",");
     	  var clubPlanNo = arr[0];
-    	  alert("tlf");
+    	
     	  $.ajax({
     		  
     		  url: "${pageContext.request.contextPath}/club/selectOneClubPlan.do?",
@@ -166,7 +127,7 @@ $(function () {
 					//참석자 부분
 					clubPlanViewModal +='<div class="form-group"><label for="inputProjectLeader">참석자</label><div class="attendeeList" id="attendeeList'+data.clubPlan.clubPlanNo+'"></div>'
 					//참석자가 있을때
-					if(data.clubPlan.planAttendeeList != null){
+					if(data.clubPlan.planAttendeeList[0].memberId != null){
 						$.each(data.clubPlan.planAttendeeList,(idx,list)=>{
 							
 							if(list.clubPlanNo == data.clubPlan.clubPlanNo){
@@ -175,7 +136,8 @@ $(function () {
 		                            			  +'<h6 class="h6">'+list.memberName+'</h6>'
 		                            			  +'<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">'
 		                            			  +'<form name="deleteClubPlanAttendeeFrm" action="${pageContext.request.contextPath}/club/deleteClubPlanAttendee.do" method="POST">'
-									    		  +'<input type="hidden" name="memberId" value="'+list.memberId+'">'
+									    		  +'<input type="hidden" name="where" value="2" />'
+		                            			  +'<input type="hidden" name="memberId" value="'+list.memberId+'">'
 									    		  +'<input type="hidden" name="clubPlanAttendeeNo" value="'+list.clubPlanAttendeeNo+'">'
 									    		  +'<input type="hidden" name="clubNo" value="'+data.clubPlan.clubNo+'">'
 									    		  +'<button type="submit" class="btn btn-tool"><i class="fas fa-times" style="color: black;"></i></button>'
@@ -188,15 +150,17 @@ $(function () {
 					}
 					clubPlanViewModal+='</div></div>'
 									 +'<div class="modal-footer"><form name="insertClubPlanAttendanceFrm" action="${pageContext.request.contextPath }/club/insertClubPlanAttendee.do" method="POST">'
+									 +'<input type="hidden" name="where" value="2" />'
 									 +'<input type="hidden" name="clubPlanNo" value='+data.clubPlan.clubPlanNo+' />'
 									 +'<input type="hidden" name="memberId" value='+'${memberLoggedIn.memberId}'+ ' />'
 									 +'<input type="hidden" name="clubNo" value='+data.clubPlan.clubNo+' />'
 									 +'<button type="submit" class="btn btn-info float-right">\<i class="fas fa-plus"></i>\</button>\</form>';
 					
-					alert(data.clubPlan.memberId);
+					
 					if('${memberLoggedIn}' != null && data.clubPlan.memberId=='${memberLoggedIn.memberId}'){
 					clubPlanViewModal+='<button type="button" class="btn btn-info" data-target="#plan-modify'+data.clubPlan.clubPlanNo+'" data-dismiss="modal" data-toggle="modal">수정</button>'
 									 +'<form name="deleteClubPlanFrm" action="${pageContext.request.contextPath }/club/deleteClubPlan.do" method="POST">'
+									 +'<input type="hidden" name="where" value="2" />'
 									 +'<input type="hidden" name="clubPlanNo" value="'+data.clubPlan.clubPlanNo+ '" />'
 									 +'<input type="hidden" name="clubNo" value="'+data.clubPlan.clubNo+ '" />'
 									 +'<button type="submit" class="btn btn-danger" onclick="return confirmDelete();">삭제</button></form>';
@@ -219,6 +183,7 @@ $(function () {
 									   +'<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button></div>';
 					
 					clubPlanModifyModal+='<form name="clubPlanUpdateFrm" action="${pageContext.request.contextPath }/club/clubPlanUpdate.do" method="post">'
+									   +'<input type="hidden" name="where" value="2" />'
 									   +'<input type="hidden" name="clubPlanNo" value="'+data.clubPlan.clubPlanNo +'" />'
 									   +'<input type="hidden" name="clubNo" value="'+data.clubPlan.clubNo+'" />'
 									   +'<div class="modal-body"> <div class="form-group"> <label for="inputName">일정</label> '
@@ -338,22 +303,26 @@ $(function () {
 				</div>
 			</div>
 		</form>
-
+		
 		<!-- Middle navbar links -->
 		<ul id="navbar-tab" class="navbar-nav ml-auto">
-			<li id="tab-club" class="nav-item"><button type="button">동호회</button></li>
-			<li id="tab-calendar" class="nav-item"><button type="button">일정</button></li>
+			<li id="tab-club" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubView.do?clubNo='+${clubNo}">동호회</button></li>
+			<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+${clubNo}">일정</button></li>
 			<c:if
-				test="${memberLoggedIn.memberId == 'admin' or club.clubManagerId == memberLoggedIn.memberId}">
+				test="${memberLoggedIn.memberId == 'admin' or fn:contains(managerYN,'Y')}">
 				<li id="tab-member" class="nav-item">
-					<button type="button" onclick="memberList('${club.clubNo}');">동호회멤버</button>
+					<button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubMemberList.do?clubNo='+${clubNo}">동호회멤버</button>
 				</li>
 			</c:if>
-			<li id="tab-attachment" class="nav-item"><button type="button">파일</button></li>
+			<li id="tab-attachment" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubFileList.do?clubNo='+${clubNo}">파일</button></li>
 		</ul>
 
 		<!-- Right navbar links -->
+	
+		
 		<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
+		
+			
 			<!-- 동호회 대화 -->
 			<li class="nav-item">
 				<button type="button"
