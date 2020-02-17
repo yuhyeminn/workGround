@@ -51,6 +51,11 @@
     </div>
     <!-- Control sidebar content goes here -->
     <div class="p-3">
+    <c:if test="${ work.workCompleteYn eq 'Y'}">
+    	<p style="font-size:12px;text-align:center;background:#f3f4f5">
+    		<i class="far fa-calendar-alt" style="width:20px;margin-bottom: 5px;"></i><span>완료됨 : </span><span>${work.workRealEndDate }</span>
+    	</p>
+    </c:if>
     	<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
 		    <p class="setting-side-title update-side-title">
 		    ${work.workTitle}
@@ -158,7 +163,7 @@
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
                         <div class="input-group" >
-                            <input type="text" class="form-control float-right" id="work_startdate" data-provide='datepicker'> 
+                            <input type="text" class="form-control float-right" id="work_startdate" data-provide='datepicker' value="${work.workStartDate}"> 
                             <input type="hidden" id="workStartDate"  value="${work.workStartDate}"> 
                         </div>
                         </div>
@@ -183,7 +188,7 @@
                    <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
 	                        <div class="input-group">
-	                            <input type="text" class="form-control float-right" id="work_enddate" data-provide='datepicker'> 
+	                            <input type="text" class="form-control float-right" id="work_enddate" data-provide='datepicker' value="${work.workStartDate}"> 
 	                        	<input type="hidden" id="workEndDate"  value="${work.workEndDate}"> 
 	                        </div>
                         </div>
@@ -471,7 +476,7 @@
                 </form>
                 <!-- 첨부파일 테이블 -->
             <div id="card-projectAttach" class="table-responsive p-0">
-            <table id="tbl-projectAttach" class="table table-hover text-nowrap">
+            <table id="tbl-projectAttach" class="table table-hover text-nowrap work-attachment-tbl">
                 <thead>
                     <tr>
                         <th>이름</th>
@@ -485,7 +490,7 @@
                     <tr id="${a.attachmentNo}">
                      <input type="hidden" class="oName" value="${a.originalFilename}" />
                      <input type="hidden" class="rName" value="${a.renamedFilename}" />
-                     <td>
+                     <td style="width:42%;">
                              <div class="img-wrapper">
                              	 <c:forTokens items="${fn:toLowerCase(a.renamedFilename)}" var="token" delims="." varStatus="vs">
                              	 <c:if test="${vs.last}">
@@ -504,19 +509,19 @@
                                  <p class="filename">${a.originalFilename}</p>
                              </div>
                      </td>
-                     <td>${a.attachmentEnrollDate}</td>
-                     <td>
+                     <td style="width:23%;">${a.attachmentEnrollDate}</td>
+                     <td style="width:30%;">
                         <span>${a.attachmentWriterMember.memberName}</span>
                          <!-- 첨부파일 옵션 버튼 -->
                          <div class="dropdown ">
                              <button type="button" class="btn-file" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
                              <div class="dropdown-menu dropdown-menu-right">
-                                 <button type="button" class="dropdown-item btn-down" value="${a.attachmentNo}">다운로드</button>
+                                 <button type="button" class="dropdown-item btn-work-file-down" value="${a.attachmentNo}">다운로드</button>
                                  
                                  <!-- 파일삭제: 관리자, 프로젝트 팀장, 공유한 사람만 가능 -->
                                  <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId || a.attachmentWriterMember.memberId==memberLoggedIn.memberId}">
                                  <div class="dropdown-divider"></div>
-                                 <button type="button" class="dropdown-item dropdown-file-remove" value="${a.attachmentNo},${a.originalFilename},${a.renamedFilename}" data-toggle="modal" data-target="#modal-file-remove">삭제</a>
+                                 <button type="button" class="dropdown-item work-file-remove" value="${a.attachmentNo},${a.renamedFilename}" data-toggle="modal" data-target="#modal-file-remove">삭제</button>
                                  </c:if>
                              </div>
                          </div>
@@ -556,6 +561,8 @@
 	insertWorkComment();
 	deleteWorkComment();
 	uploadWorkFile();
+	downloadWorkFile();
+	delWorkFile();
  });
  
  
@@ -564,14 +571,16 @@
 		    singleDatePicker: true,
 		    showDropdowns: true,
 		    locale: {
-			    format: 'YYYY-MM-DD'
+			    format: 'YYYY-MM-DD',
+			    cancelLabel: 'Clear'
 		    }
 	});
 	 $("#work_enddate").daterangepicker({
 		    singleDatePicker: true,
 		    showDropdowns: true,
 		    locale: {
-			    format: 'YYYY-MM-DD'
+			    format: 'YYYY-MM-DD',
+			    cancelLabel: 'Clear'
 		    }
 	});
  }
@@ -594,8 +603,11 @@ function sideClose(){
 			var $this = $(this);
 			var workNo = '${work.workNo}';
 			var input = $this.parent(".setting-date-dropdown").find("input");
-			var date = input.val();	//수정할 날짜
-			var dateType = input.attr('id');  //수정할 날짜 종류(startDate,endDate)
+			var date = input.eq(0).val();	//수정할 날짜
+			var dateType = input.attr('id');  //수정할 날짜 종류(work_startdate,work_enddate)
+			
+			console.log(input.eq(0));
+			console.log(input.eq(1));
 			console.log(date);
 			console.log(dateType);
 			
@@ -608,12 +620,18 @@ function sideClose(){
 					success: data =>{
 						var dateArr = date.split('-');
 						var dateView = $this.closest(".row").find("p.setting-content-inform");
+						
 						if(date == null || date ==''){
 							var dateTypeName = $this.closest(".row").find("label").text();
 							dateView.text(dateTypeName+" 없음");
 						}else{
-							dateView.text(dateArr[1]+'월 '+dateArr[2] +'일');
+							if(dateView.length == 0){
+								$this.closest(".row").append("<p class='setting-content-inform'>"+(dateArr[1]+'월 '+dateArr[2] +'일')+"<p>");
+							}else{
+								dateView.text(dateArr[1]+'월 '+dateArr[2] +'일');
+							}
 						}
+						input.eq(1).val(date);
 					},
 					error:(jqxhr, textStatus, errorThrown) =>{
 						console.log(jqxhr, textStatus, errorThrown);
@@ -628,7 +646,6 @@ function workDateValidation(date,dateType){
 	 	if(dateType == 'work_startdate'){
 			var startDateArr = date.split('-');
 			var endDate = $("#workEndDate").val();
-			console.log(endDate)
 			var endDateArr = endDate.split('-');
 			var startDateCompare = new Date(startDateArr[0], parseInt(startDateArr[1])-1, startDateArr[2]);
 			
@@ -683,10 +700,22 @@ function updateWorkMember(){
 			success: data =>{
 				if(data.isUpdated){
 					var currentWorkTag = $(this).html();
+					var view = $(".work-item#"+workNo+" div.work-tag");
+					console.log(view);
+					console.log(view.length);
 					if(workTag !='' && workTag != null){
 						$("#current-workTag").html(currentWorkTag);
+						
+						if(view.length==0){
+							var html = "<div class='work-tag'>"+currentWorkTag+"</div>";
+							$(".work-item#"+workNo+" .work-title").before(html);
+						}
+						else{
+							view.html(currentWorkTag);
+						}
 					}else{
 						$("#current-workTag").html('');
+						view.html('');
 					}
 				}
 			},
@@ -709,6 +738,7 @@ function updateWorkMember(){
 				 if(data.isUpdated){
 					 var currentWorkPoint = $(this).html();
 					 $("#current-work-point").html(currentWorkPoint);
+					 $(".work-item#"+workNo+" div.work-importances").html(currentWorkPoint);
 				 }
 			 },
 			 error:(jqxhr, textStatus, errorThrown)=>{
@@ -753,12 +783,17 @@ function updateWorkMember(){
 		   			      	  +'<input type="hidden" class="hiddenChkChargedMemId" value=" "/></th><td>'+ chk.checklistContent +'</td></tr>';
 		          		 	  
 				 $("#chk-add-tr").before(html); 
-					
+				 
 				 if ( $(".work-item#"+workNo+" .work-checklist table").length > 0 ) {
 						$(".work-item#"+workNo+" .work-checklist tbody").append(viewhtml);
+						var cnt = Number($(".work-item#"+workNo+" .work-etc .chklt-cnt-total").text());
+						$(".work-item#"+workNo+" .work-etc span.chklt-cnt-total").text(cnt+1);
 				 }
 				 else{
-				 		//테이블이 없을 경우
+					//테이블이 없을 경우
+					 $(".work-item#"+workNo+" .work-etc").children("span.ico").eq(0).remove();
+					 var cnthtml='<span class="ico chklt-cnt"><i class="far fa-list-alt"></i><span class="chklt-cnt-completed"> 0</span>/<span class="chklt-cnt-total">1</span></span>'
+					 $(".work-item#"+workNo+" .work-etc").prepend(cnthtml);
 				 		var tablehtml = '<table class="tbl-checklist"><tbody>'+viewhtml+'</tbody></table>'
 				 		$(".work-item#"+workNo+" .work-checklist").append(tablehtml);
 				 }
@@ -974,7 +1009,6 @@ function updateWorkMember(){
 				 var a = data.attachment;
 				 var rArr = (a.renamedFilename).split(".");
 				 var ext = rArr[rArr.length-1];
-				 console.log(ext);
 				 
 				 if(data.isUpdated){
 					 var html = '<tr id="'+a.attachmentNo+'"><input type="hidden" class="oName" value="'+a.originalFilename+'" />'
@@ -990,10 +1024,11 @@ function updateWorkMember(){
 					 	 +'<td>'+getToday()+'</td>'
 					 	 +'<td> <span>'+a.attachmentWriterMember.memberName+'</span>'
 					 	 +'<div class="dropdown "><button type="button" class="btn-file" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>'
-					 	 +'<div class="dropdown-menu dropdown-menu-right"><button type="button" class="dropdown-item btn-down" value="'+a.attachmentNo+'">다운로드</button>'
-					 	 +'<div class="dropdown-divider"></div><button type="button" class="dropdown-item dropdown-file-remove" value="'+a.attachmentNo+','+a.originalFilename+','+a.renamedFilename+'" data-toggle="modal" data-target="#modal-file-remove">삭제</a>'
+					 	 +'<div class="dropdown-menu dropdown-menu-right"><button type="button" class="dropdown-item btn-work-file-down" value="'+a.attachmentNo+'">다운로드</button>'
+					 	 +'<div class="dropdown-divider"></div><button type="button" class="dropdown-item work-file-remove" value="'+a.attachmentNo+','+a.renamedFilename+'" data-toggle="modal" data-target="#modal-file-remove">삭제</a>'
 				 		 +'</div></div></td></tr>';
 				 	 $("#tbl-projectAttach tbody").append(html);
+				 	 resetWorkView(); //업무 새로고침
 				 }
 			 },
 			 error:(jqxhr, textStatus, errorThrown)=>{
@@ -1002,6 +1037,52 @@ function updateWorkMember(){
 		 });
 	 });
  }
+ //파일 다운로드
+function downloadWorkFile(){
+	$(document).on('click', '.btn-work-file-down', e=>{
+		let btnDown = e.target;
+		let attachNo = btnDown.value;
+		let $tr = $('.work-attachment-tbl tr#'+attachNo);
+		let oName = $tr.find('.oName').val();
+		let rName = $tr.find('.rName').val();
+		console.log(attachNo);
+		console.log($tr);
+		console.log(oName);
+		console.log(rName);
+		
+		location.href = "${pageContext.request.contextPath}/project/downloadFile.do?oName="+oName+"&rName="+rName;
+	});
+}
+function delWorkFile(){
+	$(document).on('click', '.work-file-remove', e=>{
+		let btnRemove = e.target;
+		let attachNo = Number(btnRemove.value.split(',')[0]);
+		let rName = btnRemove.value.split(',')[1];
+		console.log(attachNo);
+		console.log(rName);
+		
+		if(confirm("파일을 삭제하시겠습니까?")){
+			$.ajax({
+				url: '${pageContext.request.contextPath}/project/deleteFile',
+				data: {attachNo:attachNo,rName:rName},
+				dataType: 'json',
+				type: 'POST',
+				success: data=>{
+					if(data.result==='success'){
+						$(".work-attachment-tbl tr#"+attachNo).remove();
+						resetWorkView(); //업무 새로고침
+					}
+					else{
+						alert("파일 삭제에 실패했습니다 :(");
+					}
+				},
+				error: (x,s,e)=>{
+					console.log(x,s,e);
+				}
+			});
+		}
+	});
+}
  $("[name=workFile]").on("change",function(){
 		//	파일 입력 취소
 		if($(this).prop("files")[0] === undefined){
@@ -1021,6 +1102,27 @@ function updateWorkMember(){
      var today = year + '-' + mon + '-' + day;
      
      return today;
+ }
+ 
+ function resetWorkView(){
+	 var workNo = '${work.workNo}';
+	 var worklistTitle='${worklistTitle}';
+	 let $workSection = $("section.work-item#"+workNo+" .work-title").parent();
+	 
+	 $.ajax({
+			url: "${pageContext.request.contextPath}/project/resetWorkOne.do",
+			type: "get",
+			data:{workNo:workNo, worklistTitle:worklistTitle},
+			dataType: "html",
+			success: data => {
+				console.log($workSection);
+				$workSection.html("");
+				$workSection.html(data);
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+	 });
  }
  
  </script>

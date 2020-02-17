@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- daterange picker -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/daterangepicker/daterangepicker.css">
+  
   <!-- Select2 -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/select2/css/select2.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">

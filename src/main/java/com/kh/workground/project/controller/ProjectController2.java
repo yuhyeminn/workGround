@@ -688,4 +688,26 @@ public class ProjectController2 {
 		}
 		return result;
 	}
+	
+	@RequestMapping("/project/resetWorkOne.do")
+	@ResponseBody
+	public ModelAndView resetWorkOne(ModelAndView mav,@RequestParam int workNo, @RequestParam String worklistTitle) {
+		try {
+			
+			//work객체 가져오기
+			Work work = projectService.selectOneWorkForSetting(workNo);
+			
+			mav.addObject("w", work);
+			mav.addObject("worklistTitle",worklistTitle);
+			mav.setViewName("/project/ajaxWorkOne");
+			
+		}catch(Exception e){
+			
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 속성 조회 오류!");
+			
+		}
+		
+		return mav;
+	}
 }

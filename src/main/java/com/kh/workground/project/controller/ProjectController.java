@@ -441,7 +441,7 @@ public class ProjectController {
 									 @RequestParam String oName, @RequestParam String rName) throws Exception {
 		
 		//1.파일 찾기
-		String saveDir = request.getSession().getServletContext().getRealPath("/resources/img/project");
+		String saveDir = request.getSession().getServletContext().getRealPath("/resources/upload/project");
 		File downloadFile = new File(saveDir+File.separator+rName);
 		
 		if(!downloadFile.canRead())
@@ -462,7 +462,7 @@ public class ProjectController {
 		
 		try {
 			//1.파일삭제
-			String saveDir = request.getSession().getServletContext().getRealPath("/resources/img/project");
+			String saveDir = request.getSession().getServletContext().getRealPath("/resources/upload/project");
 			File delFile = new File(saveDir+File.separator+rName);
 			
 			boolean bool = delFile.delete();

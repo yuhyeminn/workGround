@@ -1376,11 +1376,11 @@ function updateTitle(){
 	                	<input type="hidden" class="hiddenWorkChargedMemId" value="${workCharedMemId}"/>
 						            	
 		                <!-- 태그 -->
-		                <c:if test="${w.workTagCode!=null}">
 		                <div class="work-tag">
+		                <c:if test="${w.workTagCode!=null}">
 		                	<span class="btn btn-xs bg-${w.workTagColor}">${w.workTagTitle}</span>
-		                </div>
 		                </c:if>
+		                </div>
 	
 		                <!-- 업무 타이틀 -->
 		                <div class="work-title">
