@@ -878,12 +878,7 @@ function updateWorkMember(){
 		 var commentLevel = $("#comment-level").val();
 		 var commentRef = $("#comment-ref").val();
 		 
-		 //오늘 날짜 뿌려질 것..
-		 var now = new Date();
-	     var year= now.getFullYear();
-	     var mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
-	     var day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
-	     var today = year + '-' + mon + '-' + day;
+		 
 
 		 $.ajax({
 			 url:"${pageContext.request.contextPath}/project/insertWorkComment.do",
@@ -901,7 +896,7 @@ function updateWorkMember(){
 					 }
 					 
 					 html +='<img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/'+member.renamedFileName+'" alt="User Image">'
-		                  +'<div class="comment-text"><span class="username"><span class="comment-writer">'+member.memberName+'</span><span class="text-muted float-right">'+today+'</span></span>'
+		                  +'<div class="comment-text"><span class="username"><span class="comment-writer">'+member.memberName+'</span><span class="text-muted float-right">'+getToday()+'</span></span>'
 		                  +'<span class="comment-content">'+comment.workCommentContent+'</span>'
 		                  +'<button class="comment-delete work-comment-delete float-right" value="'+comment.workCommentNo+'">삭제</button>';
 		             
@@ -982,7 +977,7 @@ function updateWorkMember(){
 				 console.log(ext);
 				 
 				 if(data.isUpdated){
-					 var html = ' <tr id="'+a.attachmentNo+'"><input type="hidden" class="oName" value="'+a.originalFilename+'" />';
+					 var html = '<tr id="'+a.attachmentNo+'"><input type="hidden" class="oName" value="'+a.originalFilename+'" />'
 					 		  +'<input type="hidden" class="rName" value="'+a.renamedFilename+'" /><td><a href=""><div class="img-wrapper">';
 					 if(ext =='bmp' || ext =='jpg' || ext=='jpeg' || ext =='gif' || ext=='png' || ext=='tif' || ext=='tiff' || ext=='jfif'){
 						 html += '<img src="${pageContext.request.contextPath}/resources/upload/project/'+a.renamedFilename+'" alt="첨부파일 미리보기 이미지">';
@@ -990,8 +985,9 @@ function updateWorkMember(){
 					 else{
 						 html += '<img src="${pageContext.request.contextPath}/resources/img/project/default-file.png" alt="첨부파일 미리보기 이미지">';
 					 }
+					 console.log(html);
 					 html+='</div><div class="imgInfo-wrapper"><p class="filename">'+a.originalFilename+'</p></div></a></td>'
-					 	 +'<td>'+a.attachmentEnrollDate+'</td>'
+					 	 +'<td>'+getToday()+'</td>'
 					 	 +'<td> <span>'+a.attachmentWriterMember.memberName+'</span>'
 					 	 +'<div class="dropdown "><button type="button" class="btn-file" data-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>'
 					 	 +'<div class="dropdown-menu dropdown-menu-right"><button type="button" class="dropdown-item btn-down" value="'+a.attachmentNo+'">다운로드</button>'
@@ -1016,6 +1012,16 @@ function updateWorkMember(){
 		//var fileName = $(this).val(); //크롬/Firefox 실제 컴퓨터의 경로를 노출하지 않는다.
 		$(this).next(".custom-file-label").html(fileName);
  });
+ function getToday(){
+	//오늘 날짜 뿌려질 것..
+	 var now = new Date();
+     var year= now.getFullYear();
+     var mon = (now.getMonth()+1)>9 ? ''+(now.getMonth()+1) : '0'+(now.getMonth()+1);
+     var day = now.getDate()>9 ? ''+now.getDate() : '0'+now.getDate();
+     var today = year + '-' + mon + '-' + day;
+     
+     return today;
+ }
  
  </script>
  <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>
