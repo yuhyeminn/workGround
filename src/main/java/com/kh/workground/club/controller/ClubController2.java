@@ -43,6 +43,7 @@ import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubNoticeComment;
 import com.kh.workground.club.model.vo.ClubPhoto;
+import com.kh.workground.club.model.vo.ClubPhotoComment;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;
 import com.kh.workground.member.model.vo.Member;
@@ -79,6 +80,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 //			logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
 			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
 //			logger.debug("clubMemberList={}", clubMemberList);
+			List<ClubPhotoComment> clubPhotoCommentList = clubService2.selectClubPhotoCommentList(clubNo);
+			logger.debug("clubPhotoCommentList={}", clubPhotoCommentList);
 			
 			Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
 //			logger.debug("memberLoggedIn={}", memberLoggedIn);
@@ -101,6 +104,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			mav.addObject("clubNoticeList", clubNoticeList);
 			mav.addObject("clubPhotoList", clubPhotoList);
 			mav.addObject("clubNoticeCommentList", clubNoticeCommentList);
+			mav.addObject("clubPhotoCommentList", clubPhotoCommentList);
 			mav.addObject("clubPlanAttendeeList", clubPlanAttendeeList);
 			mav.addObject("clubMemberList", clubMemberList);
 			mav.addObject("clubPhotoCount", clubPhotoList.size());
@@ -764,29 +768,29 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			Map<String, String> param = new HashMap<>();
 			param.put("clubNo", clubNo+"");
 			param.put("keyword", keyword);
-			logger.debug("param={}", param);
+//			logger.debug("param={}", param);
 			
 			List<ClubPlan> clubPlanList = clubService2.searchClubPlanList(param);
-			logger.debug("clubPlanList={}", clubPlanList);
+//			logger.debug("clubPlanList={}", clubPlanList);
 			List<ClubNotice> clubNoticeList = clubService2.searchClubNoticeList(param);
-			logger.debug("clubNoticeList={}", clubNoticeList);
+//			logger.debug("clubNoticeList={}", clubNoticeList);
 			List<ClubPhoto> clubPhotoList = clubService2.searchClubPhotoList(param);
-			logger.debug("clubPhotoList={}", clubPhotoList);
+//			logger.debug("clubPhotoList={}", clubPhotoList);
 			List<ClubNoticeComment> clubNoticeCommentList = clubService2.selectClubNoticeCommentList(clubNo);
-			logger.debug("clubNoticeCommentList={}", clubNoticeCommentList);
+//			logger.debug("clubNoticeCommentList={}", clubNoticeCommentList);
 			List<ClubPlanAttendee> clubPlanAttendeeList = clubService2.selectAllClubPlanAttendeeList(clubNo);
-			logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
+//			logger.debug("clubPlanAttendeeList={}", clubPlanAttendeeList);
 			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
-			logger.debug("clubMemberList={}", clubMemberList);
+//			logger.debug("clubMemberList={}", clubMemberList);
 			
 			Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
-			logger.debug("memberLoggedIn={}", memberLoggedIn);
+//			logger.debug("memberLoggedIn={}", memberLoggedIn);
 			
 			Map<String, String> param2 = new HashMap<>();
 			param2.put("clubNo", clubNo+"");
 			param2.put("memberId", memberLoggedIn.getMemberId());
 			ClubMember clubMember = clubService2.selectOneClubMember(param2);
-			logger.debug("clubMember={}", clubMember);
+//			logger.debug("clubMember={}", clubMember);
 			
 			boolean isManager = false;
 //			logger.debug("clubManagerYN={}", clubMember.getClubManagerYN());
@@ -807,6 +811,45 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			mav.addObject("clubNoticeCount", clubNoticeList.size());
 			mav.addObject("isManager", isManager);
 			mav.setViewName("club/clubView");
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			
+			throw e;
+		}
+		
+		return mav;
+	}
+	
+	@PostMapping("/club/insertClubPhotoComment.do")
+	public ModelAndView insertClubPhotoComment(ModelAndView mav, 
+												ClubPhotoComment clubPhotoComment) {
+		try {
+			logger.debug("clubPhotoComment={}", clubPhotoComment);
+			
+			int result = clubService2.insertClubPhotoComment(clubPhotoComment);
+			
+			mav.setViewName("redirect:/club/clubView.do?clubNo="+clubPhotoComment.getClubNo());
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			
+			throw e;
+		}
+		
+		return mav;
+	}
+	
+	@PostMapping("/club/deleteClubPhotoComment.do")
+	public ModelAndView deleteClubPhotoComment(ModelAndView mav, 
+												@RequestParam("clubPhotoCommentNo") int clubPhotoCommentNo, 
+												@RequestParam("clubNo") int clubNo) {
+		try {
+			int result = clubService2.deleteClubPhotoComment(clubPhotoCommentNo);
+			
+			mav.addObject("msg", result>0?"댓글을 삭제하였습니다.":"댓글을 삭제하지 못했습니다.");
+			mav.addObject("loc", "/club/clubView.do?clubNo="+clubNo);
+			mav.setViewName("common/msg");
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

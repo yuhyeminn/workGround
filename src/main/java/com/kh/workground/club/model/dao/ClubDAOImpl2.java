@@ -12,6 +12,7 @@ import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubNoticeComment;
 import com.kh.workground.club.model.vo.ClubPhoto;
+import com.kh.workground.club.model.vo.ClubPhotoComment;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;
 
@@ -139,6 +140,21 @@ public class ClubDAOImpl2 implements ClubDAO2 {
 	@Override
 	public List<ClubPlan> searchClubPlanList(Map<String, String> param) {
 		return sqlSession.selectList("club.searchClubPlanList", param);
+	}
+
+	@Override
+	public List<ClubPhotoComment> selectClubPhotoCommentList(int clubNo) {
+		return sqlSession.selectList("club.selectClubPhotoCommentList", clubNo);
+	}
+
+	@Override
+	public int insertClubPhotoComment(ClubPhotoComment clubPhotoComment) {
+		return sqlSession.insert("club.insertClubPhotoComment", clubPhotoComment);
+	}
+
+	@Override
+	public int deleteClubPhotoComment(int clubPhotoCommentNo) {
+		return sqlSession.delete("club.deleteClubPhotoComment", clubPhotoCommentNo);
 	}
 
 

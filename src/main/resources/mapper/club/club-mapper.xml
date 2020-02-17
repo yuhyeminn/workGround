@@ -387,5 +387,31 @@
 			  or P.club_plan_manager like '%'|| #{keyword} || '%')
 		order by P.club_plan_start asc
 	</select>
+	
+	<select id="selectClubPhotoCommentList" resultType="clubPhotoComment">
+		select N.*, M.member_name, M.renamed_filename, M.member_id 
+		from club_photo_comment N 
+			left join club_member C on N.club_member_no = C.club_member_no 
+			left join member M on C.emp_id = M.member_id
+		where club_no = #{clubNo} 
+		order by club_photo_comment_date asc
+	</select>
+	
+	<insert id="insertClubPhotoComment">
+		insert into club_Photo_comment 
+		values(seq_club_photo_comment_no.nextval, 
+			   #{clubPhotoNo}, 
+			   #{clubPhotoCommentLevel}, 
+			   #{clubMemberNo}, 
+			   #{clubPhotoCommentContent}, 
+			   default, 
+			   #{clubPhotoCommentRef}, 
+			   #{clubNo})
+	</insert>
+	
+	<delete id="deleteClubPhotoComment">
+		delete from club_photo_comment 
+		where club_photo_comment_no = #{clubPhotoCommentNo}
+	</delete>
 	<!-- br end -->
 </mapper>

@@ -8,6 +8,7 @@ import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubNoticeComment;
 import com.kh.workground.club.model.vo.ClubPhoto;
+import com.kh.workground.club.model.vo.ClubPhotoComment;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;
 
@@ -60,6 +61,12 @@ public interface ClubService2 {
 	List<ClubNotice> searchClubNoticeList(Map<String, String> param);
 
 	List<ClubPlan> searchClubPlanList(Map<String, String> param);
+
+	List<ClubPhotoComment> selectClubPhotoCommentList(int clubNo);
+
+	int insertClubPhotoComment(ClubPhotoComment clubPhotoComment);
+
+	int deleteClubPhotoComment(int clubPhotoCommentNo);
 
 
 

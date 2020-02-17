@@ -13,6 +13,7 @@ import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.club.model.vo.ClubNotice;
 import com.kh.workground.club.model.vo.ClubNoticeComment;
 import com.kh.workground.club.model.vo.ClubPhoto;
+import com.kh.workground.club.model.vo.ClubPhotoComment;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;
 
@@ -146,6 +147,21 @@ public class ClubServiceImpl2 implements ClubService2 {
 	@Override
 	public List<ClubPlan> searchClubPlanList(Map<String, String> param) {
 		return clubDAO2.searchClubPlanList(param);
+	}
+
+	@Override
+	public List<ClubPhotoComment> selectClubPhotoCommentList(int clubNo) {
+		return clubDAO2.selectClubPhotoCommentList(clubNo);
+	}
+
+	@Override
+	public int insertClubPhotoComment(ClubPhotoComment clubPhotoComment) {
+		return clubDAO2.insertClubPhotoComment(clubPhotoComment);
+	}
+
+	@Override
+	public int deleteClubPhotoComment(int clubPhotoCommentNo) {
+		return clubDAO2.deleteClubPhotoComment(clubPhotoCommentNo);
 	}
 
 
