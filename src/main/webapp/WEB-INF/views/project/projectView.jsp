@@ -491,28 +491,6 @@ function addWork(){
 		
 	}); //end of 업무추가 +버튼 클릭
 	
-	
-	
-	
-	
-	//취소버튼 클릭
-	/* $(document).on('click', '.btn-addWork-cancel', (e)=>{
-		let btnCancel;		
-		if(e.target.tagName==='I') btnCancel = e.target.parentNode;	
-		else btnCancel = e.target;
-		console.log(btnCancel);
-		
-		let worklistNo = btnCancel.value;
-		let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
-		let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
-		
-		$(workTitle).val("");
-		addTag = "";
-		addMemberArr.length = 0; 
-		addDateArr.length = 0; 
-		
-		$(addWorkWrapper).removeClass("show");
-	}); */
 }
 
 //업무 삭제하기
@@ -842,6 +820,26 @@ function goTabMenu(){
 	//업무 탭 클릭
 	btnWork.addEventListener('click', e=>{
 		location.href = "${pageContext.request.contextPath}/project/projectView.do?projectNo=${project.projectNo}";	
+	});
+	
+	//타임라인 탭 클릭
+	btnTimeline.addEventListener('click', e=>{
+		$.ajax({
+			url: "${pageContext.request.contextPath}/project/projectView.do?projectNo=${project.projectNo}&tab=timeline",
+			type: "get",
+			dataType: "html",
+			success: data => {
+				
+				$(contentWrapper).html("");
+				$(contentWrapper).html(data); 
+				$(contentWrapper).removeAttr('id');
+				$(contentWrapper).attr('class', 'content-wrapper navbar-light');
+				
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
 	});
 	
 	//분석 탭 클릭

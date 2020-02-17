@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="search">
+	<select id="selectTotalNoticeListByKeyword" resultType="notice">
+		select * from view_noticeMember where dept_code is null and notice_title like '%'||#{keyword}||'%'
+		order by notice_no
+	</select>
+	
+	<select id="selectDeptNoticeListByKeyword" parameterType="hashMap" resultType="notice">
+		select * from view_noticeMember where dept_code=#{deptCode} and notice_title like '%'||#{keyword}||'%'
+		order by notice_no
+	</select>
+
+	<select id="selectCommuListByKeyword" resultType="community">
+		select * from view_communityMember where commu_title like '%'||#{keyword}||'%'
+		order by commu_no
+	</select>
+	
+	<select id="selectProjectListByKeyword" resultMap="viewProjectMemberCollectionMap">
+		select VP.*
+		from view_projectmember VP join member M on VP.project_writer = M.member_id
+		where VP.private_yn = 'N' and M.dept_code = #{deptCode} and VP.project_title like '%'||#{keyword}||'%'
+		order by project_title
+	</select>
+	<resultMap type="project" id="viewProjectMemberCollectionMap">
+		<id column="project_no" property="projectNo"></id>
+		<result column="project_writer" property="projectWriter"></result>
+		<result column="project_title" property="projectTitle"></result>
+		<result column="private_yn" property="privateYn"></result>
+		<result column="project_desc" property="projectDesc"></result>
+		<result column="project_startdate" property="projectStartDate"></result>
+		<result column="project_enddate" property="projectEndDate"></result>
+		<result column="project_realenddate" property="projectRealEndDate"></result>
+		<result column="project_status_code" property="projectStatusCode"></result>
+		<result column="project_status_title" property="projectStatusTitle"></result>
+		<result column="project_status_color" property="projectStatusColor"></result>
+		<collection property="projectMemberList" ofType="member">
+			<id column="member_id" property="memberId"></id>
+			<result column="password" property="password"></result>
+			<result column="member_name" property="memberName"></result>
+			<result column="email" property="email"></result>
+			<result column="phone" property="phone"></result>
+			<result column="date_of_birth" property="dateOfBirth"></result>
+			<result column="dept_code" property="deptCode"></result>
+			<result column="dept_title" property="deptTitle"></result>
+			<result column="job_code" property="jobCode"></result>
+			<result column="job_title" property="jobTitle"></result>
+			<result column="quit_yn" property="quitYn"></result>
+			<result column="manager_id" property="managerId"></result>
+			<result column="original_filename" property="originalFileName"></result>
+			<result column="renamed_filename" property="renamedFileName"></result>
+			<result column="manager_yn" property="managerYn"></result>
+			<result column="project_quit_yn" property="projectQuitYn"></result>
+		</collection>
+	</resultMap>
+	
+	<select id="selectClubListByKeyword" resultMap="searchClubMap">
+		select C.club_no, C.club_name, C.club_category, C.club_enroll_date, M.member_name
+		from club C join member M on C.club_manager_id = M.member_id
+		where club_name like '%'||#{keyword}||'%'
+		order by club_category
+	</select>
+	<resultMap type="hashMap" id="searchClubMap">
+		<result column="club_no" property="clubNo"/>
+		<result column="club_name" property="clubName"/>
+		<result column="club_category" property="category"/>
+		<result column="club_enroll_date" property="enrollDate"/>
+		<result column="member_name" property="clubManager"/>
+	</resultMap>
+	
+	<select id="selectMemberListByKeyword" resultType="member">
+		select * 
+		from view_member 
+		where member_id != 'admin' and (member_name like '%'||#{keyword}||'%' or email like '%'||#{keyword}||'%' or dept_title like '%'||#{keyword}||'%')
+		order by member_name
+	</select>
+	
+	<select id="selectMemberTotalContents" resultType="_int">
+		select count(*) 
+		from view_member 
+		where member_id != 'admin' and (member_name like '%'||#{keyword}||'%' or email like '%'||#{keyword}||'%' or dept_title like '%'||#{keyword}||'%')
+		order by member_name
+	</select>
+	
+	<select id="selectTotalNoticeTotalContents" resultType="_int">
+		select count(*) from view_noticeMember where dept_code is null and notice_title like '%'||#{keyword}||'%'
+		order by notice_no
+	</select>
+	
+	<select id="selectDeptNoticeTotalContents" resultType="_int">
+		select count(*) from view_noticeMember where dept_code=#{deptCode} and notice_title like '%'||#{keyword}||'%'
+		order by notice_no
+	</select>
+	
+	<select id="selectCommuListTotalContents" resultType="_int">
+		select count(*) from view_communityMember where commu_title like '%'||#{keyword}||'%'
+		order by commu_no
+	</select>
+	
+	<select id="selectProjectTotalContents" resultType="_int">
+		select count(*)
+		from project VP join member M on VP.project_writer = M.member_id
+		where VP.private_yn = 'N' and M.dept_code = #{deptCode} and VP.project_title like '%'||#{keyword}||'%'
+		order by project_title
+	</select>
+	
+	<select id="selectClubTotalContents" resultType="_int">
+		select count(*)    
+		from(select C.club_no, C.club_name, C.club_category, C.club_enroll_date, M.member_name
+			from club C join member M on C.club_manager_id = M.member_id
+			where club_name like '%'||#{keyword}||'%'
+			order by club_category)
+	</select>
+</mapper>

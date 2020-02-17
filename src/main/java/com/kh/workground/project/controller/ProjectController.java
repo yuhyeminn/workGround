@@ -87,7 +87,7 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/projectView.do")
-	public ModelAndView projectView(ModelAndView mav, HttpSession session, @RequestParam int projectNo, 
+	public ModelAndView projectView(ModelAndView mav, HttpSession session, HttpServletRequest requset, @RequestParam int projectNo, 
 									@RequestParam(defaultValue="work", required=false) String tab) {
 		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
@@ -137,11 +137,15 @@ public class ProjectController {
 					if("work".equals(tab))
 						mav.setViewName("/project/projectView");
 					else if("attach".equals(tab))
-						mav.setViewName("/project/ajaxProjectAttachment");
+						mav.setViewName("/project/projectAttachment");
+					else if("timeline".equals(tab))
+						mav.setViewName("/project/projectTimeline");
+					
 				}
 				else {
+					String[] urlArr = requset.getHeader("referer").split("/");
 					mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
-					mav.addObject("loc", "/project/projectList.do");
+					mav.addObject("loc", "/"+urlArr[4]+"/"+urlArr[5]);
 					mav.setViewName("/common/msg");
 				}
 				
