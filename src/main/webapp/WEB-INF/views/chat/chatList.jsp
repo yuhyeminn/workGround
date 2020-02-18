@@ -434,6 +434,10 @@ $(()=> {
                 <div class="input-group input-group-sm" style="width: 100%; margin: 0 auto;">
                   <input type="text" name="keyword" class="form-control float-right" id="findMember" placeholder="이름 혹은 이메일로 찾기">
                 </div>
+                
+                <div class="input-group-append">
+                  <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                </div>
             </div>
             <div class="card-body table-responsive p-0" style="height: 14rem;">
                 <table class="table table-head-fixed text-nowrap">
