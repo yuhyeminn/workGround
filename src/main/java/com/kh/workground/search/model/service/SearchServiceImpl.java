@@ -132,8 +132,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public int selectDeptNoticeTotalContents(Map<String, String> param) {
-		int totalContents = searchDAO.selectDeptNoticeTotalContents(param);
+	public int selectDeptNoticeTotalContents() {
+		int totalContents = searchDAO.selectDeptNoticeTotalContents();
 		
 		if(totalContents<=0)
 			throw new SearchException("부서게시글 조회 오류!");

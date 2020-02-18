@@ -20,7 +20,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
-<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/notice.css">
 
 <style>
 .td{
@@ -108,31 +107,6 @@ function sidebarActive(){
 			$obj.removeClass('active');
 	});
 }
-
-//공지/커뮤니티 상세보기에서 댓글 작성, 삭제
-//공지 댓글 삭제
-function deleteNoticeComment(noticeCommentNo){
-	if(!confirm("댓글을 삭제하시겠습니까?"))
-		return;
-	location.href = "${pageContext.request.contextPath}/notice/noticeCommentDelete.do?noticeCommentNo="+noticeCommentNo;
-}
-
-//게시판 댓글 삭제
-function deleteCommunityComment(communityCommentNo){
-	if(!confirm("댓글을 삭제하시겠습니까?"))
-		return;
-	location.href = "${pageContext.request.contextPath}/community/communityCommentDelete.do?communityCommentNo="+communityCommentNo;
-
-}
-
-//댓글 유효성 검사
-function checkComment(commentContent){
-	if(commentContent.trim() == 0){
-		alert("댓글을 입력하지 않으셨습니다!");
-		return false;
-	}
-	return true;
-} 
 </script>
 
 <!-- Content Wrapper. Contains page content -->
@@ -153,15 +127,10 @@ function checkComment(commentContent){
 	                 <c:if test="${type == 'dept'}">
 	                  	${memberLoggedIn.deptTitle} 게시글
 	                 </c:if>
-	                 <span class="header-count">(${fn:length(type == 'total'?noticeList:deptNoticeList)})</span>
+	                 <span class="header-count">(${fn:length(list)})</span>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${type == 'total'?noticeList:deptNoticeList}" var="n">
-		             <c:if test="${type == 'total'}">
-			             <div class="card-body" data-toggle="modal" data-target="#noticeViewModal${n.noticeNo}"> 
-		             </c:if>
-		             <c:if test="${type == 'dept'}">
-			             <div class="card-body" data-toggle="modal" data-target="#myDeptNoticeViewModal${n.noticeNo}"> 
-		             </c:if>
+	             <c:forEach items="${list}" var="n">
+	             <div class="card-body"> 
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
 	                         <h5>${n.noticeTitle}</h5>
@@ -182,10 +151,10 @@ function checkComment(commentContent){
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${fn:length(communityList)})</span></h3>
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${fn:length(list)})</span></h3>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${communityList}" var="c">
-	             <div class="card-body" data-toggle="modal" data-target="#boardViewModal${c.commuNo}">
+	             <c:forEach items="${list}" var="c">
+	             <div class="card-body">
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
 	                         <h5>${c.commuTitle}</h5>
@@ -327,5 +296,4 @@ function checkComment(commentContent){
 </div>
 <!-- /.content-wrapper -->
 
-<jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

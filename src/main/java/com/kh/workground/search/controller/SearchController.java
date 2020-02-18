@@ -40,13 +40,13 @@ public class SearchController {
 		try {
 			//1.업무로직
 			//a-1.공지
-			List<Notice> noticeList = searchService.selectTotalNoticeListByKeyword(keyword);
+			List<Notice> totalNoticeList = searchService.selectTotalNoticeListByKeyword(keyword);
 			
 			//a-2.내 부서 게시글
 			List<Notice> deptNoticeList = searchService.selectDeptNoticeListByKeyword(param);
 			
 			//a-3.커뮤니티
-			List<Community> communityList = searchService.selectCommuListByKeyword(keyword);
+			List<Community> commuList = searchService.selectCommuListByKeyword(keyword);
 			
 			//b.내 부서 프로젝트
 			List<Project> projectList = searchService.selectProjectListByKeyword(param);
@@ -60,9 +60,9 @@ public class SearchController {
 			
 			//2.뷰모델 처리
 			mav.addObject("keyword", keyword);
-			mav.addObject("noticeList", noticeList);
+			mav.addObject("totalNoticeList", totalNoticeList);
 			mav.addObject("deptNoticeList", deptNoticeList);
-			mav.addObject("communityList", communityList);
+			mav.addObject("commuList", commuList);
 			mav.addObject("projectList", projectList);
 			mav.addObject("clubList", clubList);
 			mav.addObject("memList", memList);
@@ -92,21 +92,21 @@ public class SearchController {
 			if("total".equals(type)) {
 				List<Notice> list = searchService.selectTotalNoticeListByKeyword(cPage, numPerPage, keyword);	
 				int totalContents = searchService.selectTotalNoticeTotalContents();
-				mav.addObject("noticeList", list);
+				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//내 부서 게시글
 			if("dept".equals(type)) {
 				List<Notice> list = searchService.selectDeptNoticeListByPageBar(cPage, numPerPage, param);
-				int totalContents = searchService.selectDeptNoticeTotalContents(param);
-				mav.addObject("deptNoticeList", list);
+				int totalContents = searchService.selectDeptNoticeTotalContents();
+				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//커뮤니티
 			if("commu".equals(type)) {
 				List<Community> list = searchService.selectCommuListByPageBar(cPage, numPerPage, keyword);
 				int totalContents = searchService.selectCommuListTotalContents();
-				mav.addObject("communityList", list);
+				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//내 부서 프로젝트
