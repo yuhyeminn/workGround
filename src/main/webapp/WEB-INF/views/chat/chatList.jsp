@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
@@ -67,28 +66,32 @@ function sidebarActive(){
 }
 	
 
-//대화상대찾기 ajax
 $(()=> {
 	$("#plusChannel").click(function() {
-		console.log("왜 안먹져...?");
+		console.log("여긴 먹는데");
+		
 	});
 	
-	$("#btn-findMember").on("click", function() {
-		var keyword = $(this).val().trim();
-		console.log(keyword);
-		
-		$.ajax({
-			url: '${pageContext.request.contextPath}/chat/findMember.do', 
-			data: {keyword:keyword}, 
-			dataType: 'json', 
-			success: data=> {
-				console.log(data);
-				
-			}, 
-			error: (x, s, e)=> {
-				console.log("ajax실행오류!!", x, s, e);
-			}
-		});
+});
+
+
+//대화상대찾기 ajax
+$("#findMember").keyup(function() {
+	console.log("여긴 왜 안먹져..?");
+	var keyword = $("#findMember").val().trim();
+	console.log(keyword);
+	
+	$.ajax({
+		url: '${pageContext.request.contextPath}/chat/findMember.do', 
+		data: {keyword:keyword}, 
+		dataType: 'json', 
+		success: data=> {
+			console.log(data);
+			
+		}, 
+		error: (x, s, e)=> {
+			console.log("ajax실행오류!!", x, s, e);
+		}
 	});
 });
 
@@ -108,7 +111,7 @@ $(()=> {
                                 채널 검색
                                 <i class="fas fa-search" style="float: right; position: relative; top:.3rem;"></i>
                             </button>
-                            <button type="button" id="plusChannel" class="btn btn-default" data-toggle="modal" data-target="#modal-default1" style="width: 100%; background: white; border-color: white; font-weight: bold; color:#17a2b8;">
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default1" style="width: 100%; background: white; border-color: white; font-weight: bold; color:#17a2b8;">
                                 <i class="fas fa-plus"></i>&nbsp;
                                 새 대화 채널 추가
                             </button>
@@ -392,7 +395,7 @@ $(()=> {
         <div class="col-sm-12" style="float: right; padding: 1rem;">
             <div class="form-group">
                 <label>채널 멤버 찾기</label>
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-sm">
+                <button type="button" id="plusChannel" class="btn btn-default" data-toggle="modal" data-target="#modal-sm">
                     <i class="fas fa-plus"></i>
                 </button>
                 <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">
@@ -431,13 +434,15 @@ $(()=> {
         </div>
         <div class="modal-body">
             <div class="card-tools" style="margin-bottom:2rem">
-                <div class="input-group input-group-sm" style="width: 100%; margin: 0 auto;">
-                  <input type="text" name="keyword" class="form-control float-right" id="findMember" placeholder="이름 혹은 이메일로 찾기">
-                </div>
-                
-                <div class="input-group-append">
-                  <button type="button" id="btn-findMember" class="btn btn-default"><i class="fas fa-search"></i></button>
-                </div>
+	                <div class="input-group input-group-sm" style="width: 100%; margin: 0 auto;">
+            		<form>
+	                  <input type="text" id="findMember" name="keyword" class="form-control float-right" placeholder="이름 혹은 이메일로 찾기">
+	            	</form>
+	                </div>
+	                
+	                <div class="input-group-append">
+	                  <button type="button" id="btn-findMember" class="btn btn-default"><i class="fas fa-search"></i></button>
+	                </div>
             </div>
             <div class="card-body table-responsive p-0" style="height: 14rem;">
                 <table class="table table-head-fixed text-nowrap">
