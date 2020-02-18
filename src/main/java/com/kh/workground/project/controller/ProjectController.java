@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -132,6 +133,8 @@ public class ProjectController {
 					mav.addObject("allMemList", list);
 					mav.addObject("inMemList", inMemList);
 					mav.addObject("wlList", p.getWorklistList());
+					
+					
 					
 					//서브헤더 탭에 따라 분기
 					if("work".equals(tab))
@@ -441,7 +444,9 @@ public class ProjectController {
 									 @RequestParam String oName, @RequestParam String rName) throws Exception {
 		
 		//1.파일 찾기
+
 		String saveDir = request.getSession().getServletContext().getRealPath("/resources/upload/project/"+projectNo);
+
 		File downloadFile = new File(saveDir+File.separator+rName);
 		
 		if(!downloadFile.canRead())
@@ -462,7 +467,9 @@ public class ProjectController {
 		
 		try {
 			//1.파일삭제
+
 			String saveDir = request.getSession().getServletContext().getRealPath("/resources/upload/project/"+projectNo);
+
 			File delFile = new File(saveDir+File.separator+rName);
 			
 			boolean bool = delFile.delete();
@@ -488,6 +495,31 @@ public class ProjectController {
 		}
 		
 		return map;
+	}
+	
+	@RequestMapping(value="/project/deleteProject.do", method= {RequestMethod.GET, RequestMethod.POST})
+	public ModelAndView deleteProject(ModelAndView mav, HttpSession session, @RequestParam int projectNo) {
+		
+		try {
+			//1.업무로직
+			int result = projectService.deleteProject(projectNo);
+			
+			//2. 뷰모델처리 
+			if(result!=0) {
+				projectList(mav, session);
+			}
+			else {
+				mav.addObject("msg", "프로젝트 삭제에 실패했습니다!");
+				mav.addObject("loc", "/project/projectList");
+				mav.setViewName("/common/msg");
+			}
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 삭제 오류!");
+		}
+		
+		return mav;
 	}
 	
 	

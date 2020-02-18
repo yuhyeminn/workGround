@@ -44,7 +44,7 @@ button:active, button:focus{outline: none;}
 /* 프로필 */
 .navbar-workspace #user-panel .dropdown-menu{padding: 0;}
 #user-panel .image{width: 46px; height: 46px; padding-left: 0;}
-#user-panel img{width: 100%; height: 100%;}
+#user-panel img{width: 100%; height: 100%; object-fit: cover;}
 #user-profile img{width: 50px; height: 50px; margin-top: -20px; border-radius: 3px;}
 #user-info{display: inline-block; margin-left: .3rem;}
 #user-info>p:last-of-type{margin-top: 8px; color: #696f7a; font-size: .6rem;}
@@ -83,30 +83,41 @@ button:active, button:focus{outline: none;}
 #project-important .card, #project-in .card{height: 250px;}
 .card{transition-timing-function: ease-in-out; transition-duration: .2s; transition-property: all; cursor: pointer;}
 .card.card-hover:active, .card.card-hover:hover{box-shadow: 0 5px 6px 0 rgba(0,0,0,.15); transform: translateY(-2px);} 
-.card-body{padding: 1.25rem; color: #464c59; font-size: 0.85rem;}
+.card-body{position: relative; padding: 1.25rem; color: #464c59; font-size: 0.85rem;}
 #project-recent .card-body{height: 60px;}
 .card-title h5{margin-bottom: 0; font-size: 0.9rem; font-weight: bold;}
 #project-recent .card-title, #project-in .card-title{display: inline-block;}
 #project-in .mywork .card-title{display: block;}
 #project-in .card-star{display: block;}
+.card-star{position: relative;}
 .fas.fa-star{color: #f9a50f;} 
 .far.fa-star{color: rgba(50,55,66,.5);} 
 .card-header .fa-star{margin: 0 5px;}
+.card-star .fa-star{position: absolute; right: 1px;}
+.card-star .line{position: absolute; top: 20px; right: -2px; width: 20px; height: 1px; background: #cacaca;}
+.card-star .del-project{position: absolute; top: 26px; right: 3px; color: #b5b5b5;  font-size: .88rem;}
+.card-star .del-project.no-star{top: 4px;}
+.card-star .del-project:hover, .card-star .del-project:active, .card-star .del-project:focus{color: #8d919a;}
 /* 프로젝트 상태 / 마감일 */
-.card-status{margin-top: 9.1rem;}
-.star-body .card-status{margin-top: 7.5rem;}
+.card-status{position: relative;}
+.card-status>span{position: absolute;}
+.card-status .btn-block{top: 7.5rem;}
+.card-status .end-date{top: 7.7rem; right: 0;}
 .card-status .btn-block, .card-status .end-date{display: inline-block; width: 5rem;}
 .card-status .btn-group-sm>.btn, .btn-sm {padding: .1rem .1rem;}
 .card-status .bg-success.btn:hover{border-color:#28a745;}
 .card-status .bg-info.btn:hover{border-color:#17a2b8;}
 .card-status .bg-warning.btn:hover{border-color:#ffc107;}
-.card-status .end-date{float:right; padding: .1rem 0 .1rem .1rem; font-size: .75rem; color: #17a2b8;}
+.card-status .end-date{float:right; width: auto; padding: .1rem 0 .1rem .1rem; font-size: .75rem; color: #17a2b8;}
+.card-status .p-completed{color: #8d919a;}
+.card-status .p-over{color: #dc3545;}
 .card-progress .progress-title {color: #8d919a; font-size: 0.75rem;}
-.card-progress{margin-top: .5rem;}
+.card-progress{margin-top: 9.7rem;}
+.card-progress.star-n{margin-top: 9.7rem;}
 /* 내 업무 */
-.img-profile{display: block; width: 70px; margin: 0 auto;}
+.img-profile{display: block; width: 70px; height: 70px; margin: 0 auto; object-fit: cover;}
 .mywork .card-title{float: none; margin: .8rem 0 4.6rem;}
-
+.mywork .card-progress{margin-top: 4rem;}
 
 
 
@@ -243,7 +254,7 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 .tbl-checklist th{border-right: 3px double #f8bcb6;}
 .btn-check{display: inline-block; padding: .3rem .5rem; border: 0; background: transparent; color: #d4d6db;}
 .tbl-checklist td{padding: .3rem .5rem; color: #464c59; font-size: .75rem;}
-.work-checklist .ico-profile{float: left; width: 20px; margin-right: .3rem;}
+.work-checklist .ico-profile{float: left; width: 20px; height: 20px; margin-right: .3rem; object-fit: cover;}
 /* .tbl-checklist tfoot tr{border-bottom: 0;}
 .tbl-checklist tfoot td{display: block; color: #8d919a;} */
 /* 날짜 설정 */
@@ -254,7 +265,7 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 /* 기타 아이콘 모음 */
 .work-etc{color: #8d919a; font-size: .7rem;}
 .work-etc .ico{margin: 0 .3rem;}
-.chared-member .ico-profile{display:inline-block; width: 28px; margin: -4px 0 0 0; border: 2px solid #fff; border-radius: 50%;}
+.chared-member .ico-profile{display:inline-block; width: 28px; height: 28px; object-fit: cover; margin: -4px 0 0 0; border: 2px solid #fff; border-radius: 50%;}
 .chared-member .ico-profile:not(:last-of-type){margin-right: -.5rem;}
 /* 커버 이미지 */
 .work-item>div.work-coverImage{margin: 1rem .6rem .5rem;}
@@ -324,8 +335,6 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 
 
 /* memberView.jsp */
-.layout-navbar-fixed .wrapper #user-settings.content-wrapper, .layout-navbar-fixed .wrapper #member-list.content-wrapper{margin-top: 46px;}
-#user-settings.content-wrapper>.content, #member-list.content-wrapper>.content{padding: 2rem 5rem;}
 #user-settings h2{margin-bottom: 2rem; color: #464c59; font-size: 1.5rem; font-weight: 600;}
 /* 탭 */
 .nav-tabs{border: 0;}
@@ -348,7 +357,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 .btn-update.delete{background: #dc3545;}
 /* 프로필 */
 #custom-file-wrapper{width: 150px; height: 150px; padding: 2px; border: 1px solid #d4d6db; border-radius: 2px;}
-#custom-file-wrapper img{border-radius: 2px;}
+#custom-file-wrapper img{border-radius: 2px; object-fit: cover;}
 .custom-file:hover{height: 3rem; transform: translate(0,-.6rem);}
 #custom-content-below-profile .post{color: #464c59; font-size: .88rem;}
 

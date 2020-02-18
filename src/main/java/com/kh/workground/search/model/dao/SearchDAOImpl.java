@@ -57,8 +57,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectMemberTotalContents() {
-		return sqlSession.selectOne("search.selectMemberTotalContents");
+	public int selectMemberTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectMemberTotalContents", keyword);
 	}
 
 	@Override
@@ -68,8 +68,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectTotalNoticeTotalContents() {
-		return sqlSession.selectOne("search.selectTotalNoticeTotalContents");
+	public int selectTotalNoticeTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectTotalNoticeTotalContents", keyword);
 	}
 
 	@Override
@@ -79,8 +79,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectDeptNoticeTotalContents() {
-		return sqlSession.selectOne("search.selectDeptNoticeTotalContents");
+	public int selectDeptNoticeTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectDeptNoticeTotalContents", keyword);
 	}
 
 	@Override
@@ -90,8 +90,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectCommuListTotalContents() {
-		return sqlSession.selectOne("search.selectCommuListTotalContents");
+	public int selectCommuListTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectCommuListTotalContents", keyword);
 	}
 
 	@Override
@@ -101,8 +101,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectProjectTotalContents() {
-		return sqlSession.selectOne("search.selectProjectTotalContents");
+	public int selectProjectTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectProjectTotalContents", keyword);
 	}
 
 	@Override
@@ -112,8 +112,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectClubTotalContents() {
-		return sqlSession.selectOne("search.selectClubTotalContents");
+	public int selectClubTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectClubTotalContents", keyword);
 	}
 
 }
