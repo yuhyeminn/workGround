@@ -65,6 +65,7 @@ function sidebarActive(){
 	
 	$("#sidebar-chat").addClass("active");
 }
+
 	
 
 	$(document).ready(function() {
@@ -110,14 +111,16 @@ function sidebarActive(){
                             <div class="card-body table-responsive p-0" style="height: 32.5rem;">
                                 <table class="table table-head-fixed text-nowrap">
                                     <tbody class="td">
+                                    <c:forEach items="${channelList }" var="channel">
                                         <tr>
                                             <td>
                                                 <div class="col-9" style="width: 100%;"> 
                                                     <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                                    <h6 class="h6">이주현</h6>
+                                                    <h6 class="h6">${channelTitle }</h6>
                                                 </div> 
                                             </td>
                                         </tr>
+                                    </c:forEach>
                                     </tbody>
                                 </table>
                             </div>
@@ -372,36 +375,13 @@ function sidebarActive(){
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" style="height:30rem;">
+      <div class="modal-body">
         <form role="form">
             <div class="col-sm-12" style="float: right; padding: 1rem;">
                 <div class="form-group">
                     <label>채널 이름</label>
-                    <input type="text" class="form-control" style="margin-bottom: 2rem;">
+                    <input type="text" class="form-control">
                 </div>
-                <label>공개 범위 설정</label>
-            </div>
-            <div class="col-sm-11" style="margin: 0 auto;">
-              <div class="col-sm-6" style="display: inline-block; float: left;" >
-                  <div class="info-box">
-                    <div class="custom-control custom-radio">
-                      <input class="custom-control-input" type="radio" id="customRadio1" name="customRadio" >
-                      <i class="fas fa-unlock" style="display: block; margin-left: 0.4rem; position: relative; top:1.2rem"></i>
-                      <label for="customRadio1" class="custom-control-label" style="padding-left: 1.5rem; font-weight: normal;">공개</label>
-                      <p style="color: gray; font-size: 0.8rem;">모든 멤버 접근 가능</p>
-                    </div>
-                  </div>
-              </div>
-              <div class="col-sm-6" style="display: inline-block; float: right;">
-                <div class="info-box">
-                    <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" id="customRadio2" name="customRadio" checked>
-                        <i class="fas fa-lock" style="color: black; display: block; margin-left: 0.4rem; position: relative; top:1.2rem;"></i>
-                        <label for="customRadio2" class="custom-control-label" style="padding-left: 1.5rem; font-weight: normal;">비공개</label>
-                        <p style="color: gray; font-size: 0.8rem;">추가된 멤버만 접근 가능</p>
-                    </div>
-                </div>
-              </div>
             </div>
             <div class="col-sm-12" style="float: right; padding: 1rem;">
                 <div class="form-group">
@@ -446,7 +426,7 @@ function sidebarActive(){
         <div class="modal-body">
             <div class="card-tools" style="margin-bottom:2rem">
                 <div class="input-group input-group-sm" style="width: 100%; margin: 0 auto;">
-                  <input type="text" name="table_search" class="form-control float-right" placeholder="이름 혹은 이메일로 찾기">
+                  <input type="text" id="findMember" name="keyword" class="form-control float-right" placeholder="이름 혹은 이메일로 찾기">
   
                   <div class="input-group-append">
                     <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
@@ -473,6 +453,14 @@ function sidebarActive(){
     </div>
     <!-- /.modal-dialog -->
 </div>
-		
+
+<script>
+
+$("#findMember").keyup(function() {
+	console.log("밑에써야하는거였어...");
+	
+	
+});
+</script>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
