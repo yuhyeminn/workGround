@@ -658,6 +658,9 @@ function workComplete(){
 					console.log(x,s,e);
 				}
 			});
+		}
+		else{
+			alert(loggedInMemberName+"님은 이 업무에 권한이 없습니다 :( ");
 		}//end of if	
 		
 	}); //end of 업무완료버튼 클릭
@@ -1491,7 +1494,7 @@ function updateTitle(){
 	                        <c:if test="${vs.last}">
 	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
 	                   	 		<div class="work-coverImage">
-	                   	 			<img src="${pageContext.request.contextPath}/resources/img/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
 	                   	 		</div>
 	                   	 		</c:if>
 	                   	 	</c:if>

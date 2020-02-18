@@ -740,4 +740,14 @@ public class ProjectServiceImpl implements ProjectService {
 		return list;
 	}
 
+	@Override
+	public int deleteProject(int projectNo) {
+		int result = projectDAO.deleteProject(projectNo);
+		
+		if(result!=1)
+			throw new ProjectException("프로젝트 삭제 오류!");
+		
+		return result;
+	}
+
 }

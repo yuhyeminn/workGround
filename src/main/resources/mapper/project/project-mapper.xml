@@ -297,6 +297,10 @@
 		delete from attachment where work_no = #{workNo}
 	</delete>
 	
+	<delete id="deleteProject">
+		delete from project where project_no = #{projectNo}
+	</delete>
+	
 	
 	
 	

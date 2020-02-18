@@ -151,10 +151,10 @@ function tabActive(){
                              	 <c:if test="${vs.last}">
                              	 	<c:choose>
                              	 		<c:when test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
-			                                 <img src="${pageContext.request.contextPath}/resources/img/project/${a.renamedFilename}" alt="첨부파일 미리보기 이미지">
+			                                 <img src="${pageContext.request.contextPath}/resources/upload/project/${a.renamedFilename}" alt="첨부파일 미리보기 이미지">
                              	 		</c:when>
                              	 		<c:when test="${token!='bmp' && token!='jpg' && token!='jpeg' && token!='gif' && token!='png' && token!='tif' && token!='tiff' && token!='jfif'}">
-			                                 <img src="${pageContext.request.contextPath}/resources/img/project/default-file.png" alt="첨부파일 미리보기 이미지">
+			                                 <img src="${pageContext.request.contextPath}/resources/upload/project/default-file.png" alt="첨부파일 미리보기 이미지">
                              	 		</c:when>
                              	 	</c:choose>
                              	 </c:if>
