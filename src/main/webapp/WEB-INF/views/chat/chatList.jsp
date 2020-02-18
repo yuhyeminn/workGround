@@ -64,6 +64,7 @@ function sidebarActive(){
 	});
 	
 	$("#sidebar-chat").addClass("active");
+}
 	
 
 	$(document).ready(function() {
