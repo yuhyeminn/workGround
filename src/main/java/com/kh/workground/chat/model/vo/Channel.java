@@ -1,3 +1,4 @@
+
 package com.kh.workground.chat.model.vo;
 
 import java.io.Serializable;
@@ -27,3 +28,6 @@ public class Channel implements Serializable {
 	private int lastCheck;
 	private int projectOrClubNo;
 }
+
+
+
