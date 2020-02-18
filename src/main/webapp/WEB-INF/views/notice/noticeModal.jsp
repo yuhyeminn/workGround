@@ -103,7 +103,7 @@
 
 
 <!-- 부서별 공지 상세보기 모달 -->
-<c:forEach items="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}" var="deptn" varStatus="deptnvs">
+<c:forEach items="${deptNoticeList}" var="deptn" varStatus="deptnvs">
 	<div class="modal fade" id="myDeptNoticeViewModal${deptn.noticeNo}" tabindex="-1" role="dialog" aria-labelledby="myDeptNoticeViewModal${deptn.noticeNo}" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
@@ -500,7 +500,7 @@
 	</div>
 </c:forEach>
 <!-- 내가 속한 부서 공지 수정 모달 -->
-<c:forEach items="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}" var="deptn" varStatus="deptnvs">
+<c:forEach items="${deptNoticeList}" var="deptn" varStatus="deptnvs">
 	<div class="modal fade" id="updateDeptNoticeModal${deptn.noticeNo}" tabindex="-1" role="dialog" aria-labelledby="updateNoticeModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">

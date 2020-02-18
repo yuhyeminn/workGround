@@ -31,7 +31,7 @@ public interface SearchService {
 
 	List<Notice> selectDeptNoticeListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
-	int selectDeptNoticeTotalContents();
+	int selectDeptNoticeTotalContents(Map<String, String> param);
 
 	List<Community> selectCommuListByPageBar(int cPage, int numPerPage, String keyword);
 

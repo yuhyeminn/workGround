@@ -79,8 +79,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectDeptNoticeTotalContents() {
-		return sqlSession.selectOne("search.selectDeptNoticeTotalContents");
+	public int selectDeptNoticeTotalContents(Map<String, String> param) {
+		return sqlSession.selectOne("search.selectDeptNoticeTotalContents", param);
 	}
 
 	@Override

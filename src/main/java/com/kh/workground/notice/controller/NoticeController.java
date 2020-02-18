@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.notice.model.exception.NoticeException;
@@ -41,9 +43,12 @@ public class NoticeController {
 	NoticeService noticeService;
 	
 	@RequestMapping("/notice/noticeList.do")
-	public ModelAndView noticeList(ModelAndView mav) {
+	public ModelAndView noticeList(ModelAndView mav, HttpSession session) {
 		
 		try {
+				Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+				String memberDeptCode = memberLoggedIn.getDeptCode();
+				
 				Map<String, String> noticeMap = new HashMap<>();
 				Map<String, String> commuMap = new HashMap<>();
 				
@@ -72,11 +77,10 @@ public class NoticeController {
 				
 				
 				mav.addObject("noticeList", noticeList);
-				mav.addObject("planningDeptNoticeList", planningDeptNoticeList);
-				mav.addObject("designDeptNoticeList", designDeptNoticeList);
-				mav.addObject("developmentDeptNoticeList", developmentDeptNoticeList);
+				mav.addObject("deptNoticeList", memberDeptCode.equals("D1")?planningDeptNoticeList:memberDeptCode.equals("D2")?designDeptNoticeList:developmentDeptNoticeList);
 				mav.addObject("communityList", communityList);
 				mav.setViewName("/notice/noticeList");
+				
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new NoticeException("공지 조회 오류!");
@@ -362,7 +366,8 @@ public class NoticeController {
 	//공지 댓글 추가
 	@PostMapping("/notice/noticeCommentInsert.do")
 	public ModelAndView noticeCommentInsert(ModelAndView mav,
-									  NoticeComment noticeComment) {
+									  NoticeComment noticeComment,
+									  HttpServletRequest request) {
    		logger.debug("noticeComment={}",noticeComment);
    
    		try {
@@ -374,9 +379,11 @@ public class NoticeController {
    			noticeCommentMap.put("noticeCommentRef", noticeComment.getNoticeCommentRef()==0?null:noticeComment.getNoticeCommentRef());
    			
    			int result = noticeService.insertNoticeComment(noticeCommentMap);
+   			//리다이렉트 주소 (공지페이지/검색페이지)
+   		    String referer = request.getHeader("Referer");
    			
    			mav.addObject("msg", result>0?"댓글이 작성되었습니다.":"댓글 작성에 실패하셨습니다.");
-   			mav.addObject("loc", "/notice/noticeList.do");
+   			mav.addObject("loc", referer.substring(32)); //http://localhost:9090/workground의 다음 주소부터
    			mav.setViewName("common/msg");
    		} catch(Exception e) {
    			logger.error(e.getMessage(), e);
@@ -386,16 +393,18 @@ public class NoticeController {
    		return mav;
 	}
 	
-	
 	//공지 댓글 삭제
 	@RequestMapping("/notice/noticeCommentDelete.do")
 	public ModelAndView noticeCommentDelete(ModelAndView mav,
-											@RequestParam("noticeCommentNo") int noticeCommentNo) {
+											@RequestParam("noticeCommentNo") int noticeCommentNo,
+											HttpServletRequest request) {
 		try {
 			int result = noticeService.deleteNoticeComment(noticeCommentNo);
+   			//리다이렉트 주소 (공지페이지/검색페이지)
+   		    String referer = request.getHeader("Referer");
 			
 			mav.addObject("msg", result>0?"댓글이 삭제되었습니다.":"댓글 삭제가 실패되었습니다.");
-			mav.addObject("loc", "/notice/noticeList.do");
+   			mav.addObject("loc", referer.substring(32)); //http://localhost:9090/workground의 다음 주소부터
 			mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -408,7 +417,8 @@ public class NoticeController {
 	//자유게시판 댓글 등록
 	@PostMapping("/community/communityCommentInsert.do")
 	public ModelAndView communityCommentInsert(ModelAndView mav,
-									  CommunityComment communityComment) {
+									  CommunityComment communityComment,
+									  HttpServletRequest request) {
    		logger.debug("communityComment={}",communityComment);
    
    		try {
@@ -420,9 +430,11 @@ public class NoticeController {
    			communityCommentMap.put("commuCommentRef", communityComment.getCommuCommentRef()==0?null:communityComment.getCommuCommentRef());
    			
    			int result = noticeService.insertCommunityComment(communityCommentMap);
+   			//리다이렉트 주소 (공지페이지/검색페이지)
+   		    String referer = request.getHeader("Referer");
    			
    			mav.addObject("msg", result>0?"댓글이 작성되었습니다.":"댓글 작성에 실패하셨습니다.");
-   			mav.addObject("loc", "/notice/noticeList.do");
+   			mav.addObject("loc", referer.substring(32)); //http://localhost:9090/workground의 다음 주소부터
    			mav.setViewName("common/msg");
    		} catch(Exception e) {
    			logger.error(e.getMessage(), e);
@@ -435,12 +447,15 @@ public class NoticeController {
 	//게시판 댓글 삭제
 	@RequestMapping("/community/communityCommentDelete.do")
 	public ModelAndView communityCommentDelete(ModelAndView mav,
-												@RequestParam("communityCommentNo") int communityCommentNo) {
+												@RequestParam("communityCommentNo") int communityCommentNo,
+												HttpServletRequest request) {
 		try {
 			int result = noticeService.deleteCommunityComment(communityCommentNo);
+   			//리다이렉트 주소 (공지페이지/검색페이지)
+   		    String referer = request.getHeader("Referer");
 			
 			mav.addObject("msg", result>0?"댓글이 삭제되었습니다.":"댓글 삭제가 실패되었습니다.");
-			mav.addObject("loc", "/notice/noticeList.do");
+   			mav.addObject("loc", referer.substring(32)); //http://localhost:9090/workground의 다음 주소부터
 			mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
