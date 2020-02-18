@@ -226,7 +226,7 @@ function drawTimeline(){
        	
         let options = {
        	  width: 5000,
-       	  height: 50*totalArr.length-1 - 120,
+       	  height: 50*totalArr.length-1 - 150,
           backgroundColor: '#fff',
           hAxis: {
         	format: 'MM-dd',

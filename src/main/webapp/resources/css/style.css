@@ -94,15 +94,15 @@ button:active, button:focus{outline: none;}
 .far.fa-star{color: rgba(50,55,66,.5);} 
 .card-header .fa-star{margin: 0 5px;}
 .card-star .fa-star{position: absolute; right: 1px;}
-.card-star .line{position: absolute; top: 23px; right: -2px; width: 20px; height: 1px; background: #cacaca;}
-.card-star .del-project{position: absolute; top: 32px; right: 3px; color: #b5b5b5;  font-size: .88rem;}
+.card-star .line{position: absolute; top: 20px; right: -2px; width: 20px; height: 1px; background: #cacaca;}
+.card-star .del-project{position: absolute; top: 26px; right: 3px; color: #b5b5b5;  font-size: .88rem;}
 .card-star .del-project.no-star{top: 4px;}
 .card-star .del-project:hover, .card-star .del-project:active, .card-star .del-project:focus{color: #8d919a;}
 /* 프로젝트 상태 / 마감일 */
 .card-status{position: relative;}
 .card-status>span{position: absolute;}
 .card-status .btn-block{top: 7.5rem;}
-.card-status .end-date{top: 7.7rem;}
+.card-status .end-date{top: 7.7rem; right: 0;}
 .card-status .btn-block, .card-status .end-date{display: inline-block; width: 5rem;}
 .card-status .btn-group-sm>.btn, .btn-sm {padding: .1rem .1rem;}
 .card-status .bg-success.btn:hover{border-color:#28a745;}
@@ -115,7 +115,7 @@ button:active, button:focus{outline: none;}
 .card-progress{margin-top: 9.7rem;}
 .card-progress.star-n{margin-top: 9.7rem;}
 /* 내 업무 */
-.img-profile{display: block; width: 70px; height: 70px; margin: 0 auto;}
+.img-profile{display: block; width: 70px; height: 70px; margin: 0 auto; object-fit: cover;}
 .mywork .card-title{float: none; margin: .8rem 0 4.6rem;}
 .mywork .card-progress{margin-top: 4rem;}
 
@@ -254,7 +254,7 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 .tbl-checklist th{border-right: 3px double #f8bcb6;}
 .btn-check{display: inline-block; padding: .3rem .5rem; border: 0; background: transparent; color: #d4d6db;}
 .tbl-checklist td{padding: .3rem .5rem; color: #464c59; font-size: .75rem;}
-.work-checklist .ico-profile{float: left; width: 20px; margin-right: .3rem;}
+.work-checklist .ico-profile{float: left; width: 20px; height: 20px; margin-right: .3rem; object-fit: cover;}
 /* .tbl-checklist tfoot tr{border-bottom: 0;}
 .tbl-checklist tfoot td{display: block; color: #8d919a;} */
 /* 날짜 설정 */
