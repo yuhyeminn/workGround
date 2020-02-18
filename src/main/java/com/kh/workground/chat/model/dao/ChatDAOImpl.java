@@ -1,6 +1,7 @@
 package com.kh.workground.chat.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,16 @@ public class ChatDAOImpl implements ChatDAO {
 	@Override
 	public List<Member> selectMemberList(String keyword) {
 		return sqlSession.selectList("chat.selectMemberList", keyword);
+	}
+
+	@Override
+	public Member selectOneMember(String memberId) {
+		return sqlSession.selectOne("chat.selectOneMember", memberId);
+	}
+
+	@Override
+	public String findChannelNoListByMemberId(Map<String, String> param) {
+		return sqlSession.selectOne("chat.findChannelByMemberId", param);
 	}
 	
 }

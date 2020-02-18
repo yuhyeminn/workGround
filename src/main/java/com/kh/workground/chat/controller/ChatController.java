@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.chat.model.service.ChatService;
-import com.kh.workground.chat.model.service.ChatServiceImpl;
 import com.kh.workground.chat.model.vo.Channel;
+import com.kh.workground.chat.model.vo.Chat;
 import com.kh.workground.member.model.vo.Member;
 
 @Controller
@@ -37,7 +38,7 @@ public class ChatController {
 	public void chatList(Model model, 
 						 HttpSession session, 
 						 @SessionAttribute(value="memberLoggedIn", required=false) Member memberLoggedIn) {
-		logger.debug("memberLoggId={}", memberLoggedIn);
+//		logger.debug("memberLoggId={}", memberLoggedIn);
 		List<Channel> channelList = null;
 		
 		//chatId 조회
@@ -47,7 +48,7 @@ public class ChatController {
 			channelList = new ArrayList<>();
 		}
 		
-		logger.debug("channelList={}", channelList);
+//		logger.debug("channelList={}", channelList);
 		
 		model.addAttribute(channelList);
 	}
@@ -80,7 +81,7 @@ public class ChatController {
 	@RequestMapping("/chat/findMember.do")
 	@ResponseBody
 	public Map<String, Object> findMember(@RequestParam("keyword") String keyword) {
-		logger.debug("keyword={}", keyword);
+//		logger.debug("keyword={}", keyword);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("keyword", keyword);
@@ -88,9 +89,62 @@ public class ChatController {
 		List<Member> memberList = chatService.selectMemberList(keyword);
 		map.put("memberList", memberList);
 		
+//		logger.debug("map={}", map);
+		
+		return map;
+	}
+	
+	@RequestMapping("/chat/plusMember.do")
+	@ResponseBody
+	public Map<String, Object> plusMember(@RequestParam("memberId") String memberId) {
+		logger.debug("memberId={}", memberId);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("memberId", memberId);
+		
+		Member member = chatService.selectOneMember(memberId);
+		map.put("member", member);
+		
 		logger.debug("map={}", map);
 		
 		return map;
+	}
+	
+	@PostMapping("/chat/insertChannel.do")
+	public ModelAndView insertChannel(ModelAndView mav, 
+									  @RequestParam("memberId") String memberId, 
+									  @RequestParam("channelTitle") String channelTitle, 
+									  @SessionAttribute("memberLoggedIn") Member memberLoggedIn) {
+		logger.debug("memberId={}", memberId);
+		logger.debug("channelTitle={}", channelTitle);
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("chatMember", memberId); //채팅상대
+		param.put("memberId", memberLoggedIn.getMemberId());
+		
+		logger.debug("param={}", param);
+		
+		String channelNo = null;
+		
+		channelNo = chatService.findChannelByMemberId(param);
+		logger.debug("channelNo={}", channelNo);
+		
+		if(channelNo == null) {
+			channelNo = getRandomChannelNo(10);
+			
+			List<Channel> channelList = new ArrayList<>();
+			channelList.add(new Channel());
+			channelList.add(new Channel());
+			chatService.insertChannel(channelList);
+		}
+		else {
+			List<Chat> chatList = chatService.findChatListByChannelNo(channelNo);
+			mav.addObject("chatList", chatList);
+		}
+		
+		mav.setViewName("redirect:/chat/chatList.do");
+		
+		return mav;
 	}
 	
 }

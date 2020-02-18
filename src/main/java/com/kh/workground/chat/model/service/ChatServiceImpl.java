@@ -1,6 +1,7 @@
 package com.kh.workground.chat.model.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,5 +25,15 @@ public class ChatServiceImpl implements ChatService {
 	@Override
 	public List<Member> selectMemberList(String keyword) {
 		return chatDAO.selectMemberList(keyword);
+	}
+
+	@Override
+	public Member selectOneMember(String memberId) {
+		return chatDAO.selectOneMember(memberId);
+	}
+
+	@Override
+	public String findChannelByMemberId(Map<String, String> param) {
+		return chatDAO.findChannelNoListByMemberId(param);
 	}
 }

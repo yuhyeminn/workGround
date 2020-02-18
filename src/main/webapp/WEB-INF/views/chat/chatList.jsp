@@ -50,6 +50,7 @@ $(function () {
   $('.textarea').summernote();
   
   sidebarActive(); //사이드바 활성화
+  
 });
 
 //사이드바 활성화
@@ -66,34 +67,6 @@ function sidebarActive(){
 }
 	
 
-$(()=> {
-	$("#plusChannel").click(function() {
-		console.log("여긴 먹는데");
-		
-	});
-	
-});
-
-
-//대화상대찾기 ajax
-$("#findMember").keyup(function() {
-	console.log("여긴 왜 안먹져..?");
-	var keyword = $("#findMember").val().trim();
-	console.log(keyword);
-	
-	$.ajax({
-		url: '${pageContext.request.contextPath}/chat/findMember.do', 
-		data: {keyword:keyword}, 
-		dataType: 'json', 
-		success: data=> {
-			console.log(data);
-			
-		}, 
-		error: (x, s, e)=> {
-			console.log("ajax실행오류!!", x, s, e);
-		}
-	});
-});
 
 </script>
 
@@ -384,31 +357,20 @@ $("#findMember").keyup(function() {
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form role="form">
+      <form name="insertChannelFrm" action="${pageContext.request.contextPath }/chat/insertChannel.do" method="POST">
       <div class="modal-body">
         <div class="col-sm-12" style="float: right; padding: 1rem;">
             <div class="form-group">
                 <label>채널 이름</label>
-                <input type="text" class="form-control" name="channelTitle">
+                <input type="text" class="form-control" name="channelTitle" id="channelTitle">
             </div>
         </div>
         <div class="col-sm-12" style="float: right; padding: 1rem;">
-            <div class="form-group">
+            <div class="form-group" id="div-plusMember">
                 <label>채널 멤버 찾기</label>
                 <button type="button" id="plusChannel" class="btn btn-default" data-toggle="modal" data-target="#modal-sm">
                     <i class="fas fa-plus"></i>
                 </button>
-                <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">
-                  <!-- <div class="card-header" style="height: 1rem;"> -->
-                    <div class="col-12"> 
-                        <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                        <h6 class="h6">이주현</h6>
-                        <div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">
-                          <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button>
-                        </div>
-                    </div> 
-                  <!-- </div> -->
-                </div>
             </div>
         </div>
       </div>
@@ -425,8 +387,8 @@ $("#findMember").keyup(function() {
 
 <div class="modal fade" id="modal-sm">
     <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header" style="height: 3rem;">
+      <div class="modal-content" style="max-heigth: 100%; height: 35rem;">
+        <div class="modal-header">
           <h4 class="modal-title" style="font-size: 1rem;">멤버</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -435,26 +397,12 @@ $("#findMember").keyup(function() {
         <div class="modal-body">
             <div class="card-tools" style="margin-bottom:2rem">
 	                <div class="input-group input-group-sm" style="width: 100%; margin: 0 auto;">
-            		<form>
 	                  <input type="text" id="findMember" name="keyword" class="form-control float-right" placeholder="이름 혹은 이메일로 찾기">
-	            	</form>
-	                </div>
-	                
-	                <div class="input-group-append">
-	                  <button type="button" id="btn-findMember" class="btn btn-default"><i class="fas fa-search"></i></button>
 	                </div>
             </div>
             <div class="card-body table-responsive p-0" style="height: 14rem;">
                 <table class="table table-head-fixed text-nowrap">
-                  <tbody class="td">
-                      <tr>
-                        <td>
-                          <div class="col-9"> 
-                            <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                            <h6 class="h6">이주현</h6>
-                          </div> 
-                        </td>
-                      </tr>
+                  <tbody class="td" id="findMemberList">
                   </tbody>
                 </table>
             </div>
@@ -465,5 +413,74 @@ $("#findMember").keyup(function() {
     <!-- /.modal-dialog -->
 </div>
 		
+<script>
+
+//대화상대찾기 ajax
+$("#findMember").keyup(function() {
+	var keyword = $("#findMember").val().trim();
+	if(keyword == '') return;
+	console.log(keyword);
+	
+	$.ajax({
+		url: '${pageContext.request.contextPath}/chat/findMember.do', 
+		data: {keyword:keyword}, 
+		dataType: 'json', 
+		success: data=> {
+			console.log(data.memberList);
+			$("#findMemberList").children().remove();
+			
+			if(data.memberList != null) {
+				let html = '';
+				$.each(data.memberList, (idx, list)=> {
+					html += '<tr onclick="plusMember(\''+list.memberId+'\');" data-dismiss="modal"><td><div class="col-9">';
+					html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">'
+	                html += '<h6 class="h6">'+list.memberName+'</h6>';
+	                html += '</div></td><tr>';
+	                
+				});
+				
+				$("#findMemberList").append(html);
+			}
+		}, 
+		error: (x, s, e)=> {
+			console.log("ajax실행오류!!", x, s, e);
+		}
+	});
+});
+
+function plusMember(memberId) {
+	//console.log(memberId);
+	
+	$.ajax({
+		url: '${pageContext.request.contextPath}/chat/plusMember.do', 
+		data: {memberId:memberId}, 
+		dataType: 'json', 
+		success: data=> {
+			console.log(data.member.memberName);
+			
+			let html = '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">';
+	        html += '<div class="col-12">';
+	        html += '<input type="hidden" name="memberId" value="'+data.member.memberName+'">';
+	        html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+data.member.renamedFileName+'">';
+            html += '<h6 class="h6">'+data.member.memberName+'</h6>';
+            html += '<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;"><button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button></div></div></div>';
+			
+			$("#div-plusMember").append(html);
+			
+			if($("#channelTitle").val().trim().length==0) {
+				$("#channelTitle").val(data.member.memberName);
+			}
+			else {
+				$("#channelTitle").val($("#channelTitle").val()+", "+data.member.memberName);
+			}
+		}, 
+		error: (x, s, e)=> {
+			console.log("ajax실행오류!!", x, s, e);
+		}
+	})	;
+	
+}
+
+</script>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
