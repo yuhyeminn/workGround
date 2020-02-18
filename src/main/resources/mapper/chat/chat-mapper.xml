@@ -9,4 +9,10 @@
 			left join channel_member M on C.channel_no = M.channel_no
 		where M.member_id = #{memberId}
 	</select>
+	
+	<select id="selectMemberList" resultType="member">
+		select * 
+		from member 
+		where member_name like '%'||#{keyword}||'%' or email like '%'||#{keyword}||'%'
+	</select>
 </mapper>
