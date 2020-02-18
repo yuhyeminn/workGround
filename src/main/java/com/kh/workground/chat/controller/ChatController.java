@@ -36,9 +36,8 @@ public class ChatController {
 	
 	@GetMapping("/chat/chatList.do")
 	public void chatList(Model model, 
-						 HttpSession session, 
 						 @SessionAttribute(value="memberLoggedIn", required=false) Member memberLoggedIn) {
-//		logger.debug("memberLoggId={}", memberLoggedIn);
+		logger.debug("memberLoggId={}", memberLoggedIn);
 		List<Channel> channelList = null;
 		
 		//chatId 조회
@@ -48,7 +47,7 @@ public class ChatController {
 			channelList = new ArrayList<>();
 		}
 		
-//		logger.debug("channelList={}", channelList);
+		logger.debug("channelList={}", channelList);
 		
 		model.addAttribute(channelList);
 	}
