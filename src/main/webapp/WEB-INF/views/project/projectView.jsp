@@ -620,7 +620,6 @@ function workComplete(){
 				isValid = true;
 		}
 		
-		
 		//2.업무 완료 여부
 		let yn = "N";
 		if(isValid){
@@ -683,10 +682,13 @@ function checklist(){
 		let $tr = $(btnChk.parentNode.parentNode);
 		let $tdChecklist = $(btnChk.parentNode.nextSibling.nextSibling);
 		let $icoChk = $(btnChk.firstChild);
-		let $spanCntComp = $workSection.find('.chklt-cnt-completed');
+		let $spanCntComp = $("section.work-item#"+workNo).find('.chklt-cnt-completed');
 		let workChargedMemIdArr = null;
 		if($workSection.find('.hiddenWorkChargedMemId').val() != null && $workSection.find('.hiddenWorkChargedMemId').val() !=''){
 			workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
+		}
+		if($tdChecklist.length==0){
+			$tdChecklist = $(btnChk.parentNode.nextSibling);
 		}
 		console.log(workChargedMemIdArr);
 		let chkChargedMemId = btnChk.nextSibling.nextSibling.value;
@@ -853,8 +855,23 @@ function goTabMenu(){
 	
 	//분석 탭 클릭
 	btnAnalysis.addEventListener('click', e=>{
-		location.href = "${pageContext.request.contextPath}/project/projectAnalysis.do?projectNo=${project.projectNo}";	
-	});
+		$.ajax({
+			url: "${pageContext.request.contextPath}/project/projectAnalysis.do?projectNo=${project.projectNo}",
+			type: "get",
+			dataType: "html",
+			success: data => {
+				
+				$(contentWrapper).html("");
+				$(contentWrapper).html(data); 
+				$(contentWrapper).removeAttr('id');
+				$(contentWrapper).attr('class', 'content-wrapper navbar-light');
+				
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
+	}); 
 	
 	//파일 탭 클릭
 	btnAttach.addEventListener('click', e=>{
@@ -1348,7 +1365,7 @@ function updateTitle(){
 	                        <c:if test="${vs.last}">
 	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
 	                   	 		<div class="work-coverImage">
-	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${project.projectNo}/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
 	                   	 		</div>
 	                   	 		</c:if>
 	                   	 	</c:if>

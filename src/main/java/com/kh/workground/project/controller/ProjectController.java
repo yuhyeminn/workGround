@@ -437,11 +437,11 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/downloadFile.do")
-	public ModelAndView downloadFile(HttpServletRequest request, HttpServletResponse response,
+	public ModelAndView downloadFile(HttpServletRequest request, HttpServletResponse response, @RequestParam String projectNo,
 									 @RequestParam String oName, @RequestParam String rName) throws Exception {
 		
 		//1.파일 찾기
-		String saveDir = request.getSession().getServletContext().getRealPath("/resources/upload/project");
+		String saveDir = request.getSession().getServletContext().getRealPath("/resources/upload/project/"+projectNo);
 		File downloadFile = new File(saveDir+File.separator+rName);
 		
 		if(!downloadFile.canRead())
@@ -457,12 +457,12 @@ public class ProjectController {
 	
 	@PostMapping("/project/deleteFile")
 	@ResponseBody
-	public Map<String, String> deleteFile(HttpServletRequest request, @RequestParam int attachNo, @RequestParam String rName){
+	public Map<String, String> deleteFile(HttpServletRequest request, @RequestParam String projectNo, @RequestParam int attachNo, @RequestParam String rName){
 		Map<String, String> map = new HashMap<>();
 		
 		try {
 			//1.파일삭제
-			String saveDir = request.getSession().getServletContext().getRealPath("/resources/upload/project");
+			String saveDir = request.getSession().getServletContext().getRealPath("/resources/upload/project/"+projectNo);
 			File delFile = new File(saveDir+File.separator+rName);
 			
 			boolean bool = delFile.delete();
@@ -496,13 +496,6 @@ public class ProjectController {
 	
 	
 	
-	@RequestMapping("/project/projectAnalysis.do")
-	public ModelAndView projectAnalysis(ModelAndView mav) {
-		
-		
-		mav.setViewName("/project/projectAnalysis");
-		
-		return mav;
-	}
+	
 	
 }

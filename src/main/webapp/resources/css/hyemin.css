@@ -1,5 +1,5 @@
 .work-attachment-tbl .filename{width: 6rem;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
-
+.side-header{background:white}
 .work-custom-file:hover {
     height: 2.3rem;
     transform: none;
@@ -9,7 +9,6 @@
 .reply-work-ref-content{float: right;width: 78%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;display: inline-block;}
 .reply-work-ref{background: #f8f9fa;padding: 7px 5px;margin-bottom: 10px;border-radius: 5px;font-size: 14px;width: 95%;display: inline-block;}
 .reply-work-ref-wrapper{display:none}
-
 
 #desc{border: none;padding: 5px;width: 80%;}
 #title{border: none;width: 80%;background:#e7e7e7;}
@@ -336,7 +335,7 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   
 .work-setting {
     position: fixed;
-    background-color: #fff;
+    background-color: #f3f4f5;
     box-shadow: -1px 6px 10px 0 rgba(0,0,0,.2);
     /* height: 100%; */
     right: -520px;

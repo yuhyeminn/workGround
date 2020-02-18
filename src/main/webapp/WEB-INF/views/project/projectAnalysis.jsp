@@ -4,7 +4,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
-<jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
 <link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
 
@@ -185,116 +184,17 @@ function myworkWriteChart(){
 }
 </script>		
 
-<!-- Navbar Project -->
-<nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project navbar-projectView">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-    <li id="go-back" class="nav-item text-center">
-        <a class="nav-link" href=""><i class="fas fa-chevron-left"></i></a>
-    </li>
-    <li id="project-name" class="nav-item">
-        <button type="button" id="btn-star"><i class="fas fa-star"></i></button>
-        기획
-    </li>
-    </ul>
 
-    <!-- Middle navbar links -->
-    <ul id="navbar-tab" class="navbar-nav ml-auto">
-        <li id="tab-work" class="nav-item"><button type="button">업무</button></li>
-        <li id="tab-timeline" class="nav-item"><button type="button">타임라인</button></li>
-        <li id="tab-analysis" class="nav-item"><button type="button">분석</button></li>
-        <li id="tab-attachment" class="nav-item"><button type="button" id="btn-tab-attach">파일</button></li>
-    </ul>
-
-    <!-- Right navbar links -->
-    <ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
-        <!-- 프로젝트 대화 -->
-        <li class="nav-item">
-            <button type="button" class="btn btn-block btn-default btn-xs nav-link">
-                <i class="far fa-comments"></i> 프로젝트 대화
-            </button>
-        </li>
-
-        <!-- 프로젝트 멤버 -->
-        <li id="nav-member" class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="far fa-user"></i> 6
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                    </div>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            </div>
-        </li>
-
-        <!-- 프로젝트 설정 -->
-        <li class="nav-item">
-            <button type="button" class="btn btn-block btn-default btn-xs nav-link">
-            <i class="fas fa-cog"></i>
-            </button>
-        </li>
-    </ul>
-</nav>
-<!-- /.navbar -->		
 
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper navbar-light">
+<!-- <div class="content-wrapper navbar-light"> -->
     <div class="analysis-content">
         <div class="project-summary content-box">
             <div class="row">
             <div class="summary-col-sm col-6 border-right">
                 <div class="description-block ">
                 <h5 class="description-header">시작일</h5>
-                <span class="description-text">1월 10일</span>
+                <span class="description-text">${project.projectStartDate }</span>
                 </div>
                 <!-- /.description-block -->
             </div>
@@ -302,7 +202,7 @@ function myworkWriteChart(){
             <div class="summary-col-sm col-6 border-right">
                 <div class="description-block ">
                 <h5 class="description-header">마감일</h5>
-                <span class="description-text">1월 31일</span>
+                <span class="description-text">${project.projectEndDate}</span>
                 </div>
                 <!-- /.description-block -->
             </div>
@@ -310,7 +210,7 @@ function myworkWriteChart(){
             <div class="summary-col-sm col-6 border-right">
                 <div class="description-block ">
                 <h5 class="description-header">완료일</h5>
-                <span class="description-text"> - </span>
+                <span class="description-text">${project.projectRealEndDate }</span>
                 </div>
                 <!-- /.description-block -->
             </div>
@@ -385,7 +285,6 @@ function myworkWriteChart(){
 
     </div>
     <!-- /.analysis-content-->
-</div>
+<!-- </div> -->
 <!-- /.content-wrapper -->
 
-<jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

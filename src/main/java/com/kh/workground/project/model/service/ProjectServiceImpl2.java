@@ -129,7 +129,7 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		
 		Project p = projectDAO.selectProjectOneForSetting(projectNo);
 		if(p==null) {
-			throw new ProjectException("중요 표시된 프로젝트 조회 오류!");
+			throw new ProjectException("프로젝트 조회 오류!");
 		}
 		if(!isIncludeManager) {
 			List<Member> list = p.getProjectMemberList();

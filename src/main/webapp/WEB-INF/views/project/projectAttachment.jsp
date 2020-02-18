@@ -31,10 +31,11 @@ function downloadFile(){
 		let btnDown = e.target;
 		let attachNo = btnDown.value;
 		let $tr = $('#'+attachNo);
+		let projectNo = '${project.projectNo}';
 		let oName = $tr.find('.oName').val();
 		let rName = $tr.find('.rName').val();
 		
-		location.href = "${pageContext.request.contextPath}/project/downloadFile.do?oName="+oName+"&rName="+rName;
+		location.href = "${pageContext.request.contextPath}/project/downloadFile.do?projectNo="+projectNo+"&oName="+oName+"&rName="+rName;
 	});
 }
 
@@ -49,6 +50,7 @@ function delFile(){
 		let attachNo = btnRemove.value.split(',')[0];
 		let oName = btnRemove.value.split(',')[1];
 		let rName = btnRemove.value.split(',')[2];
+		let projectNo = '${project.projectNo}';
 		
 		//삭제 모달창에 정보 뿌리기
 		$(delFileName).text(oName);
@@ -57,7 +59,8 @@ function delFile(){
 		let $tr = $('#'+attachNo);
 		let data = {
 				attachNo: attachNo*1,
-				rName: rName
+				rName: rName,
+				projectNo:projectNo
 		};
 		
 		//삭제 클릭
@@ -151,7 +154,7 @@ function tabActive(){
                              	 <c:if test="${vs.last}">
                              	 	<c:choose>
                              	 		<c:when test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
-			                                 <img src="${pageContext.request.contextPath}/resources/img/project/${a.renamedFilename}" alt="첨부파일 미리보기 이미지">
+			                                 <img src="${pageContext.request.contextPath}/resources/upload/project/${project.projectNo}/${a.renamedFilename}" alt="첨부파일 미리보기 이미지">
                              	 		</c:when>
                              	 		<c:when test="${token!='bmp' && token!='jpg' && token!='jpeg' && token!='gif' && token!='png' && token!='tif' && token!='tiff' && token!='jfif'}">
 			                                 <img src="${pageContext.request.contextPath}/resources/img/project/default-file.png" alt="첨부파일 미리보기 이미지">

@@ -363,7 +363,7 @@
 	<!-- addProject.do : 프로젝트팀원 테이블에 팀장 추가 -->
 	<insert id="insertProjectManager" parameterType="project">
 		insert into project_members
-		values(seq_project_members.nextval,#{projectNo},#{projectWriter},'Y')
+		values(seq_project_members.nextval,#{projectNo},#{projectWriter},'Y',default)
 	</insert>
 	
 	<!-- addProject.do : 프로젝트팀원 테이블에 팀원 추가 -->

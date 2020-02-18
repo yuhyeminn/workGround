@@ -26,6 +26,7 @@
 <div class="div-close" role="button" tabindex="0">
     <i class="fas fa-times close-sidebar"></i>
 </div>
+<div class="side-header">
 <div class="p-3">
 	    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin'}">
 		    <p class="setting-side-title update-side-title">
@@ -54,6 +55,7 @@
         	<button type="button" id="custom-content-above-home-tab" data-toggle="pill" href="#custom-content-above-home" role="tab" aria-controls="custom-content-above-home" aria-selected="true">설정</button>
         </li>
     </ul>
+ </div>
     <div class="tab-content" id="custom-content-above-tabContent">
         <div class="tab-pane fade show active p-setting-container" id="custom-content-above-home" role="tabpanel" aria-labelledby="custom-content-above-home-tab">
            		<!-- 권한 있을 때 -->
@@ -328,8 +330,8 @@ $(".date-update").on('click',function(){
 	var $this = $(this);
 	var projectNo = '${project.projectNo}';
 	var input = $this.parent(".setting-date-dropdown").find("input");
-	var date = input.val();	//수정할 날짜
-	var dateType = input.attr('id');  //수정할 날짜 종류(startDate,endDate,realEndDate)
+	var date = input.eq(0).val();	//수정할 날짜
+	var dateType = input.eq(0).attr('id');  //수정할 날짜 종류(startDate,endDate,realEndDate)
 	
 	var bool = dateValidation(date,dateType); //유효성 검사
 	if(bool){
@@ -346,6 +348,7 @@ $(".date-update").on('click',function(){
 				}else{
 					dateView.text(dateArr[0]+'-'+dateArr[1]+'-'+dateArr[2]);
 				}
+				input.eq(1).val(date);
 			},
 			error:(jqxhr, textStatus, errorThrown) =>{
 				console.log(jqxhr, textStatus, errorThrown);
@@ -354,43 +357,40 @@ $(".date-update").on('click',function(){
 	}
 })
 function dateValidation(date,dateType){
-	/* if(date==null || date=='') {alert("날짜를 입력하세요.");return;}  날짜 null로 변경할수도 있기 때문*/
-	
+	var dateArr = date.split('-');
+	var dateCompare = new Date(dateArr[0], parseInt(dateArr[1])-1, dateArr[2]);
+		
 	if(dateType == 'project_startdate'){
-		var startDateArr = date.split('-');
 		var endDate = $("#projectEndDate").val();
 		var endDateArr = endDate.split('-');
 		var realEndDate = $("#projectRealEndDate").val();
 		var realEndDateArr = realEndDate.split('-');
-		var startDateCompare = new Date(startDateArr[0], parseInt(startDateArr[1])-1, startDateArr[2]);
 		
 		if(endDate != null && endDate != ''){
 	        var endDateCompare = new Date(endDateArr[0], parseInt(endDateArr[1])-1, endDateArr[2]);
-	        if(startDateCompare.getTime() > endDateCompare.getTime()) {alert("시작일과 마감일을 확인 해 주세요.");return false;}
+	        if(dateCompare.getTime() > endDateCompare.getTime()) {alert("시작일과 마감일을 확인 해 주세요.");return false;}
 		}
 		if(realEndDate != null && realEndDate != ''){
 	        var realEndDateCompare = new Date(realEndDateArr[0], parseInt(realEndDateArr[1])-1, realEndDateArr[2]);
-	        if(startDateCompare.getTime() > realEndDateCompare.getTime()) {alert("시작일과 완료일을 확인 해 주세요.");return false;}
+	        if(dateCompare.getTime() > realEndDateCompare.getTime()) {alert("시작일과 완료일을 확인 해 주세요.");return false;}
 		}
 	}
 	if(dateType== 'project_enddate'){
-		var endDateArr = date.split('-');
 		var startDate = $("#projectStartDate").val();
 		var startDateArr = startDate.split('-');
-		var endDateCompare = new Date(endDateArr[0], parseInt(endDateArr[1])-1, endDateArr[2]);
+		
 		if(startDate != null && startDate != ''){
 			var startDateCompare = new Date(startDateArr[0], parseInt(startDateArr[1])-1, startDateArr[2]);
-	        if(startDateCompare.getTime() > endDateCompare.getTime()) {alert("시작일과 마감일을 확인 해 주세요.");return false;}
+	        if(startDateCompare.getTime() > dateCompare.getTime()) {alert("시작일과 마감일을 확인 해 주세요.");return false;}
 		}
 	}
 	if(dateType== 'project_realenddate'){
-		var realEndDateArr = date.split('-');
 		var startDate = $("#projectStartDate").val();
 		var startDateArr = startDate.split('-');
-		var realEndDateCompare = new Date(realEndDateArr[0], parseInt(realEndDateArr[1])-1, realEndDateArr[2]);
+		
 		if(startDate != null && startDate != ''){
 			var startDateCompare = new Date(startDateArr[0], parseInt(startDateArr[1])-1, startDateArr[2]);
-	        if(startDateCompare.getTime() > realEndDateCompare.getTime()) {alert("시작일과 완료일을 확인 해 주세요.");return false;}
+	        if(startDateCompare.getTime() > dateCompare.getTime()) {alert("시작일과 완료일을 확인 해 주세요.");return false;}
 		}
 	}
 	return true;

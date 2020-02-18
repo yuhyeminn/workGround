@@ -33,6 +33,7 @@ import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
 import com.kh.workground.project.model.vo.WorkComment;
+import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
 public class ProjectController2 {
@@ -644,7 +645,8 @@ public class ProjectController2 {
 	public Map<String, Object> uploadWorkFile(MultipartHttpServletRequest request){
 		Map<String, Object> result;
 		try {
-			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/project");
+			String projectNo = request.getParameter("projectNo");
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/project/"+projectNo);
 			MultipartFile f = request.getFile("workFile");
 			Attachment attach = new Attachment();
 			
@@ -691,7 +693,7 @@ public class ProjectController2 {
 	
 	@RequestMapping("/project/resetWorkOne.do")
 	@ResponseBody
-	public ModelAndView resetWorkOne(ModelAndView mav,@RequestParam int workNo, @RequestParam String worklistTitle) {
+	public ModelAndView resetWorkOne(ModelAndView mav,@RequestParam int workNo,@RequestParam String projectNo, @RequestParam String worklistTitle) {
 		try {
 			
 			//work객체 가져오기
@@ -699,6 +701,7 @@ public class ProjectController2 {
 			
 			mav.addObject("w", work);
 			mav.addObject("worklistTitle",worklistTitle);
+			mav.addObject("projectNo",projectNo);
 			mav.setViewName("/project/ajaxWorkOne");
 			
 		}catch(Exception e){
@@ -707,7 +710,17 @@ public class ProjectController2 {
 			throw new ProjectException("업무 속성 조회 오류!");
 			
 		}
+		return mav;
+	}
+	
+	@RequestMapping("/project/projectAnalysis.do")
+	public ModelAndView projectAnalysis(ModelAndView mav, HttpServletRequest request) {
 		
+		int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+		boolean isIncludeManager = false;
+		Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+		mav.addObject("project",p);
+		mav.setViewName("/project/projectAnalysis");
 		return mav;
 	}
 }
