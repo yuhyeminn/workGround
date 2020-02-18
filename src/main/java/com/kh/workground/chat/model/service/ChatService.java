@@ -1,13 +1,14 @@
 package com.kh.workground.chat.model.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-import com.kh.workground.chat.model.dao.ChatDAO;
+import com.kh.workground.chat.model.vo.Channel;
+import com.kh.workground.member.model.vo.Member;
 
-@Service
-public class ChatService implements ChatServiceImpl {
-	
-	@Autowired
-	ChatDAO chatDAO;
+public interface ChatService {
+
+	List<Channel> findChannelNoListByMemberId(String memberId);
+
+	List<Member> selectMemberList(String keyword);
+
 }

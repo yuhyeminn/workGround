@@ -64,26 +64,34 @@ function sidebarActive(){
 	});
 	
 	$("#sidebar-chat").addClass("active");
+}
 	
 
-	$(document).ready(function() {
-		$("#sendBtn").click(function() {
-			sendMessage();
-		});
-		$("#message").keydown(function(key) {
-			if (key.keyCode == 13) {// 엔터
-				sendMessage();
+//대화상대찾기 ajax
+$(()=> {
+	$("#plusChannel").click(function() {
+		console.log("왜 안먹져...?");
+	});
+	
+	$("#findMember").keyup(function() {
+		var keyword = $(this).val().trim();
+		console.log(keyword);
+		
+		$.ajax({
+			url: '${pageContext.request.contextPath}/chat/findMember.do', 
+			data: {keyword:keyword}, 
+			dataType: 'json', 
+			success: data=> {
+				console.log(data);
+				
+			}, 
+			error: (x, s, e)=> {
+				console.log("ajax실행오류!!", x, s, e);
 			}
 		});
-
-		//window focus이벤트핸들러 등록
-		$(window).on("focus", function() {
-			console.log("focus");
-			lastCheck();
-		});
 	});
+});
 
-	
 </script>
 
 
@@ -100,7 +108,7 @@ function sidebarActive(){
                                 채널 검색
                                 <i class="fas fa-search" style="float: right; position: relative; top:.3rem;"></i>
                             </button>
-                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default1" style="width: 100%; background: white; border-color: white; font-weight: bold; color:#17a2b8;">
+                            <button type="button" id="plusChannel" class="btn btn-default" data-toggle="modal" data-target="#modal-default1" style="width: 100%; background: white; border-color: white; font-weight: bold; color:#17a2b8;">
                                 <i class="fas fa-plus"></i>&nbsp;
                                 새 대화 채널 추가
                             </button>
@@ -109,14 +117,16 @@ function sidebarActive(){
                             <div class="card-body table-responsive p-0" style="height: 32.5rem;">
                                 <table class="table table-head-fixed text-nowrap">
                                     <tbody class="td">
+                                    <c:forEach items="${channelList }" var="channel">
                                         <tr>
                                             <td>
                                                 <div class="col-9" style="width: 100%;"> 
                                                     <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                                    <h6 class="h6">이주현</h6>
+                                                    <h6 class="h6">${channel.channelTitle }</h6>
                                                 </div> 
                                             </td>
                                         </tr>
+                                    </c:forEach>
                                     </tbody>
                                 </table>
                             </div>
@@ -371,62 +381,39 @@ function sidebarActive(){
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" style="height:30rem;">
-        <form role="form">
-            <div class="col-sm-12" style="float: right; padding: 1rem;">
-                <div class="form-group">
-                    <label>채널 이름</label>
-                    <input type="text" class="form-control" style="margin-bottom: 2rem;">
-                </div>
-                <label>공개 범위 설정</label>
+      <form role="form">
+      <div class="modal-body">
+        <div class="col-sm-12" style="float: right; padding: 1rem;">
+            <div class="form-group">
+                <label>채널 이름</label>
+                <input type="text" class="form-control" name="channelTitle">
             </div>
-            <div class="col-sm-11" style="margin: 0 auto;">
-              <div class="col-sm-6" style="display: inline-block; float: left;" >
-                  <div class="info-box">
-                    <div class="custom-control custom-radio">
-                      <input class="custom-control-input" type="radio" id="customRadio1" name="customRadio" >
-                      <i class="fas fa-unlock" style="display: block; margin-left: 0.4rem; position: relative; top:1.2rem"></i>
-                      <label for="customRadio1" class="custom-control-label" style="padding-left: 1.5rem; font-weight: normal;">공개</label>
-                      <p style="color: gray; font-size: 0.8rem;">모든 멤버 접근 가능</p>
-                    </div>
-                  </div>
-              </div>
-              <div class="col-sm-6" style="display: inline-block; float: right;">
-                <div class="info-box">
-                    <div class="custom-control custom-radio">
-                        <input class="custom-control-input" type="radio" id="customRadio2" name="customRadio" checked>
-                        <i class="fas fa-lock" style="color: black; display: block; margin-left: 0.4rem; position: relative; top:1.2rem;"></i>
-                        <label for="customRadio2" class="custom-control-label" style="padding-left: 1.5rem; font-weight: normal;">비공개</label>
-                        <p style="color: gray; font-size: 0.8rem;">추가된 멤버만 접근 가능</p>
-                    </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-12" style="float: right; padding: 1rem;">
-                <div class="form-group">
-                    <label>채널 멤버 추가</label>
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-sm">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">
-                      <!-- <div class="card-header" style="height: 1rem;"> -->
-                        <div class="col-12"> 
-                            <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                            <h6 class="h6">이주현</h6>
-                            <div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">
-                              <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button>
-                            </div>
-                        </div> 
-                      <!-- </div> -->
-                    </div>
+        </div>
+        <div class="col-sm-12" style="float: right; padding: 1rem;">
+            <div class="form-group">
+                <label>채널 멤버 찾기</label>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-sm">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">
+                  <!-- <div class="card-header" style="height: 1rem;"> -->
+                    <div class="col-12"> 
+                        <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+                        <h6 class="h6">이주현</h6>
+                        <div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">
+                          <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button>
+                        </div>
+                    </div> 
+                  <!-- </div> -->
                 </div>
             </div>
-        </form>
+        </div>
       </div>
       <div class="modal-footer justify-content-between">
         <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
         <button type="submit" class="btn btn-primary">추가하기</button>
       </div>
+    </form>
     </div>
     <!-- /.modal-content -->
   </div>
@@ -445,11 +432,11 @@ function sidebarActive(){
         <div class="modal-body">
             <div class="card-tools" style="margin-bottom:2rem">
                 <div class="input-group input-group-sm" style="width: 100%; margin: 0 auto;">
-                  <input type="text" name="table_search" class="form-control float-right" placeholder="이름 혹은 이메일로 찾기">
-  
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
-                  </div>
+                  <input type="text" name="keyword" class="form-control float-right" id="findMember" placeholder="이름 혹은 이메일로 찾기">
+                </div>
+                
+                <div class="input-group-append">
+                  <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
                 </div>
             </div>
             <div class="card-body table-responsive p-0" style="height: 14rem;">
