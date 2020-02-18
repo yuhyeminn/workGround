@@ -73,7 +73,7 @@ $(()=> {
 		console.log("왜 안먹져...?");
 	});
 	
-	$("#findMember").keyup(function() {
+	$("#btn-findMember").on("click", function() {
 		var keyword = $(this).val().trim();
 		console.log(keyword);
 		
@@ -436,7 +436,7 @@ $(()=> {
                 </div>
                 
                 <div class="input-group-append">
-                  <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                  <button type="button" id="btn-findMember" class="btn btn-default"><i class="fas fa-search"></i></button>
                 </div>
             </div>
             <div class="card-body table-responsive p-0" style="height: 14rem;">
