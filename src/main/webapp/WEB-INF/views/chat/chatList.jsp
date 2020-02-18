@@ -64,6 +64,7 @@ function sidebarActive(){
 	});
 	
 	$("#sidebar-chat").addClass("active");
+}
 	
 
 	$(document).ready(function() {
@@ -109,14 +110,16 @@ function sidebarActive(){
                             <div class="card-body table-responsive p-0" style="height: 32.5rem;">
                                 <table class="table table-head-fixed text-nowrap">
                                     <tbody class="td">
+                                    <c:forEach items="${channelList }" var="channel">
                                         <tr>
                                             <td>
                                                 <div class="col-9" style="width: 100%;"> 
                                                     <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                                    <h6 class="h6">이주현</h6>
+                                                    <h6 class="h6">${channel.channelTitle }</h6>
                                                 </div> 
                                             </td>
                                         </tr>
+                                    </c:forEach>
                                     </tbody>
                                 </table>
                             </div>

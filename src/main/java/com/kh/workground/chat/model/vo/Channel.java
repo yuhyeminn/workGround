@@ -23,7 +23,6 @@ public class Channel implements Serializable {
 	private int channelNo;
 	private String channelType;
 	private String channelTitle;
-	private String readYN;
 	private String status;
 	private int lastCheck;
 	private int projectOrClubNo;

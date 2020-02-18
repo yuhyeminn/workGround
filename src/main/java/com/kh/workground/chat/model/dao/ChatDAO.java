@@ -1,13 +1,11 @@
 package com.kh.workground.chat.model.dao;
 
-import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public class ChatDAO implements ChatDAOImpl {
-	
-	@Autowired
-	SqlSessionTemplate sqlSession;
-	
+import com.kh.workground.chat.model.vo.Channel;
+
+public interface ChatDAO {
+
+	List<Channel> findChannelNoListByMemberId(String memberId);
+
 }
