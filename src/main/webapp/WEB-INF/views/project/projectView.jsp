@@ -36,7 +36,8 @@
 $(()=>{
 	sidebarActive(); //사이드바 활성화
 	
-	projectStar(); //프로젝트 별 해제/등록
+	if('${project.privateYn}'==='N')
+		projectStar(); //프로젝트 별 해제/등록
 	searchWork(); //업무검색
 	
     addWorklist(); //새 업무리스트 만들기
@@ -290,6 +291,8 @@ function addWork(){
     	
     	let btnSubmit = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-submit');
    		let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
+   		let btnRWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-btnRight'); 
+		let dateWrapper = document.querySelector('#worklist-'+worklistNo+' .add-date'); 
    		let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
    		
    		//설정 버튼: 멤버, 태그, 날짜 
@@ -297,10 +300,13 @@ function addWork(){
    		let btnAddTag = document.querySelector('#worklist-'+worklistNo+' .btn-addWorkTag');
    		let btnAddDate = document.querySelector('#worklist-'+worklistNo+' .btn-addWorkDate'); 
    		$(btnAddDate).daterangepicker();//날짜 설정
+   		let btnCancelDate;
    		
    		let memTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-memTag');
 		let workTagArr = document.querySelectorAll('#worklist-'+worklistNo+' .drop-workTag');
-		
+   		let badgeAddMem = document.querySelector('#worklist-'+worklistNo+' .addMem-badge');
+   		let badgeAddTag = document.querySelector('#worklist-'+worklistNo+' .addTag-badge');
+   		let colorArr = ['badge-danger', 'badge-primary', 'badge-warning'];
 		
 		//입력창 열기
 		$('.addWork-wrapper').removeClass('show');
@@ -317,6 +323,7 @@ function addWork(){
 				
 				let idx = addMemberArr.indexOf(memberId);
 				let $hasCheck = $(obj).find('.media-body'); //체크아이콘 들어갈 태그
+				let cnt = $(badgeAddMem).text()*1; //선택된 멤버 카운트
 				
 				//addMemberArr에 선택한 memberId 담기
 				//배열에 아이디가 존재하지 않는 경우
@@ -324,6 +331,8 @@ function addWork(){
 					$(obj).addClass('checked');
 					$hasCheck.append(chkHtml);
 					addMemberArr.push(memberId);
+					cnt++;
+					$(badgeAddMem).text(cnt);
 				}
 				//배열에 이미 존재하는 경우
 				else {
@@ -331,6 +340,12 @@ function addWork(){
 					let $check = $hasCheck.find('.fa-check'); 
 					$check.remove();
 					addMemberArr.splice(idx, 1);
+					cnt--;
+					if(cnt===0)
+						$(badgeAddMem).text("");
+					else
+						$(badgeAddMem).text(cnt);
+						
 				}
 			}); 
 			
@@ -344,19 +359,35 @@ function addWork(){
 				let $check = $('.drop-workTag .fa-check');
 				let strIdx = obj.className.indexOf('W');
 				let status = obj.className.substr(strIdx, 3);
+				let color;
+				
+				if(status==='WT1') color = 'badge-danger';
+				else if(status==='WT2') color = 'badge-primary';
+				else color = 'badge-warning';
 				
 				//이미 선택된 태그가 아닌 경우에는 체크
 				if(status!==addTag){
 					addTag = "";
 					addTag = status;
-					
 					$check.remove(); //다른 태그 체크 아이콘 지우기
 					$this.append(chkHtml); //체크 아이콘 추가 
+					$(badgeAddTag).text(1);
+					
+					for(let i in colorArr){
+						let c = colorArr[i];
+						if($(badgeAddTag).hasClass(c))
+							$(badgeAddTag).removeClass(c);
+					}
+					
+					$(badgeAddTag).addClass(color);
 				}
 				//이미 선택된 태그는 체크 해제
 				else{
 					addTag = "";
 					$this.find('.fa-check').remove();
+					$(badgeAddTag).text("");
+					$(badgeAddTag).removeClass(color);
+					
 				}
 			});
 		}); //end of 업무상태태그 클릭
@@ -364,8 +395,6 @@ function addWork(){
 		
 		//날짜버튼 클릭
 		btnAddDate.addEventListener('click', e=>{
-			let btnWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-btnLeft'); 
-			let addWrapper = document.querySelector('#worklist-'+worklistNo+' .add-date'); 
 			let dPicker = document.querySelector('.daterangepicker');
 			dPicker.style.display = 'block';
 			
@@ -398,6 +427,14 @@ function addWork(){
 				let startSql = startArr[2]+"-"+startArr[0]+"-"+startArr[1]; //db용
 				let endSql = endArr[2]+"-"+endArr[0]+"-"+endArr[1];
 				
+				//업무 시작일 유효성 검사
+				let pStart = '${project.projectStartDate}'.split('-');
+				if(startArr[2]*1 < pStart[0]*1 || startArr[0]*1 < pStart[1]*1 || startArr[1]*1 < pStart[2]*1){
+					alert("업무 시작일은 프로젝트 시작일보다 빠를 수 없습니다 :(");
+					return;
+				}
+				
+				
 				addDateArr.length = 0;
 				let btnHtml; //추가될 버튼 요소
 				//시작일과 마감일이 같은 경우 시작일만 적용
@@ -413,16 +450,19 @@ function addWork(){
 				
 				//데이트피커버튼 지우고 선택한 날짜버튼 추가  
 				$(btnAddDate).remove();
-				$(addWrapper).html(btnHtml);
+				$(dateWrapper).html(btnHtml);
+				//취소,만들기버튼 css 수정
+				$(btnRWrapper).css('display', 'block').css('float', 'none').css('margin-bottom', '.3rem').css('text-align', 'right');
 				
-				let btnCancelDate = document.querySelector('#worklist-'+worklistNo+' .btn-cancelDate'); 
+				btnCancelDate = document.querySelector('#worklist-'+worklistNo+' .btn-cancelDate'); 
 				console.log(addDateArr); //취소하고 만드는 만큼 반복됨
 				
 				//날짜 지우기
 				$(btnCancelDate).on('click', ()=>{
 					addDateArr.length = 0; //배열 초기화
 					$(btnCancelDate).remove();
-					$(addWrapper).html(btnAddDate);
+					$(dateWrapper).html(btnAddDate);
+					$(btnRWrapper).css('display', 'inline-block').css('float', 'right');
 				});
 				
 			}); //end of click $btnApply
@@ -477,15 +517,26 @@ function addWork(){
 		
 		//취소버튼 클릭
 		btnCancel.addEventListener('click', e=>{
+			let check = document.querySelectorAll('#worklist-'+worklistNo+' .fa-check');
+			$(check).remove();
+			
 			$(workTitle).val("");
-			addTag = "";
+			
 			addMemberArr.length = 0; 
+			$(badgeAddMem).text("");
+			
+			addTag = "";
+			$(badgeAddTag).text("");
+			for(let i in colorArr){
+				let c = colorArr[i];
+				if($(badgeAddTag).hasClass(c))
+					$(badgeAddTag).removeClass(c);
+			}
+			
 			addDateArr.length = 0; 
-			
-			
-			//날짜 선택한 경우
-			//$btnCancelDate.remove();
-			//$(addDate).append(btnAddDate);
+			$(btnCancelDate).remove();
+			$(dateWrapper).append(btnAddDate);
+			$(btnRWrapper).css('display', 'inline-block').css('float', 'right');
 			
 			$(addWorkWrapper).removeClass("show");
 			
@@ -836,6 +887,8 @@ function goTabMenu(){
 		location.href = "${pageContext.request.contextPath}/project/projectView.do?projectNo=${project.projectNo}";	
 	});
 	
+	//나의 워크패드에서는 타임라인, 분석 보이지 않음
+	if('${project.privateYn}'==='N'){
 	//타임라인 탭 클릭
 	btnTimeline.addEventListener('click', e=>{
 		$.ajax({
@@ -875,6 +928,7 @@ function goTabMenu(){
 			}
 		});
 	}); 
+	} //end of if
 	
 	//파일 탭 클릭
 	btnAttach.addEventListener('click', e=>{
@@ -1043,11 +1097,21 @@ function updateTitle(){
 <nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project navbar-projectView">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
+    
+    <!-- 뒤로가기 -->
+    <c:if test="${project.privateYn=='N'}">
     <li id="go-back" class="nav-item text-center">
+    </c:if>
+    <c:if test="${project.privateYn=='Y'}">
+    <li id="go-back" class="nav-item text-center private-y">
+    </c:if>
         <a class="nav-link" href="${pageContext.request.contextPath}/project/projectList.do"><i class="fas fa-chevron-left"></i></a>
     </li>
+    
+    <!-- 프로젝트 중요표시, 이름 -->
     <li id="project-name" class="nav-item">
 		<input type="hidden" id="hiddenProjectNo" value="${project.projectNo}"/>
+        <c:if test="${project.privateYn=='N'}">
         <button type="button" id="btn-star">
         	<c:if test="${project.projectStarYn=='Y'}">
         	<i class="fas fa-star"></i>
@@ -1056,6 +1120,7 @@ function updateTitle(){
         	<i class="far fa-star"></i>
         	</c:if>
         </button>
+        </c:if> 
         <span id="header-project-title">${project.projectTitle}</span>
     </li>
     </ul>
@@ -1063,8 +1128,10 @@ function updateTitle(){
     <!-- Middle navbar links -->
     <ul id="navbar-tab" class="navbar-nav ml-auto">
         <li id="tab-work" class="nav-item"><button type="button" id="btn-tab-work">업무</button></li>
+        <c:if test="${project.privateYn=='N'}">
         <li id="tab-timeline" class="nav-item"><button type="button" id="btn-tab-timeline">타임라인</button></li>
         <li id="tab-analysis" class="nav-item"><button type="button" id="btn-tab-analysis">분석</button></li>
+        </c:if>
         <li id="tab-attachment" class="nav-item"><button type="button" id="btn-tab-attach">파일</button></li>
     </ul>
 	
@@ -1120,6 +1187,7 @@ function updateTitle(){
     <h3 class="sr-only">${project.projectTitle}</h3>
     <div class="container-fluid">
         <h4 class="sr-only">업무</h4>
+        
         <!-- SEARCH FORM -->
         <form id="workSearchFrm" class="form-inline">
 	        <div class="input-group input-group-sm">
@@ -1158,8 +1226,11 @@ function updateTitle(){
 	                    <div class="addWork-btnWrapper">
 		                    <!-- 업무 설정 -->
 		                    <div class="addWork-btnLeft">
+		                    	
+		                    	<c:if test="${project.privateYn == 'N'}">
 		                        <!-- 업무 멤버 배정 -->
 		                        <div class="add-member dropdown">
+		                        	<span class="badge navbar-badge addMem-badge"></span>
 			                        <button type="button" class="nav-link btn-addWorkMember" data-toggle="dropdown"><i class="fas fa-user-plus"></i></button>
 			                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="test-member-ajax">
 			                            <c:forEach items="${inMemList}" var="m">
@@ -1174,9 +1245,11 @@ function updateTitle(){
 							            </c:forEach>
 		                        	</div>
 		                        </div>
+		                        </c:if>
 		
 		                        <!-- 태그 설정 -->
 		                        <div class="add-tag dropdown">
+		                        	<span class="badge navbar-badge addTag-badge"></span>
 			                        <button type="button" class="nav-link btn-addWorkTag" data-toggle="dropdown"><i class="fas fa-tag"></i></button>
 			                        <div class="dropdown-menu dropdown-menu-right">
 			                            <a href="javascript:void(0)" class="dropdown-item work-tag drop-workTag WT1">
@@ -1511,7 +1584,7 @@ function updateTitle(){
 	                        <c:if test="${vs.last}">
 	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
 	                   	 		<div class="work-coverImage">
-	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${project.projectNo}/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
 	                   	 		</div>
 	                   	 		</c:if>
 	                   	 	</c:if>

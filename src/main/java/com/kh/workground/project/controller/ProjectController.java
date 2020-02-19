@@ -95,64 +95,72 @@ public class ProjectController {
 		String loggedInMemberId = memberLoggedIn.getMemberId();
 		
 		try {
-			//1. 업무로직
-			//1-1. 해당 프로젝트 조회
+			//1.업무로직
+			//1-1.해당 프로젝트 조회
 			Project p = projectService.selectProjectWorklistAll(projectNo, loggedInMemberId);
 			
-			//1-2. 나의 워크패드인 경우/아닌 경우에 따라 분기
-			if("Y".equals(p.getPrivateYn())) {
-				//2. 뷰모델 처리
-				mav.addObject("project", p);
-				mav.addObject("wlList", p.getWorklistList());
-				mav.setViewName("/project/projectView");
+			//1-2.프로젝트에 내가 속해있는지 여부
+			boolean bool = false;
+			List<Member> list = p.getProjectMemberList();
+			List<Member> inMemList = new ArrayList<>(); //나간 멤버 제외한 리스트
+			
+			for(Member m: list) {
+				String memId = m.getMemberId();
+				String yn = m.getProjectQuitYn();
+				if(loggedInMemberId.equals(memId) && yn.equals("N"))
+					bool = true;
+				
+				if(yn.equals("N"))
+					inMemList.add(m);
+			}
+			
+			//1-3.관리자인 경우
+			if("admin".equals(loggedInMemberId)) bool = true;
+			logger.debug("//////////////////////////////////");
+			logger.debug("bool={}", bool);
+			
+			//2.뷰모델 처리: 프로젝트 속함 여부에 따라 분기
+			if(!bool) {
+				String[] urlArr = requset.getHeader("referer").split("/");
+				mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
+				mav.addObject("loc", "/"+urlArr[4]+"/"+urlArr[5]);
+				mav.setViewName("/common/msg");
 			}
 			else {
-				//1-3. 프로젝트에 내가 속해있는지 여부
-				boolean bool = false;
-				List<Member> list = p.getProjectMemberList();
-				List<Member> inMemList = new ArrayList<>();
+				mav.addObject("project", p);
+				mav.addObject("allMemList", list);
+				mav.addObject("inMemList", inMemList);
+				mav.addObject("wlList", p.getWorklistList());
 				
-				for(Member m: list) {
-					String memId = m.getMemberId();
-					String yn = m.getProjectQuitYn();
-					if(loggedInMemberId.equals(memId) && yn.equals("N"))
-						bool = true;
-				}
+				//서브헤더 탭에 따라 분기
+				if("work".equals(tab))
+					mav.setViewName("/project/projectView");
+				else if("attach".equals(tab))
+					mav.setViewName("/project/projectAttachment");
+				else if("timeline".equals(tab))
+					mav.setViewName("/project/projectTimeline");
+			}
+			/*if(bool) {
+				mav.addObject("project", p);
+				mav.addObject("allMemList", list);
+				mav.addObject("inMemList", inMemList);
+				mav.addObject("wlList", p.getWorklistList());
 				
-				//프로젝트 속함 여부에 따라 분기
-				if(bool) {
-					//프로젝트에 포함되어 있는 멤버리스트 다시 구하기
-					for(Member m: list){
-						String yn = m.getProjectQuitYn();
-						if(yn.equals("N"))
-							inMemList.add(m);
-					}
-					
-					//2. 뷰모델 처리
-					mav.addObject("project", p);
-					mav.addObject("allMemList", list);
-					mav.addObject("inMemList", inMemList);
-					mav.addObject("wlList", p.getWorklistList());
-					
-					
-					
-					//서브헤더 탭에 따라 분기
-					if("work".equals(tab))
-						mav.setViewName("/project/projectView");
-					else if("attach".equals(tab))
-						mav.setViewName("/project/projectAttachment");
-					else if("timeline".equals(tab))
-						mav.setViewName("/project/projectTimeline");
-					
-				}
-				else {
-					String[] urlArr = requset.getHeader("referer").split("/");
-					mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
-					mav.addObject("loc", "/"+urlArr[4]+"/"+urlArr[5]);
-					mav.setViewName("/common/msg");
-				}
-				
-			} //end of 나의 워크패드가 아닌 경우 
+				//서브헤더 탭에 따라 분기
+				if("work".equals(tab))
+					mav.setViewName("/project/projectView");
+				else if("attach".equals(tab))
+					mav.setViewName("/project/projectAttachment");
+				else if("timeline".equals(tab))
+					mav.setViewName("/project/projectTimeline");
+			}
+			else {
+				String[] urlArr = requset.getHeader("referer").split("/");
+				mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
+				mav.addObject("loc", "/"+urlArr[4]+"/"+urlArr[5]);
+				mav.setViewName("/common/msg");
+			}*/
+			
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);

@@ -5,11 +5,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
 
-<style>
-#timeline-wrapper{width: 5030px; padding: 1.5rem; background: #f8f9fa;}
-.tooltip-wrapper{min-width: 12rem; padding: .5rem; background: #0c3865;}
-.tooltip-wrapper p{color: #fff; font-weight: bold;}
-</style>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 $(function(){
@@ -44,6 +39,11 @@ function drawTimeline(){
     google.charts.setOnLoadCallback(drawChart);
 
     function drawChart() {
+    	//html에 뿌릴 요소들 
+       	let labelWrapper = document.querySelector('#left-label');
+       	let dateWrapper = document.querySelector('#date-cell-wrapper');
+    	
+    	
         let container = document.getElementById('timeline');
         let chart = new google.visualization.Timeline(container);
         let dataTable = new google.visualization.DataTable();
@@ -111,8 +111,12 @@ function drawTimeline(){
         			sArr.push(changeDateFormat('${w.workStartDate}'));
         		</c:if>
         		
+        		//완료일이 있지만 마감일이 더 늦은 경우 마감일
         		<c:if test="${w.workRealEndDate!=null}">
-        			eArr.push(changeDateFormat('${w.workRealEndDate}'));
+        			if(changeDateFormat('${w.workRealEndDate}') < changeDateFormat('${w.workEndDate}'))
+        				eArr.push(changeDateFormat('${w.workEndDate}'));
+        			else
+        				eArr.push(changeDateFormat('${w.workRealEndDate}'));
         		</c:if>
         		<c:if test="${w.workRealEndDate==null && w.workEndDate!=null}">
     				eArr.push(changeDateFormat('${w.workEndDate}'));
@@ -144,7 +148,7 @@ function drawTimeline(){
         }
         
         totalArr.push(['${project.projectTitle}', null, createTooltip('프로젝트: ${project.projectTitle}'), 'color: #1F5C87;', ps, pe]);
-        console.log("업무리스트 리스트="+wlList);
+        
         
 		let style;
 		let state;
@@ -173,14 +177,32 @@ function drawTimeline(){
         			//시작일이 없는 경우
         			if(w['wStart']===""){
 	        			state = "완료된 업무, 시작일/마감일 없는 업무";
+	        			endDate = changeDateFormat(w['wRealEnd']);
         			}
         			//시작일이 있는 경우
         			else{
-	        			duration = Math.round((changeDateFormat(w['wRealEnd'])-changeDateFormat(w['wStart']))/(24*60*60*1000));
-	        			state = "완료된 업무, 기간 "+(duration)+"일";
+        				//시작일보다 종료를 빨리 한 경우 
+        				if(changeDateFormat(w['wStart']) > changeDateFormat(w['wRealEnd'])){
+        					//마감일이 있는 경우
+        					if(w['wEnd']!==""){
+			        			endDate = changeDateFormat(w['wEnd']);
+			        			duration = Math.round((endDate-changeDateFormat(w['wStart']))/(24*60*60*1000));
+			        			state = "완료된 업무, 기간 "+(duration)+"일";
+        					}
+        					//마감일이 없는 경우
+        					else{
+			        			endDate = changeDateFormat(w['wStart']);
+			        			state = "완료된 업무, 기간 1일";
+        					}
+        				}
+        				//시작일 지나서 종료한 경우
+        				else{
+		        			endDate = changeDateFormat(w['wRealEnd']);
+		        			duration = Math.round((changeDateFormat(w['wRealEnd'])-changeDateFormat(w['wStart']))/(24*60*60*1000));
+		        			state = "완료된 업무, 기간 "+(duration)+"일";
+        				}
         			}
         			style = "color: #20c997; opacity: .4; stroke-color: #20c997; stroke-width: 2px";
-        			endDate = changeDateFormat(w['wRealEnd']);
         		}
         		//종료일 없고 마감일 있는 경우
         		else if(w['wRealEnd']==="" && w['wEnd']!==""){
@@ -198,11 +220,21 @@ function drawTimeline(){
 	        		}
         			endDate = changeDateFormat(w['wEnd']);
         		}
-        		//마감일 없고 종료일도 없는 경우: 회색+보더+'시작일/마감일 없는 업무'
+        		//마감일 없고 종료일도 없는 경우
         		else if(w['wEnd']==="" && w['wRealEnd']===""){
-        			style = "color: #8e8e8e; opacity: .7;";
-        			state = "시작일/마감일 없는 업무";
-        			endDate = startDate;
+        			//시작일도 없는 경우: 회색+보더+'시작일/마감일 없는 업무'
+        			if(w['wStart']==="") {
+	        			endDate = startDate;
+	        			state = "시작일/마감일 없는 업무";
+	        			style = "color: #8e8e8e; opacity: .7;";
+        			}
+        			//시작일만 있는 경우: 파란색+'진행중인 업무, 기간 1일'
+            		else {
+	        			endDate = startDate;
+	        			duration = Math.round((today-changeDateFormat(w['wStart']))/(24*60*60*1000));
+	        			state = "진행중인 업무, 기간 "+(duration)+"일";
+	        			style = "color: #007bff; opacity: .4; stroke-color: #007bff; stroke-width: 2px";
+            		}
         		}
         		totalArr.push([w['wTitle'], null, createTooltipForWork('업무: '+w['wTitle'], state), style, startDate, endDate]);
         		
@@ -217,16 +249,21 @@ function drawTimeline(){
         	totalArr
         );
     		
-        
-      	//ticks
+        console.log(dateWrapper);
+      	//options
+      	let html;
         let ticks = [];
+      	let height = 50*totalArr.length-1 - 150; 	
        	for(let i=1; i<=90; i++){
        		ticks.push(new Date(ps.getFullYear(), ps.getMonth(), ps.getDate()+i));
+       		
+       		//html요소 추가
+       		$(dateWrapper).append('<div class="cell">'+(ps.getMonth()+1)+'-'+(ps.getDate()+(i-1))+'</div>');
        	}
-       	
+      
         let options = {
        	  width: 5000,
-       	  height: 50*totalArr.length-1 - 150,
+       	  height: height,
           backgroundColor: '#fff',
           hAxis: {
         	format: 'MM-dd',
@@ -241,6 +278,10 @@ function drawTimeline(){
         
         
         chart.draw(dataTable, options); 
+        
+        
+       	$(labelWrapper).css('height', height);
+       	
         
     } //end of drawChart()
 }
@@ -260,28 +301,19 @@ function tabActive(){
 }
 </script>		
 
-<!-- 프로젝트 관리자 -->
-<c:set var="projectManager" value=""/>
-<c:set var="isprojectManager" value="false"/>
-<c:forEach var="pm" items="${project.projectMemberList}">
-	<c:if test="${pm.managerYn eq 'Y'}">
-		<c:set var="projectManager" value="${projectManager=pm.memberId}" />
-	</c:if>
-	<c:if test="${pm.memberId eq memberLoggedIn.memberId }">
-		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
-	</c:if>
-</c:forEach>
-<!-- 나의 워크패드인 경우 -->
-<c:if test="${project.privateYn=='Y'}">
-	<c:set var="projectManager" value="${projectManager=project.projectWriter}" />
-</c:if>
-
-
 <!-- Content Wrapper. Contains page content -->
 <!-- <div class="content-wrapper navbar-light"> -->
     <h2 class="sr-only">프로젝트 타임라인</h2>
     <!-- Main content -->
     <div id="timeline-wrapper" class="content view">
+    	<div id="timeline-header"></div>
+    	<!-- <div id="left-label">
+    		<p class="label p">개발2팀</p>
+    		<p class="label wl">업무리스트1</p>
+    		<p class="label w">업무1</p>
+    	</div> -->
+    	<div id="date-cell-wrapper">
+    	</div>
     	<div id="timeline"></div>
     </div>
     <!-- /.content -->

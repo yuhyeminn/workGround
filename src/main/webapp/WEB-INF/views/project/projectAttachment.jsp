@@ -5,8 +5,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
 
-<script src="${pageContext.request.contextPath}/resources/plugins/datatables/jquery.dataTables.js"></script>
-<script src="${pageContext.request.contextPath}/resources/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <script>
 $(function(){
 	//데이터 테이블 설정
@@ -134,10 +132,9 @@ function tabActive(){
             <table id="tbl-projectAttach" class="table table-hover text-nowrap">
                 <thead>
                     <tr>
-                        <th style="width: 35%">이름</th>
-                        <th style="width: 20%">크기</th>
-                        <th style="width: 20%">공유한 날짜</th>
-                        <th style="width: 25%">공유한 사람</th>
+                        <th style="width: 50%">이름</th>
+                        <th style="width: 30%">공유한 날짜</th>
+                        <th style="width: 20%">공유한 사람</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -169,7 +166,6 @@ function tabActive(){
                              </div>
                          </a>
                      </td>
-                     <td>${a.attachmentSize} KB</td>
                      <td>${a.attachmentEnrollDate}</td>
                      <td>
                          	${a.attachmentWriterMember.memberName}
