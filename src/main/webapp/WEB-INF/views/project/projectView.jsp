@@ -53,7 +53,7 @@ $(()=>{
     tabActive(); //서브헤더 탭 활성화
     goTabMenu(); //서브헤더 탭 링크 이동
     
-    setting(); //설정창- 나중에 수정
+    setting(); //설정창
     updateDesc(); //업무, 프로젝트 설명 수정
     updateTitle(); //업무, 프로젝트 제목 수정
 });
@@ -952,11 +952,11 @@ function goTabMenu(){
 }
 
 function setting(){
+    var $side = $("#setting-sidebar");
+    var projectNo = ${project.projectNo}; 
+    
     //설정 사이드바 열기
     $('#project-setting-toggle').on('click', function(){
-        var $side = $("#setting-sidebar");
-        
-        var projectNo =${project.projectNo}; 
         $.ajax({
 			url: "${pageContext.request.contextPath}/project/projectSetting.do",
 			type: "get",
@@ -981,13 +981,11 @@ function setting(){
     //업무 사이드바 열기
     /* $(".work-item").on('click', function(){ */
     $(document).on('click', '.work-item', function(){
-    	var $side = $("#setting-sidebar");
     	var workNo = $(this).attr('id');
     	
     	//업무리스트 타이틀
         var worklistTitle = $(this).children("#hiddenworklistTitle").val();
-        //프로젝트 이름
-        var projectNo = '${project.projectNo}';
+    	
         $.ajax({
 			url: "${pageContext.request.contextPath}/project/workSetting.do",
 			type: "get",
@@ -1008,8 +1006,30 @@ function setting(){
         if($side.hasClass('open')) {
         	$side.stop(true).animate({right:'0px'});
         }
-        console.log($("#workEndDate").val());
     });
+    
+    //대화 사이드바 열기
+    $('#btn-openChatting').on('click', ()=>{
+    	$.ajax({
+			url: "${pageContext.request.contextPath}/project/projectChatting.do",
+			type: "get",
+			data: {projectNo:projectNo},
+			dataType: "html",
+			success: data => {
+				$side.html("");
+				$side.html(data); 
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
+        
+        $side.addClass('open');
+        if($side.hasClass('open')) {
+        	$side.stop(true).animate({right:'0px'});
+        }
+    });
+    
 }
 //프로젝트 설명 수정, 업무 설명 수정
 function updateDesc(){
@@ -1140,7 +1160,7 @@ function updateTitle(){
 	<c:if test="${project.privateYn=='N'}">
         <!-- 프로젝트 대화 -->
         <li class="nav-item">
-            <button type="button" class="btn btn-block btn-default btn-xs nav-link">
+            <button type="button" id="btn-openChatting" class="btn btn-block btn-default btn-xs nav-link">
                 <i class="far fa-comments"></i> 프로젝트 대화
             </button>
         </li>

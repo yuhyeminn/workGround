@@ -88,7 +88,7 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/projectView.do")
-	public ModelAndView projectView(ModelAndView mav, HttpSession session, HttpServletRequest requset, @RequestParam int projectNo, 
+	public ModelAndView projectView(ModelAndView mav, HttpSession session, HttpServletRequest request, @RequestParam int projectNo, 
 									@RequestParam(defaultValue="work", required=false) String tab) {
 		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
@@ -121,7 +121,8 @@ public class ProjectController {
 			
 			//2.뷰모델 처리: 프로젝트 속함 여부에 따라 분기
 			if(!bool) {
-				String[] urlArr = requset.getHeader("referer").split("/");
+				String[] urlArr = request.getHeader("referer").split("/");
+				logger.debug("urlArr={}", urlArr);
 				mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
 				mav.addObject("loc", "/"+urlArr[4]+"/"+urlArr[5]);
 				mav.setViewName("/common/msg");
@@ -140,27 +141,6 @@ public class ProjectController {
 				else if("timeline".equals(tab))
 					mav.setViewName("/project/projectTimeline");
 			}
-			/*if(bool) {
-				mav.addObject("project", p);
-				mav.addObject("allMemList", list);
-				mav.addObject("inMemList", inMemList);
-				mav.addObject("wlList", p.getWorklistList());
-				
-				//서브헤더 탭에 따라 분기
-				if("work".equals(tab))
-					mav.setViewName("/project/projectView");
-				else if("attach".equals(tab))
-					mav.setViewName("/project/projectAttachment");
-				else if("timeline".equals(tab))
-					mav.setViewName("/project/projectTimeline");
-			}
-			else {
-				String[] urlArr = requset.getHeader("referer").split("/");
-				mav.addObject("msg", "내가 속한 프로젝트가 아닙니다!");
-				mav.addObject("loc", "/"+urlArr[4]+"/"+urlArr[5]);
-				mav.setViewName("/common/msg");
-			}*/
-			
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -530,7 +510,20 @@ public class ProjectController {
 		return mav;
 	}
 	
-	
+	@RequestMapping("/project/projectChatting.do")
+	public ModelAndView projectChatting(ModelAndView mav, @RequestParam int projectNo) {
+		
+		try {
+			
+			mav.setViewName("project/projectChattingSideBar");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 채팅창 조회 오류!");
+		}
+		
+		return mav;
+	}
 	
 	
 	
