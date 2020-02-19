@@ -549,5 +549,48 @@ public class NoticeController {
 		
 	}
 	
+	@RequestMapping("/notice/noticeShowAll.do")
+	public ModelAndView noticeShowAll(ModelAndView mav, HttpSession session,
+									  @RequestParam String keyword, @RequestParam String type) {
+		
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		String memberDeptCode = memberLoggedIn.getDeptCode();
+		Map<String, String> noticeMap = new HashMap<>();
+		Map<String, String> commuMap = new HashMap<>();
+		
+		try {
+			//검색어
+			noticeMap.put("searchKeyword", keyword);
+			noticeMap.put("sort", "notice_no desc");
+			commuMap.put("searchKeyword", keyword);
+			commuMap.put("sort", "commu_no desc");
+		
+			//공지
+			if("total".equals(type)) {
+				List<Notice> noticeList = noticeService.searchNoticeList(noticeMap);
+				mav.addObject("noticeList", noticeList);
+			}
+			//부서별 게시글
+			if("dept".equals(type)) {
+				List<Notice> planningDeptNoticeList = noticeService.searchPlanningDeptNoticeList(noticeMap); //기획부
+				List<Notice> designDeptNoticeList = noticeService.searchDesignDeptNoticeList(noticeMap); //디자인부
+				List<Notice> developmentDeptNoticeList = noticeService.searchDevelopmentDeptNoticeList(noticeMap); //개발부
+				mav.addObject("deptNoticeList", memberDeptCode.equals("D1")?planningDeptNoticeList:memberDeptCode.equals("D2")?designDeptNoticeList:developmentDeptNoticeList);
+			}
+			//커뮤니티
+			if("commu".equals(type)) {
+				List<Community> communityList = noticeService.searchCommunityList(commuMap); //커뮤니티
+				mav.addObject("communityList", communityList);
+			}
+			mav.setViewName("/notice/noticeShowAll");
+			mav.addObject("type", type);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new NoticeException("게시판 모두보기 오류!", e);
+		}
+		return mav;
+	}
+	
 	
 }

@@ -175,6 +175,7 @@ function checkComment(commentContent){
 	             </c:forEach>
              </div>
         </div>
+        ${pageBar}
         </c:if>
         
         <c:if test="${type=='commu'}">
