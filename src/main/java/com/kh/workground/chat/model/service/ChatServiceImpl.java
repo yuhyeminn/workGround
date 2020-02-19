@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.kh.workground.chat.model.dao.ChatDAO;
 import com.kh.workground.chat.model.dao.ChatDAOImpl;
 import com.kh.workground.chat.model.vo.Channel;
+import com.kh.workground.chat.model.vo.Chat;
 import com.kh.workground.member.model.vo.Member;
 
 @Service
@@ -36,4 +37,17 @@ public class ChatServiceImpl implements ChatService {
 	public String findChannelByMemberId(Map<String, String> param) {
 		return chatDAO.findChannelNoListByMemberId(param);
 	}
+
+	@Override
+	public int insertChatLog(Chat fromMessage) {
+		return chatDAO.insertChatLog(fromMessage);
+	}
+
+	@Override
+	public Channel selectChannel(String channelNo) {
+
+		return chatDAO.selectChannel(channelNo);
+	}
+
+
 }

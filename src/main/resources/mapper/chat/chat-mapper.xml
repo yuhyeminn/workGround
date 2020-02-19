@@ -26,4 +26,15 @@
 			left join channel_member M on C.channel_no = M.channel_no 
 		where M.
 	</select>
+	
+	<insert id="insertChatLog">
+		INSERT INTO CHAT (chat_no, channel_no, sender, send_date, msg)
+		VALUES(SEQ_CHATLOG.NEXTVAL, #{channelNo}, #{memberId}, #{sendDate}, #{msg})
+	</insert>
+	
+	<select id="selectChannel" resultType="channel">
+		select *
+		from channel
+		where channel_no = #{channel_no}
+	</select>
 </mapper>

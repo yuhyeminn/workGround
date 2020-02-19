@@ -17,4 +17,10 @@ public interface ChatService {
 
 	String findChannelByMemberId(Map<String, String> param);
 
+	int insertChatLog(Chat fromMessage);
+
+	Channel selectChannel(String channelNo);
+
+	
+
 }

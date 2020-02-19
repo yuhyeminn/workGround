@@ -94,6 +94,10 @@ left: .5rem;
   width: 475px;
   transition: right .3s ease-in-out, display .3s ease-in-out;
 }
+
+
+
+
 </style>
 
 <script>
@@ -109,6 +113,56 @@ $(function(){
 	    }
 	  });
 
+	//웹소켓 선언
+	//1.최초 웹소켓 생성 url: /stomp
+	let socket = new SockJS('<c:url value="/chat" />');
+	let stompClient = Stomp.over(socket);
+
+	//connection이 맺어지면, 콜백함수가 호출된다.
+	stompClient.connect({}, function(frame) {
+		console.log('connected stomp over sockjs');
+		console.log(frame);
+		
+		//사용자 확인
+		//lastCheck();
+		
+
+		//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
+		stompClient.subscribe('/chat/${channelNo}', function(message) {
+			console.log("receive from subscribe /chat/${channelNo} :", message);
+			let messsageBody = JSON.parse(message.body);
+			stompClient.subscribe('/chat/${channelNo}', function(message) {
+				console.log("receive from subscribe /chat/${channelNo} :", message);
+				let messsageBody = JSON.parse(message.body);
+				let msgInfoHtml = '<div class="direct-chat-infos clearfix">'
+							   += '<span class="direct-chat-name float-left">'+messsageBody.memberId+'</span>'
+							   += '<span class="direct-chat-timestamp float-left">'+messsageBody.time+'</span></div>'
+							   += '<div class="direct-chat-text">'+messageBody.msg+'</div>';
+		                     	   
+				$(".direct-chat-msg").append(msgInfoHtml);
+			});
+		});
+
+	});
+
+	function sendMessage() {
+		let data = {
+				channelNo : "${channelNo}",
+				sender : "${memberId}",
+				msg : $("#text-message").val(),
+				sendDate : new Date().getTime(),
+				type: "MESSAGE"
+			}
+			var a = $("#text-message").val();
+			alert(a);
+
+			//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
+			stompClient.send('<c:url value="/chat/${channelNo}" />',{}, JSON.stringify(data));
+			
+			//message창 초기화
+			$('#text-message').val('');
+	}
+	  	
 /* 	//Date range as a button
 	$('#daterange-btn').daterangepicker(
 	    {
@@ -267,6 +321,41 @@ function fileDownload(oName, rName, clubNo) {
 	
 	location.href = "${pageContext.request.contextPath}/club/clubFileDownload.do?clubNo="+clubNo+"&oName="+oName+"&rName="+rName;
 }
+
+
+
+$(document).ready(function() {
+	$("#send-btn").click(function() {
+		sendMessage();
+	
+	});
+
+/* 	//window focus이벤트핸들러 등록
+	$(window).on("focus", function() {
+		console.log("focus");
+		lastCheck();
+	}); */
+});
+
+
+
+
+
+
+
+/*
+ * 윈도우가 활성화 되었을때, chatroom테이블의 lastcheck(number)컬럼을 갱신한다.
+ * 안읽은 메세지 읽음 처리
+ */ 
+/* function lastCheck() {
+    let data = {
+        chatId : "${chatId}",
+        memberId : "${memberId}",
+        time : new Date().getTime()
+    }
+    stompClient.send('<c:url value="/lastCheck" />', {}, JSON.stringify(data));
+} */
+
 </script>
 
 <!-- Navbar ClubView -->
@@ -301,7 +390,7 @@ function fileDownload(oName, rName, clubNo) {
 	<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
 		<!-- 동호회 대화 -->
 		<li class="nav-item">
-			<button type="button" class="btn btn-block btn-default btn-xs nav-link" data-widget="control-sidebar" data-slide="true">
+			<button type="button" onclick="" class="btn btn-block btn-default btn-xs nav-link" data-widget="control-sidebar" data-slide="true">
 				<i class="far fa-comments"></i> 동호회 대화
 			</button>
 		</li>
@@ -309,7 +398,7 @@ function fileDownload(oName, rName, clubNo) {
 		<!-- 동호회 멤버 -->
 		<li id="nav-member" class="nav-item dropdown">
 		<a class="nav-link" data-toggle="dropdown" href="#"> 
-			<i class="far fa-user"></i> 6
+			<i class="far fa-user"></i>
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 			  <c:if test="${not empty clubMemberList }">
@@ -1072,9 +1161,9 @@ function fileDownload(oName, rName, clubNo) {
       <div class="card-header">
                             <div class="post">
                                 <div class="user-block">
-                                    <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="user image">
-                                    <span class="username">
-                                        <h3>동호회이름</h3>
+                                	<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+                                    <span class="username"> 
+                                        <h3>${club.clubName }</h3>
                                     </span>
                                 </div>
                             </div>
@@ -1084,16 +1173,17 @@ function fileDownload(oName, rName, clubNo) {
                             <div class="direct-chat-messages" style="height:25rem">
                             <!-- Message. Default to the left -->
                                 <div class="direct-chat-msg">
-                                    <div class="direct-chat-infos clearfix">
+                                     <div class="direct-chat-infos clearfix">
                                         <span class="direct-chat-name float-left">다른동호회멤버&nbsp;&nbsp;</span>
                                         <span class="direct-chat-timestamp float-left">2:00 pm</span>
                                     </div>
                                     <!-- /.direct-chat-infos -->
-                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                    <!-- /.direct-chat-img -->
+                                   
+                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image"> --%>
+                                     <!-- /.direct-chat-img -->
                                     <div class="direct-chat-text">
                                         Is this template really for free? That's unbelievable!
-                                    </div>
+                                    </div> 
                                     <!-- /.direct-chat-text -->
                                 </div>
                                 <!-- /.direct-chat-msg -->
@@ -1158,12 +1248,75 @@ function fileDownload(oName, rName, clubNo) {
                             </div><!-- /.direct-chat-messages -->
                         </div>
                         <!-- /.card-body -->
+                                            
                         <div class="card-body pad">
                             <div class="mb-3">
-                                <textarea class="textarea" placeholder="Place some text here"
-                                        style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                <textarea class="textarea" id="text-message"
+                                        style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
+                                </textarea>
                             </div>
+                            
+                        
                         </div>
+                        <div>
+                        	<button type="button" id="sendMsg-btn" class="btn btn-info" onclick="sendMessage()" >send</button>
+                       	</div>
+                       
+    
     </div>
   </aside>
+  
+ <script>
+
+/* //웹소켓 선언
+//1.최초 웹소켓 생성 url: /stomp
+let socket = new SockJS('<c:url value="/chat" />');
+let stompClient = Stomp.over(socket);
+
+//connection이 맺어지면, 콜백함수가 호출된다.
+stompClient.connect({}, function(frame) {
+	console.log('connected stomp over sockjs');
+	console.log(frame);
+	
+	//사용자 확인
+	//lastCheck();
+	
+
+	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
+	stompClient.subscribe('/chat/${channelNo}', function(message) {
+		console.log("receive from subscribe /chat/${channelNo} :", message);
+		let messsageBody = JSON.parse(message.body);
+		stompClient.subscribe('/chat/${channelNo}', function(message) {
+			console.log("receive from subscribe /chat/${channelNo} :", message);
+			let messsageBody = JSON.parse(message.body);
+			let msgInfoHtml = '<div class="direct-chat-infos clearfix">'
+						   += '<span class="direct-chat-name float-left">'+messsageBody.memberId+'</span>'
+						   += '<span class="direct-chat-timestamp float-left">'+messsageBody.time+'</span></div>'
+						   += '<div class="direct-chat-text">'+messageBody.msg+'</div>';
+	                     	   
+			$(".direct-chat-msg").append(msgInfoHtml);
+		});
+	});
+
+});
+
+function sendMessage() {
+	let data = {
+			channelNo : "${channelNo}",
+			sender : "${memberId}",
+			msg : $("#text-message").val(),
+			sendDate : new Date().getTime(),
+			type: "MESSAGE"
+		}
+		var a = $("#text-message").val();
+		alert(a);
+
+		//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
+		stompClient.send('<c:url value="/chat/${channelNo}" />', JSON.stringify(data));
+		
+		//message창 초기화
+		$('#text-message').val('');
+} */
+  
+  </script>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

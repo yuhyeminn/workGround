@@ -6,24 +6,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.chat.model.service.ChatService;
 import com.kh.workground.chat.model.vo.Channel;
-import com.kh.workground.chat.model.vo.ChannelMember;
 import com.kh.workground.chat.model.vo.Chat;
 import com.kh.workground.member.model.vo.Member;
 
@@ -111,7 +110,7 @@ public class ChatController {
 		return map;
 	}
 	
-	@PostMapping("/chat/insertChannel.do")
+	/*@PostMapping("/chat/insertChannel.do")
 	public ModelAndView insertChannel(ModelAndView mav, 
 									  @RequestParam("memberId") String memberId, 
 									  @RequestParam("channelTitle") String channelTitle, 
@@ -149,6 +148,21 @@ public class ChatController {
 		mav.setViewName("redirect:/chat/chatList.do");
 		
 		return mav;
+	}*/
+	
+	@MessageMapping("/chat/{channelNo}")
+	@SendTo(value={"/chat/{channelNo}"})
+	public Chat sendEcho(Chat fromMessage, 
+						@DestinationVariable String channelNo, 
+						@Header("simpSessionId") String sessionId){
+		logger.info("fromMessage={}",fromMessage);
+		logger.info("channelNo={}",channelNo);
+		logger.info("sessionId={}",sessionId);
+		
+		chatService.insertChatLog(fromMessage);
+
+		return fromMessage; 
 	}
+	
 	
 }

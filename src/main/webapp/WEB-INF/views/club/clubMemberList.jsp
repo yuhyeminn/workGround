@@ -65,6 +65,24 @@
 #clubMemberSearchFrm {
 	left: 10px;
 }
+
+.control-sidebar {
+      display: block;
+      top: 92px !important;
+      overflow: hidden;
+      background-color: #fff;
+      box-shadow: -1px 6px 10px 0 rgba(0, 0, 0, .2);
+      color: #696f7a;
+    }
+
+.control-sidebar,
+.control-sidebar::before {
+  bottom: calc(3.5rem + 1px);
+  display: none;
+  right: -475px;
+  width: 475px;
+  transition: right .3s ease-in-out, display .3s ease-in-out;
+}
 </style>
 
 <script>
