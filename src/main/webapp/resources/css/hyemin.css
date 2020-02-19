@@ -337,11 +337,11 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
     position: fixed;
     background-color: #f3f4f5;
     box-shadow: -1px 6px 10px 0 rgba(0,0,0,.2);
-    /* height: 100%; */
     right: -520px;
     width: 475px;
     overflow: visible;
     bottom:0px;
+    z-index:1;
   }
   .plusBtn{display: block;border:none;border-radius: 5px;padding:5px 10px;background-color:#e7e7e7;margin-top: -5px;height:32px;}
   .plusBtn:hover{background-color:#17a2b8;color:white;}

@@ -151,11 +151,6 @@
                 </div>
                         <p class="setting-content-inform">
                             <span>${project.projectTitle }</span> <i class="fa fa-angle-double-right"></i> <span id="current-worklist">${worklistTitle }</span>
-                            <%-- <c:forEach var="worklist" items="${project.worklistList }">
-	                    		<c:if test="${worklist.worklistNo eq work.worklistNo }">
-	                    			<span>${worklist.worklistTitle }</span>
-	                    		</c:if>
-                    		</c:forEach> --%>
                         </p>
             </div>
             <!-- 시작일 -->
@@ -193,7 +188,7 @@
                    <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
 	                        <div class="input-group">
-	                            <input type="text" class="form-control float-right" id="work_enddate" data-provide='datepicker' value="${work.workStartDate}"> 
+	                            <input type="text" class="form-control float-right" id="work_enddate" data-provide='datepicker' value="${work.workEndDate}"> 
 	                        	<input type="hidden" id="workEndDate"  value="${work.workEndDate}"> 
 	                        </div>
                         </div>

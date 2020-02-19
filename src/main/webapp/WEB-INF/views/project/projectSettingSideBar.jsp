@@ -129,7 +129,7 @@
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
                         <div class="input-group" >
-                            <input type="text" class="form-control float-right" id="project_startdate" data-provide='datepicker'> 
+                            <input type="text" class="form-control float-right" id="project_startdate" data-provide='datepicker' value="${project.projectStartDate}"> 
                         	<input type="hidden" id="projectStartDate"  value="${project.projectStartDate}">
                         </div>
                         </div>
@@ -162,7 +162,7 @@
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
 	                        <div class="input-group">
-	                            <input type="text" class="form-control float-right" id="project_enddate" data-provide='datepicker'> 
+	                            <input type="text" class="form-control float-right" id="project_enddate" data-provide='datepicker' value="${project.projectEndDate}"> 
 	                        	<input type="hidden" id="projectEndDate"  value="${project.projectEndDate}"> 
 	                        </div>
                         </div>
@@ -194,7 +194,7 @@
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
                         <div class="input-group" >
-                            <input type="text" class="form-control float-right update-date-input" id="project_realenddate" data-provide='datepicker'> 
+                            <input type="text" class="form-control float-right update-date-input" id="project_realenddate" data-provide='datepicker' value="${project.projectRealEndDate }"> 
                             <input type="hidden" id="projectRealEndDate" value="${project.projectRealEndDate }"> 
                         </div>
                         </div>

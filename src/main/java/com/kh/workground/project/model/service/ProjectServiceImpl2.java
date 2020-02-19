@@ -144,7 +144,12 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		if(worklistList==null) {
 			throw new ProjectException("업무리스트 조회 오류!");
 		}
-		
+		//work의 List 추가
+		for(int i=0; i<worklistList.size(); i++) {
+			Worklist wl = worklistList.get(i);
+			List<Work> workList = projectDAO.selectWorkListByWorklistNo(wl.getWorklistNo());
+			wl.setWorkList(workList);
+		}
 		p.setWorklistList(worklistList);
 		return p;
 	}
@@ -462,6 +467,43 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		result.put("attachment", attachment);
 		
 		return result;
+	}
+
+	@Override
+	public List<Work> selectMyWorkList(int projectNo, String memberId) {
+		Map<String, String> param = new HashMap<>();
+		param.put("projectNo", Integer.toString(projectNo));
+		param.put("memberId", memberId);
+		
+		List<Work> list= projectDAO.selectMyWorkList(param);
+		if(list==null) throw new ProjectException("내가 배정된 업무 리스트 오류!");
+		return list;
+	}
+
+	@Override
+	public Map<String, Integer> selectMyActivity(int projectNo, String memberId) {
+		Map<String,Integer> cntMap = new HashMap<>();
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("projectNo", Integer.toString(projectNo));
+		param.put("memberId", memberId);
+		
+		int myChkCnt = projectDAO.selectMyChecklistCnt(param);
+		
+		String type="";
+		type="attachment";
+		param.put("type", type);
+		int myAttachCnt = projectDAO.selectMyAttachCommentCnt(param);
+		
+		type="work_comment";
+		param.put("type", type);
+		int myCommentCnt = projectDAO.selectMyAttachCommentCnt(param);
+		
+		cntMap.put("myChkCnt", myChkCnt);
+		cntMap.put("myAttachCnt", myAttachCnt);
+		cntMap.put("myCommentCnt", myCommentCnt);
+		
+		return cntMap;
 	}
 
 }

@@ -714,13 +714,35 @@ public class ProjectController2 {
 	}
 	
 	@RequestMapping("/project/projectAnalysis.do")
-	public ModelAndView projectAnalysis(ModelAndView mav, HttpServletRequest request) {
+	public ModelAndView projectAnalysis(ModelAndView mav, HttpServletRequest request, HttpSession session) {
+		try {
+			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+			
+			int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+			boolean isIncludeManager = false;
+			
+			//프로젝트 개요를 위한 프로젝트 객체
+			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+			
+			//내가 배정받은 업무 리스트
+			List<Work> myWorkList = projectService.selectMyWorkList(projectNo, memberLoggedIn.getMemberId());
+			
+			//내 활동 이력
+			Map<String, Integer> cntMap = projectService.selectMyActivity(projectNo, memberLoggedIn.getMemberId());
+			
+			mav.addObject("project",p);
+			mav.addObject("myWorkList",myWorkList);
+			mav.addObject("myActivityCnt",cntMap);
+			
+			mav.setViewName("/project/projectAnalysis");
+			
+		}catch(Exception e){
+			
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 속성 조회 오류!");
+			
+		}
 		
-		int projectNo = Integer.parseInt(request.getParameter("projectNo"));
-		boolean isIncludeManager = false;
-		Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
-		mav.addObject("project",p);
-		mav.setViewName("/project/projectAnalysis");
 		return mav;
 	}
 }

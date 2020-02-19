@@ -223,4 +223,24 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 		return sqlSession.selectOne("project.selectAttachmentOne",attachmentNo);
 	}
 
+	@Override
+	public List<Work> selectWorkListByWorklistNo(int worklistNo) {
+		return sqlSession.selectList("project.selectWorkListByWorklistNo", worklistNo);
+	}
+
+	@Override
+	public List<Work> selectMyWorkList(Map<String, String> param) {
+		return sqlSession.selectList("project.selectMyWorkList", param);
+	}
+
+	@Override
+	public int selectMyChecklistCnt(Map<String, String> param) {
+		return sqlSession.selectOne("project.selectMyChecklistCnt",param);
+	}
+
+	@Override
+	public int selectMyAttachCommentCnt(Map<String, String> param) {
+		return sqlSession.selectOne("project.selectMyAttachCommentCnt",param);
+	}
+
 }

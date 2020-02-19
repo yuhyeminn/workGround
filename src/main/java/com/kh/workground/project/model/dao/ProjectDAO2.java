@@ -89,4 +89,12 @@ public interface ProjectDAO2 {
 
 	Attachment selectAttachmentOne(int attachmentNo);
 
+	List<Work> selectWorkListByWorklistNo(int worklistNo); //언니꺼
+
+	List<Work> selectMyWorkList(Map<String, String> param);
+
+	int selectMyChecklistCnt(Map<String, String> param);
+
+	int selectMyAttachCommentCnt(Map<String, String> param);
+
 }
