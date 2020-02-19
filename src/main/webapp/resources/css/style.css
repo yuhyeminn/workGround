@@ -80,10 +80,10 @@ button:active, button:focus{outline: none;}
 .card-header h3{color: rgba(0,0,0,.5); font-size: 1rem; font-weight: bold;}
 .card-header .header-count{color: rgba(50,55,66,.5);}
 /* Card Content */
-#project-important .card, #project-in .card{height: 250px;}
+#project-important .card, #project-in .card{position: relative; height: 250px;}
 .card{transition-timing-function: ease-in-out; transition-duration: .2s; transition-property: all; cursor: pointer;}
 .card.card-hover:active, .card.card-hover:hover{box-shadow: 0 5px 6px 0 rgba(0,0,0,.15); transform: translateY(-2px);} 
-.card-body{position: relative; padding: 1.25rem; color: #464c59; font-size: 0.85rem;}
+.card-body{padding: 1.25rem; color: #464c59; font-size: 0.85rem;}
 #project-recent .card-body{height: 60px;}
 .card-title h5{margin-bottom: 0; font-size: 0.9rem; font-weight: bold;}
 #project-recent .card-title, #project-in .card-title{display: inline-block;}
@@ -98,21 +98,18 @@ button:active, button:focus{outline: none;}
 .card-star .del-project{position: absolute; top: 26px; right: 3px; color: #b5b5b5;  font-size: .88rem;}
 .card-star .del-project.no-star{top: 4px;}
 .card-star .del-project:hover, .card-star .del-project:active, .card-star .del-project:focus{color: #8d919a;}
-/* 프로젝트 상태 / 마감일 */
-.card-status{position: relative;}
+/* 프로젝트 상태,마감일 */
 .card-status>span{position: absolute;}
-.card-status .btn-block{top: 7.5rem;}
-.card-status .end-date{top: 7.7rem; right: 0;}
-.card-status .btn-block, .card-status .end-date{display: inline-block; width: 5rem;}
+.card-status .btn-block{bottom: 3.7rem; left: 1.25rem; width: 5rem;}
 .card-status .btn-group-sm>.btn, .btn-sm {padding: .1rem .1rem;}
 .card-status .bg-success.btn:hover{border-color:#28a745;}
 .card-status .bg-info.btn:hover{border-color:#17a2b8;}
 .card-status .bg-warning.btn:hover{border-color:#ffc107;}
-.card-status .end-date{float:right; width: auto; padding: .1rem 0 .1rem .1rem; font-size: .75rem; color: #17a2b8;}
+.card-status .end-date{bottom: 4rem; right: 1.3rem; width: auto; font-size: .75rem; color: #17a2b8;}
 .card-status .p-completed{color: #8d919a;}
 .card-status .p-over{color: #dc3545;}
 .card-progress .progress-title {color: #8d919a; font-size: 0.75rem;}
-.card-progress{margin-top: 9.7rem;}
+.card-progress{position: absolute; bottom: 15px; width: 83%;}
 .card-progress.star-n{margin-top: 9.7rem;}
 /* 내 업무 */
 .img-profile{display: block; width: 70px; height: 70px; margin: 0 auto; object-fit: cover;}
@@ -124,9 +121,10 @@ button:active, button:focus{outline: none;}
 /* projectView.jsp */
 /* Navbar Project */
 /* Left navbar links */
-#go-back .nav-link{display: inline-block; width: 46px; height: 46px; padding: .6rem 0; margin-left: 0; border: 0; border-radius: 0; font-size: inherit;}
+#go-back .nav-link{display: inline-block; width: 46px; height: 46px; padding: .6rem 0; margin-left: 0; margin-top: 10px; border: 0; border-radius: 0; font-size: inherit;}
+#go-back.private-y .nav-link{margin-top: 0;}
 #go-back .nav-link:hover, #go-back .nav-link:active{background: #f3f4f5;}
-#project-name{color: #464c59; font-weight: bold;}
+#project-name{padding: .6rem 0; color: #464c59; font-weight: bold;}
 #btn-star{padding: .55rem .5rem .8rem;}
 #project-name .fa-star{font-size: 0.9rem; cursor: pointer;}
 
@@ -143,7 +141,7 @@ button:active, button:focus{outline: none;}
 #viewRightNavbar-wrapper .nav-item:nth-of-type(2), #viewRightNavbar-wrapper .nav-item:last-of-type .nav-link{margin-left: .3rem;}
 /* 멤버 */
 #nav-member .dropdown-menu{max-height: 175px; overflow-y: auto;}
-#nav-member .img-profile{width: 25px;}
+#nav-member .img-profile{width: 25px; height: 25px;}
 #nav-member .memberName{margin-left: .3rem; font-size: .75rem;}
 
 /* Content */
@@ -189,21 +187,27 @@ button:active, button:focus{outline: none;}
 .addWork-btnWrapper>div, .addWork-btnWrapper>div>div, .addWork-btnWrapper>div>button{display: inline-block;}
 .addWork-btnWrapper{font-size: .8rem;}
 /* 업무 설정 */
+.addWork-btnLeft{position: relative;}
 .addWork-btnLeft .nav-link, .addWork-btnLeft button{padding: .3rem .4rem .5rem; color: #696f7a;}
 .addWork-btnLeft .nav-link i:hover, .addWork-btnLeft button i:hover{color: #17a2b8;}
 .addWork-btnLeft>div:first-of-type .nav-link{padding-left: .7rem;}
 .addWork-btnLeft>div:not(:first-of-type), .addWork-btnLeft button{margin-left: -3px;}
 /* 업무 배정 멤버 */
-.add-member .img-profile{width: 25px;}
+.add-member .img-profile{width: 25px; height: 25px;}
 .add-member .memberName{margin-left: .3rem; font-size: .75rem;}
-.add-member .dropdown-menu{min-width: 9rem; padding: .5rem;}
+.add-member .dropdown-menu{min-width: 10rem; max-height: 180px; padding: .5rem; overflow-y: auto;}
+.navbar-badge.addMem-badge{top: -18px; right: -1px; background: #464c59; color: #fff;}
+.navbar-badge.addTag-badge{top: 1px; right: -1px;}
 /* 태그 */
+.add-tag{margin-right: 5px;}
 .add-tag .dropdown-menu{padding: .5rem; margin: -2rem 5.5rem 0;}
 .dropdown-item:focus, .dropdown-item:hover{background-color: #efefef;}
 .add-member i, .add-tag i{float: right; margin-top: 5px; color: #696f7a; font-size: .9rem;}
 .add-member i{margin-top: -1rem;}
 /* 날짜설정 */
-.btn-cancelDate{padding: .2rem .4rem; border-radius: 3px; background: #e6e8ec; font-size: .6rem;}
+.add-date{position: absolute; top: -1px; font-size: .95rem;}
+.addWork-btnLeft button.btn-cancelDate{padding: .2rem .4rem; width: 7.8rem; margin: .3rem 0 0 .2rem; border-radius: 3px; background: #e6e8ec; font-size: .6rem;}
+.addWork-btnLeft button.btn-cancelDate i{margin-left: 5px;}
 .addWork-btnLeft button.btn-cancelDate i:hover{color: #696f7a;}
 /* 취소/만들기 버튼 */
 .addWork-btnRight{float: right;}
@@ -365,3 +369,17 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 /* 검색 취소버튼 */
 #btn-cancelSearch{margin-top: -3px; color: #d4d6db; font-size: 2rem;}
 #btn-cancelSearch:hover, #btn-cancelSearch:active, #btn-cancelSearch:focus{color: #8d919a;}
+
+
+
+/* 타임라인 */
+#timeline-wrapper{position:relative; width: 5080px; padding: 5rem 3rem 2.5rem; background: #f8f9fa;}
+.tooltip-wrapper{min-width: 12rem; padding: .5rem; background: #0c3865;}
+.tooltip-wrapper p{color: #fff; font-weight: bold;}
+
+#timeline-header{position: fixed; top: 92px; left: 4.6rem; width: 1190px; height: 41px; background: #e7e9ed; border-bottom: 2px solid #ced2d9; z-index: 10;}
+#left-label{position: absolute; top: 0; left: 0; width: 215px; padding: 2.5rem 0; background: #fff; color: #696f7a; font-size: .85rem; z-index: 3;}
+
+#date-cell-wrapper{position: absolute; top: 41px; left: 0; width: 4833px; height: 39px; margin-left: 215px; background: #f3f4f5; color: #7a7e88; font-size: 1rem; font-family: "Source Sans Pro"; z-index: 1;}
+.cell{display: inline-block; width: 54px; height: 39px; padding: .4rem .5rem; border-right: 1px solid rgb(230, 230, 230);}
+.cell:not(:first-of-type){margin-left: -4px;}

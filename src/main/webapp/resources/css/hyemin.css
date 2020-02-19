@@ -377,6 +377,7 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
   .comment-submit{border: 0;background: darkgray;border-radius: 3px;width: 3.5rem;height: 3.3rem;color: white;float: right;}
   .comment-submit:hover, .comment-delete:hover, .comment-reply:hover{background-color:#17a2b8;}
+  .comment-wrapper .img-circle{object-fit: cover;}
 
   /* 업무 파일 탭*/
   .work-file-upload-box{margin-bottom:20px;font-size:14px;}

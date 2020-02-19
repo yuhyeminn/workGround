@@ -58,7 +58,7 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		param.put("projectNo", p.getProjectNo());
 		worklistTitle.add("해야할 일");
 		worklistTitle.add("진행중");
-		worklistTitle.add("완료됨");
+		worklistTitle.add("완료");
 		param.put("worklistTitle", worklistTitle);
 		result = projectDAO.insertDefaultWorkList(param);
 		
