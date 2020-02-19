@@ -37,4 +37,6 @@
 		from channel
 		where channel_no = #{channel_no}
 	</select>
+	
+	<select id="getClubChatList" resultType="chat"></select>
 </mapper>

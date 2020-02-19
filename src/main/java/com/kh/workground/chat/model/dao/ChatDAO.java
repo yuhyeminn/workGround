@@ -21,6 +21,8 @@ public interface ChatDAO {
 
 	Channel selectChannel(String channelNo);
 
+	List<Chat> getClubChatList(String channelNo);
+
 
 
 }

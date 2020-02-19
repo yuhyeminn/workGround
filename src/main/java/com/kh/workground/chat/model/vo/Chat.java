@@ -26,4 +26,7 @@ public class Chat implements Serializable {
 	private String sender;
 	private Date sendDate;
 	private String msg;
+	
+	//가상컬럼
+	private String renamedFileName;
 }

@@ -49,5 +49,10 @@ public class ChatServiceImpl implements ChatService {
 		return chatDAO.selectChannel(channelNo);
 	}
 
+	@Override
+	public List<Chat> getClubChatList(String channelNo) {
+		return chatDAO.getClubChatList(channelNo);
+	}
+
 
 }

@@ -31,6 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.chat.model.service.ChatService;
 import com.kh.workground.chat.model.vo.Channel;
+import com.kh.workground.chat.model.vo.Chat;
 import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.service.ClubService;
 import com.kh.workground.club.model.service.ClubService2;
@@ -97,14 +98,18 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			}
 //			logger.debug("isManager={}", isManager);
 			
+			
+			//채팅쪽
 			mav.addObject("memberId", memberLoggedIn.getMemberId());
 			String channelNoTemp = "C"+club.getClubNo();
 			Channel channel = chatService.selectChannel(channelNoTemp);
-			
-			
+		
 			mav.addObject("channelNo", channel.getChannelNo());
 			
 			logger.info("channel에 대한정보: {}"+channel);
+			
+			//채팅리스트
+			//List<Chat> chatList = chatService.getClubChatList(channel.getChannelNo());
 			
 			mav.addObject("club", club);
 			mav.addObject("clubPlanList", clubPlanList);

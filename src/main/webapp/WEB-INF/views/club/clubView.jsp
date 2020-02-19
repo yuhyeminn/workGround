@@ -303,51 +303,7 @@ function fileDownload(oName, rName, clubNo) {
 
 
 
-function sendMessage() {
-	let data = {
-			channelNo : "${channelNo}",
-			sender : "${memberId}",
-			msg : $("#text-message").val(),
-			sendDate : new Date().getTime(),
-			type: "MESSAGE"
-		}
-		var a = $("#text-message").val();
-		alert(a);
 
-		//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
-		stompClient.send('<c:url value="/chat/${channelNo}" />',{}, JSON.stringify(data));
-		
-		//message창 초기화
-		$('#text-message').val('');
-}
-
-//웹소켓 선언
-//1.최초 웹소켓 생성 url: /stomp
-let socket = new SockJS('<c:url value="/chat" />');
-let stompClient = Stomp.over(socket);
-
-//connection이 맺어지면, 콜백함수가 호출된다.
-stompClient.connect({}, function(frame) {
-	console.log('connected stomp over sockjs');
-	console.log(frame);
-	
-	//사용자 확인
-	//lastCheck();
-	
-
-	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
-
-		stompClient.subscribe('/chat/${channelNo}', function(message) {
-			console.log("receive from subscribe /chat/${channelNo} :", message);
-			let messsageBody = JSON.parse(message.body);
-			let msgInfoHtml = '<div class="direct-chat-infos clearfix">'
-						   += '<span class="direct-chat-name float-left">'+messsageBody.memberId+'</span>'
-						   += '<span class="direct-chat-timestamp float-left">'+messsageBody.time+'</span></div>'
-						   += '<div class="direct-chat-text">'+messageBody.msg+'</div>';
-	                     	   
-			$(".direct-chat-msg").append(msgInfoHtml);
-		
-	});
 
 
 /*
@@ -1427,21 +1383,72 @@ stompClient.connect({}, function(frame) {
 </aside>
 
 
-<script>
+<script type="text/javascript">
+
+
 $(document).ready(function() {
-	$(document).on("click","#sendBtn",function() {
+	$(document).on("click", "#sendBtn", function() {
 		console.log("#sendBtn 실행성공");
 		sendMessage();
 	});
+	$(document).on("keydown", "#text-message", function(key) {
+		if (key.keyCode == 13) {// 엔터
+			sendMessage();
+		}
+	});
+	
+	//window focus이벤트핸들러 등록
+	$(window).on("focus", function() {
+		console.log("focus");
+		//lastCheck();
+	});
 });
 
+function sendMessage() {
+	let data = {
+			channelNo : "${channelNo}",
+			sender : "${memberId}",
+			msg : $("#text-message").val(),
+			sendDate : new Date().getTime(),
+			type: "MESSAGE"
+		}
+		var a = $("#text-message").val();
+		alert(a);
+
+		//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
+		stompClient.send('<c:url value="/chat/${channelNo}" />',{}, JSON.stringify(data));
+		
+		//message창 초기화
+		$('#text-message').val('');
+}
+
+//웹소켓 선언
+//1.최초 웹소켓 생성 url: /stomp
+let socket = new SockJS('<c:url value="/chat" />');
+let stompClient = Stomp.over(socket);
+
+//connection이 맺어지면, 콜백함수가 호출된다.
+stompClient.connect({}, function(frame) {
+	console.log("connected stomp over sockjs");
+	console.log(frame);
+	
+	//사용자 확인
+	//lastCheck();
+	
+	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
+	stompClient.subscribe('/chat/${channelNo}', function(message) {
+		console.log("receive from subscribe /chat/${channelNo} :", message);
+		let messsageBody = JSON.parse(message.body);
+		let msgInfoHtml ='<div class="direct-chat-infos clearfix">'
+						+= '<span class="direct-chat-name float-left">'+messsageBody.memberId+'</span>'
+						+= '<span class="direct-chat-timestamp float-left">'+messsageBody.time+'</span></div>'
+						+= '<div class="direct-chat-text">'+messageBody.msg+'</div>';
+		                     	   
+		$(".direct-chat-msg").append(msgInfoHtml);
+		
+	});
+});
 </script>
-
-
-
-
-
-
 
 
 
