@@ -7,7 +7,7 @@
 		select C.* 
 		from channel C 
 			left join channel_member M on C.channel_no = M.channel_no
-		where M.member_id = #{memberId}
+		where M.member_id = #{memberId} and C.channel_type = 'CH3'
 	</select>
 	
 	<select id="selectMemberList" resultType="member">
@@ -21,7 +21,7 @@
 	</select>
 	
 	<select id="findChannelByMemberId" resultType="channel">
-		select * 
+		select C.channel_no  
 		from channel C 
 			left join channel_member M on C.channel_no = M.channel_no 
 		where M.

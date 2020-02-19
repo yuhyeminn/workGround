@@ -21,12 +21,12 @@ public class Channel implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private int channelNo;
+	private String channelNo;
 	private String channelType;
 	private String channelTitle;
 	private String status;
 	private int lastCheck;
-	private int projectOrClubNo;
+	private String projectOrClubNo;
 }
 
 

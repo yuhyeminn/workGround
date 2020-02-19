@@ -460,7 +460,7 @@ function plusMember(memberId) {
 			
 			let html = '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">';
 	        html += '<div class="col-12">';
-	        html += '<input type="hidden" name="memberId" value="'+data.member.memberName+'">';
+	        html += '<input type="hidden" name="memberId" value="'+data.member.memberId+'">';
 	        html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+data.member.renamedFileName+'">';
             html += '<h6 class="h6">'+data.member.memberName+'</h6>';
             html += '<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;"><button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button></div></div></div>';

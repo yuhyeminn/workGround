@@ -21,6 +21,6 @@ public class ChannelMember implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int channelMemberNo;
-	private int channelNo;
+	private String channelNo;
 	private String memberId;
 }

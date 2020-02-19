@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.chat.model.service.ChatService;
 import com.kh.workground.chat.model.vo.Channel;
+import com.kh.workground.chat.model.vo.ChannelMember;
 import com.kh.workground.chat.model.vo.Chat;
 import com.kh.workground.member.model.vo.Member;
 
@@ -39,15 +40,16 @@ public class ChatController {
 						 @SessionAttribute(value="memberLoggedIn", required=false) Member memberLoggedIn) {
 		logger.debug("memberLoggId={}", memberLoggedIn);
 		List<Channel> channelList = null;
+		logger.debug("channelList={}", channelList);
 		
 		//chatId 조회
 		//1. memberId로 등록한 chatroom존재여부 검사. 있는 경우 chatId 리턴.
 		channelList = chatService.findChannelNoListByMemberId(memberLoggedIn.getMemberId());
+		logger.debug("channelList={}", channelList);
 		if(channelList == null) {
 			channelList = new ArrayList<>();
 		}
 		
-		logger.debug("channelList={}", channelList);
 		
 		model.addAttribute(channelList);
 	}
@@ -131,10 +133,13 @@ public class ChatController {
 		if(channelNo == null) {
 			channelNo = getRandomChannelNo(10);
 			
-			List<Channel> channelList = new ArrayList<>();
-			channelList.add(new Channel());
-			channelList.add(new Channel());
-			chatService.insertChannel(channelList);
+			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null);
+			chatService.insertChannel(channel);
+			
+			ChannelMember channelMember = new ChannelMember(0, channelNo, memberId);
+			chatService.insertChannelMember(channelMember);
+			channelMember = new ChannelMember(0, channelNo, memberLoggedIn.getMemberId());
+			chatService.insertChannelMember(channelMember);
 		}
 		else {
 			List<Chat> chatList = chatService.findChatListByChannelNo(channelNo);

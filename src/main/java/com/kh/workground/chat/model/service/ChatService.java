@@ -17,8 +17,4 @@ public interface ChatService {
 
 	String findChannelByMemberId(Map<String, String> param);
 
-	void insertChannel(List<Channel> channelList);
-
-	List<Chat> findChatListByChannelNo(String channelNo);
-
 }
