@@ -397,8 +397,8 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 .direct-chat-msg{position: relative; padding: .5rem;}
 .direct-chat-msg:hover{background: rgba(70,76,89,.05);}
 .chat-text{float: left; width: 78%; margin-left: .8rem;}
-.chat-name{float: left; color: #464c59; font-size: .88rem; font-weight: bold;}
-.chat-time{float: left; margin-left: .3rem; color: #b0b4bb; font-size: .75rem; font-weight: bold;}
+.chat-name{float: left; margin-bottom: .1rem; color: #464c59; font-size: .9rem; font-weight: bold;}
+.chat-time{float: left; margin: 1px 0 0 .3rem; color: #b0b4bb; font-size: .75rem; font-weight: bold;}
 .chat-text p{color: #464c59; font-size: .88rem; clear: both;}
 .btn-copyToNtc{display: none; position: absolute; right: .5rem; border: 1px solid #d4d6db; border-radius: 2px; padding: .1rem .4rem .2rem; color: #696f7a; font-size: .75rem;}
 .direct-chat-msg:hover .btn-copyToNtc{display: block;}
@@ -420,4 +420,4 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 .note-editor.note-frame .note-editing-area .note-editable p{color: #464c59;}
 .note-editor.note-frame .note-placeholder{color: #b0b4bb;}
 .note-resizebar{display: none;}
-
+.note-editor.note-frame .note-statusbar{border-top: 0;}

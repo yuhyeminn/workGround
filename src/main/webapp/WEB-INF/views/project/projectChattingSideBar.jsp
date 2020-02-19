@@ -6,7 +6,7 @@
 <fmt:requestEncoding value="utf-8" />
 
 <style>
-#setting-sidebar{background: #fff;}
+#setting-sidebar{height: 100%; background: #fff;}
 </style>
 
 <script>
@@ -23,7 +23,7 @@ $(()=>{
 	$('#summernote').summernote({
         focus: true,
         lang: 'ko-KR',
-        height: 100,
+        height: 120,
         toolbar: [
             ['style', ['bold', 'italic', 'underline', 'strikethrough']],
             ['para', ['ul', 'ol']],
