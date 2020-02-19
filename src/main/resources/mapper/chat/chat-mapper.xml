@@ -29,12 +29,12 @@
 	</select>
 	
 	<insert id="insertChannel">
-		insert into channel values(#{channelNo}, #{channelType}, #{channelTitle}, #{status}, #{lastCheck}, #{projectOrClubNo}, #{renamedFileName})
+		insert into channel values(#{channelNo}, #{channelType}, #{channelTitle}, #{status}, #{lastCheck}, #{projectOrClubNo})
 	</insert>
 	
 	<insert id="insertChannelMember">
 		insert into channel_member 
-		values(seq_channel_member_no.nextval, #{channelNo}, #{memberId}, #{renamedFileName})
+		values(seq_channel_member_no.nextval, #{channelNo}, #{memberId})
 	</insert>
 	
 	<select id="findChatRoomByChannelNo" resultType="chat">

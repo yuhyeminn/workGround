@@ -35,7 +35,7 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	@Override
-	public List<String> findChannelByMemberId(Map<String, String> param) {
+	public List<Channel> findChannelByMemberId(Map<String, String> param) {
 		return chatDAO.findChannelNoListByMemberId(param);
 	}
 

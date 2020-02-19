@@ -16,7 +16,7 @@ public interface ChatDAO {
 
 	Member selectOneMember(String memberId);
 
-	List<String> findChannelNoListByMemberId(Map<String, String> param);
+	List<Channel> findChannelNoListByMemberId(Map<String, String> param);
 
 	int insertChannel(Channel channel);
 

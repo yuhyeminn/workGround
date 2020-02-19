@@ -131,13 +131,13 @@ public class ChatController {
 		
 //		logger.debug("param={}", param);
 		
-		List<String> channelNoList = null;
+		List<Channel> channelNoList = null;
 		String channelNo = null;
 		
 		channelNoList = chatService.findChannelByMemberId(param);
-//		logger.debug("channelNoList={}", channelNoList);
+		logger.debug("channelNoList={}", channelNoList);
 		
-		if(channelNoList == null) {
+		if(channelNoList.size() < 2) {
 			channelNo = getRandomChannelNo(10);
 //			logger.debug("channelNo={}", channelNo);
 			
@@ -154,7 +154,7 @@ public class ChatController {
 //			logger.debug("insertChannelMemberResult={}", insertChannelMemberResult);
 		}
 		else {
-			channelNo = channelNoList.get(0);
+			channelNo = channelNoList.get(0).getChannelNo();
 //			logger.debug("channelNo={}", channelNo);
 			
 			mav.addObject("channelNo", channelNo);

@@ -34,8 +34,8 @@ public class ChatDAOImpl implements ChatDAO {
 	}
 
 	@Override
-	public List<String> findChannelNoListByMemberId(Map<String, String> param) {
-		return sqlSession.selectOne("chat.findChannelByMemberId", param);
+	public List<Channel> findChannelNoListByMemberId(Map<String, String> param) {
+		return sqlSession.selectList("chat.findChannelByMemberId", param);
 	}
 
 	@Override
