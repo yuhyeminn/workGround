@@ -36,7 +36,7 @@
 $(()=>{
 	sidebarActive(); //사이드바 활성화
 	
-	if(${project.privateYn=='N'})
+	if('${project.privateYn}'==='N')
 		projectStar(); //프로젝트 별 해제/등록
 	searchWork(); //업무검색
 	
