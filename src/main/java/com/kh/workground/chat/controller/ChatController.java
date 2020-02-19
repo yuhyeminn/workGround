@@ -11,6 +11,10 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -116,39 +120,95 @@ public class ChatController {
 									  @RequestParam("memberId") String memberId, 
 									  @RequestParam("channelTitle") String channelTitle, 
 									  @SessionAttribute("memberLoggedIn") Member memberLoggedIn) {
-		logger.debug("memberId={}", memberId);
-		logger.debug("channelTitle={}", channelTitle);
+//		logger.debug("memberId={}", memberId);
+//		logger.debug("channelTitle={}", channelTitle);
+		
+		Member member = chatService.selectOneMember(memberId);
 		
 		Map<String, String> param = new HashMap<>();
 		param.put("chatMember", memberId); //채팅상대
 		param.put("memberId", memberLoggedIn.getMemberId());
 		
-		logger.debug("param={}", param);
+//		logger.debug("param={}", param);
 		
+		List<String> channelNoList = null;
 		String channelNo = null;
 		
-		channelNo = chatService.findChannelByMemberId(param);
-		logger.debug("channelNo={}", channelNo);
+		channelNoList = chatService.findChannelByMemberId(param);
+//		logger.debug("channelNoList={}", channelNoList);
 		
-		if(channelNo == null) {
+		if(channelNoList == null) {
 			channelNo = getRandomChannelNo(10);
+//			logger.debug("channelNo={}", channelNo);
 			
-			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null);
-			chatService.insertChannel(channel);
+			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null, member.getRenamedFileName());
+			int insertChannelResult = chatService.insertChannel(channel);
+//			logger.debug("insertChatResult={}", insertChannelResult);
 			
-			ChannelMember channelMember = new ChannelMember(0, channelNo, memberId);
-			chatService.insertChannelMember(channelMember);
-			channelMember = new ChannelMember(0, channelNo, memberLoggedIn.getMemberId());
-			chatService.insertChannelMember(channelMember);
+			List<ChannelMember> channelMemberList = new ArrayList<>();
+			channelMemberList.add(new ChannelMember(0, channelNo, memberId, member.getRenamedFileName()));
+			channelMemberList.add(new ChannelMember(0, channelNo, memberLoggedIn.getMemberId(), memberLoggedIn.getRenamedFileName()));
+//			logger.debug("channelMemberList={}", channelMemberList);
+			
+			int insertChannelMemberResult = chatService.insertChannelMember(channelMemberList);
+//			logger.debug("insertChannelMemberResult={}", insertChannelMemberResult);
 		}
 		else {
-			List<Chat> chatList = chatService.findChatListByChannelNo(channelNo);
-			mav.addObject("chatList", chatList);
+			channelNo = channelNoList.get(0);
+//			logger.debug("channelNo={}", channelNo);
+			
+			mav.addObject("channelNo", channelNo);
 		}
+		
+//		mav.addObject("channelNo", channelNo);
 		
 		mav.setViewName("redirect:/chat/chatList.do");
 		
 		return mav;
+	}
+	
+	@PostMapping("/chat/loadChatList.do")
+	@ResponseBody
+	public Map<String, Object> loadChatList (@RequestParam("channelNo") String channelNo, 
+											 @SessionAttribute("memberLoggedIn") Member memberLoggedIn, 
+											 HttpSession session) {
+		logger.debug("channelNo={}", channelNo);
+		logger.debug("memberLoggedIn={}", memberLoggedIn);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("channelNo", channelNo);
+		session.setAttribute("channelNo", channelNo);
+		
+		List<ChannelMember> channelMemberList = chatService.selectChannelMemberList(channelNo);
+		map.put("channelMemberList", channelMemberList);
+//		logger.debug("channelMemberList={}", channelMemberList);
+		
+		String chatMemberId = channelMemberList.get(0).getMemberId();
+		if(memberLoggedIn.getMemberId().equals(chatMemberId))
+			chatMemberId = channelMemberList.get(1).getMemberId();
+		map.put("chatMemberId", chatMemberId);
+//		logger.debug("chatMemberId={}", chatMemberId);
+		map.put("memberId", memberLoggedIn.getMemberId());
+		
+		List<Chat> chatList = chatService.findChatRoomByChannelNo(channelNo);
+//		logger.debug("chatList={}", chatList);
+		map.put("chatList", chatList);
+		
+		return map;
+	}
+	
+	@MessageMapping("/chat/{channelNo}")
+	@SendTo("/chat/{channelNo}")
+	public Chat sendEcho(Chat fromMessage, 
+						 @DestinationVariable String channelNo, 
+						 @Header("simpSessionId") String sessionId) {
+		logger.debug("fromMessage={}", fromMessage);
+		logger.debug("channelNo={}", channelNo);
+		logger.debug("sessionId={}", sessionId);
+		
+		chatService.insertChatLog(fromMessage);
+		
+		return fromMessage;
 	}
 	
 }

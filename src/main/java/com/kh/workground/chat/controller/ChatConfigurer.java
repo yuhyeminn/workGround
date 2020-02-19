@@ -26,7 +26,7 @@ public class ChatConfigurer implements WebSocketMessageBrokerConfigurer {
 	 */
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/chat")
+		registry.addEndpoint("/stomp")
 				.withSockJS()
 				.setInterceptors(new HttpSessionHandshakeInterceptor());//HttpSession에 접근하기 위한 인터셉터 지정 
 	}

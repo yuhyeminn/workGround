@@ -66,8 +66,6 @@ function sidebarActive(){
 	$("#sidebar-chat").addClass("active");
 }
 	
-
-
 </script>
 
 
@@ -94,10 +92,10 @@ function sidebarActive(){
                                 <table class="table table-head-fixed text-nowrap">
                                     <tbody class="td">
                                     <c:forEach items="${channelList }" var="channel">
-                                        <tr>
+                                        <tr onclick="loadChatList('${channel.channelNo }', '${channel.channelTitle }', '${channel.renamedFileName }');" >
                                             <td>
                                                 <div class="col-9" style="width: 100%;"> 
-                                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
+                                                    <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
                                                     <h6 class="h6">${channel.channelTitle }</h6>
                                                 </div> 
                                             </td>
@@ -115,98 +113,18 @@ function sidebarActive(){
                     <div class="card chat-wrapper">
                         <div class="card-header">
                             <div class="post">
-                                <div class="user-block">
-                                    <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="user image">
-                                    <span class="username">
-                                        <h3>이주현</h3>
-                                    </span>
+                                <div class="user-block" id="chat_userName">
+                                    
                                 </div>
                             </div>
                         </div><!-- /.card-header -->
                         <div class="card-body">        
                             <!-- Conversations are loaded here -->
-                            <div class="direct-chat-messages" style="height:20.8rem">
-                            <!-- Message. Default to the left -->
-                                <div class="direct-chat-msg">
-                                    <div class="direct-chat-infos clearfix">
-                                        <span class="direct-chat-name float-left">이주현&nbsp;&nbsp;</span>
-                                        <span class="direct-chat-timestamp float-left">2:00 pm</span>
-                                    </div>
-                                    <!-- /.direct-chat-infos -->
-                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                    <!-- /.direct-chat-img -->
-                                    <div class="direct-chat-text">
-                                        Is this template really for free? That's unbelievable!
-                                    </div>
-                                    <!-- /.direct-chat-text -->
-                                </div>
-                                <!-- /.direct-chat-msg -->
-                        
-                                <!-- Message to the right -->
-                                <div class="direct-chat-msg right">
-                                    <div class="direct-chat-infos clearfix">
-                                        <span class="direct-chat-name float-right">김효정</span>
-                                        <span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span>
-                                    </div>
-                                    <!-- /.direct-chat-infos -->
-                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user2-160x160.jpg" alt="Message User Image">
-                                    <!-- /.direct-chat-img -->
-                                    <div class="direct-chat-text">
-                                        You better believe it!
-                                    </div>
-                                    <!-- /.direct-chat-text -->
-                                </div> 
-
-                                <div class="direct-chat-msg">
-                                    <div class="direct-chat-infos clearfix">
-                                        <span class="direct-chat-name float-left">이주현&nbsp;&nbsp;</span>
-                                        <span class="direct-chat-timestamp float-left">2:00 pm</span>
-                                    </div>
-                                    <!-- /.direct-chat-infos -->
-                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                    <!-- /.direct-chat-img -->
-                                    <div class="direct-chat-text">
-                                        Is this template really for free? That's unbelievable!
-                                    </div>
-                                    <!-- /.direct-chat-text -->
-                                </div>
-
-                                <div class="direct-chat-msg right">
-                                    <div class="direct-chat-infos clearfix">
-                                        <span class="direct-chat-name float-right">김효정</span>
-                                        <span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span>
-                                    </div>
-                                    <!-- /.direct-chat-infos -->
-                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user2-160x160.jpg" alt="Message User Image">
-                                    <!-- /.direct-chat-img -->
-                                    <div class="direct-chat-text">
-                                        You better believe it!
-                                    </div>
-                                    <!-- /.direct-chat-text -->
-                                </div> 
-
-                                <div class="direct-chat-msg">
-                                    <div class="direct-chat-infos clearfix">
-                                        <span class="direct-chat-name float-left">이주현&nbsp;&nbsp;</span>
-                                        <span class="direct-chat-timestamp float-left">2:00 pm</span>
-                                    </div>
-                                    <!-- /.direct-chat-infos -->
-                                    <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                    <!-- /.direct-chat-img -->
-                                    <div class="direct-chat-text">
-                                        Is this template really for free? That's unbelievable!
-                                    </div>
-                                    <!-- /.direct-chat-text -->
-                                </div>
-                                <!-- /.direct-chat-msg -->
+                            <div class="direct-chat-messages" id="chatArea" style="height:20.8rem">
                             </div><!-- /.direct-chat-messages -->
                         </div>
                         <!-- /.card-body -->
-                        <div class="card-body pad">
-                            <div class="mb-3">
-                                <textarea class="textarea" placeholder="Place some text here"
-                                        style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
-                            </div>
+                        <div class="input-group mb-3" id="div_textarea">
                         </div>
                     </div>
                     <!-- /.card -->
@@ -413,7 +331,26 @@ function sidebarActive(){
     <!-- /.modal-dialog -->
 </div>
 		
-<script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+	$(document).on("click", "#sendBtn", function() {
+		console.log("#sendBtn 실행성공");
+		sendMessage();
+	});
+	$(document).on("keydown", "#message", function(key) {
+		if (key.keyCode == 13) {// 엔터
+			sendMessage();
+		}
+	});
+
+	//window focus이벤트핸들러 등록
+	$(window).on("focus", function() {
+		console.log("focus");
+		//lastCheck();
+	});
+});
+
 
 //대화상대찾기 ajax
 $("#findMember").keyup(function() {
@@ -477,10 +414,119 @@ function plusMember(memberId) {
 		error: (x, s, e)=> {
 			console.log("ajax실행오류!!", x, s, e);
 		}
-	})	;
+	});
 	
 }
 
+function loadChatList(channelNo, channelTitle, renamedFileName) {
+	console.log(channelTitle);
+	$.ajax({
+		url: '${pageContext.request.contextPath}/chat/loadChatList.do', 
+		data: {channelNo : channelNo}, 
+		dataType: 'json', 
+		type: 'POST', 
+		success: data=> {
+			console.log(data.chatList);
+			console.log(data.chatMemberId);
+			
+			$("#chatArea").children().remove();
+			$("#chat_userName").children().remove();
+			$("#chat_userName").append('<img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'" alt="user image"><span class="username"><h3>'+channelTitle+'</h3></span>');
+			$("#div_textarea").children().remove();
+			console.log("1");
+			if(data.chatList != null) {
+				let html = '';
+				$.each(data.chatList, (idx, list)=> {
+					if(list.sender != data.chatMemberId) {
+						html += '<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix">';
+						html += '<span class="direct-chat-name float-right">'+list.sender+'</span>';
+						html += '<span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span></div>';
+						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'">';
+						html += '<div class="direct-chat-text">'+list.msg+'</div>';
+						html += '</div>';
+					}
+					else {
+						html += '<div class="direct-chat-msg"><div class="direct-chat-infos clearfix">';
+						html += '<span class="direct-chat-name float-left">'+list.sender+'</span>';
+						html += '<span class="direct-chat-timestamp float-left">2:05 pm &nbsp;&nbsp;</span></div>';
+						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'">';
+						html += '<div class="direct-chat-text">'+list.msg+'</div>';
+						html += '</div>';
+					}
+				});
+				console.log("2");
+				$("#chatArea").append(html);
+				console.log("3");
+			}
+			//let textarea = '<div class="mb-3"><textarea class="textarea" placeholder="Message" id="message" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea></div>';
+			let textarea = '<input type="text" id="message" class="form-control" placeholder="Message to '+channelTitle+'"><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>';
+			$("#div_textarea").append(textarea);
+		}, 
+		error: (x, s, e)=> {
+			console.log("ajax실행오류!!", x, s, e);
+		}
+	});
+}
+
+//웹소켓 선언
+//1.최초 웹소켓 생성 url: /chat
+let socket = new SockJS('<c:url value="/stomp" />');
+let stompClient = Stomp.over(socket);
+
+//connection이 맺어지면, 콜백함수가 호출된다.
+stompClient.connect({}, function(frame) {
+	console.log("connected stomp over sockjs");
+	console.log(frame);
+	
+	//사용자 확인
+	//lastCheck();
+	
+	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
+	stompClient.subscribe('/chat/${channelNo}', function(message) {
+		console.log("receive from subscribe /chat/${chatId} : ", message);
+		let messageBody = JSON.parse(message.body);
+		let html = '<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix">';
+		html += '<span class="direct-chat-name float-right">'+messageBody.sender+'</span>';
+		html += '<span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span></div>';
+		html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">';
+		html += '<div class="direct-chat-text">'+messageBody.msg+'</div>';
+		html += '</div>';
+		//console.log(html);
+		$("#chatArea").append(html);
+	});
+});
+
+function sendMessage() {
+	//console.log("실행되나${channelNo}");
+	let data = {
+		channelNo : "${channelNo }", 
+		sender : "${memberLoggedIn.memberId }", 
+		msg: $("#message").val(), 
+		time : new Date().getTime(), 
+		type : "MESSAGE"
+	}
+	console.log(data);
+	
+	//채팅메세지: 1대1채팅을 위해 고유한 channelNo을 서버측에서 발급해 관리한다.
+	stompClient.send('<c:url value="/chat/${channelNo }" />', {}, JSON.stringify(data));
+	console.log("실행되나");
+	//message창 초기화
+	$('#message').val('');
+}
+
+/*
+ * 윈도우가 활성화 되었을때, chatroom테이블의 lastcheck(number)컬럼을 갱신한다.
+ * 안읽은 메세지 읽음 처리
+ */ 
+function lastCheck() {
+	console.log("lastCheck()실행확인");
+	let data = {
+		channelNo : "${channelNo}", 
+		memberId : "${memberLoggedIn.memberId}", 
+		time : new Date().getTime()
+	}
+	stompClient.send('<c:url value="/lastCheck" />', {}, JSON.stringity(data));
+}
 </script>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

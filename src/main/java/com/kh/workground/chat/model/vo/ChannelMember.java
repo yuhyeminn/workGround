@@ -23,4 +23,7 @@ public class ChannelMember implements Serializable {
 	private int channelMemberNo;
 	private String channelNo;
 	private String memberId;
+	
+	//프로필사진 가상컬럼
+	private String renamedFileName;
 }

@@ -22,8 +22,12 @@ public class Chat implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int chatNo;
-	private int channelNo;
+	private String channelNo;
 	private String sender;
 	private Date sendDate;
 	private String msg;
+	
+	//필요한 컬럼
+	private long time;
+	private MsgType type;
 }
