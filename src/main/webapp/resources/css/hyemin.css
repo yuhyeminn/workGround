@@ -122,6 +122,7 @@
     left: 0px;
     height: 24px;
     width: 24px;
+    object-fit: cover;
 }
 
 .material .value {

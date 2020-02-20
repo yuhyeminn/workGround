@@ -227,15 +227,15 @@ function delProject(){
             
             <c:forEach items="${listByDept}" var="p">
 	            <div class="col-12 col-sm-6 col-md-3">
-	                <div class="card card-hover">
 	                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
+	                <div class="card card-hover">
 	                    <div class="card-body">
 	                    <div class="card-title">
 	                        <h5>${p.projectTitle}</h5>
 	                    </div>
 	                    </div>
-	                </a>
 	                </div><!-- /.card -->
+	                </a>
 	            </div>
 	        </c:forEach> 
 	        
@@ -251,8 +251,8 @@ function delProject(){
             
             <c:forEach items="${listByImportant}" var="p">
             <div class="col-12 col-sm-6 col-md-3">
+                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
                 <div class="card card-hover">
-                    <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
                     <div class="card-body star-body">
                         <!-- 타이틀 -->
                         <div class="card-title">
@@ -303,8 +303,8 @@ function delProject(){
 	                        </div>
                         </div>
                     </div>
-                    </a>
                 </div><!-- /.card -->
+                </a>
             </div>
             </c:forEach>
             
@@ -320,8 +320,8 @@ function delProject(){
             
             <!-- 내 업무 -->
             <div class="col-12 col-sm-6 col-md-3">
+                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${listByInclude[0].projectNo}">
                 <div class="card card-hover mywork">
-                    <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${listByInclude[0].projectNo}">
                     <div class="card-body">
                         <!-- 프로필 사진 -->
                         <img src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}" alt="User Avatar" class="img-circle img-profile">
@@ -336,15 +336,15 @@ function delProject(){
 	                        </div>
                         </div>
                     </div>
-                    </a>
                 </div><!-- /.card -->
+                </a>
             </div>
             
             <!-- 프로젝트 -->
 			<c:forEach items="${listByInclude}" begin="1" var="p">
             <div class="col-12 col-sm-6 col-md-3">
-                <div class="card card-hover">
                 <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
+                <div class="card card-hover">
                 <c:if test="${p.projectStarYn=='Y'}">
                     <div class="card-body star-body">
                 </c:if>
@@ -415,8 +415,8 @@ function delProject(){
                         </div>
                     </div>
                     </div><!-- /.card-body -->
-                </a>
                 </div><!-- /.card -->
+                </a>
             </div>
             </c:forEach> 
             

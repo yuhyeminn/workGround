@@ -371,7 +371,6 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 #btn-cancelSearch:hover, #btn-cancelSearch:active, #btn-cancelSearch:focus{color: #8d919a;}
 
 
-
 /* 타임라인 */
 #timeline-wrapper{position:relative; width: 5080px; padding: 5rem 3rem 2.5rem; background: #f8f9fa;}
 .tooltip-wrapper{min-width: 12rem; padding: .5rem; background: #0c3865;}
@@ -383,3 +382,42 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 #date-cell-wrapper{position: absolute; top: 41px; left: 0; width: 4833px; height: 39px; margin-left: 215px; background: #f3f4f5; color: #7a7e88; font-size: 1rem; font-family: "Source Sans Pro"; z-index: 1;}
 .cell{display: inline-block; width: 54px; height: 39px; padding: .4rem .5rem; border-right: 1px solid rgb(230, 230, 230);}
 .cell:not(:first-of-type){margin-left: -4px;}
+
+
+
+/* 프로젝트, 동호회 내 대화창 */
+#chat-sidebar{background: #fff;}
+/* 멤버리스트 */
+#chat-memList{height: 49px; padding: .7rem .8rem; border-bottom: 2px solid #e6e8ec;}
+#chat-memList ul{padding: 0; margin: 0;}
+#chat-memList li{display: inline-block;}
+#chat-memList li:not(:first-of-type){margin-left: -3px;}
+/* 메시지 영역 */
+#chatSide-msg-wrapper{height: 60% !important; padding: 1rem 1.5rem 1rem 2rem;}
+.direct-chat-msg{position: relative; padding: .5rem;}
+.direct-chat-msg:hover{background: rgba(70,76,89,.05);}
+.chat-text{float: left; width: 78%; margin-left: .8rem;}
+.chat-name{float: left; margin-bottom: .1rem; color: #464c59; font-size: .9rem; font-weight: bold;}
+.chat-time{float: left; margin: 1px 0 0 .3rem; color: #b0b4bb; font-size: .75rem; font-weight: bold;}
+.chat-text p{color: #464c59; font-size: .88rem; clear: both;}
+.btn-copyToNtc{display: none; position: absolute; right: .5rem; border: 1px solid #d4d6db; border-radius: 2px; padding: .1rem .4rem .2rem; color: #696f7a; font-size: .75rem;}
+.direct-chat-msg:hover .btn-copyToNtc{display: block;}
+.btn-copyToNtc:hover, .btn-copyToNtc:focus, .btn-copyToNtc:active{background: #d4d6db;}
+/* 오른쪽: 내 메시지 */
+.direct-chat-msg.right .chat-text{float: right; margin-right: .8rem; text-align: right;}
+.direct-chat-msg.right .chat-name{float: right;}
+.direct-chat-msg.right .chat-time{float: right; margin-right: .3rem;}
+.direct-chat-msg.right .btn-copyToNtc{left: .5rem;}
+/* 날짜 구분선 */
+.chat-date-wrapper{position: relative; margin: 1.5rem 0;}
+.chat-date-wrapper .divider{width: 100%; height: 1px; background: #d4d6db;}
+.chat-date-wrapper .date{position: absolute; top: -10px; left: 44%; padding: 0 .5rem; background: #fff; color: #464C59; font-size: .75rem; font-weight: bold;}
+/* 텍스트 에디터 */
+.note-editor.note-frame{border: 0;}
+.note-frame *{color: #8d919a;}
+.note-toolbar{border-bottom: 0; border-top: 2px solid #17a2b8;}
+.note-editor.note-frame .note-editing-area .note-editable, .note-editor.note-frame .note-placeholder{padding: .5rem 1rem; color: #464c59; font-size: .85rem; font-family: 'Noto Sans KR';}
+.note-editor.note-frame .note-editing-area .note-editable p{color: #464c59;}
+.note-editor.note-frame .note-placeholder{color: #b0b4bb;}
+.note-resizebar{display: none;}
+.note-editor.note-frame .note-statusbar{border-top: 0;}

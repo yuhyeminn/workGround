@@ -507,6 +507,52 @@ function fileDownload(oName, rName, clubNo) {
 								   alt="..." class="img-thumbnail" data-toggle="modal"
 								   data-target="#clubPhoto${vs.index }">
 							</div>
+							<!-- PhotoModalComment -->
+							<div class="comment-count"><i class="fas fa-comments"></i>&nbsp; 댓글</div>
+						        <div class="card-footer card-comments">
+							
+							<c:if test="${not empty clubPhotoCommentList }">
+							<c:forEach items="${clubPhotoCommentList }" var="clubPhotoComment">
+							<c:if test="${clubPhotoComment.clubPhotoNo == clubPhoto.clubPhotoNo }">
+							<c:if test="${clubPhotoComment.clubPhotoCommentLevel == 1 }">
+						      <div class="card-comment">
+						        <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${clubPhotoComment.renamedFileName }" alt="User Image">
+						        <div class="comment-text">
+						          <span class="username">${clubPhotoComment.memberName }<span class="text-muted float-right">${clubPhotoComment.clubPhotoCommentDate }</span></span>
+						          <span>${clubPhotoComment.clubPhotoCommentContent }</span>
+						          <c:if test="${not empty memberLoggedIn and (clubPhotoComment.memberId==memberLoggedIn.memberId or isManager) }">
+						            <form name="deleteClubPhotoCommentFrm" action="${pageContext.request.contextPath }/club/deleteClubPhotoComment.do" method="POST">
+						              <input type="hidden" name="clubPhotoCommentNo" value="${clubPhotoComment.clubPhotoCommentNo }" />
+						              <input type="hidden" name="clubNo" value="${club.clubNo }" />
+						              <button type="submit" class="comment-delete float-right" onclick="return confirmDelete();">삭제</button>
+						            </form>
+						          </c:if>
+						        </div>
+						      </div>
+							</c:if>
+							</c:if>
+							</c:forEach>
+							</c:if>
+						        </div>
+							<!-- 댓글 작성 -->
+						    <div class="card-footer">
+						    <form name="insertClubPhotoCommentFrm" action="${pageContext.request.contextPath }/club/insertClubPhotoComment.do" method="post">
+						        <c:if test="${not empty memberLoggedIn }">
+						          <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}">
+						        </c:if>
+						        <c:if test="${empty memberLoggedIn }">
+						          <img class="img-fluid img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">
+						        </c:if>
+						        <div class="img-push">
+						          <input type="hidden" name="clubNo" value="${clubPhoto.clubNo }" />
+						          <input type="hidden" name="clubPhotoNo" value="${clubPhoto.clubPhotoNo }" />
+						          <input type="hidden" name="clubPhotoCommentLevel" value="1" />
+						          <input type="hidden" name="clubMemberNo" value="${clubPhoto.clubMemberNo }" />
+						          <input type="text" class="form-control form-control-sm comment-text-area" name="clubPhotoCommentContent" placeholder="댓글을 입력하세요.">
+						          <input type="submit" class="comment-submit" value="등록">
+						        </div>
+						    </form>
+						    </div> 
 						</div>
 						<div class="modal-footer">
 						<c:if test="${not empty memberLoggedIn and (memberLoggedIn.memberId == clubPhoto.memberId or isManager)}">
@@ -671,9 +717,10 @@ function fileDownload(oName, rName, clubNo) {
 										    <input type="hidden" name="memberId" value="${memberLoggedIn.memberId }" />
 										    <input type="hidden" name="clubNo" value="${club.clubNo }" />
 										    <input type="hidden" name="where" value="1" />
-											<button type="submit" class="btn btn-info float-right">
+											<button type="submit" class="btn btn-info">참석</button>
+											<!-- <button type="submit" class="btn btn-info float-right">
 												<i class="fas fa-plus"></i>
-											</button>
+											</button> -->
 										  </form>
 										  <c:if test="${not empty memberLoggedIn and (clubPlan.memberId == memberLoggedIn.memberId or isManager)}">
 											<button type="button" class="btn btn-info" data-target="#plan-modify${vs.index }" data-dismiss="modal" data-toggle="modal">수정</button>
@@ -743,10 +790,10 @@ function fileDownload(oName, rName, clubNo) {
 														singleDatePicker: true,
 													    showDropdowns: true, 
 													    startOfWeek: 'monday', 
-													    setDate: '${clubPlan.clubPlanStart}', 
 													    locale: {
 														    format: 'YYYY-MM-DD' 
-													    }
+													    }, 
+													    startDate: '${clubPlan.clubPlanStart}'
 													  });
 													/* $("#clubPlanUpdateDate${vs.index }").daterangepicker('setDate', ${clubPlan.clubPlanStart}); */
 												});
