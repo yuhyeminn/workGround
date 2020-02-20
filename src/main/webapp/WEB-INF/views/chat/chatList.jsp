@@ -92,11 +92,11 @@ function sidebarActive(){
                                 <table class="table table-head-fixed text-nowrap">
                                     <tbody class="td">
                                     <c:forEach items="${channelList }" var="channel">
-                                        <tr onclick="loadChatList('${channel.channelNo }', '${channel.channelTitle }', '${channel.renamedFileName }');" >
+                                        <tr onclick="loadChatList('${channel.channelNo }', '${channel.memberName }', '${channel.renamedFileName }');" >
                                             <td>
                                                 <div class="col-9" style="width: 100%;"> 
                                                     <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
-                                                    <h6 class="h6">${channel.channelTitle }</h6>
+                                                    <h6 class="h6"><c:if test="${empty channelTitle }">${channel.memberName }</c:if><c:if test="${not empty channelTitle }">${channel.channelTitle }</c:if> </h6>
                                                 </div> 
                                             </td>
                                         </tr>
@@ -405,12 +405,6 @@ function plusMember(memberId) {
 			
 			$("#div-plusMember").append(html);
 			
-			if($("#channelTitle").val().trim().length==0) {
-				$("#channelTitle").val(data.member.memberName);
-			}
-			else {
-				$("#channelTitle").val($("#channelTitle").val()+", "+data.member.memberName);
-			}
 		}, 
 		error: (x, s, e)=> {
 			console.log("ajax실행오류!!", x, s, e);

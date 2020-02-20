@@ -28,6 +28,8 @@ public class Channel implements Serializable {
 	private int lastCheck;
 	private String projectOrClubNo;
 	
+	//멤버네임 가상컬럼
+	private String memberName;
 	//프로필사진 가상컬럼
 	private String renamedFileName;
 }

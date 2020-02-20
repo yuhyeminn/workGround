@@ -141,7 +141,7 @@ public class ChatController {
 			channelNo = getRandomChannelNo(10);
 //			logger.debug("channelNo={}", channelNo);
 			
-			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null, member.getRenamedFileName());
+			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null, member.getMemberName(), member.getRenamedFileName());
 			int insertChannelResult = chatService.insertChannel(channel);
 //			logger.debug("insertChatResult={}", insertChannelResult);
 			
