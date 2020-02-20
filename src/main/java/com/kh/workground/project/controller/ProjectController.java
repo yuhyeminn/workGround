@@ -492,14 +492,17 @@ public class ProjectController {
 			//1.업무로직
 			int result = projectService.deleteProject(projectNo);
 			
+			String viewName = "";
 			//2. 뷰모델처리 
 			if(result!=0) {
-				projectList(mav, session);
+				viewName = "redirect:/project/projectList.do";
+				mav.setViewName(viewName);
 			}
 			else {
+				viewName = "/common/msg";
 				mav.addObject("msg", "프로젝트 삭제에 실패했습니다!");
 				mav.addObject("loc", "/project/projectList");
-				mav.setViewName("/common/msg");
+				mav.setViewName(viewName);
 			}
 			
 		} catch(Exception e) {
