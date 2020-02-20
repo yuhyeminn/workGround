@@ -48,7 +48,10 @@
 	
 	<select id="selectChatList" resultType="chat">
 		select C.*, M.member_name, M.renamed_filename  
-		from chat C left join member M on C.sender = M.member_id 
+		from chat C 
+			left join member M on C.sender = M.member_id 
+			left join channel H on C.channel_no = H.channel_no
+		where H.channel_type = 'CH3'
 		order by send_date
 	</select>
 	
