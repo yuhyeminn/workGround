@@ -127,9 +127,6 @@ public class SearchController {
 			if("member".equals(type)) {
 				List<Member> list = searchService.selectMemberListByPageBar(cPage, numPerPage, keyword);
 				int totalContents = searchService.selectMemberTotalContents(keyword);
-				
-				logger.debug("///////////////////////////////");
-				logger.debug("totalContents={}",totalContents);
 				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
