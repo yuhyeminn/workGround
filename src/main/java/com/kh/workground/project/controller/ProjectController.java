@@ -27,10 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
-import com.kh.workground.project.model.vo.Attachment;
-import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
-import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
@@ -487,6 +484,7 @@ public class ProjectController {
 	
 	@RequestMapping(value="/project/deleteProject.do", method= {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView deleteProject(ModelAndView mav, HttpSession session, @RequestParam int projectNo) {
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		
 		try {
 			//1.업무로직
@@ -495,7 +493,14 @@ public class ProjectController {
 			String viewName = "";
 			//2. 뷰모델처리 
 			if(result!=0) {
-				viewName = "redirect:/project/projectList.do";
+				//관리자인 경우
+				if("admin".equals(memberLoggedIn.getMemberId())) {
+					viewName = "redirect:/admin/adminProjectList.do";
+				}
+				//관리자 아닌 경우
+				else {
+					viewName = "redirect:/project/projectList.do";
+				}
 				mav.setViewName(viewName);
 			}
 			else {
