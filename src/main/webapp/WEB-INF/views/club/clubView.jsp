@@ -1270,7 +1270,7 @@ function fileDownload(oName, rName, clubNo) {
 			<div class="post">
 				<div class="user-block">
 					<img class="direct-chat-img"
-						src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg"
+						src="${pageContext.request.contextPath}/resources/img/profile/default.jpg"
 						alt="Message User Image"> <span class="username">
 						<h3>${club.clubName }</h3>
 					</span>
@@ -1280,87 +1280,58 @@ function fileDownload(oName, rName, clubNo) {
 		<!-- /.card-header -->
 		<div class="card-body">
 			<!-- Conversations are loaded here -->
-			<div class="direct-chat-messages" style="height: 25rem">
+			<div class="direct-chat-messages" id="direct-chat-messages" style="height: 25rem">
 				<!-- Message. Default to the left -->
-				<div class="direct-chat-msg">
-					<div class="direct-chat-infos clearfix">
-						<span class="direct-chat-name float-left">다른동호회멤버&nbsp;&nbsp;</span>
-						<span class="direct-chat-timestamp float-left">2:00 pm</span>
-					</div>
-					<!-- /.direct-chat-infos -->
+				<c:forEach items="${chatList }" var="chat">
+					<c:choose>
+						<c:when test="${chat.sender eq memberLoggedIn.memberId }">
+							<!-- Message to the right -->
+							<div class="direct-chat-msg right">
+								<div class="direct-chat-infos clearfix">
+									<span class="direct-chat-name float-right">나</span> <span
+										class="direct-chat-timestamp float-right">${chat.sendDate }
+										&nbsp;&nbsp;</span>
+								</div>
+						
+								<img class="direct-chat-img"
+									src="${pageContext.request.contextPath}/resources/img/profile/${chat.renamedFileName}"
+									alt="Message User Image">
+								<!-- /.direct-chat-img -->
+								<div class="direct-chat-text">${chat.msg }</div>
+								
+							</div>
+							
+						</c:when>
+						
+						<c:otherwise>
+							<div class="direct-chat-msg">
+								<div class="direct-chat-infos clearfix">
+									<span class="direct-chat-name float-left">${chat.sender }</span>
+									<span class="direct-chat-timestamp float-left">${chat.sendDate }</span>
+								</div>
+								<!-- /.direct-chat-infos -->
+			
+								<img class="direct-chat-img"
+									src="${pageContext.request.contextPath}/resources/img/profile/${chat.renamedFileName}"
+									alt="Message User Image"> 
+								<!-- /.direct-chat-img -->
+								<div class="direct-chat-text">${chat.msg }</div>
+								<!-- /.direct-chat-text -->
+							</div>
+							
+						</c:otherwise>
+					
+					</c:choose>
+					
+				
+				</c:forEach>
+				
+				
 
-					<img class="direct-chat-img"
-						src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg"
-						alt="Message User Image"> --%>
-					<!-- /.direct-chat-img -->
-					<div class="direct-chat-text">Is this template really for
-						free? That's unbelievable!</div>
-					<!-- /.direct-chat-text -->
-				</div>
-				<!-- /.direct-chat-msg -->
-
-				<!-- Message to the right -->
-				<div class="direct-chat-msg right">
-					<div class="direct-chat-infos clearfix">
-						<span class="direct-chat-name float-right">나</span> <span
-							class="direct-chat-timestamp float-right">2:05 pm
-							&nbsp;&nbsp;</span>
-					</div>
-					<!-- /.direct-chat-infos -->
-					<img class="direct-chat-img"
-						src="${pageContext.request.contextPath}/resources/img/user2-160x160.jpg"
-						alt="Message User Image">
-					<!-- /.direct-chat-img -->
-					<div class="direct-chat-text">You better believe it!</div>
-					<!-- /.direct-chat-text -->
-				</div>
-
-				<div class="direct-chat-msg">
-					<div class="direct-chat-infos clearfix">
-						<span class="direct-chat-name float-left">이주현&nbsp;&nbsp;</span> <span
-							class="direct-chat-timestamp float-left">2:00 pm</span>
-					</div>
-					<!-- /.direct-chat-infos -->
-					<img class="direct-chat-img"
-						src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg"
-						alt="Message User Image">
-					<!-- /.direct-chat-img -->
-					<div class="direct-chat-text">Is this template really for
-						free? That's unbelievable!</div>
-					<!-- /.direct-chat-text -->
-				</div>
-
-				<div class="direct-chat-msg right">
-					<div class="direct-chat-infos clearfix">
-						<span class="direct-chat-name float-right">김효정</span> <span
-							class="direct-chat-timestamp float-right">2:05 pm
-							&nbsp;&nbsp;</span>
-					</div>
-					<!-- /.direct-chat-infos -->
-					<img class="direct-chat-img"
-						src="${pageContext.request.contextPath}/resources/img/user2-160x160.jpg"
-						alt="Message User Image">
-					<!-- /.direct-chat-img -->
-					<div class="direct-chat-text">You better believe it!</div>
-					<!-- /.direct-chat-text -->
-				</div>
-
-				<div class="direct-chat-msg">
-					<div class="direct-chat-infos clearfix">
-						<span class="direct-chat-name float-left">이주현&nbsp;&nbsp;</span> <span
-							class="direct-chat-timestamp float-left">2:00 pm</span>
-					</div>
-					<!-- /.direct-chat-infos -->
-					<img class="direct-chat-img"
-						src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg"
-						alt="Message User Image">
-					<!-- /.direct-chat-img -->
-					<div class="direct-chat-text">Is this template really for
-						free? That's unbelievable!</div>
-					<!-- /.direct-chat-text -->
-				</div>
+				
 				<!-- /.direct-chat-msg -->
 			</div>
+			
 			<!-- /.direct-chat-messages -->
 		</div>
 		<!-- /.card-body -->
@@ -1370,25 +1341,23 @@ function fileDownload(oName, rName, clubNo) {
 				
                 <input type="text" id="text-message" size="55%"/>
                 
-				<button type="button" id="sendBtn" class="btn btn-info">send</button>
+				<button type="button" id="send-msg-Btn" class="btn btn-info">send</button>
 			</div>
 
-
 		</div>
-
-
-
+		<div id="tt">
+		</div>	
 
 	</div>
-</aside>
+</aside> 
 
 
 <script type="text/javascript">
 
 
 $(document).ready(function() {
-	$(document).on("click", "#sendBtn", function() {
-		console.log("#sendBtn 실행성공");
+	$(document).on("click", "#send-msg-Btn", function() {
+		console.log("#send-msg-Btn 실행성공");
 		sendMessage();
 	});
 	$(document).on("keydown", "#text-message", function(key) {
@@ -1416,19 +1385,43 @@ stompClient.connect({}, function(frame) {
 	console.log("connected stomp over sockjs");
 	console.log(frame);
 	
-	//사용자 확인
-	//lastCheck();
-	
+
 	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
 	stompClient.subscribe('/chat/${channelNo}', function(message) {
 		console.log("receive from subscribe /chat/${channelNo} :", message);
 		let messsageBody = JSON.parse(message.body);
-		let msgInfoHtml ='<div class="direct-chat-infos clearfix">'
-						+= '<span class="direct-chat-name float-left">'+messsageBody.memberId+'</span>'
-						+= '<span class="direct-chat-timestamp float-left">'+messsageBody.time+'</span></div>'
-						+= '<div class="direct-chat-text">'+messageBody.msg+'</div>';
-		                     	   
-		$(".direct-chat-msg").append(msgInfoHtml);
+		console.log("message="+messsageBody.sender);
+		let myMsgInfoHtml = '';
+		let otherMsg = '';
+
+		if(messsageBody.sender == "${memberLoggedIn.memberId}"){
+			alert("1");
+			myMsgInfoHtml +='<div class="direct-chat-msg right">'
+						  + '<div class="direct-chat-infos clearfix">'
+						  + '<span class="direct-chat-name float-right">'+messsageBody.sender+'</span>'
+						  + '<span class="direct-chat-timestamp float-right">'+messsageBody.sendDate+'</span></div>'
+						  + '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="Message User Image">'
+						  + '<div class="direct-chat-text">'+messsageBody.msg+'</div></div>';
+			
+			alert('messsageBody.sendTime');
+						
+			$("#direct-chat-messages").append(myMsgInfoHtml);
+			
+			
+		}
+		else{
+			
+			otherMsg += '<div class="direct-chat-msg">'
+					 + '<div class="direct-chat-infos clearfix">'
+					 + '<span class="direct-chat-name float-left">'+messsageBody.sender+'</span>'
+					 + '<span class="direct-chat-timestamp float-left">'+messsageBody.sendDate+'</span></div>'
+					 + '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="Message User Image">'
+					 + '<div class="direct-chat-text">'+messsageBody.msg+'</div></div>';	
+			
+			
+			$("#direct-chat-messages").append(otherMsg);
+		
+		}
 		
 	});
 });
@@ -1441,8 +1434,9 @@ function sendMessage() {
 			sendDate : new Date().getTime(),
 			type: "MESSAGE"
 		}
+	
 		var a = $("#text-message").val();
-		alert(a);
+
 
 		//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
 		stompClient.send('<c:url value="/chat/${channelNo}" />',{}, JSON.stringify(data));

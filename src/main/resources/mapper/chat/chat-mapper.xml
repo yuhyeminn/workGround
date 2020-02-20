@@ -29,7 +29,7 @@
 	
 	<insert id="insertChatLog">
 		INSERT INTO CHAT (chat_no, channel_no, sender, send_date, msg)
-		VALUES(SEQ_CHATLOG.NEXTVAL, #{channelNo}, #{memberId}, #{sendDate}, #{msg})
+		VALUES(seq_chat_no.nextval, #{channelNo}, #{sender}, #{sendDate}, #{msg})
 	</insert>
 	
 	<select id="selectChannel" resultType="channel">
@@ -38,5 +38,9 @@
 		where channel_no = #{channel_no}
 	</select>
 	
-	<select id="getClubChatList" resultType="chat"></select>
+	<select id="getClubChatList" resultType="chat">
+		select C.*,M.renamed_filename
+		from (select * from chat where channel_no = #{channelNo} order by chat_no asc) C
+		left join member M on M.member_id = C.sender
+	</select>
 </mapper>
