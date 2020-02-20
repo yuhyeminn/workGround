@@ -407,5 +407,30 @@ public class ClubController {
 		
 		return map;
 	}
+	
+	@RequestMapping("/club/cancelClubManager.do")
+	public ModelAndView cancelClubManager(ModelAndView mav, 
+										  @RequestParam(value = "clubNo") int clubNo,
+										  @RequestParam(value = "memberId") String memberId) {
+
+		try {
+			Map param = new HashMap<>();
+			param.put("clubNo", clubNo);
+			param.put("memberId", memberId);
+			int result = clubService.cancelClubManager(param);
+
+			mav.addObject("msg", result > 0 ? "관리자 취소 성공!" : "관리자 취소 실패");
+			mav.addObject("loc", "/club/clubMemberList.do?clubNo="+clubNo);
+			mav.setViewName("common/msg");
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ClubException("관리자 취소 오류!");
+		}
+
+		return mav;
+
+	}
+	
 
 }

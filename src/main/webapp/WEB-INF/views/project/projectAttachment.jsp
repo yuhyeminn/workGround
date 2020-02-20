@@ -5,8 +5,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
 
-<script src="${pageContext.request.contextPath}/resources/plugins/datatables/jquery.dataTables.js"></script>
-<script src="${pageContext.request.contextPath}/resources/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <script>
 $(function(){
 	//데이터 테이블 설정
@@ -31,10 +29,11 @@ function downloadFile(){
 		let btnDown = e.target;
 		let attachNo = btnDown.value;
 		let $tr = $('#'+attachNo);
+		let projectNo = '${project.projectNo}';
 		let oName = $tr.find('.oName').val();
 		let rName = $tr.find('.rName').val();
 		
-		location.href = "${pageContext.request.contextPath}/project/downloadFile.do?oName="+oName+"&rName="+rName;
+		location.href = "${pageContext.request.contextPath}/project/downloadFile.do?projectNo="+projectNo+"&oName="+oName+"&rName="+rName;
 	});
 }
 
@@ -49,6 +48,7 @@ function delFile(){
 		let attachNo = btnRemove.value.split(',')[0];
 		let oName = btnRemove.value.split(',')[1];
 		let rName = btnRemove.value.split(',')[2];
+		let projectNo = '${project.projectNo}';
 		
 		//삭제 모달창에 정보 뿌리기
 		$(delFileName).text(oName);
@@ -57,7 +57,8 @@ function delFile(){
 		let $tr = $('#'+attachNo);
 		let data = {
 				attachNo: attachNo*1,
-				rName: rName
+				rName: rName,
+				projectNo:projectNo
 		};
 		
 		//삭제 클릭
@@ -131,10 +132,9 @@ function tabActive(){
             <table id="tbl-projectAttach" class="table table-hover text-nowrap">
                 <thead>
                     <tr>
-                        <th style="width: 35%">이름</th>
-                        <th style="width: 20%">크기</th>
-                        <th style="width: 20%">공유한 날짜</th>
-                        <th style="width: 25%">공유한 사람</th>
+                        <th style="width: 50%">이름</th>
+                        <th style="width: 30%">공유한 날짜</th>
+                        <th style="width: 20%">공유한 사람</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -151,7 +151,7 @@ function tabActive(){
                              	 <c:if test="${vs.last}">
                              	 	<c:choose>
                              	 		<c:when test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
-			                                 <img src="${pageContext.request.contextPath}/resources/img/project/${a.renamedFilename}" alt="첨부파일 미리보기 이미지">
+			                                 <img src="${pageContext.request.contextPath}/resources/upload/project/${project.projectNo}/${a.renamedFilename}" alt="첨부파일 미리보기 이미지">
                              	 		</c:when>
                              	 		<c:when test="${token!='bmp' && token!='jpg' && token!='jpeg' && token!='gif' && token!='png' && token!='tif' && token!='tiff' && token!='jfif'}">
 			                                 <img src="${pageContext.request.contextPath}/resources/img/project/default-file.png" alt="첨부파일 미리보기 이미지">
@@ -166,7 +166,6 @@ function tabActive(){
                              </div>
                          </a>
                      </td>
-                     <td>${a.attachmentSize} KB</td>
                      <td>${a.attachmentEnrollDate}</td>
                      <td>
                          	${a.attachmentWriterMember.memberName}

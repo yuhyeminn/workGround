@@ -34,8 +34,11 @@
 	                    <div class="addWork-btnWrapper">
 		                    <!-- 업무 설정 -->
 		                    <div class="addWork-btnLeft">
+		                    
+		                    	<c:if test="${project.privateYn == 'N'}">
 		                        <!-- 업무 멤버 배정 -->
 		                        <div class="add-member dropdown">
+		                        	<span class="badge navbar-badge addMem-badge"></span>
 			                        <button type="button" class="nav-link btn-addWorkMember" data-toggle="dropdown"><i class="fas fa-user-plus"></i></button>
 			                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 			                            <c:forEach items="${inMemList}" var="m">
@@ -50,9 +53,11 @@
 							            </c:forEach>
 		                        	</div>
 		                        </div>
-		
+								</c:if>
+								
 		                        <!-- 태그 설정 -->
 		                        <div class="add-tag dropdown">
+		                        	<span class="badge navbar-badge addTag-badge"></span>
 			                        <button type="button" class="nav-link btn-addWorkTag" data-toggle="dropdown"><i class="fas fa-tag"></i></button>
 			                        <div class="dropdown-menu dropdown-menu-right">
 			                            <a href="javascript:void(0)" class="dropdown-item work-tag drop-workTag WT1">
@@ -70,7 +75,6 @@
 		                        <!-- 날짜 설정 -->
 		                        <div class="add-date">
 			                        <button type="button" class="btn-addWorkDate"><i class="far fa-calendar-alt"></i></button>
-			                        <!-- <button type="button" class="btn-cancelDate">2월 12일 - 2월 14일 <i class="fas fa-times"></i></button> -->
 		                        </div>
 		                    </div>
 	
@@ -241,7 +245,7 @@
 	                        <c:if test="${vs.last}">
 	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
 	                   	 		<div class="work-coverImage">
-	                   	 			<img src="${pageContext.request.contextPath}/resources/img/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${project.projectNo}/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
 	                   	 		</div>
 	                   	 		</c:if>
 	                   	 	</c:if>
@@ -383,7 +387,7 @@
 	                        <c:if test="${vs.last}">
 	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
 	                   	 		<div class="work-coverImage">
-	                   	 			<img src="${pageContext.request.contextPath}/resources/img/project/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${project.projectNo}/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
 	                   	 		</div>
 	                   	 		</c:if>
 	                   	 	</c:if>

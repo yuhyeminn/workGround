@@ -45,7 +45,12 @@ public interface ClubDAO {
 
 	List<Club> selectAllStandByClubListByCategory(Map param);
 
+	int cancelClubManager(Map param);
 
+	
+
+	
 
 
 }
+

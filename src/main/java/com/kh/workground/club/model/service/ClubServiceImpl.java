@@ -112,5 +112,9 @@ public class ClubServiceImpl implements ClubService {
 		return clubDAO.selectAllStandByClubListByCategory(param);
 	}
 
+	@Override
+	public int cancelClubManager(Map param) {
+		return clubDAO.cancelClubManager(param);
+	}
 
 }

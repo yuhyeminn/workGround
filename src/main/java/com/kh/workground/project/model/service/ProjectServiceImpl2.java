@@ -58,7 +58,7 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		param.put("projectNo", p.getProjectNo());
 		worklistTitle.add("해야할 일");
 		worklistTitle.add("진행중");
-		worklistTitle.add("완료됨");
+		worklistTitle.add("완료");
 		param.put("worklistTitle", worklistTitle);
 		result = projectDAO.insertDefaultWorkList(param);
 		
@@ -129,7 +129,7 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		
 		Project p = projectDAO.selectProjectOneForSetting(projectNo);
 		if(p==null) {
-			throw new ProjectException("중요 표시된 프로젝트 조회 오류!");
+			throw new ProjectException("프로젝트 조회 오류!");
 		}
 		if(!isIncludeManager) {
 			List<Member> list = p.getProjectMemberList();
@@ -144,7 +144,12 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		if(worklistList==null) {
 			throw new ProjectException("업무리스트 조회 오류!");
 		}
-		
+		//work의 List 추가
+		for(int i=0; i<worklistList.size(); i++) {
+			Worklist wl = worklistList.get(i);
+			List<Work> workList = projectDAO.selectWorkListByWorklistNo(wl.getWorklistNo());
+			wl.setWorkList(workList);
+		}
 		p.setWorklistList(worklistList);
 		return p;
 	}
@@ -441,7 +446,9 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 	}
 
 	@Override
-	public int insertWorkFile(Attachment attach) {
+	public Map<String, Object> insertWorkFile(Attachment attach) {
+		Map<String, Object> result = new HashMap<>();
+		//멤버 아이디, 업무번호로 프로젝트 멤버 테이블 고유번호 가져오기
 		Map<String, String> param = new HashMap<>();
 		param.put("memberId", attach.getAttachmentWriterId());
 		param.put("workNo", Integer.toString(attach.getWorkNo()));
@@ -450,10 +457,53 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		
 		attach.setAttachmentWriterNo(member_no);
 		
-		int result = projectDAO.insertWorkFile(attach);
-		if(result==0) throw new ProjectException("업무 파일 업로드 오류!");
+		//첨부파일 insert
+		int isUpdated = projectDAO.insertWorkFile(attach);
+		if(isUpdated==0) throw new ProjectException("업무 파일 업로드 오류!");
+		result.put("isUpdated", isUpdated>0?true:false);
+		
+		//방금 insert한 첨부파일 객체 가져오기(멤버까지)
+		Attachment attachment = projectDAO.selectAttachmentOne(attach.getAttachmentNo());
+		result.put("attachment", attachment);
 		
 		return result;
+	}
+
+	@Override
+	public List<Work> selectMyWorkList(int projectNo, String memberId) {
+		Map<String, String> param = new HashMap<>();
+		param.put("projectNo", Integer.toString(projectNo));
+		param.put("memberId", memberId);
+		
+		List<Work> list= projectDAO.selectMyWorkList(param);
+		if(list==null) throw new ProjectException("내가 배정된 업무 리스트 오류!");
+		return list;
+	}
+
+	@Override
+	public Map<String, Integer> selectMyActivity(int projectNo, String memberId) {
+		Map<String,Integer> cntMap = new HashMap<>();
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("projectNo", Integer.toString(projectNo));
+		param.put("memberId", memberId);
+		
+		int myChkCnt = projectDAO.selectMyChecklistCnt(param);
+		
+		String type="";
+		type="attachment";
+		param.put("type", type);
+		int myAttachCnt = projectDAO.selectMyAttachCommentCnt(param);
+		
+		type="work_comment";
+		param.put("type", type);
+		int myCommentCnt = projectDAO.selectMyAttachCommentCnt(param);
+		
+		cntMap.put("myChkCnt", myChkCnt);
+		cntMap.put("myAttachCnt", myAttachCnt);
+		cntMap.put("myCommentCnt", myCommentCnt);
+		
+		return cntMap;
 	}
 
 }

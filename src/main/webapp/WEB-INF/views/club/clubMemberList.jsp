@@ -34,7 +34,7 @@
 	font-size: .7rem;
 }
 
-.btn-manager{
+.btn-manager {
 	width: 45px !important;
 	margin: 0 auto;
 	font-size: .7rem;
@@ -134,6 +134,12 @@ function addManager(memberId){
 	
 }
 
+//관리자 취소
+function cancelManager(memberId){
+	var clubNo ='${clubNo}';
+	location.href = "${pageContext.request.contextPath}/club/cancelClubManager.do?clubNo="+clubNo+"&&memberId="+memberId;
+}
+
 //가입승인
 function approveJoin(memberId){
 	var clubNo ='${clubNo}';
@@ -151,31 +157,35 @@ function clubView(clubNo) {
 	class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
 	<!-- Left navbar links -->
 	<!-- SEARCH FORM -->
-	<div style="margin: 20px;">
-		<form id="clubMemberSearchFrm" class="form-inline"
-			action="${pageContext.request.contextPath}/club/searchClubMember.do"
-			method="post" enctype="multipart/form-data">
-			<div class="input-group input-group-sm">
-				<input class="form-control form-control-navbar" type="search"
-					placeholder="멤버 검색하기" aria-label="Search" name="keyword"
-					> <input
-					type="hidden" value="${clubNo }" name="clubNo" />
-				<div class="input-group-append">
-					<button class="btn btn-navbar" type="submit">
-						<i class="fas fa-search"></i>
-					</button>
-				</div>
+	<form id="noticeSearchFrm" class="form-inline"
+		style="margin-left: 20px"
+		action="${pageContext.request.contextPath }/club/searchClubContent.do"
+		method="POST">
+		<div class="input-group input-group-sm">
+			<input class="form-control form-control-navbar" type="search"
+				placeholder="${club.clubName } 검색" aria-label="Search"
+				name="keyword"> <input type="hidden" name="clubNo"
+				value="${club.clubNo }" />
+			<div class="input-group-append">
+				<button class="btn btn-navbar" type="submit">
+					<i class="fas fa-search"></i>
+				</button>
 			</div>
-		</form>
-	</div>
+		</div>
+	</form>
+
 
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
-		<li id="tab-club" class="nav-item"><button type="button" onclick="clubView('${clubNo}');">동호회</button></li>
-		<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+${clubNo}">일정</button></li>
-			<li id="tab-member" class="nav-item">
-			<button type="button" onclick="memberList('${clubNo}');">동호회멤버</button></li>
-		<li id="tab-attachment" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubFileList.do?clubNo='+${clubNo}");">파일</button></li>
+		<li id="tab-club" class="nav-item"><button type="button"
+				onclick="clubView('${clubNo}');">동호회</button></li>
+		<li id="tab-calendar" class="nav-item"><button type="button"
+				onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+${clubNo}">일정</button></li>
+		<li id="tab-member" class="nav-item">
+			<button type="button" onclick="memberList('${clubNo}');">동호회멤버</button>
+		</li>
+		<li id="tab-attachment" class="nav-item"><button type="button"
+				onclick="location.href='${pageContext.request.contextPath}/club/clubFileList.do?clubNo='+${clubNo}");">파일</button></li>
 	</ul>
 
 	<!-- Right navbar links -->
@@ -189,25 +199,27 @@ function clubView(clubNo) {
 		</li>
 
 		<!-- 동호회 멤버 -->
-		<li id="nav-member" class="nav-item dropdown">
-		<a class="nav-link" data-toggle="dropdown" href="#"> <i class="far fa-user"></i> 6
+		<li id="nav-member" class="nav-item dropdown"><a class="nav-link"
+			data-toggle="dropdown" href="#"> <i class="far fa-user"></i> 6
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-			  <c:if test="${not empty memberList }">
-			  <c:forEach items="${memberList }" var="clubMember">
-				<a href="${pageContext.request.contextPath }/member/memberView.do?memberId=${clubMember.empId }" class="dropdown-item"> <!-- Message Start -->
-				  <div class="media">
-				  	<img src="${pageContext.request.contextPath}/resources/img/profile/${clubMember.clubMemberList[0].renamedFileName }"
-				  		 alt="User Avatar" class="img-circle img-profile ico-profile" />
-				  	<div class="media-body">
-				  		<p class="memberName">${clubMember.clubMemberList[0].memberName }</p>
-				  	</div>
-				  </div> <!-- Message End -->
-				</a> 
-			  </c:forEach>
-			  </c:if>
-			</div>
-		</li>
+				<c:if test="${not empty memberList }">
+					<c:forEach items="${memberList }" var="clubMember">
+						<a
+							href="${pageContext.request.contextPath }/member/memberView.do?memberId=${clubMember.empId }"
+							class="dropdown-item"> <!-- Message Start -->
+							<div class="media">
+								<img
+									src="${pageContext.request.contextPath}/resources/img/profile/${clubMember.clubMemberList[0].renamedFileName }"
+									alt="User Avatar" class="img-circle img-profile ico-profile" />
+								<div class="media-body">
+									<p class="memberName">${clubMember.clubMemberList[0].memberName }</p>
+								</div>
+							</div> <!-- Message End -->
+						</a>
+					</c:forEach>
+				</c:if>
+			</div></li>
 
 		<!-- 동호회 설정 -->
 		<li class="nav-item">
@@ -224,10 +236,28 @@ function clubView(clubNo) {
 <div id="member-list" class="content-wrapper">
 
 	<h2>동호회 상세보기</h2>
+
 	<div class="content">
 		<div class="container-fluid">
 			<!-- Main content -->
 			<section class="content">
+
+				<div>
+					<form id="clubMemberSearchFrm" class="form-inline"
+						action="${pageContext.request.contextPath}/club/searchClubMember.do"
+						method="post" enctype="multipart/form-data">
+						<div class="input-group input-group-sm">
+							<input class="form-control form-control-navbar" type="search"
+								placeholder="멤버 검색하기" aria-label="Search" name="keyword">
+							<input type="hidden" value="${clubNo }" name="clubNo" />
+							<div class="input-group-append">
+								<button class="btn btn-navbar" type="submit">
+									<i class="fas fa-search"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
 
 				<div id="member-inner" class="table-responsive p-0">
 
@@ -248,26 +278,23 @@ function clubView(clubNo) {
 						<tbody id="member-body">
 							<c:forEach items="${memberList}" var="m">
 								<tr>
-									<td>
-										<c:if test="${fn:contains(m.clubManagerYN,'Y')}">
-											
+									<td><c:if test="${fn:contains(m.clubManagerYN,'Y')}">
+
 											<c:choose>
-									
-												<c:when test="${club.clubManagerId eq m.clubMemberList[0].memberId}">
-												<button type="button"
-													class="btn btn-block btn-outline-warning btn-xs btn-admin">회장</button>
+
+												<c:when
+													test="${club.clubManagerId eq m.clubMemberList[0].memberId}">
+													<button type="button"
+														class="btn btn-block btn-outline-warning btn-xs btn-admin">회장</button>
 												</c:when>
-												
+
 												<c:otherwise>
-												<button type="button"
-													class="btn btn-block btn-outline-danger btn-xs btn-manager">관리자</button>
+													<button type="button"
+														class="btn btn-block btn-outline-danger btn-xs btn-manager">관리자</button>
 												</c:otherwise>
 											</c:choose>
-										
-										</c:if>
-										
-										
-									</td>
+
+										</c:if></td>
 									<td onclick="goMemberProfile('${m.empId}');"><img
 										src="${pageContext.request.contextPath }/resources/img/profile/${m.clubMemberList[0].renamedFileName}"
 										alt="User Avatar" class="img-circle img-profile ico-profile">
@@ -300,6 +327,25 @@ function clubView(clubNo) {
 													<a href="#" class="dropdown-item"
 														onclick="addManager('${m.empId}')"><i
 														class="fas fa-star"></i>관리자변경</a>
+												</c:if>
+
+												<c:if
+													test="${club.clubManagerId eq memberLoggedIn.memberId }">
+
+													<c:if test="${fn:contains(m.clubManagerYN,'Y')}">
+														<c:choose>
+															<c:when
+																test="${club.clubManagerId eq m.clubMemberList[0].memberId }">
+
+															</c:when>
+															<c:otherwise>
+																<a href="#" class="dropdown-item"
+																	onclick="cancelManager('${m.empId}')"><i
+																	class="far fa-trash-alt"></i>관리자취소</a>
+															</c:otherwise>
+														</c:choose>
+
+													</c:if>
 												</c:if>
 											</div>
 										</div></td>

@@ -13,6 +13,7 @@ import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -99,7 +100,7 @@ public class MemberController {
 		
 		return mav;
 	}
-
+	
 	/*@PostMapping("/member/memberLogin.do")
 	public ModelAndView memberLogin(@RequestParam String memberId, @RequestParam String password, ModelAndView mav,
 			HttpSession session, HttpServletRequest request, HttpServletResponse response) {

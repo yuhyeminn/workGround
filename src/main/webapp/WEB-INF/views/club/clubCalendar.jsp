@@ -154,7 +154,7 @@ $(function () {
 									 +'<input type="hidden" name="clubPlanNo" value='+data.clubPlan.clubPlanNo+' />'
 									 +'<input type="hidden" name="memberId" value='+'${memberLoggedIn.memberId}'+ ' />'
 									 +'<input type="hidden" name="clubNo" value='+data.clubPlan.clubNo+' />'
-									 +'<button type="submit" class="btn btn-info float-right">\<i class="fas fa-plus"></i>\</button>\</form>';
+									 +'<button type="submit" class="btn btn-info">참석</button>\</form>';
 					
 					
 					if('${memberLoggedIn}' != null && data.clubPlan.memberId=='${memberLoggedIn.memberId}'){

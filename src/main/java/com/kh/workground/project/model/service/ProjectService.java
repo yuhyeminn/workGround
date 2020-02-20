@@ -53,4 +53,6 @@ public interface ProjectService {
 
 	List<Member> selectProjectMemberListByQuitYn(int projectNo);
 
+	int deleteProject(int projectNo);
+
 }

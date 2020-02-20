@@ -91,42 +91,45 @@ public class SearchController {
 			//공지인경우
 			if("total".equals(type)) {
 				List<Notice> list = searchService.selectTotalNoticeListByKeyword(cPage, numPerPage, keyword);	
-				int totalContents = searchService.selectTotalNoticeTotalContents();
+				int totalContents = searchService.selectTotalNoticeTotalContents(keyword);
 				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//내 부서 게시글
 			if("dept".equals(type)) {
 				List<Notice> list = searchService.selectDeptNoticeListByPageBar(cPage, numPerPage, param);
-				int totalContents = searchService.selectDeptNoticeTotalContents();
+				int totalContents = searchService.selectDeptNoticeTotalContents(keyword);
 				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//커뮤니티
 			if("commu".equals(type)) {
 				List<Community> list = searchService.selectCommuListByPageBar(cPage, numPerPage, keyword);
-				int totalContents = searchService.selectCommuListTotalContents();
+				int totalContents = searchService.selectCommuListTotalContents(keyword);
 				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//내 부서 프로젝트
 			if("project".equals(type)) {
 				List<Project> list = searchService.selectProjectListByPageBar(cPage, numPerPage, param);
-				int totalContents = searchService.selectProjectTotalContents();
+				int totalContents = searchService.selectProjectTotalContents(keyword);
 				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//동호회
 			if("club".equals(type)) {
 				List<Map<String, Object>> list = searchService.selectClubListByPageBar(cPage, numPerPage, keyword);
-				int totalContents = searchService.selectClubTotalContents();
+				int totalContents = searchService.selectClubTotalContents(keyword);
 				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//멤버
 			if("member".equals(type)) {
 				List<Member> list = searchService.selectMemberListByPageBar(cPage, numPerPage, keyword);
-				int totalContents = searchService.selectMemberTotalContents();
+				int totalContents = searchService.selectMemberTotalContents(keyword);
+				
+				logger.debug("///////////////////////////////");
+				logger.debug("totalContents={}",totalContents);
 				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
