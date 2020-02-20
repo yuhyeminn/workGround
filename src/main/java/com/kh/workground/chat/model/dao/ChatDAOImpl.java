@@ -67,5 +67,10 @@ public class ChatDAOImpl implements ChatDAO {
 	public int insertChatLog(Chat fromMessage) {
 		return sqlSession.insert("chat.insertChatLog", fromMessage);
 	}
+
+	@Override
+	public List<Chat> selectChatList() {
+		return sqlSession.selectList("chat.selectChatList");
+	}
 	
 }

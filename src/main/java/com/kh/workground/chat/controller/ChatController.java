@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -54,7 +55,11 @@ public class ChatController {
 			channelList = new ArrayList<>();
 		}
 		
-		
+		//2. chatList가져오기
+//		List<Chat> chatList = chatService.selectChatList();
+//		logger.debug("chatList={}", chatList);
+//		
+//		model.addAttribute(chatList);
 		model.addAttribute(channelList);
 	}
 	
@@ -137,7 +142,7 @@ public class ChatController {
 		channelNoList = chatService.findChannelByMemberId(param);
 		logger.debug("channelNoList={}", channelNoList);
 		
-		if(channelNoList.size() < 2) {
+		if(channelNoList.isEmpty()) {
 			channelNo = getRandomChannelNo(10);
 //			logger.debug("channelNo={}", channelNo);
 			
@@ -171,13 +176,14 @@ public class ChatController {
 	@ResponseBody
 	public Map<String, Object> loadChatList (@RequestParam("channelNo") String channelNo, 
 											 @SessionAttribute("memberLoggedIn") Member memberLoggedIn, 
-											 HttpSession session) {
+											 HttpSession session, 
+											 HttpServletRequest request, 
+											 ModelAndView mav) {
 		logger.debug("channelNo={}", channelNo);
 		logger.debug("memberLoggedIn={}", memberLoggedIn);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("channelNo", channelNo);
-		session.setAttribute("channelNo", channelNo);
 		
 		List<ChannelMember> channelMemberList = chatService.selectChannelMemberList(channelNo);
 		map.put("channelMemberList", channelMemberList);
@@ -194,6 +200,16 @@ public class ChatController {
 //		logger.debug("chatList={}", chatList);
 		map.put("chatList", chatList);
 		
+//		logger.debug("map={}", map);
+//		session.removeAttribute("channelNo");
+		session.setAttribute("channelNo", channelNo);
+//		request.removeAttribute("channelNo");
+//		request.setAttribute("channelNo", channelNo);
+//		logger.debug("channelNo={}", channelNo);
+		
+//		ModelAndView mav = new ModelAndView();
+//		mav.addObject("channelNo", channelNo);
+
 		return map;
 	}
 	
@@ -208,6 +224,8 @@ public class ChatController {
 		
 		chatService.insertChatLog(fromMessage);
 		
+		logger.debug("fromMessage={}", fromMessage);
+
 		return fromMessage;
 	}
 	

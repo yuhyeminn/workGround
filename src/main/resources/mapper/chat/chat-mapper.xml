@@ -26,7 +26,8 @@
 		select C.channel_no  
 		from channel C 
 			left join channel_member M on C.channel_no = M.channel_no 
-		where C.channel_type = 'CH3' and (M.member_id = #{chatMember} or M.member_id = #{memberId})
+		where C.channel_type = 'CH3'and (M.member_id = #{chatMember} or M.member_id = #{memberId})
+			and C.channel_title like '%'||#{chatMember}||'%' and C.channel_title like '%'||#{memberId}||'%'
 	</select>
 	
 	<insert id="insertChannel">
@@ -39,8 +40,15 @@
 	</insert>
 	
 	<select id="findChatRoomByChannelNo" resultType="chat">
-		select * from chat 
+		select C.*, M.member_name, M.renamed_filename  
+		from chat C left join member M on C.sender = M.member_id 
 		where channel_no = #{channelNo}
+		order by send_date
+	</select>
+	
+	<select id="selectChatList" resultType="chat">
+		select C.*, M.member_name, M.renamed_filename  
+		from chat C left join member M on C.sender = M.member_id 
 		order by send_date
 	</select>
 	

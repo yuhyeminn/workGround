@@ -96,7 +96,7 @@ function sidebarActive(){
                                             <td>
                                                 <div class="col-9" style="width: 100%;"> 
                                                     <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
-                                                    <h6 class="h6"><c:if test="${empty channelTitle }">${channel.memberName }</c:if><c:if test="${not empty channelTitle }">${channel.channelTitle }</c:if> </h6>
+                                                    <h6 class="h6">${channel.memberName }</h6>
                                                 </div> 
                                             </td>
                                         </tr>
@@ -336,6 +336,7 @@ function sidebarActive(){
 $(document).ready(function() {
 	$(document).on("click", "#sendBtn", function() {
 		console.log("#sendBtn 실행성공");
+		console.log($(this).val());
 		sendMessage();
 	});
 	$(document).on("keydown", "#message", function(key) {
@@ -405,6 +406,12 @@ function plusMember(memberId) {
 			
 			$("#div-plusMember").append(html);
 			
+			if($("#channelTitle").val().trim().length==0) {
+				$("#channelTitle").val(data.member.memberId+", ${memberLoggedIn.memberId}");
+			}
+			else {
+				$("#channelTitle").val($("#channelTitle").val()+", "+data.member.memberName);
+			}
 		}, 
 		error: (x, s, e)=> {
 			console.log("ajax실행오류!!", x, s, e);
@@ -413,8 +420,15 @@ function plusMember(memberId) {
 	
 }
 
-function loadChatList(channelNo, channelTitle, renamedFileName) {
-	console.log(channelTitle);
+function loadChatList(channelNo, memberName, renamedFileName) {
+	<c:set var="channelNo" value="" />
+	<c:forEach items="${channelList}" var="channel" varStatus="vs">
+		if("${channel.channelNo}" == channelNo) {
+			<c:set var="index" value="${vs.index}" />
+			//console.log("${channelNo}");
+		}
+	</c:forEach>
+	console.log("1", memberName);
 	$.ajax({
 		url: '${pageContext.request.contextPath}/chat/loadChatList.do', 
 		data: {channelNo : channelNo}, 
@@ -423,38 +437,40 @@ function loadChatList(channelNo, channelTitle, renamedFileName) {
 		success: data=> {
 			console.log(data.chatList);
 			console.log(data.chatMemberId);
+			console.log(data.channelNo);
 			
 			$("#chatArea").children().remove();
 			$("#chat_userName").children().remove();
-			$("#chat_userName").append('<img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'" alt="user image"><span class="username"><h3>'+channelTitle+'</h3></span>');
+			$("#chat_userName").append('<img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'" alt="user image"><span class="username"><h3>'+memberName+'</h3></span>');
 			$("#div_textarea").children().remove();
-			console.log("1");
+			//console.log("1");
 			if(data.chatList != null) {
 				let html = '';
 				$.each(data.chatList, (idx, list)=> {
 					if(list.sender != data.chatMemberId) {
 						html += '<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix">';
-						html += '<span class="direct-chat-name float-right">'+list.sender+'</span>';
+						html += '<span class="direct-chat-name float-right">'+list.memberName+'</span>';
 						html += '<span class="direct-chat-timestamp float-right">'+list.sendDate+' &nbsp;&nbsp;</span></div>';
-						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'">';
+						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">';
 						html += '<div class="direct-chat-text">'+list.msg+'</div>';
 						html += '</div>';
 					}
 					else {
 						html += '<div class="direct-chat-msg"><div class="direct-chat-infos clearfix">';
-						html += '<span class="direct-chat-name float-left">'+list.sender+'</span>';
+						html += '<span class="direct-chat-name float-left">'+list.memberName+'</span>';
 						html += '<span class="direct-chat-timestamp float-left"> &nbsp;&nbsp;'+list.sendDate+'</span></div>';
-						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'">';
+						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">';
 						html += '<div class="direct-chat-text">'+list.msg+'</div>';
 						html += '</div>';
 					}
 				});
-				console.log("2");
+				//console.log("2");
 				$("#chatArea").append(html);
-				console.log("3");
+				//console.log("3");
 			}
+			console.log(data.channelNo);
 			//let textarea = '<div class="mb-3"><textarea class="textarea" placeholder="Message" id="message" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea></div>';
-			let textarea = '<input type="text" id="message" class="form-control" placeholder="Message to '+channelTitle+'"><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>';
+			let textarea = '<input type="text" id="message" class="form-control" placeholder="Message to '+memberName+'"><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>';
 			//$("#div_textarea").append(textarea);
 			$("#div_textarea").append(textarea);
 		}, 
@@ -462,8 +478,8 @@ function loadChatList(channelNo, channelTitle, renamedFileName) {
 			console.log("ajax실행오류!!", x, s, e);
 		}
 	});
-}
 
+}
 //웹소켓 선언
 //1.최초 웹소켓 생성 url: /chat
 let socket = new SockJS('<c:url value="/stomp" />');
@@ -473,39 +489,51 @@ let stompClient = Stomp.over(socket);
 stompClient.connect({}, function(frame) {
 	console.log("connected stomp over sockjs");
 	console.log(frame);
-	
 	//사용자 확인
 	//lastCheck();
 	
 	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
-	stompClient.subscribe('/chat/${channelNo}', function(message) {
-		console.log("receive from subscribe /chat/${channelNo} : ", message);
+	stompClient.subscribe('/chat/${channelList[index].channelNo}', function(message) {
+		console.log("receive from subscribe /chat/channelList[index].channelNo : ", message);
 		let messageBody = JSON.parse(message.body);
-		let html = '<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix">';
-		html += '<span class="direct-chat-name float-right">'+messageBody.sender+'</span>';
-		html += '<span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span></div>';
-		html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">';
-		html += '<div class="direct-chat-text">'+messageBody.msg+'</div>';
-		html += '</div>';
+		//console.log(messageBody);
+		
+		let html = '';
+		if(messageBody.sender == '${memberLoggedIn.memberId}') {
+			html += '<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix">';
+			html += '<span class="direct-chat-name float-right">'+messageBody.memberName+'</span>';
+			html += '<span class="direct-chat-timestamp float-right">'+messageBody.sendDate+' &nbsp;&nbsp;</span></div>';
+			html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messageBody.renamedFileName+'">';
+			html += '<div class="direct-chat-text">'+messageBody.msg+'</div>';
+			html += '</div>';
+		}
+		else {
+			html += '<div class="direct-chat-msg"><div class="direct-chat-infos clearfix">';
+			html += '<span class="direct-chat-name float-left">'+messageBody.memberName+'</span>';
+			html += '<span class="direct-chat-timestamp float-left"> &nbsp;&nbsp;'+messageBody.sendDate+'</span></div>';
+			html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messageBody.renamedFileName+'">';
+			html += '<div class="direct-chat-text">'+messageBody.msg+'</div>';
+			html += '</div>';
+		}
 		//console.log(html);
 		$("#chatArea").append(html);
 	});
 });
 
 function sendMessage() {
-	//console.log("실행되나${channelNo}");
 	let data = {
-		channelNo : "${channelNo }", 
+		channelNo : "${channelList[index].channelNo}", 
 		sender : "${memberLoggedIn.memberId }", 
 		msg: $("#message").val(), 
-		time : new Date().getTime(), 
-		type : "MESSAGE"
+		sendDate : new Date().getTime(), 
+		type : "MESSAGE", 
+		memberName : "${memberLoggedIn.memberName}", 
+		renamedFileName : "${memberLoggedIn.renamedFileName}"
 	}
 	console.log(data);
 	
 	//채팅메세지: 1대1채팅을 위해 고유한 channelNo을 서버측에서 발급해 관리한다.
-	stompClient.send('<c:url value="/chat/${channelNo }" />', {}, JSON.stringify(data));
-	console.log("실행되나");
+	stompClient.send('<c:url value="/chat/channelList[index].channelNo" />', {}, JSON.stringify(data));
 	//message창 초기화
 	$('#message').val('');
 }
