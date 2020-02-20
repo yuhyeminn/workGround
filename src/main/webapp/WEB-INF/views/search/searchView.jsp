@@ -50,7 +50,6 @@ padding: 1rem 1.5rem .7rem;
 .card-header:hover{background: #fff; border-radius: .25rem; cursor: default;}
 .card-header h3{display:inline-block; font-size: .95rem;}
 .card-body{padding-top: 1rem; border-bottom: 1px solid rgba(0,0,0,.125); cursor: pointer;}
-/* .card-body:last-of-type{border-bottom: 0;} */
 .card-body:hover{background: #f3f4f5;}
 .card-body:last-of-type:hover{border-radius: .25rem;}
 .deadline{float: right; padding-right: 1rem;}
@@ -63,15 +62,16 @@ padding: 1rem 1.5rem .7rem;
 
 #project-wrapper h5, #community-wrapper h5, #dept-wrapper h5{display: inline-block;}
 .card-status{float: right; margin-top: 0; padding-right: .5rem; padding-top: .2rem; color: #8d919a;}
-.card-status .date{float: none; width: 6rem; margin-right: 12.5rem; font-size: .8rem;}
+.card-status>span{position: unset;}
+.card-status .date{float: none; width: 6rem; margin-right: 13.5rem; font-size: .8rem;}
 .card-status .writer{color: #464c59;}
-#project-wrapper .card-status .date{width: 8rem; margin-right: 8rem;}
+#project-wrapper .date{width: 8rem; margin-left: 29rem;}
 .date-color{color: #17a2b8;}
 .date-color.over{color: #dc3545;}
 .btn-clubCate{margin-left: .5rem; margin-top: -3px;}
 
 #member-wrapper .card-body{padding: 1rem 1.5rem;}
-.direct-chat-img{width: 30px; height: 30px;}
+.direct-chat-img{width: 30px; height: 30px; object-fit: cover;}
 .email{float: right; padding: .2rem .3rem 0 0; color: #464c59;}
 .dept{margin-left: 27rem;}
 
@@ -120,14 +120,16 @@ function sidebarActive(){
         <div class="col-md-10" >
         	 <div class="card-wrapper">
 	             <div class="card-header">
-	                 <i class="far fa-file-word"></i>&nbsp;&nbsp;
-	                 <c:if test="${type == 'total'}">
-	                  	공지 
-	                 </c:if>
-	                 <c:if test="${type == 'dept'}">
-	                  	${memberLoggedIn.deptTitle} 게시글
-	                 </c:if>
-	                 <span class="header-count">(${fn:length(list)})</span>
+	             	 <h3>
+		                 <i class="far fa-file-word"></i>&nbsp;&nbsp;
+		                 <c:if test="${type == 'total'}">
+		                  	공지 
+		                 </c:if>
+		                 <c:if test="${type == 'dept'}">
+		                  	${memberLoggedIn.deptTitle} 게시글
+		                 </c:if>
+		                 <span class="header-count">(${totalContents})</span>
+	                 </h3>
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${list}" var="n">
 	             <div class="card-body"> 
@@ -144,6 +146,7 @@ function sidebarActive(){
 	             </c:forEach>
              </div>
         </div>
+        ${pageBar} 
         </c:if>
         
         <c:if test="${type=='commu'}">
@@ -151,7 +154,7 @@ function sidebarActive(){
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${fn:length(list)})</span></h3>
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${totalContents})</span></h3>
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${list}" var="c">
 	             <div class="card-body">
@@ -176,7 +179,7 @@ function sidebarActive(){
         <div class="col-md-10">
             <div id="project-wrapper" class="card-wrapper">
                 <div class="card-header">
-                    <h3><i class="nav-icon far fa-calendar-check"></i>&nbsp;&nbsp;프로젝트 <span class="header-count">(${fn:length(list)})</span></h3>
+                    <h3><i class="nav-icon far fa-calendar-check"></i>&nbsp;&nbsp;프로젝트 <span class="header-count">(${totalContents})</span></h3>
                 </div><!-- /.card-header -->
                 
                 <c:forEach items="${list}" var="p">
@@ -244,7 +247,7 @@ function sidebarActive(){
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${fn:length(list)})</span></h3>
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${totalContents})</span></h3>
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${clubList}" var="map" begin="0" end="4">
 	             <div class="card-body">
@@ -270,7 +273,7 @@ function sidebarActive(){
         <div class="col-md-10">
             <div id="member-wrapper" class="card-wrapper">
                 <div class="card-header">
-                    <h3><i class="fas fa-users"></i>&nbsp;&nbsp;멤버 <span class="header-count">(${fn:length(list)})</span></h3>
+                    <h3><i class="fas fa-users"></i>&nbsp;&nbsp;멤버 <span class="header-count">(${totalContents})</span></h3>
                 </div><!-- /.card-header -->
                 <c:forEach items="${list}" var="m">
                 <a href="${pageContext.request.contextPath}/member/memberView.do?memberId=${m.memberId}">

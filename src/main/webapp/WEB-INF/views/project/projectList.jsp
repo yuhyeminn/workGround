@@ -20,6 +20,7 @@
 $(function(){
 	sidebarActive(); //사이드바 활성화
 	addMember(); //프로젝트 팀원 추가 - multiselect.js
+	delProject(); //프로젝트 삭제 
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -105,7 +106,26 @@ function sortByStatus(statusCodeElem){
 	})
 }
 
+//프로젝트 삭제
+function delProject(){
+	let btnRemoveP = document.querySelector('#btn-removeProject');
+	$(document).on('click', '.btn-del-project', (e)=>{
+		e.preventDefault();
+		
+		let val = e.target.parentNode.value;
+		let projectNo = val.split(',')[0];
+		let title = val.split(',')[1];
+		
+		$('.modal-del-target').text(title);
+		
+		btnRemoveP.addEventListener('click', ()=>{
+			location.href = '${pageContext.request.contextPath}/project/deleteProject.do?projectNo='+projectNo;
+		});
+	});
+}
+
 </script>
+
 
 <!-- Navbar Project -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
@@ -166,15 +186,15 @@ function sortByStatus(statusCodeElem){
             
             <c:forEach items="${listByDept}" var="p">
 	            <div class="col-12 col-sm-6 col-md-3">
-	                <div class="card card-hover">
 	                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
+	                <div class="card card-hover">
 	                    <div class="card-body">
 	                    <div class="card-title">
 	                        <h5>${p.projectTitle}</h5>
 	                    </div>
 	                    </div>
-	                </a>
 	                </div><!-- /.card -->
+	                </a>
 	            </div>
 	        </c:forEach> 
 	        
@@ -190,8 +210,8 @@ function sortByStatus(statusCodeElem){
             
             <c:forEach items="${listByImportant}" var="p">
             <div class="col-12 col-sm-6 col-md-3">
+                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
                 <div class="card card-hover">
-                    <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
                     <div class="card-body star-body">
                         <!-- 타이틀 -->
                         <div class="card-title">
@@ -200,15 +220,38 @@ function sortByStatus(statusCodeElem){
                         <!-- 중요표시 -->
                         <div class="card-star text-right">
                         	<i class="fas fa-star"></i>
+                        	<c:if test="${memberLoggedIn.memberId == p.projectWriter}">
+                        	<span class="line"></span>
+                        	<button type="button" class="btn-del-project" value="${p.projectNo},${p.projectTitle}" data-toggle="modal" data-target="#modal-project-remove"><i class="fas fa-times del-project"></i></button>
+                        	</c:if>
                         </div>
                         <!-- 프로젝트 상태 / 마감일 -->
                         <div class="card-status">
                         	<span class="btn btn-block btn-sm bg-${p.projectStatusColor}">${p.projectStatusTitle}</span>
 	                        <span class="end-date">
-	                        	<c:if test="${p.projectEndDate!=null}">
-	                        	<i class="far fa-calendar-alt"></i> 
+	                        	<c:set var="now" value="<%= new Date() %>"/>
+		                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
+		                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
+		                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
+		                    	<fmt:parseDate var="enddate" value="${p.projectEndDate}" pattern="yyyy-MM-dd"/>
+		                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
+		                    	
+	                        	<!-- 실제완료일이 있는 경우  -->
+	                        	<c:if test="${p.projectRealEndDate!=null}">
+	                        	<span class="p-completed"><fmt:formatDate value="${p.projectRealEndDate}" type="date" pattern="MM월 dd일"/>에 완료</span>
 	                        	</c:if>
-	                        	${p.projectEndDate}
+	                        	<!-- 실제완료일 없고 마감일만 있는 경우 -->
+	                        	<c:if test="${p.projectRealEndDate==null && p.projectEndDate!=null}">
+	                        		<!-- 마감일 안 지난 경우 -->
+	                        		<c:if test="${today_D <= enddate_D}">
+		                        	<i class="far fa-calendar-alt"></i> 
+		                        	${p.projectEndDate}
+	                        		</c:if>
+	                        		<c:if test="${today_D > enddate_D}">
+		                        	<span class="p-over">마감일 ${today_D - enddate_D}일 지남</span>
+	                        		</c:if>
+	                        		<!-- 마감일 지난 경우 -->
+	                        	</c:if>
 	                        </span>
                         </div>
                         <div class="progress-group card-progress">
@@ -219,8 +262,8 @@ function sortByStatus(statusCodeElem){
 	                        </div>
                         </div>
                     </div>
-                    </a>
                 </div><!-- /.card -->
+                </a>
             </div>
             </c:forEach>
             
@@ -236,8 +279,8 @@ function sortByStatus(statusCodeElem){
             
             <!-- 내 업무 -->
             <div class="col-12 col-sm-6 col-md-3">
+                <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${listByInclude[0].projectNo}">
                 <div class="card card-hover mywork">
-                    <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${listByInclude[0].projectNo}">
                     <div class="card-body">
                         <!-- 프로필 사진 -->
                         <img src="${pageContext.request.contextPath}/resources/img/profile/${memberLoggedIn.renamedFileName}" alt="User Avatar" class="img-circle img-profile">
@@ -252,15 +295,15 @@ function sortByStatus(statusCodeElem){
 	                        </div>
                         </div>
                     </div>
-                    </a>
                 </div><!-- /.card -->
+                </a>
             </div>
             
             <!-- 프로젝트 -->
 			<c:forEach items="${listByInclude}" begin="1" var="p">
             <div class="col-12 col-sm-6 col-md-3">
-                <div class="card card-hover">
                 <a href="${pageContext.request.contextPath}/project/projectView.do?projectNo=${p.projectNo}">
+                <div class="card card-hover">
                 <c:if test="${p.projectStarYn=='Y'}">
                     <div class="card-body star-body">
                 </c:if>
@@ -273,23 +316,57 @@ function sortByStatus(statusCodeElem){
                     </div>
 
                     <!-- 중요표시 -->
-                    <c:if test="${p.projectStarYn=='Y'}">
                     <div class="card-star text-right">
+	                    <c:if test="${p.projectStarYn=='Y'}">
                     	<i class="fas fa-star"></i>
+	                    </c:if>
+	                    
+	                    <c:if test="${memberLoggedIn.memberId == p.projectWriter}">
+	                    	<c:if test="${p.projectStarYn=='Y'}">
+	                    	<span class="line"></span>
+                        	<button type="button" class="btn-del-project" value="${p.projectNo},${p.projectTitle}" data-toggle="modal" data-target="#modal-project-remove"><i class="fas fa-times del-project"></i></button>
+	                    	</c:if>
+	                    	<c:if test="${p.projectStarYn=='N'}">
+                        	<button type="button" class="btn-del-project" value="${p.projectNo},${p.projectTitle}" data-toggle="modal" data-target="#modal-project-remove"><i class="fas fa-times del-project no-star"></i></button>
+	                    	</c:if>
+                        </c:if>
                     </div>
-                    </c:if>
 
                     <!-- 프로젝트 상태 / 마감일 -->
                     <div class="card-status">
                         <span class="btn btn-block btn-sm bg-${p.projectStatusColor}">${p.projectStatusTitle}</span>
                         <span class="end-date">
-                        	<c:if test="${p.projectEndDate!=null}">
-                        	<i class="far fa-calendar-alt"></i> 
+                        	<c:set var="now" value="<%= new Date() %>"/>
+	                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	<fmt:parseDate var="enddate" value="${p.projectEndDate}" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	
+                        	<!-- 실제완료일이 있는 경우  -->
+                        	<c:if test="${p.projectRealEndDate!=null}">
+                        	<span class="p-completed"><fmt:formatDate value="${p.projectRealEndDate}" type="date" pattern="MM월 dd일"/>에 완료</span>
                         	</c:if>
-                        	${p.projectEndDate}
-                        	</span>
+                        	<!-- 실제완료일 없고 마감일만 있는 경우 -->
+                        	<c:if test="${p.projectRealEndDate==null && p.projectEndDate!=null}">
+                        		<!-- 마감일 안 지난 경우 -->
+                        		<c:if test="${today_D <= enddate_D}">
+	                        	<i class="far fa-calendar-alt"></i> 
+	                        	${p.projectEndDate}
+                        		</c:if>
+                        		<c:if test="${today_D > enddate_D}">
+	                        	<span class="p-over">마감일 ${today_D - enddate_D}일 지남</span>
+                        		</c:if>
+                        		<!-- 마감일 지난 경우 -->
+                        	</c:if>
+                        </span>
                     </div>
+                    <c:if test="${p.projectStarYn=='N'}">
+                    <div class="progress-group card-progress star-n">
+                    </c:if>
+                    <c:if test="${p.projectStarYn=='Y'}">
                     <div class="progress-group card-progress">
+                    </c:if>
                         <span class="progress-title"><span class="percent">${p.completePercent}%</span> 완료</span>
                         <span class="progress-title float-right"><span>${p.totalProjectCompletedWorkCnt}</span>/<span>${p.totalProjectWorkCnt}</span> 개 업무</span>
                         <div class="progress progress-sm">
@@ -297,8 +374,8 @@ function sortByStatus(statusCodeElem){
                         </div>
                     </div>
                     </div><!-- /.card-body -->
-                </a>
                 </div><!-- /.card -->
+                </a>
             </div>
             </c:forEach> 
             
@@ -359,7 +436,30 @@ function sortByStatus(statusCodeElem){
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-</div>		
+</div>	
+
+<!-- 프로젝트 삭제 모달 -->
+<div class="modal fade" id="modal-project-remove">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title"><span class="modal-del-target"></span> 삭제</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            <p>정말 삭제하시겠습니까? 프로젝트 [<span class="modal-del-target"></span>]는 영구 삭제됩니다.</p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">아니오, <span class="modal-del-target"></span>를 유지합니다.</button>
+            <button type="button" id="btn-removeProject" class="btn btn-danger">네</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>	
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
 <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

@@ -62,6 +62,10 @@ public interface ProjectService2 {
 
 	int deleteWorkComment(int commentNo);
 
-	int insertWorkFile(Attachment attach);
+	Map<String, Object> insertWorkFile(Attachment attach);
+
+	List<Work> selectMyWorkList(int projectNo, String memberId);
+
+	Map<String, Integer> selectMyActivity(int projectNo, String memberId);
 
 }

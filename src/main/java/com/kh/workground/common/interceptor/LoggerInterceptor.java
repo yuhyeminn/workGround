@@ -8,12 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-/**
- * preHandle: DispatcherServlet이 controlle handler 호출 전.
- * postHandle: handler에서 DispatcherServlet으로 리턴되기 전(ModelAndView객체 접근 가능) 
- * afterCompletion: view단에서 최종결과 생성 완료 후에 실행됨.
- *
- */
 public class LoggerInterceptor extends HandlerInterceptorAdapter {
 	
 	final static Logger logger = LoggerFactory.getLogger(LoggerInterceptor.class);

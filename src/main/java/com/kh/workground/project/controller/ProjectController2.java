@@ -33,6 +33,7 @@ import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
 import com.kh.workground.project.model.vo.WorkComment;
+import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
 public class ProjectController2 {
@@ -642,9 +643,10 @@ public class ProjectController2 {
 	@RequestMapping("/project/uploadWorkFile.do")
 	@ResponseBody
 	public Map<String, Object> uploadWorkFile(MultipartHttpServletRequest request){
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> result;
 		try {
-			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/project");
+			String projectNo = request.getParameter("projectNo");
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/project/"+projectNo);
 			MultipartFile f = request.getFile("workFile");
 			Attachment attach = new Attachment();
 			
@@ -680,13 +682,67 @@ public class ProjectController2 {
 			//MultipartFile 객체 파일 업로드 처리 끝 /////////////
 			
 			//2. 업무로직
-			int result = projectService.insertWorkFile(attach);
-			
+			result = projectService.insertWorkFile(attach);
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("업무 파일 업로드 오류!");
 		}
-		return map;
+		return result;
+	}
+	
+	@RequestMapping("/project/resetWorkOne.do")
+	@ResponseBody
+	public ModelAndView resetWorkOne(ModelAndView mav,@RequestParam int workNo,@RequestParam String projectNo, @RequestParam String worklistTitle) {
+		try {
+			
+			//work객체 가져오기
+			Work work = projectService.selectOneWorkForSetting(workNo);
+			
+			mav.addObject("w", work);
+			mav.addObject("worklistTitle",worklistTitle);
+			mav.addObject("projectNo",projectNo);
+			mav.setViewName("/project/ajaxWorkOne");
+			
+		}catch(Exception e){
+			
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 속성 조회 오류!");
+			
+		}
+		return mav;
+	}
+	
+	@RequestMapping("/project/projectAnalysis.do")
+	public ModelAndView projectAnalysis(ModelAndView mav, HttpServletRequest request, HttpSession session) {
+		try {
+			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+			
+			int projectNo = Integer.parseInt(request.getParameter("projectNo"));
+			boolean isIncludeManager = false;
+			
+			//프로젝트 개요를 위한 프로젝트 객체
+			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+			
+			//내가 배정받은 업무 리스트
+			List<Work> myWorkList = projectService.selectMyWorkList(projectNo, memberLoggedIn.getMemberId());
+			
+			//내 활동 이력
+			Map<String, Integer> cntMap = projectService.selectMyActivity(projectNo, memberLoggedIn.getMemberId());
+			
+			mav.addObject("project",p);
+			mav.addObject("myWorkList",myWorkList);
+			mav.addObject("myActivityCnt",cntMap);
+			
+			mav.setViewName("/project/projectAnalysis");
+			
+		}catch(Exception e){
+			
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 속성 조회 오류!");
+			
+		}
+		
+		return mav;
 	}
 }

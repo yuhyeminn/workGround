@@ -139,7 +139,7 @@ create table worklist(
     project_no number not null,
     worklist_title varchar2(100) not null,
     constraint pk_worklist_no primary key(worklist_no),
-    constraint fk_worklist_project_no foreign key(project_no) references project(project_no)
+    constraint fk_worklist_project_no foreign key(project_no) references project(project_no) on delete cascade
 );
 
 --------------------------------------------------
@@ -213,7 +213,7 @@ create table checklist(
     checklist_endDate date, --완료일
     complete_yn char(1) default 'N' not null,
     constraint pk_checklist primary key(checklist_no),
-    constraint fk_checklist_work_no foreign key(work_no) references work(work_no),
+    constraint fk_checklist_work_no foreign key(work_no) references work(work_no) on delete cascade,
     constraint fk_checklist_charged_mem_no foreign key(checklist_charged_members_no) references work_charged_members(work_charged_members_no) on delete set null,
     constraint ck_checklist_complete_yn check (complete_yn in ('Y','N')) 
 );
@@ -605,9 +605,9 @@ from community C left join member M on C.commu_writer = M.member_id;
 
 
 --================================================
---트리거: 회원가입시 내 워크패드 생성
+--트리거: 회원가입시 내 워크패드 생성  
 --================================================
-create or replace trigger trg_member_workpad
+create or replace trigger trg_register_workpad
     after
     update on member
     for each row
@@ -616,15 +616,32 @@ declare
     vnew_password varchar2(300) := :new.password;
 begin
     --회원가입 한 경우
-    if vold_password = null then 
+    if vold_password is null then 
         insert into project values(seq_project.nextval, :old.member_id, '나의 워크패드', 'Y', null, null, null, null, null);
     --계정삭제 한 경우
-    elsif vnew_password = null then 
+    elsif vnew_password is null then 
         delete from project where project_writer = :old.member_id and private_yn = 'Y';
     end if;
 end;
 /
 
+--================================================
+--트리거: 내 워크패드 생성 시 프로젝트 멤버에도 추가 
+--================================================
+create or replace trigger trg_project_members_workpad
+    after
+    insert on project
+    for each row
+declare
+    vproject_no number := :new.project_no;
+    vmember_id varchar2(30) := :new.project_writer;
+begin
+    --나의 워크패드인 경우
+    if :new.private_yn = 'Y' then
+        insert into project_members values(seq_project_members.nextval, vproject_no, vmember_id, 'Y', default);
+    end if;
+end;
+/
 
 --================================================
 --트리거: project_members의 project_quit_yn이 N->Y로 변경될 때
@@ -660,4 +677,3 @@ begin
     end if;
 end;
 /
-

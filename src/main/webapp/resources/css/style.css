@@ -44,7 +44,7 @@ button:active, button:focus{outline: none;}
 /* 프로필 */
 .navbar-workspace #user-panel .dropdown-menu{padding: 0;}
 #user-panel .image{width: 46px; height: 46px; padding-left: 0;}
-#user-panel img{width: 100%; height: 100%;}
+#user-panel img{width: 100%; height: 100%; object-fit: cover;}
 #user-profile img{width: 50px; height: 50px; margin-top: -20px; border-radius: 3px;}
 #user-info{display: inline-block; margin-left: .3rem;}
 #user-info>p:last-of-type{margin-top: 8px; color: #696f7a; font-size: .6rem;}
@@ -80,7 +80,7 @@ button:active, button:focus{outline: none;}
 .card-header h3{color: rgba(0,0,0,.5); font-size: 1rem; font-weight: bold;}
 .card-header .header-count{color: rgba(50,55,66,.5);}
 /* Card Content */
-#project-important .card, #project-in .card{height: 250px;}
+#project-important .card, #project-in .card{position: relative; height: 250px;}
 .card{transition-timing-function: ease-in-out; transition-duration: .2s; transition-property: all; cursor: pointer;}
 .card.card-hover:active, .card.card-hover:hover{box-shadow: 0 5px 6px 0 rgba(0,0,0,.15); transform: translateY(-2px);} 
 .card-body{padding: 1.25rem; color: #464c59; font-size: 0.85rem;}
@@ -89,33 +89,42 @@ button:active, button:focus{outline: none;}
 #project-recent .card-title, #project-in .card-title{display: inline-block;}
 #project-in .mywork .card-title{display: block;}
 #project-in .card-star{display: block;}
+.card-star{position: relative;}
 .fas.fa-star{color: #f9a50f;} 
 .far.fa-star{color: rgba(50,55,66,.5);} 
 .card-header .fa-star{margin: 0 5px;}
-/* 프로젝트 상태 / 마감일 */
-.card-status{margin-top: 9.1rem;}
-.star-body .card-status{margin-top: 7.5rem;}
-.card-status .btn-block, .card-status .end-date{display: inline-block; width: 5rem;}
+.card-star .fa-star{position: absolute; right: 1px;}
+.card-star .line{position: absolute; top: 20px; right: -2px; width: 20px; height: 1px; background: #cacaca;}
+.card-star .del-project{position: absolute; top: 26px; right: 3px; color: #b5b5b5;  font-size: .88rem;}
+.card-star .del-project.no-star{top: 4px;}
+.card-star .del-project:hover, .card-star .del-project:active, .card-star .del-project:focus{color: #8d919a;}
+/* 프로젝트 상태,마감일 */
+.card-status>span{position: absolute;}
+.card-status .btn-block{bottom: 3.7rem; left: 1.25rem; width: 5rem;}
 .card-status .btn-group-sm>.btn, .btn-sm {padding: .1rem .1rem;}
 .card-status .bg-success.btn:hover{border-color:#28a745;}
 .card-status .bg-info.btn:hover{border-color:#17a2b8;}
 .card-status .bg-warning.btn:hover{border-color:#ffc107;}
-.card-status .end-date{float:right; padding: .1rem 0 .1rem .1rem; font-size: .75rem; color: #17a2b8;}
+.card-status .end-date{bottom: 4rem; right: 1.3rem; width: auto; font-size: .75rem; color: #17a2b8;}
+.card-status .p-completed{color: #8d919a;}
+.card-status .p-over{color: #dc3545;}
 .card-progress .progress-title {color: #8d919a; font-size: 0.75rem;}
-.card-progress{margin-top: .5rem;}
+.card-progress{position: absolute; bottom: 15px; width: 83%;}
+.card-progress.star-n{margin-top: 9.7rem;}
 /* 내 업무 */
-.img-profile{display: block; width: 70px; margin: 0 auto;}
+.img-profile{display: block; width: 70px; height: 70px; margin: 0 auto; object-fit: cover;}
 .mywork .card-title{float: none; margin: .8rem 0 4.6rem;}
-
+.mywork .card-progress{margin-top: 4rem;}
 
 
 
 /* projectView.jsp */
 /* Navbar Project */
 /* Left navbar links */
-#go-back .nav-link{display: inline-block; width: 46px; height: 46px; padding: .6rem 0; margin-left: 0; border: 0; border-radius: 0; font-size: inherit;}
+#go-back .nav-link{display: inline-block; width: 46px; height: 46px; padding: .6rem 0; margin-left: 0; margin-top: 10px; border: 0; border-radius: 0; font-size: inherit;}
+#go-back.private-y .nav-link{margin-top: 0;}
 #go-back .nav-link:hover, #go-back .nav-link:active{background: #f3f4f5;}
-#project-name{color: #464c59; font-weight: bold;}
+#project-name{padding: .6rem 0; color: #464c59; font-weight: bold;}
 #btn-star{padding: .55rem .5rem .8rem;}
 #project-name .fa-star{font-size: 0.9rem; cursor: pointer;}
 
@@ -132,7 +141,7 @@ button:active, button:focus{outline: none;}
 #viewRightNavbar-wrapper .nav-item:nth-of-type(2), #viewRightNavbar-wrapper .nav-item:last-of-type .nav-link{margin-left: .3rem;}
 /* 멤버 */
 #nav-member .dropdown-menu{max-height: 175px; overflow-y: auto;}
-#nav-member .img-profile{width: 25px;}
+#nav-member .img-profile{width: 25px; height: 25px;}
 #nav-member .memberName{margin-left: .3rem; font-size: .75rem;}
 
 /* Content */
@@ -178,21 +187,27 @@ button:active, button:focus{outline: none;}
 .addWork-btnWrapper>div, .addWork-btnWrapper>div>div, .addWork-btnWrapper>div>button{display: inline-block;}
 .addWork-btnWrapper{font-size: .8rem;}
 /* 업무 설정 */
+.addWork-btnLeft{position: relative;}
 .addWork-btnLeft .nav-link, .addWork-btnLeft button{padding: .3rem .4rem .5rem; color: #696f7a;}
 .addWork-btnLeft .nav-link i:hover, .addWork-btnLeft button i:hover{color: #17a2b8;}
 .addWork-btnLeft>div:first-of-type .nav-link{padding-left: .7rem;}
 .addWork-btnLeft>div:not(:first-of-type), .addWork-btnLeft button{margin-left: -3px;}
 /* 업무 배정 멤버 */
-.add-member .img-profile{width: 25px;}
+.add-member .img-profile{width: 25px; height: 25px;}
 .add-member .memberName{margin-left: .3rem; font-size: .75rem;}
-.add-member .dropdown-menu{min-width: 9rem; padding: .5rem;}
+.add-member .dropdown-menu{min-width: 10rem; max-height: 180px; padding: .5rem; overflow-y: auto;}
+.navbar-badge.addMem-badge{top: -18px; right: -1px; background: #464c59; color: #fff;}
+.navbar-badge.addTag-badge{top: 1px; right: -1px;}
 /* 태그 */
+.add-tag{margin-right: 5px;}
 .add-tag .dropdown-menu{padding: .5rem; margin: -2rem 5.5rem 0;}
 .dropdown-item:focus, .dropdown-item:hover{background-color: #efefef;}
 .add-member i, .add-tag i{float: right; margin-top: 5px; color: #696f7a; font-size: .9rem;}
 .add-member i{margin-top: -1rem;}
 /* 날짜설정 */
-.btn-cancelDate{padding: .2rem .4rem; border-radius: 3px; background: #e6e8ec; font-size: .6rem;}
+.add-date{position: absolute; top: -1px; font-size: .95rem;}
+.addWork-btnLeft button.btn-cancelDate{padding: .2rem .4rem; width: 7.8rem; margin: .3rem 0 0 .2rem; border-radius: 3px; background: #e6e8ec; font-size: .6rem;}
+.addWork-btnLeft button.btn-cancelDate i{margin-left: 5px;}
 .addWork-btnLeft button.btn-cancelDate i:hover{color: #696f7a;}
 /* 취소/만들기 버튼 */
 .addWork-btnRight{float: right;}
@@ -243,7 +258,7 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 .tbl-checklist th{border-right: 3px double #f8bcb6;}
 .btn-check{display: inline-block; padding: .3rem .5rem; border: 0; background: transparent; color: #d4d6db;}
 .tbl-checklist td{padding: .3rem .5rem; color: #464c59; font-size: .75rem;}
-.work-checklist .ico-profile{float: left; width: 20px; margin-right: .3rem;}
+.work-checklist .ico-profile{float: left; width: 20px; height: 20px; margin-right: .3rem; object-fit: cover;}
 /* .tbl-checklist tfoot tr{border-bottom: 0;}
 .tbl-checklist tfoot td{display: block; color: #8d919a;} */
 /* 날짜 설정 */
@@ -254,7 +269,7 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 /* 기타 아이콘 모음 */
 .work-etc{color: #8d919a; font-size: .7rem;}
 .work-etc .ico{margin: 0 .3rem;}
-.chared-member .ico-profile{display:inline-block; width: 28px; margin: -4px 0 0 0; border: 2px solid #fff; border-radius: 50%;}
+.chared-member .ico-profile{display:inline-block; width: 28px; height: 28px; object-fit: cover; margin: -4px 0 0 0; border: 2px solid #fff; border-radius: 50%;}
 .chared-member .ico-profile:not(:last-of-type){margin-right: -.5rem;}
 /* 커버 이미지 */
 .work-item>div.work-coverImage{margin: 1rem .6rem .5rem;}
@@ -324,8 +339,6 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 
 
 /* memberView.jsp */
-.layout-navbar-fixed .wrapper #user-settings.content-wrapper, .layout-navbar-fixed .wrapper #member-list.content-wrapper{margin-top: 46px;}
-#user-settings.content-wrapper>.content, #member-list.content-wrapper>.content{padding: 2rem 5rem;}
 #user-settings h2{margin-bottom: 2rem; color: #464c59; font-size: 1.5rem; font-weight: 600;}
 /* 탭 */
 .nav-tabs{border: 0;}
@@ -348,7 +361,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 .btn-update.delete{background: #dc3545;}
 /* 프로필 */
 #custom-file-wrapper{width: 150px; height: 150px; padding: 2px; border: 1px solid #d4d6db; border-radius: 2px;}
-#custom-file-wrapper img{border-radius: 2px;}
+#custom-file-wrapper img{border-radius: 2px; object-fit: cover;}
 .custom-file:hover{height: 3rem; transform: translate(0,-.6rem);}
 #custom-content-below-profile .post{color: #464c59; font-size: .88rem;}
 
@@ -356,3 +369,55 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 /* 검색 취소버튼 */
 #btn-cancelSearch{margin-top: -3px; color: #d4d6db; font-size: 2rem;}
 #btn-cancelSearch:hover, #btn-cancelSearch:active, #btn-cancelSearch:focus{color: #8d919a;}
+
+
+/* 타임라인 */
+#timeline-wrapper{position:relative; width: 5080px; padding: 5rem 3rem 2.5rem; background: #f8f9fa;}
+.tooltip-wrapper{min-width: 12rem; padding: .5rem; background: #0c3865;}
+.tooltip-wrapper p{color: #fff; font-weight: bold;}
+
+#timeline-header{position: fixed; top: 92px; left: 4.6rem; width: 1190px; height: 41px; background: #e7e9ed; border-bottom: 2px solid #ced2d9; z-index: 10;}
+#left-label{position: absolute; top: 0; left: 0; width: 215px; padding: 2.5rem 0; background: #fff; color: #696f7a; font-size: .85rem; z-index: 3;}
+
+#date-cell-wrapper{position: absolute; top: 41px; left: 0; width: 4833px; height: 39px; margin-left: 215px; background: #f3f4f5; color: #7a7e88; font-size: 1rem; font-family: "Source Sans Pro"; z-index: 1;}
+.cell{display: inline-block; width: 54px; height: 39px; padding: .4rem .5rem; border-right: 1px solid rgb(230, 230, 230);}
+.cell:not(:first-of-type){margin-left: -4px;}
+
+
+
+/* 프로젝트, 동호회 내 대화창 */
+#chat-sidebar{background: #fff;}
+/* 멤버리스트 */
+#chat-memList{height: 49px; padding: .7rem .8rem; border-bottom: 2px solid #e6e8ec;}
+#chat-memList ul{padding: 0; margin: 0;}
+#chat-memList li{display: inline-block;}
+#chat-memList li:not(:first-of-type){margin-left: -3px;}
+/* 메시지 영역 */
+#chatSide-msg-wrapper{height: 60% !important; padding: 1rem 1.5rem 1rem 2rem;}
+.direct-chat-msg{position: relative; padding: .5rem;}
+.direct-chat-msg:hover{background: rgba(70,76,89,.05);}
+.chat-text{float: left; width: 78%; margin-left: .8rem;}
+.chat-name{float: left; margin-bottom: .1rem; color: #464c59; font-size: .9rem; font-weight: bold;}
+.chat-time{float: left; margin: 1px 0 0 .3rem; color: #b0b4bb; font-size: .75rem; font-weight: bold;}
+.chat-text p{color: #464c59; font-size: .88rem; clear: both;}
+.btn-copyToNtc{display: none; position: absolute; right: .5rem; border: 1px solid #d4d6db; border-radius: 2px; padding: .1rem .4rem .2rem; color: #696f7a; font-size: .75rem;}
+.direct-chat-msg:hover .btn-copyToNtc{display: block;}
+.btn-copyToNtc:hover, .btn-copyToNtc:focus, .btn-copyToNtc:active{background: #d4d6db;}
+/* 오른쪽: 내 메시지 */
+.direct-chat-msg.right .chat-text{float: right; margin-right: .8rem; text-align: right;}
+.direct-chat-msg.right .chat-name{float: right;}
+.direct-chat-msg.right .chat-time{float: right; margin-right: .3rem;}
+.direct-chat-msg.right .btn-copyToNtc{left: .5rem;}
+/* 날짜 구분선 */
+.chat-date-wrapper{position: relative; margin: 1.5rem 0;}
+.chat-date-wrapper .divider{width: 100%; height: 1px; background: #d4d6db;}
+.chat-date-wrapper .date{position: absolute; top: -10px; left: 44%; padding: 0 .5rem; background: #fff; color: #464C59; font-size: .75rem; font-weight: bold;}
+/* 텍스트 에디터 */
+.note-editor.note-frame{border: 0;}
+.note-frame *{color: #8d919a;}
+.note-toolbar{border-bottom: 0; border-top: 2px solid #17a2b8;}
+.note-editor.note-frame .note-editing-area .note-editable, .note-editor.note-frame .note-placeholder{padding: .5rem 1rem; color: #464c59; font-size: .85rem; font-family: 'Noto Sans KR';}
+.note-editor.note-frame .note-editing-area .note-editable p{color: #464c59;}
+.note-editor.note-frame .note-placeholder{color: #b0b4bb;}
+.note-resizebar{display: none;}
+.note-editor.note-frame .note-statusbar{border-top: 0;}
