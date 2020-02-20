@@ -44,6 +44,7 @@ import com.kh.workground.club.model.vo.ClubPhotoComment;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;
 import com.kh.workground.member.model.vo.Member;
+import com.kh.workground.project.model.exception.ProjectException;
 
 @Controller
 public class ClubController2 {
@@ -872,6 +873,22 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			logger.error(e.getMessage(), e);
 			
 			throw e;
+		}
+		
+		return mav;
+	}
+	
+	
+	@RequestMapping("/club/clubChatting.do")
+	public ModelAndView projectChatting(ModelAndView mav, @RequestParam int clubNo) {
+		
+		try {
+			
+			mav.setViewName("club/clubChattingSideBar");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("동호회 채팅창 조회 오류!");
 		}
 		
 		return mav;

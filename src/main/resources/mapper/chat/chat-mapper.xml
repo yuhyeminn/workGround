@@ -39,7 +39,7 @@
 	</select>
 	
 	<select id="getClubChatList" resultType="chat">
-		select C.*,M.renamed_filename
+		select C.*,M.renamed_filename, M.member_name
 		from (select * from chat where channel_no = #{channelNo} order by chat_no asc) C
 		left join member M on M.member_id = C.sender
 	</select>

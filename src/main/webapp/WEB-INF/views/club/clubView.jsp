@@ -152,6 +152,7 @@ $(function(){
 
 	sidebarActive(); //사이드바 활성화
 	tabActive(); //서브헤더 탭 활성화
+	setting(); //설정창
 	
 });
 
@@ -219,54 +220,6 @@ function validate() {
 	return true;
 }
 
-/* $(()=> {
-	var clubPlanNo = $("#clubPlanNo").val();
-	//console.log(clubPlanNo);
-
-	$(".clubPlanCard").on("click", ()=> {
-		
-		$.ajax({
-			url: "${pageContext.request.contextPath}/club/selectClubPlanAttendeeList.do", 
-			data: {clubPlanNo: clubPlanNo}, 
-			dataType: "json", 
-			success: data=> {
-				console.log(data);
-				
-				let html = '';
-				let clubPlanNo = '';
-				$(data).each((idx, a)=>{
-                    html += '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem; display: inline-block;">';
-                    html += '<div class="col-12">';
-					html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+a.renamedFileName+'" alt="Message User Image">';
-					html += '<h6 class="h6">'+a.memberName+'</h6>';
-                    html += '<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;">';
-                    html += '<form name="deleteClubPlanAttendeeFrm" action="${pageContext.request.contextPath}/club/deleteClubPlanAttendee.do" method="POST">';
-                    html += '<input type="hidden" name="memberId" value="'+a.memberId+'">';
-                    html += '<input type="hidden" name="clubPlanAttendeeNo" value="'+a.clubPlanAttendeeNo+'">';
-                    html += '<input type="hidden" name="clubNo" value="${club.clubNo}">';
-                    html += '<button type="submit" class="btn btn-tool" onclick="return deleteClubPlanAttendee();">';
-                    html += '<i class="fas fa-times" style="color: black;"></i></button>';
-                    html += '</form>';
-                    html += '</div></div></div>'; 
-                  	
-                    clubPlanNo = a.clubPlanNo;
-                    //console.log(a.memberId);
-				});
-				
-				console.log(clubPlanNo);
-				console.log("#attendeeList"+clubPlanNo);
-				
-				$("#attendeeList"+clubPlanNo).html(html);
-				
-				//console.log($("#attendeeList"));
-			}, 
-			error: (x, s, e)=> {
-				console.log("ajax처리 실패!!", x, s, e);
-			}
-		});
-	});
-}); */
-
 function deleteClubPlanAttendee() {
 		console.log($(this));
 	if(!confirm("참여를 취소하시겠습니까?")) return false;
@@ -290,34 +243,37 @@ function fileDownload(oName, rName, clubNo) {
 	location.href = "${pageContext.request.contextPath}/club/clubFileDownload.do?clubNo="+clubNo+"&oName="+oName+"&rName="+rName;
 }
 
+// 사이드바 관련
+function setting(){
+    var $side = $("#setting-sidebar");
+    var clubNo = ${club.clubNo}; 
+     
+    //대화 사이드바 열기
+    $('#btn-openChatting').on('click', ()=>{
+    	$.ajax({
+			url: "${pageContext.request.contextPath}/club/clubChatting.do",
+			type: "get",
+			data: {clubNo:clubNo},
+			dataType: "html",
+			success: data => {
+				$side.html("");
+				$side.html(data); 
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
+        
+        $side.addClass('open');
+        if($side.hasClass('open')) {
+        	$side.stop(true).animate({right:'0px'});
+        }
+    });
+    
+}
 
 
 
-
-
-/* 	//window focus이벤트핸들러 등록
-	$(window).on("focus", function() {
-		console.log("focus");
-		lastCheck();
-	}); */
-
-
-
-
-
-
-/*
- * 윈도우가 활성화 되었을때, chatroom테이블의 lastcheck(number)컬럼을 갱신한다.
- * 안읽은 메세지 읽음 처리
- */ 
-/* function lastCheck() {
-    let data = {
-        chatId : "${chatId}",
-        memberId : "${memberId}",
-        time : new Date().getTime()
-    }
-    stompClient.send('<c:url value="/lastCheck" />', {}, JSON.stringify(data));
-} */
 
 </script>
 
@@ -360,7 +316,7 @@ function fileDownload(oName, rName, clubNo) {
 	<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
 		<!-- 동호회 대화 -->
 		<li class="nav-item">
-			<button type="button" onclick=""
+			<button type="button" id="btn-openChatting"
 				class="btn btn-block btn-default btn-xs nav-link"
 				data-widget="control-sidebar" data-slide="true">
 				<i class="far fa-comments"></i> 동호회 대화
@@ -1306,7 +1262,7 @@ function fileDownload(oName, rName, clubNo) {
 						<c:otherwise>
 							<div class="direct-chat-msg">
 								<div class="direct-chat-infos clearfix">
-									<span class="direct-chat-name float-left">${chat.sender }</span>
+									<span class="direct-chat-name float-left">${chat.memberName }</span>
 									<span class="direct-chat-timestamp float-left">${chat.sendDate }</span>
 								</div>
 								<!-- /.direct-chat-infos -->
@@ -1351,6 +1307,9 @@ function fileDownload(oName, rName, clubNo) {
 	</div>
 </aside> 
 
+<!-- 오른쪽 프로젝트/업무 설정 사이드 바-->
+<aside class="club-setting" id="setting-sidebar" style="display: block;">
+</aside>
 
 <script type="text/javascript">
 
@@ -1395,15 +1354,14 @@ stompClient.connect({}, function(frame) {
 		let otherMsg = '';
 
 		if(messsageBody.sender == "${memberLoggedIn.memberId}"){
-			alert("1");
 			myMsgInfoHtml +='<div class="direct-chat-msg right">'
 						  + '<div class="direct-chat-infos clearfix">'
-						  + '<span class="direct-chat-name float-right">'+messsageBody.sender+'</span>'
+						  + '<span class="direct-chat-name float-right">'+messsageBody.memberName+'</span>'
 						  + '<span class="direct-chat-timestamp float-right">'+messsageBody.sendDate+'</span></div>'
-						  + '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="Message User Image">'
+						  + '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messsageBody.renamedFileName+'" alt="Message User Image">'
 						  + '<div class="direct-chat-text">'+messsageBody.msg+'</div></div>';
 			
-			alert('messsageBody.sendTime');
+			
 						
 			$("#direct-chat-messages").append(myMsgInfoHtml);
 			
@@ -1413,9 +1371,9 @@ stompClient.connect({}, function(frame) {
 			
 			otherMsg += '<div class="direct-chat-msg">'
 					 + '<div class="direct-chat-infos clearfix">'
-					 + '<span class="direct-chat-name float-left">'+messsageBody.sender+'</span>'
+					 + '<span class="direct-chat-name float-left">'+messsageBody.memberName+'</span>'
 					 + '<span class="direct-chat-timestamp float-left">'+messsageBody.sendDate+'</span></div>'
-					 + '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="Message User Image">'
+					 + '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messsageBody.renamedFileName+'" alt="Message User Image">'
 					 + '<div class="direct-chat-text">'+messsageBody.msg+'</div></div>';	
 			
 			
@@ -1432,6 +1390,8 @@ function sendMessage() {
 			sender : "${memberId}",
 			msg : $("#text-message").val(),
 			sendDate : new Date().getTime(),
+			memberName : "${memberLoggedIn.memberName}",
+			renamedFileName : "${memberLoggedIn.renamedFileName}",
 			type: "MESSAGE"
 		}
 	
