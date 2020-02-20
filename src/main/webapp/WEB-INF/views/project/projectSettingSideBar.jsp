@@ -416,7 +416,17 @@ function updateProjectMember(){
 			dataType:"json",
 			success: data =>{
 				if(data.isUpdated){
-					console.log("프로젝트 팀원 변경 성공~");
+					var memberList = data.memberList;
+					var html="";
+					$("#nav-member .pmember-dropdown").html('');
+					$.each(data.memberList,(idx,m)=>{
+						html = '<a href="${pageContext.request.contextPath}/member/memberView.do?memberId='+m.memberId+'" class="dropdown-item">'
+							+'<div class="media"><img src="${pageContext.request.contextPath}/resources/img/profile/'+m.renamedFileName+'" alt="User Avatar" class="img-circle img-profile ico-profile">'
+							+'<div class="media-body"><p class="memberName">'+m.memberName+'</p></div></div></a>';
+						
+						$("#nav-member .pmember-dropdown").append(html);
+					})
+					$("#nav-member span#nav-member-cnt").html(data.memberCnt);
 				}
 			},
 			error:(jqxhr, textStatus, errorThrown) =>{

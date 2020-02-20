@@ -775,7 +775,7 @@ function updateWorkMember(){
 			 success: data=>{
 				 var chk = data.checklist
 				 let html = '<tr id="'+chk.checklistNo+'"><th><button type="button" class="btn-check" value="'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>        '
-					      +'<input type="hidden" class="hiddenChkChargedMemId" value=" "/></th><td style="width:100%">'
+					      +'<input type="hidden" class="hiddenChkChargedMemId" value=""/></th><td style="width:100%">'
 					      +'<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown"><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div>'
 	             		  + chk.checklistContent +'<button class="delete-checklist" id="'+chk.checklistNo+'" style="float:right;"><i class="fas fa-times"></i></button>';
 	             //멤버 배정 위한 드롭다운 메뉴 추가
@@ -794,7 +794,7 @@ function updateWorkMember(){
 					html+='</div></td></tr>';
 					
 		         var viewhtml = '<tr id="'+chk.checklistNo+'"><th><button type="button" class="btn-check" value="'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>      '
-		   			      	  +'<input type="hidden" class="hiddenChkChargedMemId" value=" "/></th><td>'+ chk.checklistContent +'</td></tr>';
+		   			      	  +'<input type="hidden" class="hiddenChkChargedMemId" value=""/></th><td>'+ chk.checklistContent +'</td></tr>';
 		          		 	  
 				 $("#chk-add-tr").before(html); 
 				 

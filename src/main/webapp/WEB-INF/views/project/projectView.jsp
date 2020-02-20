@@ -733,7 +733,7 @@ function checklist(){
 		let workNo = val.split(",")[0];
 		let chkNo = val.split(",")[1];
 		
-		let $workSection = $(btnChk.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);
+		let $workSection = $("section#"+workNo);
 		let $tr = $(btnChk.parentNode.parentNode);
 		let $tdChecklist = $(btnChk.parentNode.nextSibling.nextSibling);
 		let $icoChk = $(btnChk.firstChild);
@@ -742,35 +742,24 @@ function checklist(){
 		let hiddenChargedMemIdVal = $workSection.find('.hiddenWorkChargedMemId').val();
 		let workChargedMemIdArr = null;
 		
-		console.log("$workSection="+$workSection);
-		console.log("input:hiddenWorkChargedMemId="+$workSection.find('.hiddenWorkChargedMemId'));
-		console.log("hiddenChargedMemIdVal="+hiddenChargedMemIdVal);
-		
-		if(hiddenChargedMemIdVal !==''){
-			workChargedMemIdArr = hiddenChargedMemIdVal.split(',');
+		if($workSection.find('.hiddenWorkChargedMemId').val() != null && $workSection.find('.hiddenWorkChargedMemId').val() !=''){
+			workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
 		}
-		console.log("workChargedMemIdArr="+workChargedMemIdArr);
-		
-		console.log($tdChecklist);		
-		/* if($tdChecklist.length==0){
+		if($tdChecklist.length==0){
 			$tdChecklist = $(btnChk.parentNode.nextSibling);
-		} */
+		}
 		
 		let chkChargedMemId = btnChk.nextSibling.nextSibling.value;
 		let isValid = false;
-		
-		console.log("chkChargedMemId="+chkChargedMemId);
 		
 		//1.유효성 검사
 		//체크리스트에 배정된 멤버가 있다면
 		if(chkChargedMemId!=""){
 			//체크리스트에 배정된 멤버, 프로젝트 팀장, admin만 클릭 가능
 			if(loggedInMemberId===chkChargedMemId || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
-				console.log("체크리스트 배정된 멤버 있고 그게 나야");
 				isValid = true;
 			}
 			else{
-				console.log("체크리스트 배정된 멤버 있는데 그게 난 아님");
 				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
 				return;
 			}
@@ -785,11 +774,9 @@ function checklist(){
 			}
 			
 			if(chkbool===true || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
-				console.log("체크리스트 배정된 멤버 없고 업무배정된 멤버는 있는데 그게 나야");
 				isValid = true;
 			}
 			else{
-				console.log("체크리스트 배정된 멤버 없고 업무배정된 멤버도 없으니까 난 안돼");
 				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
 				return;
 			}
@@ -1193,9 +1180,9 @@ function closeSideBar(){
         <!-- 프로젝트 멤버 -->
         <li id="nav-member" class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="far fa-user"></i> ${fn:length(inMemList)}
+                <i class="far fa-user"></i> <span id="nav-member-cnt">${fn:length(inMemList)}</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right pmember-dropdown">
             <c:forEach items="${inMemList}" var="m">
             <a href="${pageContext.request.contextPath}/member/memberView.do?memberId=${m.memberId}" class="dropdown-item">
                 <div class="media">
