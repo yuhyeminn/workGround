@@ -134,14 +134,21 @@ public class ClubController {
 	}
 
 	@RequestMapping("/club/deleteClub.do")
-	public ModelAndView deleteClub(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo) {
+	public ModelAndView deleteClub(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo, HttpSession session) {
 
 		try {
+			Member memberLoggedIn = (Member) session.getAttribute("memberLoggedIn");
 			// logger.info("clubNo={}", clubNo);
 			int result = clubService.deleteClub(clubNo);
 			// logger.info("result={}", result);
 			mav.addObject("msg", result > 0 ? "동호회 삭제 성공!" : "동호회 삭제 실패");
-			mav.addObject("loc", "/club/clubList.do");
+			
+			if(memberLoggedIn.getMemberId().equals("admin")) {
+				mav.addObject("loc", "/admin/adminClubList.do");
+			}
+			else {
+				mav.addObject("loc", "/club/clubList.do");				
+			}
 			mav.setViewName("common/msg");
 
 		} catch (Exception e) {

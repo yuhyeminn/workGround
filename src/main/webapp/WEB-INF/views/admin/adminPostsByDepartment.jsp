@@ -14,6 +14,10 @@
 .btn-admin{width: 45px !important; margin: 0 auto; font-size: .7rem;}
 #tbl-projectAttach.member-table .dropdown-item{color: #dc3545; font-size: .8rem;}
 #tbl-projectAttach.member-table .dropdown-item i{margin-right: .3rem;}
+.comment-reply.work-comment-reply.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .3rem;color: white;}
+.comment-reply.work-comment-reply.float-right:hover{background:#dc3545;}
+.comment-delete.work-comment-delete.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .3rem;color: white}
+.comment-delete.work-comment-delete.float-right:hover{background:#17a2b8;}
 </style>
 
 <script>
@@ -41,12 +45,19 @@ function sidebarActive(){
 			$obj.removeClass('active');
 	});
 	
-	$("#sidebar-member").addClass("active");
+	$("#sidebar-notice").addClass("active");
 }
 
 //멤버 프로필 페이지로 이동
 function goMemberProfile(memberId){
     location.href = '${pageContext.request.contextPath}/member/memberView.do?memberId='+memberId;
+}
+
+function deleteChk(noticeNo){
+	var result = confirm("게시글을 삭제하시겠습니까?"); 
+	if(result == true){
+		location.href = "${pageContext.request.contextPath}/notice/deleteNotice.do?noticeNo="+noticeNo;
+	}
 }
 </script>	
 
@@ -55,54 +66,42 @@ function goMemberProfile(memberId){
 <div id="member-list" class="content-wrapper">
     <!-- Main content -->
     <section class="content">
-        <h2>공지</h2>
+        <h2 style="margin-bottom: 1.4rem;">부서별 공지</h2>
+        <button class="btn btn-block btn-outline-secondary" style="width:4rem; height:2rem; font-size:.8rem;margin-left: 58rem;margin-bottom: .5rem;" data-toggle="modal" data-target="#addNoticeModal">글쓰기</button>
         
+        <select name="" id="dept-result" class="form-control">
+        	<option value="" selected disabled>부서 선택</option>
+        	<option value="D1" ${dept=='D1'?'selected="selected"':''}>기획부</option>
+        	<option value="D2" ${dept=='D2'?'selected="selected"':''}>디자인</option>
+        	<option value="D3" ${dept=='D3'?'selected="selected"':''}>개발부</option>
+        </select>
         <div id="member-inner" class="table-responsive p-0">
-            <!-- SEARCH FORM -->
-            <!-- <div class="navbar-light">
-                <form id="memberSearchFrm" class="form-inline">
-                    <div class="input-group input-group-sm">
-                    <input class="form-control form-control-navbar" type="search" placeholder="멤버 검색하기" aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-navbar" type="submit">
-                        <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                    </div>
-                </form>
-            </div> -->
-
+        <script>
+        $("#dept-result").change(function(){
+        	var dept = $(this).val();
+        	console.log(dept);
+    
+        	location.href = "${pageContext.request.contextPath}/admin/"+dept+"/selectDepartment.do";
+        })
+        </script>
             <!-- 멤버리스트 -->
             <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table">
                 <thead>
                     <tr>
-                        <!-- <th style="width: 8%"></th> -->
                         <th style="width: 30%">제목</th>
-                        <th style="width: 17%">직급</th>
-                        <th style="width: 17%">부서</th>
-                       <!--  <th style="width: 26%">이메일</th> -->
+                        <th style="width: 17%">작성자</th>
+                        <th style="width: 17%">작성날짜</th>
                     </tr>
                 </thead>
-                <tbody>
-                	<c:forEach items="${noticeList}" var="n">
+                <tbody id="tbody">
+                <c:forEach items="${noticeList}" var="n">
                     <tr>
-                       <%--  <td onclick="goMemberProfile('${m.memberId}');">
-                            <img src="${pageContext.request.contextPath }/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">
-                        	${m.memberName}
-                        </td> --%>
-                        <td>${n.noticeTitle}</td>
-                        <td>${n.noticeWriter}</td>
+                        <td style="padding-left: 1.3rem;" data-toggle="modal" data-target="#noticeViewModal${n.noticeNo}">${n.noticeTitle}</td>
+                        <td onclick="goMemberProfile('${n.noticeWriter}');">${n.memberName}</td>
                         <td>
                             ${n.noticeDate}
-                            <!-- 계정삭제 버튼: 대표 관리자한테만 보이기 -->
-                            <c:if test="${memberLoggedIn.memberId == 'admin'}">
-                            <div class="dropdown">
-                                <button type="button" class="btn-moreMenu btn-drop btn-file" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a href="#" class="dropdown-item"><i class="far fa-trash-alt"></i> 계정 삭제하기</a>
-                                </div>
-                            </div>
-                            </c:if>
+                           	<button class="comment-reply work-comment-reply float-right" onclick="deleteChk(${n.noticeNo})">삭제</button>
+                            <button class="comment-delete work-comment-delete float-right"  data-toggle="modal" data-target="#updateNoticeModal${n.noticeNo}">수정</button>
                         </td>
                     </tr>
                     </c:forEach>
@@ -113,5 +112,5 @@ function goMemberProfile(memberId){
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->		
-
+<jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

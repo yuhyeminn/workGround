@@ -107,7 +107,7 @@ function goMemberProfile(memberId){
                             <div class="dropdown">
                                 <button type="button" class="btn-moreMenu btn-drop btn-file" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a href="#" class="dropdown-item"><i class="far fa-trash-alt"></i> 계정 삭제하기</a>
+                                    <a href="${pageContext.request.contextPath}/member/deleteMember.do?memberId=${m.memberId}" class="dropdown-item"><i class="far fa-trash-alt"></i> 계정 삭제하기</a>
                                 </div>
                             </div>
                             </c:if>

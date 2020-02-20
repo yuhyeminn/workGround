@@ -178,7 +178,11 @@ public class MemberController {
 			} else {
 				//로그인 한 경우
 				mav.addObject("memberLoggedIn", m);
-				viewName="redirect:/notice/noticeList.do";
+				if(m.getMemberId().equals("admin")) {
+					viewName="redirect:/admin/adminAllNoticesList.do";
+				}else {
+					viewName="redirect:/notice/noticeList.do";					
+				}
 			}
 
 			// 2. view모델 처리
@@ -352,10 +356,20 @@ public class MemberController {
 	
 	@RequestMapping("/member/deleteMember.do")
 	public ModelAndView deleteMember(@RequestParam("memberId") String memberId,
-									 ModelAndView mav) {
+									 ModelAndView mav, HttpSession session) {
+		
+		Member memberLoggedIn = (Member) session.getAttribute("memberLoggedIn");
+		
+		//logger.debug(memberId);
 		int result = memberSerivce.deleteMember(memberId);
 		mav.addObject("msg", result>0?"계정이 삭제되었습니다.":"계정 삭제 실패! 깔깔깔");
-		mav.addObject("loc", "/");
+		
+		if(memberLoggedIn.getMemberId().equals("admin")) {
+			mav.addObject("loc", "/member/memberList.do");
+		}
+		else {
+			mav.addObject("loc", "/");			
+		}
 		mav.setViewName("common/msg");
 		return mav;
 	}

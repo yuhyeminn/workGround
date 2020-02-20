@@ -387,5 +387,6 @@
 			  or P.club_plan_manager like '%'|| #{keyword} || '%')
 		order by P.club_plan_start asc
 	</select>
+	
 	<!-- br end -->
 </mapper>
