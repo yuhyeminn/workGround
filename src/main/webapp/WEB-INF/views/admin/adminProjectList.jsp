@@ -51,10 +51,10 @@ function goMemberProfile(memberId){
     location.href = '${pageContext.request.contextPath}/member/memberView.do?memberId='+memberId;
 }
 
-function deleteChk(noticeNo){
-	var result = confirm("게시글을 삭제하시겠습니까?"); 
+function deleteChk(projectNo){
+	var result = confirm("프로젝트를 삭제하시겠습니까?"); 
 	if(result == true){
-		location.href = "${pageContext.request.contextPath}/notice/deleteNotice.do?noticeNo="+noticeNo;
+		location.href = "${pageContext.request.contextPath}/project/deleteProject.do?projectNo="+projectNo;
 	}
 }
 
