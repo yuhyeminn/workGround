@@ -45,6 +45,8 @@ public interface ClubService {
 
 	List<Club> selectAllStandByClubListByCategory(Map param);
 
+	int cancelClubManager(Map param);
+
 	
 
 

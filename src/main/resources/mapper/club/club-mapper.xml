@@ -179,6 +179,11 @@
 		</collection>
 	</resultMap>
 	
+	<update id="cancelClubManager">
+		update club_member
+		set club_manager_yn = 'N'
+		where club_code = #{clubNo} and emp_id = #{memberId}
+	</update>
 
 	<!-- sh end -->
 
