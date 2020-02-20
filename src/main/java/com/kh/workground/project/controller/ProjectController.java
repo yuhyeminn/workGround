@@ -27,10 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
-import com.kh.workground.project.model.vo.Attachment;
-import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
-import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
@@ -56,13 +53,20 @@ public class ProjectController {
 		try {
 			//1.업무로직
 			//1-1.부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
-			projectMap = projectService.selectProjectListAll(memberLoggedIn);
+			String sortType = "project_startdate";
+			String statusCode = "ALL";
+			
+			Map<String, String> param = new HashMap<>();
+			param.put("statusCode", statusCode);
+			param.put("sortType", sortType);
+			
+			projectMap = projectService.selectProjectListAll(param,memberLoggedIn);
 			
 			//1-2.부서 전체 프로젝트 상태 카운트
 			List<Project> listByDept = projectMap.get("listByDept");
 			
 			for(Project p: listByDept) {
-				String statusCode = p.getProjectStatusCode();
+				statusCode = p.getProjectStatusCode();
 				
 				if("PS1".equals(statusCode)) ps1++;
 				else if("PS2".equals(statusCode)) ps2++;
@@ -533,5 +537,31 @@ public class ProjectController {
 	
 	
 	
-	
+	@RequestMapping("/project/sortProjectList.do")
+	public ModelAndView sortProjectList(ModelAndView mav, HttpSession session, @RequestParam(value="statusCode",defaultValue="ALL") String statusCode,
+			@RequestParam(value="sortType",defaultValue="project_startdate") String sortType) {
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		List<Member> memberListByDept = null; //부서 사람들 담는 리스트
+		Map<String, List<Project>> projectMap = null; //조회한 프로젝트 리스트 담는 맵
+		
+		try {
+			//1.업무로직
+			//1-1.부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
+			Map<String, String> param = new HashMap<>();
+			param.put("statusCode", statusCode);
+			param.put("sortType", sortType);
+			
+			projectMap = projectService.selectProjectListAll(param,memberLoggedIn);
+			
+			//2.뷰모델 처리
+			mav.addObject("projectMap", projectMap);
+			mav.setViewName("/project/ajaxProjectSort"); 
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 목록 조회 오류!");
+		}
+		
+		return mav;
+	}
 }

@@ -74,7 +74,13 @@
 	<select id="selectListByDept" resultMap="viewProjectMemberCollectionMap">
 		select * from view_projectMember 
 		where private_yn = 'N' and dept_code = #{deptCode}
-		order by project_no desc
+		<if test="statusCode != null and statusCode !='' and statusCode != 'ALL' and statusCode != 'NONE'">
+			and project_status_code = #{statusCode}
+		</if>
+		<if test="statusCode == 'NONE'">
+		and project_status_code is null
+		</if>
+		order by ${sortType}
 	</select>
 	
 	<!-- projectList 뿌리기 : 총업무수/완료된 업무수 조회 -->
@@ -93,7 +99,7 @@
 	
 	<!-- projectList 뿌리기 : 중요 표시된 프로젝트 번호 조회 -->
 	<select id="selectImportantProjectNo" resultType="_int">
-		select project_no from project_important where member_id=#{memberId} order by project_no desc
+		select PI.project_no from project_important PI left join project P on PI.project_no = P.project_no where member_id=#{memberId} order by ${sortType}
 	</select>
 	
 	<!-- projectList 뿌리기 : 내 워크패드 조회 -->

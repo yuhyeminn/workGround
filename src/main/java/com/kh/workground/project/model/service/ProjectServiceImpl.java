@@ -30,13 +30,16 @@ public class ProjectServiceImpl implements ProjectService {
 	ProjectDAO projectDAO;
 
 	@Override
-	public Map<String, List<Project>> selectProjectListAll(Member memberLoggedIn) {
+	public Map<String, List<Project>> selectProjectListAll(Map<String, String> param,Member memberLoggedIn) {
 		Map<String, List<Project>> map = new HashMap<>(); //조회한 프로젝트 담는 맵
 		String deptCode = memberLoggedIn.getDeptCode();
 		String memberId = memberLoggedIn.getMemberId();
 		
+		param.put("deptCode", deptCode);
+		param.put("memberId", memberId);
+		
 		//1. 부서 전체 프로젝트(최근 프로젝트) 조회
-		List<Project> listByDept = projectDAO.selectListByDept(deptCode);
+		List<Project> listByDept = projectDAO.selectListByDept(param);
 		
 		if(listByDept==null)
 			throw new ProjectException("최근 프로젝트 조회 오류!");
@@ -86,7 +89,7 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		//2. 중요 표시된 프로젝트 조회(프로젝트 번호만)
 		List<Project> listByImportant = new ArrayList<>();
-		List<Integer> pNoListByImportant = projectDAO.selectListByImportantProjectNo(memberId);
+		List<Integer> pNoListByImportant = projectDAO.selectListByImportantProjectNo(param);
 		
 		if(pNoListByImportant==null)
 			throw new ProjectException("중요 표시된 프로젝트 조회 오류!");

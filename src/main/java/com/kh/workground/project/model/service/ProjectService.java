@@ -11,7 +11,7 @@ import com.kh.workground.project.model.vo.Worklist;
 
 public interface ProjectService {
 
-	Map<String, List<Project>> selectProjectListAll(Member memberLoggedIn);
+	Map<String, List<Project>> selectProjectListAll(Map<String, String> param,Member m);
 
 	List<Member> selectMemberListByDept(String deptCode);
 

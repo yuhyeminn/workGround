@@ -40,7 +40,7 @@ function sidebarActive(){
 	$("#sidebar-project").addClass("active");
 }
 
-function sortByStatus(){
+/* function sortByStatus(){
 	var statusCode = 'ALL';
 	var sortType = 'project_startdate';
 	
@@ -115,8 +115,8 @@ function sortByStatus(){
 			}
 		});
 	});
-}
-/* function sortByStatus(){
+} */
+function sortByStatus(){
 	var statusCode = 'ALL';
 	var sortType = 'project_startdate';
 	
@@ -128,13 +128,8 @@ function sortByStatus(){
 				$("#sort-by-title").html($(this).html());
 				sortType = $(this).attr('id');
 			}
-		
-		if(statusCode == 'ALL'){
-			location.href="${pageContext.request.contextPath}/project/projectList.do"
-			return;
-		}
 		$.ajax({
-			url:"${pageContext.request.contextPath}/project/projectListByStatusCode.do",
+			url:"${pageContext.request.contextPath}/project/sortProjectList.do",
 			data:{statusCode : statusCode, sortType:sortType},
 			dataType:"html",
 			success: data => {
@@ -145,7 +140,7 @@ function sortByStatus(){
 			}
 		});
 	});
-} */
+}
 
 //프로젝트 삭제
 function delProject(){
@@ -181,7 +176,7 @@ function delProject(){
             <a class="dropdown-item project-sort sort-by-status" id="PS1" tabindex="-1">계획됨 (${statusCntMap['계획됨']}) <span class="status-dot bg-warning"></span></a>
             <a class="dropdown-item project-sort sort-by-status" id="PS2" tabindex="-1">진행중 (${statusCntMap['진행중']}) <span class="status-dot bg-success"></span></a>
             <a class="dropdown-item project-sort sort-by-status" id="PS3" tabindex="-1">완료됨 (${statusCntMap['완료됨']}) <span class="status-dot bg-info"></span></a>
-            <a class="dropdown-item project-sort sort-by-status" id="" tabindex="-1">상태없음 (${statusCntMap['상태없음']})</a>
+            <a class="dropdown-item project-sort sort-by-status" id="NONE" tabindex="-1">상태없음 (${statusCntMap['상태없음']})</a>
         </div>
         </li>
     </ul>

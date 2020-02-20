@@ -27,8 +27,8 @@ public class ProjectDAOImpl implements ProjectDAO {
 	SqlSessionTemplate sqlSession;
 	
 	@Override
-	public List<Project> selectListByDept(String deptCode) {
-		return sqlSession.selectList("project.selectListByDept", deptCode);
+	public List<Project> selectListByDept(Map<String, String> param) {
+		return sqlSession.selectList("project.selectListByDept", param);
 	}
 
 	@Override
@@ -87,8 +87,8 @@ public class ProjectDAOImpl implements ProjectDAO {
 	}
 
 	@Override
-	public List<Integer> selectListByImportantProjectNo(String memberId) {
-		return sqlSession.selectList("project.selectImportantProjectNo", memberId);
+	public List<Integer> selectListByImportantProjectNo(Map<String, String> param) {
+		return sqlSession.selectList("project.selectImportantProjectNo", param);
 	}
 
 	@Override
