@@ -65,7 +65,6 @@ function sidebarActive(){
 	
 	$("#sidebar-chat").addClass("active");
 }
-	
 </script>
 
 
@@ -349,6 +348,7 @@ $(document).ready(function() {
 		console.log("focus");
 		//lastCheck();
 	});
+	
 });
 
 
@@ -461,7 +461,7 @@ function loadChatList(channelNo, channelTitle, renamedFileName) {
 			}
 			//let textarea = '<div class="mb-3"><textarea class="textarea" placeholder="Message" id="message" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea></div>';
 			let textarea = '<input type="text" id="message" class="form-control" placeholder="Message to '+channelTitle+'"><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>';
-			//$("#div_textarea").append(textarea);
+			
 			$("#div_textarea").append(textarea);
 		}, 
 		error: (x, s, e)=> {

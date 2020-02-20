@@ -355,7 +355,7 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .checklist-box-row .work-checklist{width:100%;font-size:14px;}
   .checklist-box-row .tbl-checklist th{height: 50px;padding: 5px;font-size: 20px;}
   .checklist-box-row .tbl-checklist td{font-size: 14px;}
-  .checklist-box-row .tbl-checklist td img{width:25px;margin-right: .5rem;}
+  .checklist-box-row .tbl-checklist td img{width:25px; height: 25px; margin-right: .5rem; object-fit: cover;}
   .checklist-box-row .tbl-checklist td div.ico-profile{width:25px;height:25px;margin-right: .5rem;text-align: center;background-color: #e7e7e7;}
   #chk-add-tr{border-top: 3px double rgb(248, 188, 182);}
   .btn-add-checklist{padding: .3rem .5rem;background: transparent;color: #d4d6db;}

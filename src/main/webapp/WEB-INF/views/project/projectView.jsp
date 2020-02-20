@@ -652,9 +652,10 @@ function workComplete(){
 		else btnChk = e.target;
 		
 		let workNo = btnChk.value;
-		let $workSection = $("section#"+workNo);
+		let $workSection = $(btnChk.parentNode.parentNode.parentNode);
 		let workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
 		let isValid = false;
+		
 		
 		//1.유효성 검사
 		//1-1.업무 배정된 멤버가 있는 경우
@@ -732,31 +733,44 @@ function checklist(){
 		let workNo = val.split(",")[0];
 		let chkNo = val.split(",")[1];
 		
-		let $workSection = $("section#"+workNo);
+		let $workSection = $(btnChk.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);
 		let $tr = $(btnChk.parentNode.parentNode);
 		let $tdChecklist = $(btnChk.parentNode.nextSibling.nextSibling);
 		let $icoChk = $(btnChk.firstChild);
-		let $spanCntComp = $("section.work-item#"+workNo).find('.chklt-cnt-completed');
+		let $spanCntComp = $workSection.find('.chklt-cnt-completed');
+		
+		let hiddenChargedMemIdVal = $workSection.find('.hiddenWorkChargedMemId').val();
 		let workChargedMemIdArr = null;
-		if($workSection.find('.hiddenWorkChargedMemId').val() != null && $workSection.find('.hiddenWorkChargedMemId').val() !=''){
-			workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
+		
+		console.log("$workSection="+$workSection);
+		console.log("input:hiddenWorkChargedMemId="+$workSection.find('.hiddenWorkChargedMemId'));
+		console.log("hiddenChargedMemIdVal="+hiddenChargedMemIdVal);
+		
+		if(hiddenChargedMemIdVal !==''){
+			workChargedMemIdArr = hiddenChargedMemIdVal.split(',');
 		}
-		if($tdChecklist.length==0){
+		console.log("workChargedMemIdArr="+workChargedMemIdArr);
+		
+		console.log($tdChecklist);		
+		/* if($tdChecklist.length==0){
 			$tdChecklist = $(btnChk.parentNode.nextSibling);
-		}
-		console.log(workChargedMemIdArr);
+		} */
+		
 		let chkChargedMemId = btnChk.nextSibling.nextSibling.value;
 		let isValid = false;
 		
+		console.log("chkChargedMemId="+chkChargedMemId);
 		
 		//1.유효성 검사
 		//체크리스트에 배정된 멤버가 있다면
-		if(chkChargedMemId!==""){
+		if(chkChargedMemId!=""){
 			//체크리스트에 배정된 멤버, 프로젝트 팀장, admin만 클릭 가능
 			if(loggedInMemberId===chkChargedMemId || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
+				console.log("체크리스트 배정된 멤버 있고 그게 나야");
 				isValid = true;
 			}
 			else{
+				console.log("체크리스트 배정된 멤버 있는데 그게 난 아님");
 				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
 				return;
 			}
@@ -764,16 +778,18 @@ function checklist(){
 		//체크리스트에 배정된 멤버가 없다면, 업무에 배정된 멤버인지
 		else{
 			let chkbool = false;
-			if(workChargedMemIdArr !=null && workChargedMemIdArr !=''){
+			if(workChargedMemIdArr !=null){
 				workChargedMemIdArr.forEach(id=>{
 					if(loggedInMemberId===id) chkbool = true;
 				});
 			}
 			
 			if(chkbool===true || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
+				console.log("체크리스트 배정된 멤버 없고 업무배정된 멤버는 있는데 그게 나야");
 				isValid = true;
 			}
 			else{
+				console.log("체크리스트 배정된 멤버 없고 업무배정된 멤버도 없으니까 난 안돼");
 				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
 				return;
 			}
