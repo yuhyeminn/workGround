@@ -1367,15 +1367,15 @@ function fileDownload(oName, rName, clubNo) {
 
 		<div class="card-body pad">
 			<div class="mb-3">
-				<textarea class="textarea" id="text-message"
-					style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
-                </textarea>
+				
+                <input type="text" id="text-message" size="55%"/>
+                
+				<button type="button" id="sendBtn" class="btn btn-info">send</button>
 			</div>
 
 
 		</div>
 
-		<button type="button" id="sendBtn" class="btn btn-info">send</button>
 
 
 
@@ -1404,23 +1404,7 @@ $(document).ready(function() {
 	});
 });
 
-function sendMessage() {
-	let data = {
-			channelNo : "${channelNo}",
-			sender : "${memberId}",
-			msg : $("#text-message").val(),
-			sendDate : new Date().getTime(),
-			type: "MESSAGE"
-		}
-		var a = $("#text-message").val();
-		alert(a);
 
-		//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
-		stompClient.send('<c:url value="/chat/${channelNo}" />',{}, JSON.stringify(data));
-		
-		//message창 초기화
-		$('#text-message').val('');
-}
 
 //웹소켓 선언
 //1.최초 웹소켓 생성 url: /stomp
@@ -1448,6 +1432,24 @@ stompClient.connect({}, function(frame) {
 		
 	});
 });
+
+function sendMessage() {
+	let data = {
+			channelNo : "${channelNo}",
+			sender : "${memberId}",
+			msg : $("#text-message").val(),
+			sendDate : new Date().getTime(),
+			type: "MESSAGE"
+		}
+		var a = $("#text-message").val();
+		alert(a);
+
+		//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
+		stompClient.send('<c:url value="/chat/${channelNo}" />',{}, JSON.stringify(data));
+		
+		//message창 초기화
+		$('#text-message').val('');
+}
 </script>
 
 
