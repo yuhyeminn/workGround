@@ -432,7 +432,7 @@ function clubFunc(){
 
 
 				<c:forEach items="${clubList }" var="club">
-					<!-- modal Club 부분 -->
+<%-- 					<!-- modal Club 부분 -->
 					<div class="modal fade" id="modal-club-${club.clubNo }">
 						<div class="modal-dialog modal-lg">
 							<div class="modal-content">
@@ -545,7 +545,7 @@ function clubFunc(){
 						</div>
 						<!-- /.modal-dialog -->
 					</div>
-					<!-- /.modal -->
+					<!-- /.modal --> --%>
 
 
 					<!-- new Club modal -->
@@ -874,5 +874,5 @@ function clubFunc(){
 	<!-- /.content-wrapper -->
 
 
-
+	<jsp:include page="/WEB-INF/views/club/clubListModal.jsp"></jsp:include>
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

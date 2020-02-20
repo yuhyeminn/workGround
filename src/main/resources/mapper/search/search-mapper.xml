@@ -105,7 +105,7 @@
 		</collection>
 	</resultMap>
 	
-	<select id="selectClubListByKeyword" resultMap="searchClubMap">
+<!-- 	<select id="selectClubListByKeyword" resultMap="searchClubMap">
 		select C.club_no, C.club_name, C.club_category, C.club_enroll_date, M.member_name
 		from club C join member M on C.club_manager_id = M.member_id
 		where club_name like '%'||#{keyword}||'%'
@@ -117,7 +117,7 @@
 		<result column="club_category" property="category"/>
 		<result column="club_enroll_date" property="enrollDate"/>
 		<result column="member_name" property="clubManager"/>
-	</resultMap>
+	</resultMap> -->
 	
 	<select id="selectMemberListByKeyword" resultType="member">
 		select * 
@@ -162,4 +162,43 @@
 			where club_name like '%'||#{keyword}||'%'
 			order by club_category)
 	</select>
+	
+	<!-- 클럽 수정 -->
+	<resultMap type="club" id="searchClubMap">
+		<id column="club_no" property="clubNo"></id>
+		<result column="club_name" property="clubName"></result>
+		<result column="club_enroll_date" property="clubEnrollDate"></result>
+		<result column="club_introduce" property="clubIntroduce"></result>
+		<result column="club_meeting_cycle" property="clubMeetingCycle"></result>
+		<result column="club_meeting_date" property="clubMeetingDate"></result>
+		<result column="club_category" property="clubCategory"></result>
+		<result column="club_manager_id" property="clubManagerId"></result>
+		<result column="club_approve_YN" property="clubApproveYN"></result>
+		<result column="club_manager_yn" property="clubManagerYN"></result>
+		<result column="member_name" property="clubManagerName"></result>
+		<collection property="clubPhotoList" ofType="clubPhoto">
+			<id column="club_photo_no" property="clubPhotoNo"></id>
+			<result column="club_photo_title" property="clubPhotoTitle"></result>
+			<result column="club_photo_original" property="clubPhotoOriginal"></result>
+			<result column="club_photo_renamed" property="clubPhotoRenamed"></result>
+			<result column="club_no" property="clubNo"></result>
+			<result column="club_photo_date" property="clubPhotoDate"></result>
+		</collection>
+	</resultMap>
+	
+	<select id="selectClubListByKeyword" resultMap="searchClubMap">
+		select C.*, P.*, M.member_name,
+			   (select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn,
+			   (select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
+		from (select * from club order by club_enroll_date asc) C
+			left join club_photo P on C.club_no = P.club_no
+            left join member M on C.club_manager_id = M.member_id
+        where club_name like '%'||#{keyword}||'%'
+        order by club_category
+	</select>
+	
+
+	
+	
+	
 </mapper>

@@ -276,17 +276,17 @@ function checkComment(commentContent){
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${fn:length(list)})</span></h3>
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${fn:length(clubList)})</span></h3>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${clubList}" var="map" begin="0" end="4">
-	             <div class="card-body">
+	             <c:forEach items="${clubList}" var="club" begin="0" end="4">
+	             <div class="card-body" data-toggle="modal" data-target="#modal-club-${club.clubNo}">
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
-	                         <h5>${map['clubName']}</h5>
-	                         <button type="button" class="btn btn-outline-warning btn-xs btn-admin btn-clubCate">${map['category']}</button>
+	                         <h5>${club.clubName}</h5>
+	                         <button type="button" class="btn btn-outline-warning btn-xs btn-admin btn-clubCate">${club.clubCategory}</button>
 	                         <div class="card-status">
-                                <span class="date"><fmt:formatDate value="${map['enrollDate']}" type="date" pattern="yyyy-MM-dd" /></span>
-                                <span class="writer">${map['clubManager']}</span>
+                                <span class="date"><fmt:formatDate value="${club.clubEnrollDate}" type="date" pattern="yyyy-MM-dd" /></span>
+                                <span class="writer">${club.clubManagerName}</span>
                              </div>
 	                     </div>
 	                 </div>
@@ -328,5 +328,6 @@ function checkComment(commentContent){
 </div>
 <!-- /.content-wrapper -->
 
+<jsp:include page="/WEB-INF/views/club/clubListModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

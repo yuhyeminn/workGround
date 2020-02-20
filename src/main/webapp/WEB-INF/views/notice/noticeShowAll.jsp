@@ -28,7 +28,7 @@ $(function(){
         "paging": true,
         "lengthChange": false,
         "searching": false,
-        "ordering": true,
+        "ordering": false,
         "info": false,
         "autoWidth": false,
     });
@@ -46,7 +46,7 @@ function sidebarActive(){
 			$obj.removeClass('active');
 	});
 	
-	$("#sidebar-member").addClass("active");
+	$("#sidebar-notice").addClass("active");
 }
 
 //공지/커뮤니티 상세보기에서 댓글 작성, 삭제

@@ -61,9 +61,19 @@ public class SearchServiceImpl implements SearchService {
 		return list;
 	}
 
-	@Override
+/*	@Override
 	public List<Map<String, Object>> selectClubListByKeyword(String keyword) {
 		List<Map<String, Object>> list = searchDAO.selectClubListByKeyword(keyword);
+		
+		if(list==null)
+			throw new SearchException("키워드로 동호회 조회 오류!");
+		
+		return list;
+	}
+*/	
+	@Override
+	public List<Club> selectClubListByKeyword(Map<String, String> param) {
+		List<Club> list = searchDAO.selectClubListByKeyword(param);
 		
 		if(list==null)
 			throw new SearchException("키워드로 동호회 조회 오류!");
@@ -181,9 +191,18 @@ public class SearchServiceImpl implements SearchService {
 		return totalContents;
 	}
 
-	@Override
+/*	@Override
 	public List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword) {
 		List<Map<String, Object>> list = searchDAO.selectClubListByPageBar(cPage, numPerPage, keyword);
+		
+		if(list==null)
+			throw new SearchException("동호회 조회 오류!");
+		
+		return list;
+	} */
+	@Override
+	public List<Club> selectClubListByPageBar(int cPage, int numPerPage, Map<String, String> param) {
+		List<Club> list = searchDAO.selectClubListByPageBar(cPage, numPerPage, param);
 		
 		if(list==null)
 			throw new SearchException("동호회 조회 오류!");

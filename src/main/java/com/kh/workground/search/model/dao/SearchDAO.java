@@ -19,7 +19,8 @@ public interface SearchDAO {
 
 	List<Project> selectProjectListByKeyword(Map<String, String> param);
 
-	List<Map<String, Object>> selectClubListByKeyword(String keyword);
+/*	List<Map<String, Object>> selectClubListByKeyword(String keyword); */
+	List<Club> selectClubListByKeyword(Map<String, String> param);
 
 	List<Member> selectMemberListByKeyword(String keyword);
 
@@ -43,7 +44,8 @@ public interface SearchDAO {
 
 	int selectProjectTotalContents();
 
-	List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword);
+/*	List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword); */
+	List<Club> selectClubListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
 	int selectClubTotalContents();
 

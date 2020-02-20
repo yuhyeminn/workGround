@@ -19,8 +19,9 @@ public interface SearchService {
 
 	List<Project> selectProjectListByKeyword(Map<String, String> param);
 
-	List<Map<String, Object>> selectClubListByKeyword(String keyword);
-
+	List<Club> selectClubListByKeyword(Map<String, String> param);
+/*	List<Map<String, Object>> selectClubListByKeyword(String keyword);
+*/
 	List<Member> selectMemberListByKeyword(String keyword);
 
 	List<Member> selectMemberListByPageBar(int cPage, int numPerPage, String keyword);
@@ -39,7 +40,8 @@ public interface SearchService {
 
 	int selectProjectTotalContents();
 
-	List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword);
+/*	List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword); */
+	List<Club> selectClubListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
 	int selectClubTotalContents();
 

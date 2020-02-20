@@ -45,6 +45,9 @@ public class Club implements Serializable {
 	//동호회 사진 가상컬럼
 	private List<ClubPhoto> clubPhotoList;
 	
+	//동호회 매니저 이름 가상컬럼 *추가해도 되는지?*
+	private String clubManagerName;
+	
 
 	
 	

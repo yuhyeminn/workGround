@@ -33,16 +33,18 @@ public class SearchController {
 	@RequestMapping("/search/searchList.do")
 	public ModelAndView searchList(ModelAndView mav, HttpSession session, @RequestParam String keyword) {
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		String memberId = memberLoggedIn.getMemberId(); //추가
 		Map<String, String> param = new HashMap<>();
 		param.put("deptCode", memberLoggedIn.getDeptCode());
 		param.put("keyword", keyword);
+		param.put("memberId", memberId); //동호회 모달에서 가입을 위해 //@추가@
 		
 		try {
 			//1.업무로직
 			//a-1.공지
 			List<Notice> noticeList = searchService.selectTotalNoticeListByKeyword(keyword);
 			
-			//a-2.내 부서 게시글
+			//a-2.내 부서 게시글   @수정@
 			List<Notice> deptNoticeList = searchService.selectDeptNoticeListByKeyword(param);
 			
 			//a-3.커뮤니티
@@ -51,8 +53,9 @@ public class SearchController {
 			//b.내 부서 프로젝트
 			List<Project> projectList = searchService.selectProjectListByKeyword(param);
 			
-			//c.동호회
-			List<Map<String, Object>> clubList = searchService.selectClubListByKeyword(keyword);
+			//c.동호회   @param수정@
+/*			List<Map<String, Object>> clubList = searchService.selectClubListByKeyword(param); */
+			List<Club> clubList = searchService.selectClubListByKeyword(param);
 			
 			//d.멤버
 			List<Member> memList = searchService.selectMemberListByKeyword(keyword);
@@ -81,9 +84,11 @@ public class SearchController {
 									@RequestParam String keyword, @RequestParam String type, @RequestParam(defaultValue="1") int cPage) {
 		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		String memberId = memberLoggedIn.getMemberId(); //추가
 		Map<String, String> param = new HashMap<>();
 		param.put("deptCode", memberLoggedIn.getDeptCode());
 		param.put("keyword", keyword);
+		param.put("memberId", memberId); //동호회 모달에서 가입을 위해 //@추가@
 		final int numPerPage = 10; 
 		
 		try {
@@ -118,9 +123,10 @@ public class SearchController {
 			}
 			//동호회
 			if("club".equals(type)) {
-				List<Map<String, Object>> list = searchService.selectClubListByPageBar(cPage, numPerPage, keyword);
+/*				List<Map<String, Object>> list = searchService.selectClubListByPageBar(cPage, numPerPage, keyword); */
+				List<Club> list = searchService.selectClubListByPageBar(cPage, numPerPage, param);
 				int totalContents = searchService.selectClubTotalContents();
-				mav.addObject("list", list);
+				mav.addObject("clubList", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//멤버

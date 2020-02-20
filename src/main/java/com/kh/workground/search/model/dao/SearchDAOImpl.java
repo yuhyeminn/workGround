@@ -40,9 +40,13 @@ public class SearchDAOImpl implements SearchDAO {
 		return sqlSession.selectList("search.selectProjectListByKeyword", param);
 	}
 
-	@Override
+/*	@Override
 	public List<Map<String, Object>> selectClubListByKeyword(String keyword) {
 		return sqlSession.selectList("search.selectClubListByKeyword", keyword);
+	} */
+	@Override
+	public List<Club> selectClubListByKeyword(Map<String, String> param) {
+		return sqlSession.selectList("search.selectClubListByKeyword", param);
 	}
 
 	@Override
@@ -105,10 +109,15 @@ public class SearchDAOImpl implements SearchDAO {
 		return sqlSession.selectOne("search.selectProjectTotalContents");
 	}
 
-	@Override
+/*	@Override
 	public List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword) {
 		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
 		return sqlSession.selectList("search.selectClubListByKeyword", keyword, rowBounds);
+	} */
+	@Override
+	public List<Club> selectClubListByPageBar(int cPage, int numPerPage, Map<String, String> param) {
+		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
+		return sqlSession.selectList("search.selectClubListByKeyword", param, rowBounds);
 	}
 
 	@Override

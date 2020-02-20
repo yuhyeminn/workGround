@@ -7,7 +7,8 @@
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 <link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/notice.css">
 <style>
-.btn-showAll{float: right; margin-right: 1rem; border: 1px solid darkgray; border-radius: 3px; padding: .4rem; color: gray}
+.btn-showAll{float: right; margin-right: 1rem; border: 1.2px solid lightgray; border-radius: 3px; padding: .4rem; color: darkgray}
+.btn-showAll:hover{color: gray;}
 </style>
 
 <script>

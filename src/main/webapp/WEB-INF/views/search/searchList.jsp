@@ -279,7 +279,7 @@ function checkComment(commentContent){
         </c:if>
         
         <c:if test="${clubList!=null && !empty clubList}">
-        <!-- 동호회 -->
+        <!-- 동호회 --> <!-- @수정@ -->
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
@@ -288,15 +288,15 @@ function checkComment(commentContent){
 	                 <button type="button" class="btn-more" value="${keyword},club">모두 보기</button>
 	                 </c:if>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${clubList}" var="map" begin="0" end="4">
-	             <div class="card-body">
+	             <c:forEach items="${clubList}" var="club" begin="0" end="4">
+	             <div class="card-body" data-toggle="modal" data-target="#modal-club-${club.clubNo}">
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
-	                         <h5>${map['clubName']}</h5>
-	                         <button type="button" class="btn btn-outline-warning btn-xs btn-admin btn-clubCate">${map['category']}</button>
+	                         <h5>${club.clubName}</h5>
+	                         <button type="button" class="btn btn-outline-warning btn-xs btn-admin btn-clubCate">${club.clubCategory}</button>
 	                         <div class="card-status">
-                                <span class="date"><fmt:formatDate value="${map['enrollDate']}" type="date" pattern="yyyy-MM-dd" /></span>
-                                <span class="writer">${map['clubManager']}</span>
+                                <span class="date"><fmt:formatDate value="${club.clubEnrollDate}" type="date" pattern="yyyy-MM-dd" /></span>
+                                <span class="writer">${club.clubManagerName}</span>
                              </div>
 	                     </div>
 	                 </div>
@@ -347,5 +347,6 @@ function checkComment(commentContent){
 </div>
 <!-- /.content-wrapper -->
 
+<jsp:include page="/WEB-INF/views/club/clubListModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
