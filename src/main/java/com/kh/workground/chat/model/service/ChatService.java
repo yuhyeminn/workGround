@@ -30,4 +30,6 @@ public interface ChatService {
 	
 	int insertChatLog(Chat fromMessage);
 
+	List<Chat> selectChatList();
+
 }

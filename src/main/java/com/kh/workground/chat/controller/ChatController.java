@@ -1,11 +1,13 @@
 package com.kh.workground.chat.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.JsonIOException;
 import com.kh.workground.chat.model.service.ChatService;
 import com.kh.workground.chat.model.vo.Channel;
 import com.kh.workground.chat.model.vo.ChannelMember;
@@ -40,7 +43,7 @@ public class ChatController {
 	ChatService chatService;
 	
 	@GetMapping("/chat/chatList.do")
-	public void chatList(Model model, 
+	public ModelAndView chatList(ModelAndView mav, 
 						 @SessionAttribute(value="memberLoggedIn", required=false) Member memberLoggedIn) {
 		logger.debug("memberLoggId={}", memberLoggedIn);
 		List<Channel> channelList = null;
@@ -54,8 +57,17 @@ public class ChatController {
 			channelList = new ArrayList<>();
 		}
 		
+		//2. chatList가져오기
+		List<Chat> chatList = chatService.selectChatList();
+		logger.debug("chatList={}", chatList);
 		
-		model.addAttribute(channelList);
+		mav.addObject("channelNo", channelList.get(0).getChannelNo());
+		mav.addObject("index", 0);
+		mav.addObject("chatList", chatList);
+		mav.addObject("channelList", channelList);
+		mav.setViewName("chat/chatList");
+		
+		return mav;
 	}
 	
 	/**
@@ -137,11 +149,11 @@ public class ChatController {
 		channelNoList = chatService.findChannelByMemberId(param);
 		logger.debug("channelNoList={}", channelNoList);
 		
-		if(channelNoList.size() < 2) {
+		if(channelNoList.isEmpty()) {
 			channelNo = getRandomChannelNo(10);
 //			logger.debug("channelNo={}", channelNo);
 			
-			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null, member.getRenamedFileName());
+			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null, member.getMemberName(), member.getRenamedFileName());
 			int insertChannelResult = chatService.insertChannel(channel);
 //			logger.debug("insertChatResult={}", insertChannelResult);
 			
@@ -168,16 +180,49 @@ public class ChatController {
 	}
 	
 	@PostMapping("/chat/loadChatList.do")
+	public ModelAndView loadChatList(ModelAndView mav, 
+			 @SessionAttribute(value="memberLoggedIn", required=false) Member memberLoggedIn, 
+			 @RequestParam("channelNo") String channelNo, 
+			 @RequestParam("index") int index) {
+		logger.debug("channelNo={}", channelNo);
+		logger.debug("index={}", index);
+		logger.debug("memberLoggId={}", memberLoggedIn);
+		List<Channel> channelList = null;
+		logger.debug("channelList={}", channelList);
+		
+		//chatId 조회
+		//1. memberId로 등록한 chatroom존재여부 검사. 있는 경우 chatId 리턴.
+		channelList = chatService.findChannelNoListByMemberId(memberLoggedIn.getMemberId());
+		logger.debug("channelList={}", channelList);
+		if(channelList == null) {
+			channelList = new ArrayList<>();
+		}
+		
+		//2. chatList가져오기
+		List<Chat> chatList = chatService.selectChatList();
+		logger.debug("chatList={}", chatList);
+		
+		mav.addObject("channelNo", channelList.get(index).getChannelNo());
+		mav.addObject("index", index);
+		mav.addObject("chatList", chatList);
+		mav.addObject("channelList", channelList);
+		mav.setViewName("chat/chatList");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/chat/loadChatList2.do")
 	@ResponseBody
-	public Map<String, Object> loadChatList (@RequestParam("channelNo") String channelNo, 
+	public Map<String, Object> loadChatList2 (@RequestParam("channelNo") String channelNo, 
 											 @SessionAttribute("memberLoggedIn") Member memberLoggedIn, 
-											 HttpSession session) {
+											 HttpSession session, 
+											 HttpServletRequest request, 
+											 Model model) {
 		logger.debug("channelNo={}", channelNo);
 		logger.debug("memberLoggedIn={}", memberLoggedIn);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("channelNo", channelNo);
-		session.setAttribute("channelNo", channelNo);
 		
 		List<ChannelMember> channelMemberList = chatService.selectChannelMemberList(channelNo);
 		map.put("channelMemberList", channelMemberList);
@@ -191,8 +236,18 @@ public class ChatController {
 		map.put("memberId", memberLoggedIn.getMemberId());
 		
 		List<Chat> chatList = chatService.findChatRoomByChannelNo(channelNo);
-//		logger.debug("chatList={}", chatList);
+		logger.debug("chatList={}", chatList);
 		map.put("chatList", chatList);
+		
+//		logger.debug("map={}", map);
+//		session.removeAttribute("channelNo");
+//		session.setAttribute("channelNo", channelNo);
+//		request.removeAttribute("channelNo");
+//		request.setAttribute("channelNo", channelNo);
+//		logger.debug("channelNo={}", channelNo);
+		
+		model.addAttribute("channelNo", channelNo);
+		logger.debug("model={}", model);
 		
 		return map;
 	}
@@ -201,13 +256,15 @@ public class ChatController {
 	@SendTo("/chat/{channelNo}")
 	public Chat sendEcho(Chat fromMessage, 
 						 @DestinationVariable String channelNo, 
-						 @Header("simpSessionId") String sessionId) {
+						 @Header(value="simpSessionId") String sessionId) {
 		logger.debug("fromMessage={}", fromMessage);
 		logger.debug("channelNo={}", channelNo);
 		logger.debug("sessionId={}", sessionId);
 		
 		chatService.insertChatLog(fromMessage);
 		
+		logger.debug("fromMessage={}", fromMessage);
+
 		return fromMessage;
 	}
 	
