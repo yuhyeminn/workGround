@@ -246,7 +246,7 @@ function phone_validate(){
       									  enctype="multipart/form-data"
       									  onsubmit="return checkUpFile();">
 	                                	<c:if test="${m.memberId == memberLoggedIn.memberId}">
-		                                <button type="submit" class="btn-update" style="position:absolute;top:22rem;left:14.6rem;">사진 업데이트</button>
+		                                <button type="submit" class="btn-update" style="position:absolute;top:20rem;left:14.6rem;">사진 업데이트</button>
 		                                </c:if>
 		                                <div id="custom-file-wrapper" style="float: left; margin-left: 1.5rem;">
 		                                    <img class="img-fluid" src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="user image" id="img-viewer" style="max-height:9rem; width:100%;">
@@ -255,7 +255,7 @@ function phone_validate(){
 		    								<c:if test="${m.memberId == memberLoggedIn.memberId}">
 		                                    <div class="custom-file" style="background: black; opacity: 0.7; position: relative; bottom: 2.3rem; text-align: center; transition: .08s">
 		                                        <label for="customFile" style="color: white; padding-top: 0.5rem; font-size: .75rem; cursor: pointer;">
-		                                            <i class="fas fa-camera-retro" style="margin-right: .3rem;"></i>사진 업데이트
+		                                            <i class="fas fa-camera-retro" style="margin-right: .3rem;"></i>사진 선택
 		                                        </label>
 		                                    </div>
 		                                    <div class="form-group" style="display:none;">

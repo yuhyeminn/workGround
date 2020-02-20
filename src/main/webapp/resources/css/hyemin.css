@@ -1,13 +1,14 @@
+.work-attachment-tbl .filename{width: 6rem;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+.side-header{background:white}
 .work-custom-file:hover {
     height: 2.3rem;
     transform: none;
 }
 
 .reply-work-ref-writer{background: #17a2b8; color: white;padding: 2px;border-radius: 5px;margin-right: 5px;}
-.reply-work-ref-content{float: right;width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;display: inline-block;}
+.reply-work-ref-content{float: right;width: 78%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;display: inline-block;}
 .reply-work-ref{background: #f8f9fa;padding: 7px 5px;margin-bottom: 10px;border-radius: 5px;font-size: 14px;width: 95%;display: inline-block;}
 .reply-work-ref-wrapper{display:none}
-
 
 #desc{border: none;padding: 5px;width: 80%;}
 #title{border: none;width: 80%;background:#e7e7e7;}
@@ -121,6 +122,7 @@
     left: 0px;
     height: 24px;
     width: 24px;
+    object-fit: cover;
 }
 
 .material .value {
@@ -306,7 +308,7 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
 .setting-row{padding:15px 0px;}
 .add-description{color:#17a2b8;}
 .add-description:hover{background: #e7e7e7;cursor: pointer;}
-.tab-content{background:#f3f4f5; font-size:15px;height:100%;}
+.tab-content{background:#f3f4f5; font-size:15px;}
 .setting-content-label{margin:0px;width:9rem;font-size:14px;}
 .setting-row .row{padding:15px 0px;}
 .status-dropdown .status-dot{float:right;}
@@ -334,12 +336,13 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   
 .work-setting {
     position: fixed;
-    background-color: #fff;
+    background-color: #f3f4f5;
     box-shadow: -1px 6px 10px 0 rgba(0,0,0,.2);
-    height: 100%;
     right: -520px;
     width: 475px;
     overflow: visible;
+    bottom:0px;
+    z-index:1;
   }
   .plusBtn{display: block;border:none;border-radius: 5px;padding:5px 10px;background-color:#e7e7e7;margin-top: -5px;height:32px;}
   .plusBtn:hover{background-color:#17a2b8;color:white;}
@@ -370,11 +373,12 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .comment-box{height:500px;overflow-y: scroll;/* border:1px solid #e7e7e7; */font-size:14px;}
   .comment-level2{margin-left: 3rem;}
   .comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93);}
-  .comment-text-area{display: inline-block; width: 83%; height: 2rem; margin-right: .3rem;}
+  .comment-text-area{display: inline-block; width: 82%; height: 2rem; margin-right: .3rem;}
   .comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
   .comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
   .comment-submit{border: 0;background: darkgray;border-radius: 3px;width: 3.5rem;height: 3.3rem;color: white;float: right;}
   .comment-submit:hover, .comment-delete:hover, .comment-reply:hover{background-color:#17a2b8;}
+  .comment-wrapper .img-circle{object-fit: cover;}
 
   /* 업무 파일 탭*/
   .work-file-upload-box{margin-bottom:20px;font-size:14px;}
