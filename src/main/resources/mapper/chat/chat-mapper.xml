@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chat">
+	<select id="findChannelNoListByMemberId" resultType="channel">
+		select C.* , B.renamed_filename 
+		from channel C 
+			left join channel_member M on C.channel_no = M.channel_no
+			left join member B on M.member_id = B.member_id 
+		where M.member_id = #{memberId} and C.channel_type = 'CH3'
+	</select>
+	
+	<select id="selectMemberList" resultType="member">
+		select * 
+		from member 
+		where member_name like '%'||#{keyword}||'%' or email like '%'||#{keyword}||'%'
+	</select>
+	
+	<select id="selectOneMember" resultType="member">
+		select * from member where member_id = #{memberId}
+	</select>
+	
+	<select id="findChannelByMemberId" resultType="channel">
+		select C.channel_no  
+		from channel C 
+			left join channel_member M on C.channel_no = M.channel_no 
+		where C.channel_type = 'CH3' and (M.member_id = #{chatMember} or M.member_id = #{memberId})
+	</select>
+	
+	<insert id="insertChannel">
+		insert into channel values(#{channelNo}, #{channelType}, #{channelTitle}, #{status}, #{lastCheck}, #{projectOrClubNo})
+	</insert>
+	
+	<insert id="insertChannelMember">
+		insert into channel_member 
+		values(seq_channel_member_no.nextval, #{channelNo}, #{memberId})
+	</insert>
+	
+	<select id="findChatRoomByChannelNo" resultType="chat">
+		select * from chat 
+		where channel_no = #{channelNo}
+		order by send_date
+	</select>
+	
+	<select id="selectChannelMemberList" resultType="channelMember">
+		select C.*, M.renamed_filename 
+		from channel_member C left join member M on C.member_id = M.member_id 
+		where channel_no = #{channelNo} 
+	</select>
+	
+	<update id="updateLastCheck">
+		update channel set lastcheck = #{time} 
+		where channel_no = #{channelNo} and sender = #{sender}
+	</update>
+	
+	<insert id="insertChatLog">
+		insert into chat(chat_no, channel_no, sender, send_date, msg) 
+		values(seq_chat_no.nextval, #{channelNo}, #{sender}, default, #{msg})
+	</insert>
+</mapper>
