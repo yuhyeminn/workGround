@@ -62,6 +62,7 @@ public class ChatController {
 		logger.debug("chatList={}", chatList);
 		
 		mav.addObject("channelNo", channelList.get(0).getChannelNo());
+		mav.addObject("index", 0);
 		mav.addObject("chatList", chatList);
 		mav.addObject("channelList", channelList);
 		mav.setViewName("chat/chatList");
@@ -178,9 +179,41 @@ public class ChatController {
 		return mav;
 	}
 	
-	@RequestMapping("/chat/loadChatList.do")
+	@PostMapping("/chat/loadChatList.do")
+	public ModelAndView loadChatList(ModelAndView mav, 
+			 @SessionAttribute(value="memberLoggedIn", required=false) Member memberLoggedIn, 
+			 @RequestParam("channelNo") String channelNo, 
+			 @RequestParam("index") int index) {
+		logger.debug("channelNo={}", channelNo);
+		logger.debug("index={}", index);
+		logger.debug("memberLoggId={}", memberLoggedIn);
+		List<Channel> channelList = null;
+		logger.debug("channelList={}", channelList);
+		
+		//chatId 조회
+		//1. memberId로 등록한 chatroom존재여부 검사. 있는 경우 chatId 리턴.
+		channelList = chatService.findChannelNoListByMemberId(memberLoggedIn.getMemberId());
+		logger.debug("channelList={}", channelList);
+		if(channelList == null) {
+			channelList = new ArrayList<>();
+		}
+		
+		//2. chatList가져오기
+		List<Chat> chatList = chatService.selectChatList();
+		logger.debug("chatList={}", chatList);
+		
+		mav.addObject("channelNo", channelList.get(index).getChannelNo());
+		mav.addObject("index", index);
+		mav.addObject("chatList", chatList);
+		mav.addObject("channelList", channelList);
+		mav.setViewName("chat/chatList");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/chat/loadChatList2.do")
 	@ResponseBody
-	public Map<String, Object> loadChatList (@RequestParam("channelNo") String channelNo, 
+	public Map<String, Object> loadChatList2 (@RequestParam("channelNo") String channelNo, 
 											 @SessionAttribute("memberLoggedIn") Member memberLoggedIn, 
 											 HttpSession session, 
 											 HttpServletRequest request, 
@@ -223,7 +256,7 @@ public class ChatController {
 	@SendTo("/chat/{channelNo}")
 	public Chat sendEcho(Chat fromMessage, 
 						 @DestinationVariable String channelNo, 
-						 @Header("simpSessionId") String sessionId) {
+						 @Header(value="simpSessionId") String sessionId) {
 		logger.debug("fromMessage={}", fromMessage);
 		logger.debug("channelNo={}", channelNo);
 		logger.debug("sessionId={}", sessionId);

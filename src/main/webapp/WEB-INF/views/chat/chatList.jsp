@@ -92,8 +92,12 @@ function sidebarActive(){
                                 <table id="dmList" class="table table-head-fixed text-nowrap">
                                     <tbody class="td">
                                     <c:forEach items="${channelList }" var="channel" varStatus="vs">
-                                      <tr onclick="loadChatList('${channel.channelNo }', '${channel.memberName }', '${channel.renamedFileName }');">
+                                      <tr onclick="loadChatList('${channel.channelNo }', '${channel.memberName }', '${channel.renamedFileName }', '${vs.index }');">
                                         <td>
+                                        <form name="loadChatListFrm">
+									    	<input type="hidden" name="channelNo" value="" />
+									    	<input type="hidden" name="index" value="" />
+									    </form>
                                           <div class="col-9" style="width: 100%;"> 
                                             <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
                                             <h6 class="h6">${channel.memberName }</h6>
@@ -114,8 +118,8 @@ function sidebarActive(){
                         <div class="card-header">
                             <div class="post">
                                 <div class="user-block" id="chat_userName">
-                                  <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[0].renamedFileName}" alt="user image">
-                                  <span class="username"><h3>${channelList[0].memberName }</h3></span> 
+                                  <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[index].renamedFileName}" alt="user image">
+                                  <span class="username"><h3>${channelList[index].memberName }</h3></span> 
                                 </div>
                             </div>
                         </div><!-- /.card-header -->
@@ -123,7 +127,7 @@ function sidebarActive(){
                             <!-- Conversations are loaded here -->
                             <div class="direct-chat-messages" id="chatArea" style="height:20.8rem">
                             <c:forEach items="${chatList }" var="chat">
-                            <c:if test="${channelList[0].channelNo eq chat.channelNo }">
+                            <c:if test="${channelList[index].channelNo eq chat.channelNo }">
                             <c:if test="${chat.sender eq memberLoggedIn.memberId }">
                               <div class="direct-chat-msg right">
                                 <div class="direct-chat-infos clearfix">
@@ -448,59 +452,23 @@ function plusMember(memberId) {
 	
 }
 
-function loadChatList(channelNo, memberName, renamedFileName) {
+function loadChatList(channelNo, memberName, renamedFileName, index) {
 	console.log(channelNo);
+	console.log(index);
 	//$("#chatContent").children().remove();
-	
-	$.ajax({
-		url: '${pageContext.request.contextPath}/chat/loadChatList.do', 
-		data: {channelNo : channelNo}, 
-		dataType: 'json', 
-		type: 'POST', 
-		success: data=> {
-			console.log(data);
-			console.log("${channelNo}");
-			
-			$("#chatArea").children().remove();
-			$("#chat_userName").children().remove();
-			$("#chat_userName").append('<img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'" alt="user image"><span class="username"><h3>'+memberName+'</h3></span>');
-			$("#div_textarea").children().remove();
-			//console.log("1");
-			if(data.chatList != null) {
-				let html = '';
-				$.each(data.chatList, (idx, list)=> {
-					if(list.sender != data.chatMemberId) {
-						html += '<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix">';
-						html += '<span class="direct-chat-name float-right">'+list.memberName+'</span>';
-						html += '<span class="direct-chat-timestamp float-right">'+list.sendDate+' &nbsp;&nbsp;</span></div>';
-						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">';
-						html += '<div class="direct-chat-text">'+list.msg+'</div>';
-						html += '</div>';
-					}
-					else {
-						html += '<div class="direct-chat-msg"><div class="direct-chat-infos clearfix">';
-						html += '<span class="direct-chat-name float-left">'+list.memberName+'</span>';
-						html += '<span class="direct-chat-timestamp float-left"> &nbsp;&nbsp;'+list.sendDate+'</span></div>';
-						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">';
-						html += '<div class="direct-chat-text">'+list.msg+'</div>';
-						html += '</div>';
-					}
-				});
-				//console.log("2");
-				$("#chatArea").append(html);
-				//console.log("3");
-			}
-			//console.log(data.channelNo);
-			//let textarea = '<div class="mb-3"><textarea class="textarea" placeholder="Message" id="message" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea></div>';
-			let textarea = '<input type="text" id="message" class="form-control" placeholder="Message to '+memberName+'"><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>';
-			//$("#div_textarea").append(textarea);
-			$("#div_textarea").append(textarea);
-			
-		}, 
-		error: (x, s, e)=> {
-			console.log("ajax실행오류!!", x, s, e);
-		}
-	});
+	// name이 loadChatListFrm인 태그
+      var f = document.loadChatListFrm;
+		console.log(f);
+      // form 태그의 하위 태그 값 매개 변수로 대입
+      f[index].channelNo.value = channelNo;
+      f[index].index.value = index;
+
+      // input태그의 값들을 전송하는 주소
+      f[index].action = "${pageContext.request.contextPath}/chat/loadChatList.do";
+
+      // 전송 방식 : post
+      f[index].method = "post";
+      f[index].submit();
 }
 //웹소켓 선언
 //1.최초 웹소켓 생성 url: /chat
@@ -553,7 +521,7 @@ function sendMessage() {
 		memberName : "${memberLoggedIn.memberName}", 
 		renamedFileName : "${memberLoggedIn.renamedFileName}"
 	}
-	//console.log(data);
+	console.log(data);
 	
 	//채팅메세지: 1대1채팅을 위해 고유한 channelNo을 서버측에서 발급해 관리한다.
 	stompClient.send('<c:url value="/chat/${channelNo}" />', {}, JSON.stringify(data));
