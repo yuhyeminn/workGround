@@ -394,6 +394,7 @@ function plusMember(memberId) {
 		dataType: 'json', 
 		success: data=> {
 			console.log(data.member.memberName);
+			console.log(plusMember);
 			
 			let html = '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">';
 	        html += '<div class="col-12">';
@@ -440,7 +441,7 @@ function loadChatList(channelNo, channelTitle, renamedFileName) {
 					if(list.sender != data.chatMemberId) {
 						html += '<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix">';
 						html += '<span class="direct-chat-name float-right">'+list.sender+'</span>';
-						html += '<span class="direct-chat-timestamp float-right">2:05 pm &nbsp;&nbsp;</span></div>';
+						html += '<span class="direct-chat-timestamp float-right">'+list.sendDate+' &nbsp;&nbsp;</span></div>';
 						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'">';
 						html += '<div class="direct-chat-text">'+list.msg+'</div>';
 						html += '</div>';
@@ -448,7 +449,7 @@ function loadChatList(channelNo, channelTitle, renamedFileName) {
 					else {
 						html += '<div class="direct-chat-msg"><div class="direct-chat-infos clearfix">';
 						html += '<span class="direct-chat-name float-left">'+list.sender+'</span>';
-						html += '<span class="direct-chat-timestamp float-left">2:05 pm &nbsp;&nbsp;</span></div>';
+						html += '<span class="direct-chat-timestamp float-left"> &nbsp;&nbsp;'+list.sendDate+'</span></div>';
 						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+renamedFileName+'">';
 						html += '<div class="direct-chat-text">'+list.msg+'</div>';
 						html += '</div>';
@@ -460,6 +461,7 @@ function loadChatList(channelNo, channelTitle, renamedFileName) {
 			}
 			//let textarea = '<div class="mb-3"><textarea class="textarea" placeholder="Message" id="message" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea></div>';
 			let textarea = '<input type="text" id="message" class="form-control" placeholder="Message to '+channelTitle+'"><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>';
+			//$("#div_textarea").append(textarea);
 			$("#div_textarea").append(textarea);
 		}, 
 		error: (x, s, e)=> {
@@ -483,7 +485,7 @@ stompClient.connect({}, function(frame) {
 	
 	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
 	stompClient.subscribe('/chat/${channelNo}', function(message) {
-		console.log("receive from subscribe /chat/${chatId} : ", message);
+		console.log("receive from subscribe /chat/${channelNo} : ", message);
 		let messageBody = JSON.parse(message.body);
 		let html = '<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix">';
 		html += '<span class="direct-chat-name float-right">'+messageBody.sender+'</span>';
