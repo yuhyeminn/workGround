@@ -25,26 +25,26 @@ public interface SearchDAO {
 
 	List<Member> selectMemberListByPageBar(int cPage, int numPerPage, String keyword);
 
-	int selectMemberTotalContents();
+	int selectMemberTotalContents(String keyword);
 
 	List<Notice> selectTotalNoticeListByKeyword(int cPage, int numPerPage, String keyword);
 
-	int selectTotalNoticeTotalContents();
+	int selectTotalNoticeTotalContents(String keyword);
 
 	List<Notice> selectDeptNoticeListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
-	int selectDeptNoticeTotalContents();
+	int selectDeptNoticeTotalContents(String keyword);
 
 	List<Community> selectCommuListByPageBar(int cPage, int numPerPage, String keyword);
 
-	int selectCommuListTotalContents();
+	int selectCommuListTotalContents(String keyword);
 
 	List<Project> selectProjectListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
-	int selectProjectTotalContents();
+	int selectProjectTotalContents(String keyword);
 
 	List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword);
 
-	int selectClubTotalContents();
+	int selectClubTotalContents(String keyword);
 
 }
