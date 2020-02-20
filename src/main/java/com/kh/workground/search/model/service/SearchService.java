@@ -26,28 +26,34 @@ public interface SearchService {
 
 	List<Member> selectMemberListByPageBar(int cPage, int numPerPage, String keyword);
 
-	int selectMemberTotalContents();
+	int selectMemberTotalContents(String keyword);
 
 	List<Notice> selectTotalNoticeListByKeyword(int cPage, int numPerPage, String keyword);
 
 	List<Notice> selectDeptNoticeListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
+/*<<<<<<< HEAD
+	int selectDeptNoticeTotalContents(Map<String, String> param);
+	int selectDeptNoticeTotalContents(Map<String, String> param);
+=======
+	int selectDeptNoticeTotalContents(String keyword);
+>>>>>>> master*/
 	int selectDeptNoticeTotalContents(Map<String, String> param);
 
 	List<Community> selectCommuListByPageBar(int cPage, int numPerPage, String keyword);
 
 	List<Project> selectProjectListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
-	int selectProjectTotalContents();
+	int selectProjectTotalContents(String keyword);
 
 /*	List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword); */
 	List<Club> selectClubListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
-	int selectClubTotalContents();
+	int selectClubTotalContents(String keyword);
 
-	int selectTotalNoticeTotalContents();
+	int selectTotalNoticeTotalContents(String keyword);
 
-	int selectCommuListTotalContents();
+	int selectCommuListTotalContents(String keyword);
 
 
 }

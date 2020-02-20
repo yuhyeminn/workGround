@@ -297,6 +297,10 @@
 		delete from attachment where work_no = #{workNo}
 	</delete>
 	
+	<delete id="deleteProject">
+		delete from project where project_no = #{projectNo}
+	</delete>
+	
 	
 	
 	
@@ -363,7 +367,7 @@
 	<!-- addProject.do : 프로젝트팀원 테이블에 팀장 추가 -->
 	<insert id="insertProjectManager" parameterType="project">
 		insert into project_members
-		values(seq_project_members.nextval,#{projectNo},#{projectWriter},'Y')
+		values(seq_project_members.nextval,#{projectNo},#{projectWriter},'Y',default)
 	</insert>
 	
 	<!-- addProject.do : 프로젝트팀원 테이블에 팀원 추가 -->
@@ -618,7 +622,35 @@
 	<!-- insertWorkFile.do : 업무 파일 업로드 -->
 	<insert id="insertWorkFile">
 		insert into attachment values (seq_attachment.nextval,#{workNo},#{attachmentWriterNo},#{originalFilename},#{renamedFilename},default)
+		<selectKey keyProperty="attachmentNo" resultType="_int" order="AFTER">
+			select seq_attachment.currval from dual
+		</selectKey>
 	</insert>
+	
+	<!-- insertWorkFile.do : attachment조회 -->
+	<select id="selectAttachmentOne" resultMap="attachmentMemberMap">
+		select A.*, VM.*
+		from attachment A join project_members PM on A.attachment_writer_no = PM.project_members_no left join view_member VM on PM.member_id = VM.member_id
+		where A.attachment_no = #{attachmentNo}
+	</select>
+	
+	<select id="selectMyWorkList" resultMap="workListCollectionMap">
+		select W.* 
+		from worklist WL left join work W on WL.worklist_no = W.worklist_no left join work_charged_members WM on W.work_no = WM.work_no
+		where project_no = to_number(#{projectNo}) and charged_member_id = #{memberId}
+	</select>
+	
+	<select id="selectMyChecklistCnt" resultType="_int">
+		select count(*) my_checklist_cnt 
+		from work W right join checklist C on W.work_no = C.work_no 
+		where worklist_no in (select worklist_no from worklist where project_no = to_number(#{projectNo})) and checklist_writer = #{memberId}
+	</select>
+	
+	<select id="selectMyAttachCommentCnt" resultType="_int">
+		select count(*) from work W right join ${type} A on W.work_no = A.work_no where worklist_no in (select worklist_no from worklist where project_no = to_number(#{projectNo}))
+		and ${type}_writer_no = (select project_members_no from project_members where member_id=#{memberId} and project_no=to_number(#{projectNo}))
+		
+	</select>
 	
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>

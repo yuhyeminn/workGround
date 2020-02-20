@@ -112,6 +112,12 @@ public class ClubDAOImpl implements ClubDAO {
 		return sqlSession.selectList("club.selectAllStandByClubListByCategory",param);
 	}
 
+	@Override
+	public int cancelClubManager(Map param) {
+
+		return sqlSession.update("club.cancelClubManager",param);
+	}
+
 
 
 

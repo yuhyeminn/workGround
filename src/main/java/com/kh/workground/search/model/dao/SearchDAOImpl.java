@@ -61,8 +61,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectMemberTotalContents() {
-		return sqlSession.selectOne("search.selectMemberTotalContents");
+	public int selectMemberTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectMemberTotalContents", keyword);
 	}
 
 	@Override
@@ -72,8 +72,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectTotalNoticeTotalContents() {
-		return sqlSession.selectOne("search.selectTotalNoticeTotalContents");
+	public int selectTotalNoticeTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectTotalNoticeTotalContents", keyword);
 	}
 
 	@Override
@@ -82,6 +82,13 @@ public class SearchDAOImpl implements SearchDAO {
 		return sqlSession.selectList("search.selectDeptNoticeListByKeyword", param, rowBounds);
 	}
 
+/*<<<<<<< HEAD
+	public int selectDeptNoticeTotalContents(Map<String, String> param) {
+		return sqlSession.selectOne("search.selectDeptNoticeTotalContents", param);
+=======
+	public int selectDeptNoticeTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectDeptNoticeTotalContents", keyword);
+>>>>>>> master*/
 	@Override
 	public int selectDeptNoticeTotalContents(Map<String, String> param) {
 		return sqlSession.selectOne("search.selectDeptNoticeTotalContents", param);
@@ -94,8 +101,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectCommuListTotalContents() {
-		return sqlSession.selectOne("search.selectCommuListTotalContents");
+	public int selectCommuListTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectCommuListTotalContents", keyword);
 	}
 
 	@Override
@@ -105,8 +112,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectProjectTotalContents() {
-		return sqlSession.selectOne("search.selectProjectTotalContents");
+	public int selectProjectTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectProjectTotalContents", keyword);
 	}
 
 /*	@Override
@@ -121,8 +128,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectClubTotalContents() {
-		return sqlSession.selectOne("search.selectClubTotalContents");
+	public int selectClubTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectClubTotalContents", keyword);
 	}
 
 }

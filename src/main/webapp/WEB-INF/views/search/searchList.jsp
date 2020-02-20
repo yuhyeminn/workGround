@@ -37,7 +37,6 @@ padding: 1rem 1.5rem .7rem;
 .card-header:hover{background: #fff; border-radius: .25rem; cursor: default;}
 .card-header h3{display:inline-block; font-size: .95rem;}
 .card-body{padding-top: 1rem; border-bottom: 1px solid rgba(0,0,0,.125); cursor: pointer;}
-/* .card-body:last-of-type{border-bottom: 0;} */
 .card-body:hover{background: #f3f4f5;}
 .card-body:last-of-type:hover{border-radius: .25rem;}
 .deadline{float: right; padding-right: 1rem;}
@@ -50,15 +49,16 @@ padding: 1rem 1.5rem .7rem;
 
 #project-wrapper h5, #community-wrapper h5, #dept-wrapper h5{display: inline-block;}
 .card-status{float: right; margin-top: 0; padding-right: .5rem; padding-top: .2rem; color: #8d919a;}
-.card-status .date{float: none; width: 6rem; margin-right: 12.5rem; font-size: .8rem;}
+.card-status>span{position: unset;}
+.card-status .date{float: none; width: 6rem; margin-right: 13.5rem; font-size: .8rem;}
 .card-status .writer{color: #464c59;}
-#project-wrapper .card-status .date{width: 8rem; margin-right: 8rem;}
+#project-wrapper .date{width: 8rem; margin-left: 29rem;}
 .date-color{color: #17a2b8;}
 .date-color.over{color: #dc3545;}
 .btn-clubCate{margin-left: .5rem; margin-top: -3px;}
 
 #member-wrapper .card-body{padding: 1rem 1.5rem;}
-.direct-chat-img{width: 30px; height: 30px;}
+.direct-chat-img{width: 30px; height: 30px; object-fit: cover;}
 .email{float: right; padding: .2rem .3rem 0 0; color: #464c59;}
 .dept{margin-left: 27rem;}
 
@@ -225,48 +225,50 @@ function checkComment(commentContent){
                     <div class="tab-content">
                         <div class="active tab-pane">
                             <h5>${p.projectTitle}</h5>
-                            <div class="card-status">
-                            	<c:set var="now" value="<%= new Date() %>"/>
-		                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
-		                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
-		                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
-		                    	<fmt:parseDate var="enddate" value="${p.projectEndDate}" pattern="yyyy-MM-dd"/>
-		                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
-		                    	
-                                <span class="date">
-                                <!-- 실제완료일이 없는 경우 -->
-                                <c:if test="${p.projectRealEndDate==null}">
-                                	<!-- 마감일이 없는 경우 -->
-                                	<c:if test="${p.projectEndDate==null}">
-		                                <!-- 시작일만 있는 경우 -->
-			                        	<c:if test="${p.projectStartDate!=null && p.projectEndDate==null}">
-				                        	<span class="date-color"><fmt:formatDate value="${p.projectStartDate}" type="date" pattern="MM월 dd일"/></span>에 시작
-			                        	</c:if>
-			                        </c:if>
-	                                <!-- 마감일이 있는 경우 -->
-	                                <c:if test="${p.projectEndDate!=null}">
-	                                	<!-- 마감일 안 지난 경우: 시작일이 있는 경우 -->
-		                        		<c:if test="${today_D <= enddate_D && p.projectStartDate!=null}">
-	                                	<span class="date-color">
-											<fmt:formatDate value="${p.projectStartDate}" type="date" pattern="MM월 dd일"/> -
-		                        			<fmt:formatDate value="${p.projectEndDate}" type="date" pattern="MM월 dd일"/>
-										</span>
-										</c:if> 
-										<!-- 마감일 안 지난 경우: 시작일이 없는 경우 -->
-										<c:if test="${today_D <= enddate_D && p.projectStartDate==null}">
-											<span class="date-color"><fmt:formatDate value="${p.projectEndDate}" type="date" pattern="MM월 dd일"/></span>에 마감
-										</c:if>
-										<!-- 마감일 지난 경우 -->
-		                        		<c:if test="${today_D > enddate_D}">
-											<span class="date-color over">마감일 ${today_D - enddate_D}일 지남</span>
-										</c:if> 
-	                                </c:if>
+                            
+                           	<c:set var="now" value="<%= new Date() %>"/>
+	                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	<fmt:parseDate var="enddate" value="${p.projectEndDate}" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	
+                               <span class="date">
+                               <!-- 실제완료일이 없는 경우 -->
+                               <c:if test="${p.projectRealEndDate==null}">
+                               	<!-- 마감일이 없는 경우 -->
+                               	<c:if test="${p.projectEndDate==null}">
+	                                <!-- 시작일만 있는 경우 -->
+		                        	<c:if test="${p.projectStartDate!=null && p.projectEndDate==null}">
+			                        	<span class="date-color"><fmt:formatDate value="${p.projectStartDate}" type="date" pattern="MM월 dd일"/></span>에 시작
+		                        	</c:if>
 		                        </c:if>
-		                        <!-- 실제완료일이 있는 경우 -->
-                                <c:if test="${p.projectRealEndDate!=null}">
-                                	<span class="date-color"><fmt:formatDate value="${p.projectStartDate}" type="date" pattern="MM월 dd일"/></span>에 완료
+                                <!-- 마감일이 있는 경우 -->
+                                <c:if test="${p.projectEndDate!=null}">
+                                	<!-- 마감일 안 지난 경우: 시작일이 있는 경우 -->
+	                        		<c:if test="${today_D <= enddate_D && p.projectStartDate!=null}">
+                                	<span class="date-color">
+										<fmt:formatDate value="${p.projectStartDate}" type="date" pattern="MM월 dd일"/> -
+	                        			<fmt:formatDate value="${p.projectEndDate}" type="date" pattern="MM월 dd일"/>
+									</span>
+									</c:if> 
+									<!-- 마감일 안 지난 경우: 시작일이 없는 경우 -->
+									<c:if test="${today_D <= enddate_D && p.projectStartDate==null}">
+										<span class="date-color"><fmt:formatDate value="${p.projectEndDate}" type="date" pattern="MM월 dd일"/></span>에 마감
+									</c:if>
+									<!-- 마감일 지난 경우 -->
+	                        		<c:if test="${today_D > enddate_D}">
+										<span class="date-color over">마감일 ${today_D - enddate_D}일 지남</span>
+									</c:if> 
                                 </c:if>
-	                        	</span>
+	                        </c:if>
+	                        <!-- 실제완료일이 있는 경우 -->
+                               <c:if test="${p.projectRealEndDate!=null}">
+                               	<span class="date-color"><fmt:formatDate value="${p.projectRealEndDate}" type="date" pattern="MM월 dd일"/></span>에 완료
+                               </c:if>
+                        	</span>
+                        	
+                            <div class="card-status">
                                 <span class="btn btn-block btn-sm bg-${p.projectStatusColor}">${p.projectStatusTitle}</span>
                             </div>
                         </div>

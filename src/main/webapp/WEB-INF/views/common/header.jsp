@@ -20,13 +20,11 @@
   <!-- DataTables -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
   <!-- summernote -->
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/summernote/summernote-bs4.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/summernote/summernote-lite.css">
   <!-- iCheck for checkboxes and radio inputs -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- daterange picker -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/daterangepicker/daterangepicker.css">
-  <!--datepicker-->
-  <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
   <!-- Select2 -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/select2/css/select2.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -61,7 +59,8 @@
   <script src="${pageContext.request.contextPath}/resources/plugins/datatables/jquery.dataTables.js"></script>
   <script src="${pageContext.request.contextPath}/resources/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
   <!-- Summernote -->
-  <script src="${pageContext.request.contextPath}/resources/plugins/summernote/summernote-bs4.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/plugins/summernote/summernote-lite.js"></script>
+<script src="${pageContext.request.contextPath}/resources/plugins/summernote/lang/summernote-ko-KR.js"></script>
   <!-- Select2 -->
   <script src="${pageContext.request.contextPath}/resources/plugins/select2/js/select2.full.min.js"></script>
   <!-- InputMask -->
@@ -70,8 +69,6 @@
   <!-- date-range-picker -->
   <script src="${pageContext.request.contextPath}/resources/plugins/moment/moment.min.js"></script>
   <script src="${pageContext.request.contextPath}/resources/plugins/daterangepicker/daterangepicker.js"></script>
-  <!-- date picker-->
-  <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
   <!-- 차트 js-->
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <!--Syncfusion MultiSelect-->
@@ -82,6 +79,10 @@
   <script src="https://cdn.syncfusion.com/ej2/ej2-lists/dist/global/ej2-lists.min.js" type="text/javascript"></script>
   <script src="https://cdn.syncfusion.com/ej2/ej2-popups/dist/global/ej2-popups.min.js" type="text/javascript"></script>
   <script src="https://cdn.syncfusion.com/ej2/ej2-dropdowns/dist/global/ej2-dropdowns.min.js" type="text/javascript"></script>
+  <!-- WebSocket: stomp.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+  <!-- WebSocket:sock.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.js"></script>
   <!-- jQuery UI -->
 <script
 	src="${pageContext.request.contextPath}/resources/plugins/jquery-ui/jquery-ui.min.js"></script>

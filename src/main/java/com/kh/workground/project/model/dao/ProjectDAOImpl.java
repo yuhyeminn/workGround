@@ -191,4 +191,9 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.selectList("project.selectProjectMemberListByQuitYn", projectNo);
 	}
 
+	@Override
+	public int deleteProject(int projectNo) {
+		return sqlSession.delete("project.deleteProject", projectNo);
+	}
+
 }

@@ -4,9 +4,200 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
-<jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
 <link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
+
+<!-- 오늘 날짜 -->
+<jsp:useBean id="now" class="java.util.Date" />
+<fmt:parseNumber value="${now.time / (1000*60*60*24)}" integerOnly="true" var="today"></fmt:parseNumber>
+<fmt:formatDate value="${now}" var="nowDate" pattern="yyyy-MM-dd"/>
+
+<!-- 프로젝트 시작일 -->
+<fmt:parseDate value="${project.projectStartDate}" var="projectStartDate" pattern="yyyy-MM-dd"/>
+<fmt:parseNumber value="${projectStartDate.time / (1000*60*60*24)}" integerOnly="true" var="startDate"></fmt:parseNumber>
+
+<!-- 프로젝트 마감일 -->
+<fmt:parseDate value="${project.projectEndDate}" var="projectEndDate" pattern="yyyy-MM-dd"/>
+<fmt:parseNumber value="${projectEndDate.time / (1000*60*60*24)}" integerOnly="true" var="endDate"></fmt:parseNumber>
+
+<!-- 프로젝트 개요 정보(완료됨, 마감일 지남, 계획됨, 마감일 없음) -->
+<c:set var="completeWorkCnt" value="0"/> <!-- 완료 업무 개수 -->
+<c:set var="ncompleteWorkCnt" value="0"/> <!-- 완료되지 않은 업무 개수 -->
+<c:set var="lateEndWorkCnt" value="0"/> <!-- 마감일 지남 -->
+<c:set var="planWorkCnt" value="0"/> <!-- 계획됨 -->
+<c:set var="nullEndWorkCnt" value="0"/> <!-- 마감일없음 -->
+<c:forEach items="${project.worklistList }" var="wl">
+    <c:forEach items="${wl.workList}" var="work">
+      <c:if test="${work.workCompleteYn eq 'Y'}">
+         <c:set var="completeWorkCnt" value="${completeWorkCnt+1}"/>
+      </c:if>
+      <c:if test="${work.workCompleteYn eq 'N'}">
+         <c:set var="ncompleteWorkCnt" value="${ncompleteWorkCnt+1}"/>
+         <fmt:formatDate value="${work.workEndDate}" var="workEndDate" pattern="yyyy-MM-dd"/>
+         <!-- 마감일 지남 -->
+		 <c:if test="${workEndDate < nowDate}">
+		   <c:set var="lateEndWorkCnt" value="${lateEndWorkCnt+1}"/>
+		 </c:if>
+		 <!-- 계획 됨 -->
+		 <c:if test="${workEndDate >= nowDate}">
+		   <c:set var="planWorkCnt" value="${planWorkCnt+1}"/>
+		 </c:if>
+		 <!-- 마감일 없음 -->
+		 <c:if test="${work.workEndDate == null or work.workEndDate ==''}">
+		   <c:set var="nullEndWorkCnt" value="${nullEndWorkCnt+1}"/>
+		 </c:if>
+      </c:if>
+    </c:forEach>
+</c:forEach>
+
+<c:set var="mycompleteWorkCnt" value="0"/> <!-- 완료 업무 개수 -->
+<c:set var="mylateEndWorkCnt" value="0"/> <!-- 마감일 지남 -->
+<c:set var="myplanWorkCnt" value="0"/> <!-- 계획됨 -->
+<c:set var="mynullEndWorkCnt" value="0"/> <!-- 마감일없음 -->
+<!-- 나에게 배정된 업무 개요-->
+<c:forEach items="${myWorkList}" var="mwork">
+      <c:if test="${mwork.workCompleteYn eq 'Y'}">
+         <c:set var="mycompleteWorkCnt" value="${mycompleteWorkCnt+1}"/>
+      </c:if>
+      <c:if test="${mwork.workCompleteYn eq 'N'}">
+         <fmt:formatDate value="${mwork.workEndDate}" var="myworkEndDate" pattern="yyyy-MM-dd"/>
+         <!-- 마감일 지남 -->
+		 <c:if test="${myworkEndDate < nowDate}">
+		   <c:set var="mylateEndWorkCnt" value="${mylateEndWorkCnt+1}"/>
+		 </c:if>
+		 <!-- 계획 됨 -->
+		 <c:if test="${myworkEndDate >= nowDate}">
+		   <c:set var="myplanWorkCnt" value="${myplanWorkCnt+1}"/>
+		 </c:if>
+		 <!-- 마감일 없음 -->
+		 <c:if test="${work.workEndDate == null or work.workEndDate ==''}">
+		   <c:set var="mynullEndWorkCnt" value="${mynullEndWorkCnt+1}"/>
+		 </c:if>
+      </c:if>
+</c:forEach>
+
+    <div class="analysis-content">
+        <div class="project-summary content-box">
+            <div class="row">
+            <div class="summary-col-sm col-6 border-right">
+                <div class="description-block ">
+                <h5 class="description-header">시작일</h5>
+                <span class="description-text">
+                 <c:if test="${project.projectStartDate != null and project.projectStartDate !='' }">
+                 	${project.projectStartDate }
+                 </c:if>
+                 <c:if test="${project.projectStartDate == null or project.projectStartDate =='' }">-</c:if>
+                </span>
+                </div>
+                <!-- /.description-block -->
+            </div>
+            <!-- /.col -->
+            <div class="summary-col-sm col-6 border-right">
+                <div class="description-block ">
+                <h5 class="description-header">마감일</h5>
+                <span class="description-text">
+                <c:if test="${project.projectEndDate != null and project.projectEndDate !='' }">
+                 	${project.projectEndDate}
+                 </c:if>
+                 <c:if test="${project.projectEndDate == null or project.projectEndDate =='' }">-</c:if>
+                </span>
+                </div>
+                <!-- /.description-block -->
+            </div>
+            <!-- /.col -->
+            <div class="summary-col-sm col-6 border-right">
+                <div class="description-block ">
+                <h5 class="description-header">완료일</h5>
+                <span class="description-text">
+                <c:if test="${project.projectRealEndDate != null and project.projectRealEndDate !='' }">
+                 	 ${project.projectRealEndDate }
+                 </c:if>
+                 <c:if test="${project.projectRealEndDate == null or project.projectRealEndDate =='' }">-</c:if>
+                </span>
+                </div>
+                <!-- /.description-block -->
+            </div>
+            <!-- /.col -->
+            <div class="summary-col-sm col-6 border-right">
+                <div class="description-block ">
+                <h5 class="description-header">경과 시간</h5>
+                <span class="description-text"> 
+                <c:if test="${today - starDate >= 0}">
+                	${today - startDate - 1}일
+                </c:if>
+                <c:if test="${today - starDate < 0}">-</c:if>
+                </span>
+                </div>
+                <!-- /.description-block -->
+            </div>
+            <div class="summary-col-sm col-6 border-right">
+                <div class="description-block ">
+                <h5 class="description-header">남은 시간</h5>
+                <span class="description-text">
+                <c:if test="${endDate - today >= 0}">
+                	${endDate - today + 1}일
+                </c:if>
+                <c:if test="${endDate - today < 0}">-</c:if>
+				 </span>
+                </div>
+                <!-- /.description-block -->
+            </div>
+            <div class="summary-col-sm col-6 border-right">
+                <div class="description-block ">
+                <h5 class="description-header">완료됨</h5>
+                <span class="description-text">${completeWorkCnt}개 업무</span>
+                </div>
+                <!-- /.description-block -->
+            </div>
+            <div class="summary-col-sm col-6">
+                <div class="description-block">
+                <h5 class="description-header">남은업무</h5>
+                <span class="description-text">${ncompleteWorkCnt}개 업무</span>
+                </div>
+                <!-- /.description-block -->
+            </div>
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.project-summary-->
+
+        <!--프로젝트 개요 차트-->
+        <div class="project-summary-chart content-box">
+            <span class="content-box-header">프로젝트 개요</span>
+            <div id="project_chart" style="width:100%"></div>
+        </div>
+    
+        <!-- 나에게 배정된 업무, 내가 작성한 업무 차트-->
+        <div class="my-summary-chart">
+            <div class="row">
+            <div class="col-md-6 content-box">
+                <p class="content-box-header" style="text-align: center;margin-bottom: 20px;">나에게 배정된 업무</p>
+                <div class="chart-container">
+                <div id="mywork-assign_chart"></div>
+                <div id="cnt" class="overlay"></div>
+                <div class="overlay-label">전체 업무</div>
+            </div>
+            </div>
+            <div class="col-md-6 content-box">
+                <p class="content-box-header" style="text-align: center;margin-bottom: 20px;">나의 활동 이력</p>
+                <div class="chart-container">
+                <div id="mywork-write_chart"></div>
+                <div id="write-cnt" class="overlay"></div>
+                <div class="overlay-label">전체 이력</div>
+                </div>
+            </div>
+            </div>
+            <!-- /.end row-->
+        </div>
+
+        <!--업무리스트 개요 차트-->
+        <div class="worklist-summary-chart content-box">
+            <span class="content-box-header">업무리스트 개요</span>
+        <div id="worklist_chart" style="width:100%"></div>
+    </div>
+
+    </div>
+    <!-- /.analysis-content-->
 
 <script>
 $(function(){
@@ -53,7 +244,7 @@ function tabActive(){
 function projectSummaryChart() {
     var data = google.visualization.arrayToDataTable([
         ['', '완료됨', '마감일 지남', '계획됨', '마감일 없음'],
-        ['', 5, 6, 4, 3]
+        ['', ${completeWorkCnt}, ${lateEndWorkCnt}, ${planWorkCnt}, ${nullEndWorkCnt}]
     ]);
 
     var options_fullStacked = {
@@ -86,15 +277,41 @@ function projectSummaryChart() {
 
 // 업무리스트 개요
 function worklistSummaryChart() {
+	
     var data = google.visualization.arrayToDataTable([
         ['업무리스트', '완료됨', '마감일 지남', '계획됨', '마감일 없음'],
-        ['해야할 일', 5, 6, 4, 3],
-        ['진행중', 0, 2, 11, 5],
-        ['완료', 15, 0, 0, 0]
+        <c:forEach items="${project.worklistList }" var="wl" varStatus="vs">
+			<c:set var="completeWorkCnt" value="0"/> <!-- 완료 업무 개수 -->
+			<c:set var="ncompleteWorkCnt" value="0"/> <!-- 완료되지 않은 업무 개수 -->
+			<c:set var="lateEndWorkCnt" value="0"/> <!-- 마감일 지남 -->
+			<c:set var="planWorkCnt" value="0"/> <!-- 계획됨 -->
+			<c:set var="nullEndWorkCnt" value="0"/> <!-- 마감일없음 -->
+		    <c:forEach items="${wl.workList}" var="work">
+		      <c:if test="${work.workCompleteYn eq 'Y'}">
+		         <c:set var="completeWorkCnt" value="${completeWorkCnt+1}"/>
+		      </c:if>
+		      <c:if test="${work.workCompleteYn eq 'N'}">
+		         <fmt:formatDate value="${work.workEndDate}" var="workEndDate" pattern="yyyy-MM-dd"/>
+		         <!-- 마감일 지남 -->
+				 <c:if test="${workEndDate < nowDate}">
+				   <c:set var="lateEndWorkCnt" value="${lateEndWorkCnt+1}"/>
+				 </c:if>
+				 <!-- 계획 됨 -->
+				 <c:if test="${workEndDate >= nowDate}">
+				   <c:set var="planWorkCnt" value="${planWorkCnt+1}"/>
+				 </c:if>
+				 <!-- 마감일 없음 -->
+				 <c:if test="${work.workEndDate == null or work.workEndDate ==''}">
+				   <c:set var="nullEndWorkCnt" value="${nullEndWorkCnt+1}"/>
+				 </c:if>
+		      </c:if>
+		    </c:forEach>
+	    ['${wl.worklistTitle}',${completeWorkCnt},${lateEndWorkCnt},${planWorkCnt},${nullEndWorkCnt}] ${vs.last?"":","}
+		</c:forEach>
     ]);
     var options_fullStacked = {
         isStacked: 'percent',
-        height: 300,
+        height: ${fn:length(project.worklistList)}*100 ,
         legend: {position: 'top', maxLines: 3},
         series: {
             0: { color: 'rgb(39, 182, 186)' },
@@ -118,10 +335,10 @@ function worklistSummaryChart() {
 function myworkAssignChart(){
     var data = google.visualization.arrayToDataTable([
         ['Task', 'Hours per Day'],
-        ['완료됨', 11],
-        ['마감일 지남', 2],
-        ['계획됨', 2],
-        ['마감일 없음', 2]
+        ['완료됨', ${mycompleteWorkCnt}],
+        ['마감일 지남', ${mylateEndWorkCnt}],
+        ['계획됨', ${myplanWorkCnt}],
+        ['마감일 없음', ${mynullEndWorkCnt}]
     ]);
 
     var options = {
@@ -137,26 +354,22 @@ function myworkAssignChart(){
             width: 380, 
             height: 380
         },
-        tooltip: {
-            trigger:'none'
-        },
         colors: ['rgb(39, 182, 186)', 'rgb(233, 94, 81)', 'rgb(255, 176, 36)', 'rgb(176, 180, 187)']
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('mywork-assign_chart'));
     chart.draw(data, options);
-    $('#cnt').text('5');
+    $('#cnt').text(${mycompleteWorkCnt+mylateEndWorkCnt+myplanWorkCnt+mynullEndWorkCnt});
     window.addEventListener('resize', function() { chart.draw(data, options); }, false);
 }
 
-// 내가 작성한 업무
+// 나의 활동 이력(체크리스트 작성 개수, 코멘트 개수, 첨부파일 개수)
 function myworkWriteChart(){
     var data = google.visualization.arrayToDataTable([
-        ['Task', 'Hours per Day'],
-        ['완료됨', 2],
-        ['마감일 지남', 1],
-        ['계획됨', 0],
-        ['마감일 없음', 2]
+        ['종류', '개수'],
+        ['체크리스트', ${myActivityCnt.myChkCnt}],
+        ['코멘트', ${myActivityCnt.myAttachCnt}],
+        ['첨부파일', ${myActivityCnt.myCommentCnt}]
     ]);
 
     var options ={
@@ -172,220 +385,12 @@ function myworkWriteChart(){
             width: 380, 
             height: 380
         },
-        tooltip: {
-            trigger:'none'
-        },
         colors: ['rgb(39, 182, 186)', 'rgb(233, 94, 81)', 'rgb(255, 176, 36)', 'rgb(176, 180, 187)']
         };
 
     var chart = new google.visualization.PieChart(document.getElementById('mywork-write_chart'));
     chart.draw(data, options);
-    $('#write-cnt').text('5');
+    $('#write-cnt').text(${myActivityCnt.myChkCnt + myActivityCnt.myAttachCnt + myActivityCnt.myCommentCnt});
     window.addEventListener('resize', function() { chart.draw(data, options); }, false);
 }
-</script>		
-
-<!-- Navbar Project -->
-<nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project navbar-projectView">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-    <li id="go-back" class="nav-item text-center">
-        <a class="nav-link" href=""><i class="fas fa-chevron-left"></i></a>
-    </li>
-    <li id="project-name" class="nav-item">
-        <button type="button" id="btn-star"><i class="fas fa-star"></i></button>
-        기획
-    </li>
-    </ul>
-
-    <!-- Middle navbar links -->
-    <ul id="navbar-tab" class="navbar-nav ml-auto">
-        <li id="tab-work" class="nav-item"><button type="button">업무</button></li>
-        <li id="tab-timeline" class="nav-item"><button type="button">타임라인</button></li>
-        <li id="tab-analysis" class="nav-item"><button type="button">분석</button></li>
-        <li id="tab-attachment" class="nav-item"><button type="button" id="btn-tab-attach">파일</button></li>
-    </ul>
-
-    <!-- Right navbar links -->
-    <ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
-        <!-- 프로젝트 대화 -->
-        <li class="nav-item">
-            <button type="button" class="btn btn-block btn-default btn-xs nav-link">
-                <i class="far fa-comments"></i> 프로젝트 대화
-            </button>
-        </li>
-
-        <!-- 프로젝트 멤버 -->
-        <li id="nav-member" class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="far fa-user"></i> 6
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                    </div>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            <a href="#" class="dropdown-item">
-                <!-- Message Start -->
-                <div class="media">
-                <img src="${pageContext.request.contextPath}/resources/img/profile.jfif" alt="User Avatar" class="img-circle img-profile ico-profile">
-                <div class="media-body">
-                    <p class="memberName">Brad Diesel</p>
-                </div>
-                </div>
-                <!-- Message End -->
-            </a>
-            </div>
-        </li>
-
-        <!-- 프로젝트 설정 -->
-        <li class="nav-item">
-            <button type="button" class="btn btn-block btn-default btn-xs nav-link">
-            <i class="fas fa-cog"></i>
-            </button>
-        </li>
-    </ul>
-</nav>
-<!-- /.navbar -->		
-
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper navbar-light">
-    <div class="analysis-content">
-        <div class="project-summary content-box">
-            <div class="row">
-            <div class="summary-col-sm col-6 border-right">
-                <div class="description-block ">
-                <h5 class="description-header">시작일</h5>
-                <span class="description-text">1월 10일</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="summary-col-sm col-6 border-right">
-                <div class="description-block ">
-                <h5 class="description-header">마감일</h5>
-                <span class="description-text">1월 31일</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="summary-col-sm col-6 border-right">
-                <div class="description-block ">
-                <h5 class="description-header">완료일</h5>
-                <span class="description-text"> - </span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="summary-col-sm col-6 border-right">
-                <div class="description-block ">
-                <h5 class="description-header">경과 시간</h5>
-                <span class="description-text"> - </span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <div class="summary-col-sm col-6 border-right">
-                <div class="description-block ">
-                <h5 class="description-header">남은 시간</h5>
-                <span class="description-text"> 15일 </span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <div class="summary-col-sm col-6 border-right">
-                <div class="description-block ">
-                <h5 class="description-header">완료됨</h5>
-                <span class="description-text">3개 업무(27%)</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <div class="summary-col-sm col-6">
-                <div class="description-block">
-                <h5 class="description-header">남은업무</h5>
-                <span class="description-text">8개 업무 (73%)</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.project-summary-->
-
-        <!--프로젝트 개요 차트-->
-        <div class="project-summary-chart content-box">
-            <span class="content-box-header">프로젝트 개요</span>
-            <div id="project_chart" style="width:100%"></div>
-        </div>
-    
-        <!-- 나에게 배정된 업무, 내가 작성한 업무 차트-->
-        <div class="my-summary-chart">
-            <div class="row">
-            <div class="col-md-6 content-box">
-                <p class="content-box-header" style="text-align: center;margin-bottom: 20px;">나에게 배정된 업무</p>
-                <div class="chart-container">
-                <div id="mywork-assign_chart"></div>
-                <div id="cnt" class="overlay"></div>
-                <div class="overlay-label">전체 업무</div>
-            </div>
-            </div>
-            <div class="col-md-6 content-box">
-                <p class="content-box-header" style="text-align: center;margin-bottom: 20px;">내가 작성한 업무</p>
-                <div class="chart-container">
-                <div id="mywork-write_chart"></div>
-                <div id="write-cnt" class="overlay"></div>
-                <div class="overlay-label">전체 업무</div>
-                </div>
-            </div>
-            </div>
-            <!-- /.end row-->
-        </div>
-
-        <!--업무리스트 개요 차트-->
-        <div class="worklist-summary-chart content-box">
-            <span class="content-box-header">업무리스트 개요</span>
-        <div id="worklist_chart" style="width:100%"></div>
-    </div>
-
-    </div>
-    <!-- /.analysis-content-->
-</div>
-<!-- /.content-wrapper -->
-
-<jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
+</script>
