@@ -92,17 +92,21 @@ public class ProjectController2 {
 		return list;
 	}
 	
-	@RequestMapping("/project/projectListByStatusCode.do")
+	/*@RequestMapping("/project/projectListByStatusCode.do")
 	@ResponseBody
 	public Map<String, List<Project>> projectListByStatusCode(HttpServletRequest request, HttpSession session){
 		String statusCode = request.getParameter("statusCode");
+		String sortType = request.getParameter("sortType");
+		
 		Map<String, List<Project>> projectMap = null; //조회한 프로젝트 리스트 담는 맵
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		logger.debug("statusCode= {}",statusCode);
+		logger.debug("sortType= {}",sortType);
 		try {
 			Map<String, Object> param = new HashMap<>();
 			param.put("memberLoggedIn", memberLoggedIn);
 			param.put("statusCode", statusCode);
+			param.put("sortType", sortType);
 			
 			projectMap = projectService.selectProjectListByStatusCode(param);
 			
@@ -112,6 +116,33 @@ public class ProjectController2 {
 		}
 		
 		return projectMap;
+	}*/
+	@RequestMapping("/project/projectListByStatusCode.do")
+	@ResponseBody
+	public ModelAndView projectListByStatusCode(ModelAndView mav,HttpServletRequest request, HttpSession session){
+		String statusCode = request.getParameter("statusCode");
+		String sortType = request.getParameter("sortType");
+		
+		Map<String, List<Project>> projectMap = null; //조회한 프로젝트 리스트 담는 맵
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		logger.debug("statusCode= {}",statusCode);
+		logger.debug("sortType= {}",sortType);
+		try {
+			Map<String, Object> param = new HashMap<>();
+			param.put("memberLoggedIn", memberLoggedIn);
+			param.put("statusCode", statusCode);
+			param.put("sortType", sortType);
+			
+			projectMap = projectService.selectProjectListByStatusCode(param);
+			mav.addObject("projectMap",projectMap);
+			mav.setViewName("/project/ajaxProjectSort");
+			
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("상태코드별 프로젝트 정렬 오류!");
+		}
+		
+		return mav;
 	}
 	
 	@RequestMapping("/project/projectSetting.do")

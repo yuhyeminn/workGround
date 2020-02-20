@@ -22,6 +22,15 @@
 		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
 	</c:if>
 </c:forEach>
+
+<!-- 현재 로그인 한 회원이 프로젝트 멤버인지 확인 -->
+<c:set var="isProjectMember" value="false" />
+<c:forEach var="pm" items="${project.projectMemberList}">
+	<c:if test="${memberLoggedIn.memberId eq pm.memberId}">
+		<c:set var="isProjectMember" value="true" />
+	</c:if>
+</c:forEach>
+
 <section style="height:100%;overflow-y:scroll">
 <div class="div-close" role="button" tabindex="0">
     <i class="fas fa-times close-sidebar"></i>
@@ -240,9 +249,7 @@
                 </div>
             </div>
             </div>
-            <c:if test="${!empty project.projectMemberList}">
-            	<c:forEach var="member" items="${project.projectMemberList}" varStatus="vs">
-            		<c:if test="${member.memberId eq memberLoggedIn.memberId && member.managerYn eq 'N' }">
+            		<c:if test="${isProjectMember && !isprojectManager}">
             		<hr/>
 		            <div class="row setting-row">
 		                <label class="setting-content-label">프로젝트 나가기</label>
@@ -252,8 +259,16 @@
 		              </div>
 		            </div>
             		</c:if>
-            	</c:forEach>
-            </c:if>
+            		<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin'}">
+            		<hr/>
+		            <div class="row setting-row">
+		                <label class="setting-content-label">프로젝트 삭제</label>
+		              <div style="width:60%">
+		                <button type="button" class="sign-out-project" id="delete-project">프로젝트 삭제</button>
+		                <p style="text-align:center">해당 프로젝트는 영구삭제 됩니다.</p>
+		              </div>
+		            </div>
+            		</c:if>
         </div>
         </div>
      </section>   
@@ -266,6 +281,7 @@ $(()=>{
 	updateProjectMember();
 	updateProjectManager();
 	quitProject();
+	deleteProject();
 });
 
 //업무 사이드바 닫기
@@ -284,12 +300,6 @@ $("#project_startdate").daterangepicker({
 	    format: 'YYYY-MM-DD'
     }
   });
-/* $("#project_startdate").datepicker({
-    todayHighlight: true,
-    format: 'yyyy/mm/dd',
-    uiLibrary: 'bootstrap4'
-    
-    }); */
 $("#project_enddate").daterangepicker({
     singleDatePicker: true,
     showDropdowns: true,
@@ -447,6 +457,13 @@ function quitProject(){
 		}
 	})
 }
-
+function deleteProject(){
+	$("#delete-project").on('click',function(){
+		var projectNo = '${project.projectNo}';
+		if(confirm("이 프로젝트를 삭제하시겠습니까?")){
+			location.href = '${pageContext.request.contextPath}/project/deleteProject.do?projectNo='+projectNo;
+		}
+	})
+}
 </script>
 <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

@@ -399,6 +399,7 @@
 		<if test="!(statusCode !='' and statusCode != null)">
 		and project_status_code is null
 		</if>
+		order by ${sortType}
 	</select>
 	
 	<!-- projectListByStatusCode.do : 상태코드별 중요 표시된 프로젝트 조회 -->
@@ -412,6 +413,7 @@
 		<if test="!(statusCode !='' and statusCode != null)">
 		and P.project_status_code is null
 		</if>
+		order by ${sortType}
 	</select>
 	
 	<!-- projectSetting.do : 프로젝트 설정 사이드바에서 조회할 프로젝트 정보 조회 .-->
@@ -437,7 +439,7 @@
 		select A.*, VM.*
 		from attachment A join project_members PM on A.attachment_writer_no = PM.project_members_no left join view_member VM on PM.member_id = VM.member_id
 		where A.work_no = #{workNo}
-		order by A.attachment_no desc
+		order by attachment_enrolldate
 	</select>
 	<resultMap type="attachment" id="attachmentMemberMap">
 		<id column="attachment_no" property="attachmentNo"></id>

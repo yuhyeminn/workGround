@@ -891,6 +891,7 @@ function goTabMenu(){
 	if('${project.privateYn}'==='N'){
 	//타임라인 탭 클릭
 	btnTimeline.addEventListener('click', e=>{
+		closeSideBar();
 		$.ajax({
 			url: "${pageContext.request.contextPath}/project/projectView.do?projectNo=${project.projectNo}&tab=timeline",
 			type: "get",
@@ -911,6 +912,7 @@ function goTabMenu(){
 	
 	//분석 탭 클릭
 	btnAnalysis.addEventListener('click', e=>{
+		closeSideBar();
 		$.ajax({
 			url: "${pageContext.request.contextPath}/project/projectAnalysis.do?projectNo=${project.projectNo}",
 			type: "get",
@@ -932,6 +934,7 @@ function goTabMenu(){
 	
 	//파일 탭 클릭
 	btnAttach.addEventListener('click', e=>{
+		closeSideBar();
 		$.ajax({
 			url: "${pageContext.request.contextPath}/project/projectView.do?projectNo=${project.projectNo}&tab=attach",
 			type: "get",
@@ -1088,8 +1091,14 @@ function updateTitle(){
  			 } 
  		 }) 
  	 })
-	
-	
+}
+//사이드바 닫기
+function closeSideBar(){
+	var $side = $("#setting-sidebar");
+    if($side.hasClass('open')) {
+        $side.stop(true).animate({right:'-520px'});
+        $side.removeClass('open');
+    }
 }
 </script>		
 
