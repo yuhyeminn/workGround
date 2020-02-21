@@ -412,7 +412,7 @@
                 <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${writer.renamedFileName}" alt="User Image">
                 <div class="comment-text">
                     <span class="username"><span class="comment-writer">${writer.memberName}</span><span class="text-muted float-right">${wc.workCommentEnrollDate }</span></span>
-                    <span class="comment-content">${wc.workCommentContent}</span>
+                    <div style="word-wrap:break-word;"><span class="comment-content">${wc.workCommentContent}</span></div>
                     <c:if test="${memberLoggedIn.memberId eq writer.memberId || memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin'}">
                     <button class="comment-delete work-comment-delete float-right" value="${wc.workCommentNo}">삭제</button>
                     </c:if>
@@ -484,9 +484,9 @@
             <table id="tbl-projectAttach" class="table table-hover text-nowrap work-attachment-tbl">
                 <thead>
                     <tr>
-                        <th>이름</th>
-                        <th>공유한 날짜</th>
-                        <th>공유한 사람</th>
+                        <th style="width:42%;">이름</th>
+                        <th style="width:23%;">공유한 날짜</th>
+                        <th style="width:30%;">공유한 사람</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -495,7 +495,7 @@
                     <tr id="${a.attachmentNo}">
                      <input type="hidden" class="oName" value="${a.originalFilename}" />
                      <input type="hidden" class="rName" value="${a.renamedFilename}" />
-                     <td style="width:42%;">
+                     <td>
                              <div class="img-wrapper">
                              	 <c:forTokens items="${fn:toLowerCase(a.renamedFilename)}" var="token" delims="." varStatus="vs">
                              	 <c:if test="${vs.last}">
@@ -514,8 +514,8 @@
                                  <p class="filename">${a.originalFilename}</p>
                              </div>
                      </td>
-                     <td style="width:23%;">${a.attachmentEnrollDate}</td>
-                     <td style="width:30%;">
+                     <td>${a.attachmentEnrollDate}</td>
+                     <td>
                         <span>${a.attachmentWriterMember.memberName}</span>
                          <!-- 첨부파일 옵션 버튼 -->
                          <div class="dropdown ">
@@ -533,6 +533,11 @@
                      </td>
                     </tr>
                     </c:forEach>
+		    </c:if>
+		    <c:if test="${work.attachmentList==null || empty work.attachmentList}">
+		    <tr id="no-exist-file" style="text-align:center;">
+		    	<td colspan="3" style="padding:1rem;">파일이 존재하지 않습니다.</td>
+            </tr>
 		    </c:if>
           </tbody>
     </table>
@@ -716,8 +721,6 @@ function updateWorkMember(){
 				if(data.isUpdated){
 					var currentWorkTag = $(this).html();
 					var view = $(".work-item#"+workNo+" div.work-tag");
-					console.log(view);
-					console.log(view.length);
 					if(workTag !='' && workTag != null){
 						$("#current-workTag").html(currentWorkTag);
 						
@@ -837,7 +840,9 @@ function updateWorkMember(){
 			 success: data=>{
 				 var $workSection = $("section.work-item#"+workNo+" .work-title").parent();
 				 $workSection.remove();
+				 $("#current-worklist").text(worklistTitle);
 				 //해당 worklist 새로고침
+				 resetWorklist(worklistNo);
 			 },
 			 error:(jqxhr, textStatus, errorThrown)=>{
 				 console.log(jqxhr, textStatus, errorThrown);
@@ -888,7 +893,6 @@ function updateWorkMember(){
 	 $(document).on('click', ".delete-checklist", function(){
 		 var checklistNo = $(this).attr("id");
 		 var isCompleted = $(this).closest("tr").hasClass("completed");
-		 console.log(isCompleted)
 		 $.ajax({
 			 url:"${pageContext.request.contextPath}/project/deleteChecklist.do",
 			 data: {checklistNo:checklistNo},
@@ -954,6 +958,7 @@ function updateWorkMember(){
 		 $.ajax({
 			 url:"${pageContext.request.contextPath}/project/insertWorkComment.do",
 			 data: {workNo:workNo,commentContent:commentContent,commentWriter:commentWriter,commentLevel:commentLevel,commentRef:commentRef},
+			 type:"POST",
 			 dataType:"json",
 			 success: data=>{
 				 if(data.isUpdated){
@@ -961,14 +966,14 @@ function updateWorkMember(){
 					 var member = data.member;
 					 var html;
 					 if(comment.workCommentLevel == 2){
-						 html ='<div class="card-comment work-comment comment-level2 work-ref-'+comment.workCommentRef+' id="'+comment.workCommentNo+'">';
+						 html ='<div class="card-comment work-comment comment-level2 work-ref-'+comment.workCommentRef+'" id="' + comment.workCommentNo + '">';
 					 }else{
 						 html ='<div class="card-comment work-comment" id="'+comment.workCommentNo+'">';
 					 }
 					 
 					 html +='<img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/'+member.renamedFileName+'" alt="User Image">'
 		                  +'<div class="comment-text"><span class="username"><span class="comment-writer">'+member.memberName+'</span><span class="text-muted float-right">'+getToday()+'</span></span>'
-		                  +'<span class="comment-content">'+comment.workCommentContent+'</span>'
+		                  +'<div style="word-wrap:break-word;"><span class="comment-content">'+comment.workCommentContent+'</span></div>'
 		                  +'<button class="comment-delete work-comment-delete float-right" value="'+comment.workCommentNo+'">삭제</button>';
 		             
 		             if(comment.workCommentLevel == 1) html +='<button class="comment-reply work-comment-reply float-right" value="'+comment.workCommentNo+'">답글</button>';   
@@ -987,6 +992,10 @@ function updateWorkMember(){
 		            	 var chtml='<div class="card-footer card-comments work-comments-box">'+html+'</div>';
 		            	 $(".work-comment-box").html(chtml);
 		             }
+		             
+		             //코멘트 숫자 증가
+		             var cnt = Number($(".work-item#"+workNo+" .work-etc .comment-cnt").text());
+				 	 $(".work-item#"+workNo+" .work-etc span.comment-cnt").text(cnt+1);
 		               
 				 }
 				 $("div.enroll-comment-inform textarea").val('');
@@ -1003,14 +1012,22 @@ function updateWorkMember(){
  function deleteWorkComment(){
 	 $(document).on('click',".work-comment-delete", function(){
 		 var commentNo = $(this).val();
+		 var workNo = '${work.workNo}';
 		 $.ajax({
 			 url:"${pageContext.request.contextPath}/project/deleteWorkComment.do",
 			 data: {commentNo:commentNo},
 			 dataType:"json",
 			 success: data=>{
 				 if(data.isUpdated){
-					 $(".work-comments-box .card-comment#"+commentNo).remove();
+					 $(".work-comments-box .work-comment#"+commentNo).remove();
+					 //코멘트 숫자 1 삭감
+		             var cnt = Number($(".work-item#"+workNo+" .work-etc .comment-cnt").text());
+				 	 $(".work-item#"+workNo+" .work-etc span.comment-cnt").text(cnt-1);
+				 	 
 					 if($(".work-ref-"+commentNo).length>0){
+						 var refcnt = Number($(".work-ref-"+commentNo).length);
+						 $(".work-item#"+workNo+" .work-etc span.comment-cnt").text(cnt-refcnt-1); 
+						 
 						 $(".work-ref-"+commentNo).remove();
 					 }
 					 if($(".work-comments-box .card-comment").length==0){
@@ -1047,6 +1064,10 @@ function updateWorkMember(){
 				 var ext = rArr[rArr.length-1];
 				 
 				 if(data.isUpdated){
+					 if($("#no-exist-file").length != 0){
+						 $("#no-exist-file").remove()
+					 }
+						 
 					 var html = '<tr id="'+a.attachmentNo+'"><input type="hidden" class="oName" value="'+a.originalFilename+'" />'
 					 		  +'<input type="hidden" class="rName" value="'+a.renamedFilename+'" /><td><a href=""><div class="img-wrapper">';
 					 if(ext =='bmp' || ext =='jpg' || ext=='jpeg' || ext =='gif' || ext=='png' || ext=='tif' || ext=='tiff' || ext=='jfif'){
@@ -1101,6 +1122,10 @@ function delWorkFile(){
 				success: data=>{
 					if(data.result==='success'){
 						$(".work-attachment-tbl tr#"+attachNo).remove();
+						if($(".work-attachment-tbl tbody>tr").length==0){
+							var html = '<tr id="no-exist-file" style="text-align:center;"><td colspan="3" style="padding:1rem;">파일이 존재하지 않습니다.</td></tr>';
+							$(".work-attachment-tbl tbody").append(html);
+						}
 						resetWorkView(); //업무 새로고침
 					}
 					else{
@@ -1147,7 +1172,6 @@ function delWorkFile(){
 			data:{workNo:workNo, worklistTitle:worklistTitle,projectNo:projectNo},
 			dataType: "html",
 			success: data => {
-				console.log($workSection);
 				$workSection.html("");
 				$workSection.html(data);
 			},
@@ -1155,6 +1179,23 @@ function delWorkFile(){
 				console.log(x,s,e);
 			}
 	 });
+ }
+ function resetWorklist(worklistNo){
+		$.ajax({
+			url: '${pageContext.request.contextPath}/project/resetWorklist.do',
+			data: {projectManager: '${projectManager}',projectNo: ${project.projectNo},worklistNo: worklistNo},
+			dataType: 'html',
+			type: 'POST',
+			success: data=>{
+				if(data!=null){
+					$("#worklist-"+worklistNo).html(data);
+				}
+				
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		}); 
  }
 
  

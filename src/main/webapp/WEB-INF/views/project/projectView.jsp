@@ -1528,8 +1528,8 @@ function closeSideBar(){
 		                    		<span class="chklt-cnt-completed">${chkCnt}</span>/<span class="chklt-cnt-total">${fn:length(w.checklistList)}</span>
 		                    	</span>
 		                    </c:if>
-		                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
-		                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+		                    <span class="ico"><i class="far fa-comment"></i> <span class="comment-cnt">${fn:length(w.workCommentList)}</span></span>
+		                    <span class="ico"><i class="fas fa-paperclip"></i> <span class="attach-cnt-total">${fn:length(w.attachmentList)}</span></span>
 		                    
 		                    <!-- 업무 배정된 멤버 -->
 		                    <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">

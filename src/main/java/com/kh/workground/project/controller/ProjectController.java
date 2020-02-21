@@ -555,5 +555,21 @@ public class ProjectController {
 		
 		return mav;
 	}
+	
+	@PostMapping("/project/resetWorklist.do")
+	public ModelAndView resetWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam int worklistNo,@RequestParam String projectManager) {
+		
+		try {
+			
+			ajaxWorkSetView(mav, projectNo, worklistNo, projectManager);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무리스트 삭제 오류!");
+		}
+		
+		return mav;
+	}
+	
 
 }

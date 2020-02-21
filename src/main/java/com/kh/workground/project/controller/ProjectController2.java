@@ -619,6 +619,11 @@ public class ProjectController2 {
 			@RequestParam String commentWriter, @RequestParam int commentLevel, @RequestParam String commentRef){
 		Map<String, Object> result = new HashMap<>();
 		try {
+			//XSS공격대비 &문자변환
+			commentContent = commentContent.replaceAll("<", "&lt;")
+									   .replaceAll(">", "&gt;")
+									   .replaceAll("\\n", "<br/>");//개행문자처리
+			
 			WorkComment wc = new WorkComment();
 			wc.setWorkNo(workNo);
 			wc.setWorkCommentContent(commentContent);
