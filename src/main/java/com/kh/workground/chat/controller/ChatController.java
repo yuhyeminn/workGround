@@ -49,7 +49,6 @@ public class ChatController {
 		List<Channel> channelList = null;
 		logger.debug("channelList={}", channelList);
 		
-		//chatId 조회
 		//1. memberId로 등록한 chatroom존재여부 검사. 있는 경우 chatId 리턴.
 		channelList = chatService.findChannelNoListByMemberId(memberLoggedIn.getMemberId());
 		logger.debug("channelList={}", channelList);
@@ -61,7 +60,8 @@ public class ChatController {
 		List<Chat> chatList = chatService.selectChatList();
 		logger.debug("chatList={}", chatList);
 		
-		mav.addObject("channelNo", channelList.get(0).getChannelNo());
+		if(!channelList.isEmpty())
+			mav.addObject("channelNo", channelList.get(0).getChannelNo());
 		mav.addObject("index", 0);
 		mav.addObject("chatList", chatList);
 		mav.addObject("channelList", channelList);
@@ -132,7 +132,7 @@ public class ChatController {
 									  @RequestParam("memberId") String memberId, 
 									  @RequestParam("channelTitle") String channelTitle, 
 									  @SessionAttribute("memberLoggedIn") Member memberLoggedIn) {
-//		logger.debug("memberId={}", memberId);
+		logger.debug("memberId={}", memberId);
 //		logger.debug("channelTitle={}", channelTitle);
 		
 		Member member = chatService.selectOneMember(memberId);
@@ -149,11 +149,13 @@ public class ChatController {
 		channelNoList = chatService.findChannelByMemberId(param);
 		logger.debug("channelNoList={}", channelNoList);
 		
+		int index = 0;
+		
 		if(channelNoList.isEmpty()) {
 			channelNo = getRandomChannelNo(10);
 //			logger.debug("channelNo={}", channelNo);
 			
-			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null, member.getMemberName(), member.getRenamedFileName());
+			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null, member.getMemberName(), member.getRenamedFileName(), member.getMemberId());
 			int insertChannelResult = chatService.insertChannel(channel);
 //			logger.debug("insertChatResult={}", insertChannelResult);
 			
@@ -164,17 +166,31 @@ public class ChatController {
 			
 			int insertChannelMemberResult = chatService.insertChannelMember(channelMemberList);
 //			logger.debug("insertChannelMemberResult={}", insertChannelMemberResult);
-		}
-		else {
-			channelNo = channelNoList.get(0).getChannelNo();
-//			logger.debug("channelNo={}", channelNo);
 			
-			mav.addObject("channelNo", channelNo);
 		}
 		
-//		mav.addObject("channelNo", channelNo);
+		//1. memberId로 등록한 chatroom존재여부 검사. 있는 경우 chatId 리턴.
+		List<Channel> channelList = chatService.findChannelNoListByMemberId(memberLoggedIn.getMemberId());
+		logger.debug("channelList={}", channelList);
 		
-		mav.setViewName("redirect:/chat/chatList.do");
+		//2. chatList가져오기
+		List<Chat> chatList = chatService.selectChatList();
+		logger.debug("chatList={}", chatList);
+		
+		for(int i=0; i<channelList.size(); i++) {
+			if(channelList.get(i).getMemberId().equals(memberId)) {
+				channelNo = channelList.get(i).getChannelNo();
+				index = i;
+			}
+		}
+		logger.debug("channelNo={}", channelNo);
+		
+		
+		mav.addObject("index", index);
+		mav.addObject("channelNo", channelNo);
+		mav.addObject("chatList", chatList);
+		mav.addObject("channelList", channelList);
+		mav.setViewName("chat/chatList");
 		
 		return mav;
 	}
@@ -190,7 +206,6 @@ public class ChatController {
 		List<Channel> channelList = null;
 		logger.debug("channelList={}", channelList);
 		
-		//chatId 조회
 		//1. memberId로 등록한 chatroom존재여부 검사. 있는 경우 chatId 리턴.
 		channelList = chatService.findChannelNoListByMemberId(memberLoggedIn.getMemberId());
 		logger.debug("channelList={}", channelList);
