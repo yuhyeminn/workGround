@@ -317,9 +317,9 @@
 									                </div>
 								                </div>
 								            </c:forEach>
-								            <div class="media dropdown-item chk-charge-member" id="" >
-									         <p style="color:red;font-size:14px;">배정 멤버 삭제</p>
-								         	</div>
+										    	<div class="dropdown-item chk-charge-member del-chk-charge-member" id="" <c:if test="${chk.checklistChargedMemberId==null}">style="display:none"</c:if>>
+											         <p style="color:red;font-size:14px;">배정 멤버 삭제</p>
+										        </div>
 								      </c:if>
 								      <c:if test="${work.workChargedMemberList == null or empty work.workChargedMemberList }">
 								    	<span style="margin-left:10px;">없음</span>
@@ -356,9 +356,11 @@
 									         </div>
 								         </div>
 								    </c:forEach>
-								    	<div class="dropdown-item chk-charge-member" id="">
+								     
+								    	<div class="dropdown-item chk-charge-member del-chk-charge-member" id="" <c:if test="${chk.checklistChargedMemberId==null}">style="display:none"</c:if>>
 									         <p style="color:red;font-size:14px;">배정 멤버 삭제</p>
-								         </div>
+								        </div>
+								        
 								    </c:if>
 								    <c:if test="${work.workChargedMemberList == null or empty work.workChargedMemberList }">
 								    	<span style="margin-left:10px;">없음</span>
@@ -789,8 +791,8 @@ function updateWorkMember(){
 		               		+'<img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">'	
 		               		+'<div class="media-body"><p class="memberName">${m.memberName}</p></div></div>';
 				    </c:forEach> 
-		          	html +='<div class="media dropdown-item chk-charge-member" id="" ><p style="color:red;font-size:14px;">배정 멤버 삭제</p></div>';
-		         </c:if>	
+ 		          	html +='<div class="media dropdown-item chk-charge-member del-chk-charge-member" id="" style="display:none"><p style="color:red;font-size:14px;">배정 멤버 삭제</p></div>';
+ 		         </c:if>	
 		         <c:if test="${work.workChargedMemberList == null or empty work.workChargedMemberList }">
 			    	html += '<span style="margin-left:10px;">없음</span>';
 			   	 </c:if>
@@ -859,13 +861,16 @@ function updateWorkMember(){
 				 if(data.isUpdated){
 						 var originImg = $this.closest("td").children(".update-chk-charge");
 						 originImg.remove();
+					 //멤버 수정할 때
 					 if(memberId != '' && memberId != null){
 						 var member = data.member;
-						 
+						 $this.closest("td").find(".del-chk-charge-member").show();
 						 var profile = '<img src="${pageContext.request.contextPath}/resources/img/profile/'+member.renamedFileName+'" data-toggle="dropdown" alt="User Avatar" class="img-circle img-profile ico-profile update-chk-charge" title="'+member.memberName+'">';
 						 $this.closest("td").prepend(profile);
 					 }
+					 //멤버 없앨 때
 					 else{
+						 $this.closest("td").find(".del-chk-charge-member").hide();
 						 var profile = '<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown" ><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div>';
 						 $this.closest("td").prepend(profile);
 					 }
@@ -883,6 +888,8 @@ function updateWorkMember(){
 	 var workNo = '${work.workNo}';
 	 $(document).on('click', ".delete-checklist", function(){
 		 var checklistNo = $(this).attr("id");
+		 var isCompleted = $(this).closest("tr").hasClass("completed");
+		 console.log(isCompleted)
 		 $.ajax({
 			 url:"${pageContext.request.contextPath}/project/deleteChecklist.do",
 			 data: {checklistNo:checklistNo},
@@ -891,9 +898,22 @@ function updateWorkMember(){
 				 if(data.isUpdated){
 				 	$(".tbl-checklist tr#"+checklistNo).remove();
 				 	$(".work-item#"+workNo+" .work-checklist tbody tr#"+checklistNo).remove();
-				 	console.log($(".work-item#"+workNo+" .work-checklist tbody").length);
+				 	
+				 	//체크리스트 숫자 삭감
+				 	var cnt = Number($(".work-item#"+workNo+" .work-etc .chklt-cnt-total").text());
+					$(".work-item#"+workNo+" .work-etc span.chklt-cnt-total").text(cnt-1);
+				 	if(isCompleted){
+				 		var completecnt = Number($(".work-item#"+workNo+" .work-etc .chklt-cnt-completed").text());
+				 		$(".work-item#"+workNo+" .work-etc span.chklt-cnt-completed").text(completecnt-1);
+				 	}
+					
+					//체크리스트 테이블 없을 경우
 				 	if($(".work-item#"+workNo+" .work-checklist tbody>tr").length == 0){
 				 		$(".work-item#"+workNo+" .work-checklist table").remove();
+				 		
+				 		$(".work-item#"+workNo+" .work-etc").children(".chklt-cnt").eq(0).remove();
+						var cnthtml='<span class="ico"><i class="far fa-list-alt "></i> 0</span>'
+						$(".work-item#"+workNo+" .work-etc").prepend(cnthtml);
 				 	}
 				 }
 			 },
