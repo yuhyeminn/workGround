@@ -180,7 +180,7 @@ button:active, button:focus{outline: none;}
 .workCompleted-title{padding: .5rem 0 .3rem; background: #f3f4f5;}
 .workCompleted-title h5{margin: 0; padding-left: 1rem; color: #464c59; font-size: .88rem; font-weight: bold;}
 /* 새 업무 만들기 */
-.addWork-wrapper{display:none; margin: 0 .6rem .6rem; clear: both;}
+.addWork-wrapper{display:none; padding: 0 .6rem .6rem; clear: both;}
 .addWork-wrapper.show{display: block;}
 .addWorkFrm{border: 2px solid #27b6ba; border-radius: 3px; background: #fff;}
 .addWork-textarea{min-height: 65px; max-height: 35vh; width: 100%; padding: .3rem .5rem; border: 0; color: #464c59; font-size: .85rem; resize: none; outline: none;}

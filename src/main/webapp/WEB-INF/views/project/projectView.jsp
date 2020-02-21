@@ -96,19 +96,16 @@ function projectStar(){
 //업무 검색
 function searchWork(){
 	let wrapper = document.querySelector(".container-fluid");
-	let frm = document.querySelector("#workSearchFrm");
-	let input = document.querySelector("input[name=searchWorkKeyword]");
-	let btn = document.querySelector("#btn-searchWork");
-	let keyword = $(input).val().trim(); 
+	let url = '${pageContext.request.contextPath}/project/searchWork';
+	let input;
+	let keyword; 
 	
-	//엔터
+	//엔터키
  	$(document).on('keydown', '#workSearchFrm input', (e)=>{
- 		let input = document.querySelector("input[name=searchWorkKeyword]");
- 		let keyword = $(input).val().trim(); 
+ 		input = document.querySelector("input[name=searchWorkKeyword]");
+ 		keyword = $(input).val().trim(); 
  		
 		if(e.which==13){
-			console.log(keyword);
-			
 			//유효성 검사
 			if(keyword==""){
 				alert("검색 키워드를 입력해 주세요!");
@@ -119,37 +116,16 @@ function searchWork(){
 					keyword: keyword,
 					memberId: '${memberLoggedIn.memberId}'
 			};
-			console.log('${pageContext.request.contextPath}/project/searchWork');
 			
-			$.ajax({
-				url: '${pageContext.request.contextPath}/project/searchWork',
-				data: data,
-				dataType: 'html',
-				type: 'GET',
-				success: data=>{
-					if(data!=null){
-						$(wrapper).html("");
-						$(wrapper).html(data);
-					}
-					else{
-						alert("업무 검색에 실패했습니다 :(");
-					}
-				},
-				error: (x,s,e) => {
-					console.log(x,s,e);
-				}
-			}); 
+			ajax(data);
 		}
 		
 	}); 
 	
-	
+	//검색버튼 클릭
 	$(document).on('click', '#btn-searchWork', (e)=>{
-		let wrapper = document.querySelector(".container-fluid");
-		let frm = document.querySelector("#workSearchFrm");
-		let input = document.querySelector("input[name=searchWorkKeyword]");
-		let btn = document.querySelector("#btn-searchWork");
-		let keyword = $(input).val().trim();
+		input = document.querySelector("input[name=searchWorkKeyword]");
+		keyword = $(input).val().trim();
 
 		//유효성 검사
 		if(keyword==""){
@@ -162,8 +138,12 @@ function searchWork(){
 				memberId: '${memberLoggedIn.memberId}'
 		};
 		
+		ajax(data);
+	});
+		
+	function ajax(data){
 		$.ajax({
-			url: '${pageContext.request.contextPath}/project/searchWork',
+			url: url,
 			data: data,
 			dataType: 'html',
 			type: 'GET',
@@ -180,8 +160,7 @@ function searchWork(){
 				console.log(x,s,e);
 			}
 		}); 
-		
-	}); 
+	}	
 }
 
 //새 업무리스트 만들기
@@ -194,6 +173,7 @@ function addWorklist(){
     
     let btnAdd = document.querySelector("#btn-addWorklist");
     let btnCancel = document.querySelector("#btn-cancel-addWorklist");
+    let url = '${pageContext.request.contextPath}/project/addWorklist.do';
 	
     //프로젝트 팀원들에게는 업무리스트 추가가 보이지 않음!
     if(addWklt!==null){
@@ -211,12 +191,34 @@ function addWorklist(){
         $(addWklt).show();
     });
 
+    //엔터키 입력시 업무리스트 추가
+    inputTitle.addEventListener('keydown', key=>{
+    	if(key.keyCode==13){
+    		let val = $(inputTitle).val().trim();
+    		
+    		//유효성 검사
+            if(val===""){
+            	alert("추가할 업무리스트의 이름을 입력해 주세요!");
+            	return;
+            }
+    		
+            let data = {
+            		projectNo: ${project.projectNo},
+            		projectManager: '${projectManager}',
+            		worklistTitle: val
+            };
+            
+            ajax(data);
+            
+    	}
+    });
+    
     //+버튼 클릭시 업무리스트 추가
     btnAdd.addEventListener('click', ()=>{
-        let title = document.querySelector("input[name=worklistTitle]");
+        let val = $(inputTitle).val().trim();
         
         //유효성 검사
-        if($(title).val().trim()==""){
+        if(val===""){
         	alert("추가할 업무리스트의 이름을 입력해 주세요!");
         	return;
         }
@@ -224,13 +226,16 @@ function addWorklist(){
         let data = {
         		projectNo: ${project.projectNo},
         		projectManager: '${projectManager}',
-        		worklistTitle: $(title).val().trim()
+        		worklistTitle: val
         };
         
-        console.log(data);
+        ajax(data);
         
-        $.ajax({
-        	url: '${pageContext.request.contextPath}/project/addWorklist.do',
+    }); //end of +버튼 클릭
+    
+    function ajax(data) {
+    	$.ajax({
+        	url: url,
         	data: data,
         	dataType: 'html',
         	type: 'POST',
@@ -247,14 +252,12 @@ function addWorklist(){
         		else{
         			alert("새 업무리스트 추가에 실패했습니다 :(");
         		}
-       			
         	},
         	error: (x,s,e) => {
 				console.log(x,s,e);
 			}
-      
         }); 
-    }); //end of +버튼 클릭
+    }
 }
 
 //업무리스트 삭제하기
@@ -297,8 +300,6 @@ function deleteWorklist(){
 	        	dataType: 'json',
 	        	type: 'POST',
 	        	success: data=>{
-	        		console.log(data);
-	        		
 	        		//삭제 성공시 모달창 닫기
 	        		if(data.result===1){
 	        			$(modal).modal('hide');
@@ -306,7 +307,6 @@ function deleteWorklist(){
 		        		//해당 요소 지우기
 		        		delwl.remove();
 	        		}
-	        		
 	        	},
 	        	error: (x,s,e) => {
 					console.log(x,s,e);
@@ -455,6 +455,7 @@ function addWork(){
 			//취소버튼 클릭 시
 			$btnCancel.on('click', ()=>{
 				dPicker.style.display = 'none';
+				$('.daterangepicker').remove();
 			});
 			
 			//적용버튼 클릭 시
@@ -497,7 +498,8 @@ function addWork(){
 					addDateArr.push(endSql);
 				}
 				
-				//데이트피커버튼 지우고 선택한 날짜버튼 추가  
+				//데이트피커버튼 지우고 선택한 날짜버튼 추가 
+				$(dPicker).remove();
 				$(btnAddDate).remove();
 				$(dateWrapper).html(btnHtml);
 				//취소,만들기버튼 css 수정
@@ -538,7 +540,6 @@ function addWork(){
 					workTag: addTag,
 					workDate: addDateArr
 			}
-			console.log(data);
 			
 			$.ajax({
 				url: '${pageContext.request.contextPath}/project/insertWork.do',
@@ -552,6 +553,7 @@ function addWork(){
 						addTag = "";
 						addMemberArr.length = 0;
 						addDateArr.length = 0;
+						$('.daterangepicker').remove();
 					}
 					else{
 						alert("새 업무 만들기에 실패했습니다 :(");
@@ -586,6 +588,7 @@ function addWork(){
 			$(btnCancelDate).remove();
 			$(dateWrapper).append(btnAddDate);
 			$(btnRWrapper).css('display', 'inline-block').css('float', 'right');
+			$('.daterangepicker').remove();
 			
 			$(addWorkWrapper).removeClass("show");
 			
@@ -645,42 +648,44 @@ function deleteWork(){
 	
 	//삭제버튼 클릭시
 	btnDel.addEventListener('click', e=>{
-		let title = e.target.value;
-		let wlSection = work.parentNode.parentNode.parentNode;
- 		let worklistNo = wlSection.id.split('-')[1]*1; 
- 		
-		let data = {
-			projectNo: ${project.projectNo},
-			worklistNo: worklistNo,
-			workNo: workNo,
-			cntChk: cntChk,
-			cntComment: cntComment,
-			cntFile: cntFile,
-			projectManager: '${projectManager}'
-		}
-		
 		//업무리스트와 구분
-		if(title==='work'){
-			$.ajax({
-	        	url: '${pageContext.request.contextPath}/project/deleteWork.do',
-	        	data: data,
-	        	dataType: 'html',
-	        	type: 'POST',
-	        	success: data=>{
-	        		if(data!=null){
-		        		$(wlSection).html(data);
-		        		$(modal).modal('hide');
-	        		}
-	        		else{
-						alert("업무 삭제에 실패했습니다 :(");	        			
-	        		}
-	        	},
-	        	error: (x,s,e) => {
-					console.log(x,s,e);
-				}
-	        }); 
-		} 
-		
+		if(btnDel.value==='work'){
+			let title = e.target.value;
+			let wlSection = work.parentNode.parentNode.parentNode;
+	 		let worklistNo = wlSection.id.split('-')[1]*1; 
+	 		
+			let data = {
+				projectNo: ${project.projectNo},
+				worklistNo: worklistNo,
+				workNo: workNo,
+				cntChk: cntChk,
+				cntComment: cntComment,
+				cntFile: cntFile,
+				projectManager: '${projectManager}'
+			}
+			
+			//업무리스트와 구분
+			if(title==='work'){
+				$.ajax({
+		        	url: '${pageContext.request.contextPath}/project/deleteWork.do',
+		        	data: data,
+		        	dataType: 'html',
+		        	type: 'POST',
+		        	success: data=>{
+		        		if(data!=null){
+			        		$(wlSection).html(data);
+			        		$(modal).modal('hide');
+		        		}
+		        		else{
+							alert("업무 삭제에 실패했습니다 :(");	        			
+		        		}
+		        	},
+		        	error: (x,s,e) => {
+						console.log(x,s,e);
+					}
+		        }); 
+			} 
+		}
 	}); //end of btnDel click 
 	
 	document.addEventListener('click', ()=>{
@@ -1726,7 +1731,7 @@ function updateTitle(){
         <section id="add-wkltfrm-wrapper" class="worklist add-worklist" role="button" tabindex="0">
             <!-- 타이틀 -->
             <div class="worklist-title add-wklt">
-                <form id="addWorklistFrm">
+                <form id="addWorklistFrm" onsubmit="return false;">
                     <input type="text" name="worklistTitle" placeholder="업무리스트 이름" required/>
                     <div class="worklist-title-btn">
                         <button type="button" id="btn-addWorklist" class="btn-addWork">

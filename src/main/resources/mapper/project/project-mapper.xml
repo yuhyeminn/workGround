@@ -301,7 +301,9 @@
 		delete from project where project_no = #{projectNo}
 	</delete>
 	
-	
+	<select id="selectProjectPrivateYn" resultType="string">
+		select private_yn from project where project_no = #{projectNo}
+	</select>
 	
 	
 	

@@ -32,7 +32,7 @@ $(function(){
 </script>
 
 		<!-- SEARCH FORM -->
-        <form id="workSearchFrm" class="form-inline">
+        <form id="workSearchFrm" class="form-inline" onsubmit="return false;">
 	        <div class="input-group input-group-sm">
 	            <input class="form-control form-control-navbar" name="searchWorkKeyword" type="search" placeholder="업무 검색" value="${keywordBefore}" aria-label="Search">
 	            <div class="input-group-append">

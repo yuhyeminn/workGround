@@ -52,7 +52,10 @@
 	<interceptors>
 		<interceptor>
 			<mapping path="/**"/>
-			<exclude-mapping path="/member/memberLogin.do"/>
+			<exclude-mapping path="/member/memberLog*.do"/>
+			<exclude-mapping path="/member/forgotPassword.do"/>
+			<exclude-mapping path="/member/memberRegister*.do"/>
+			<exclude-mapping path="/member/checkIdExistence.do"/>
 			<beans:bean id="loginInterceptor" class="com.kh.workground.common.interceptor.LoginInterceptor"/>
 		</interceptor>
 		<!-- 로그아웃 후 뒤로가기 방지 -->

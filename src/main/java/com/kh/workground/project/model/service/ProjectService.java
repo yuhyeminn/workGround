@@ -55,4 +55,6 @@ public interface ProjectService {
 
 	int deleteProject(int projectNo);
 
+	String selectProjectPrivateYn(int projectNo);
+
 }
