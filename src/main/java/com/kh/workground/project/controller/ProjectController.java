@@ -60,7 +60,7 @@ public class ProjectController {
 			param.put("statusCode", statusCode);
 			param.put("sortType", sortType);
 			
-			projectMap = projectService.selectProjectListAll(param,memberLoggedIn);
+			projectMap = projectService.selectProjectListAll(param, memberLoggedIn);
 			
 			//1-2.부서 전체 프로젝트 상태 카운트
 			List<Project> listByDept = projectMap.get("listByDept");
@@ -191,7 +191,7 @@ public class ProjectController {
 	}
 	
 	@PostMapping("/project/addWorklist.do")
-	public ModelAndView insertWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam String worklistTitle, @RequestParam String projectManager) {
+	public ModelAndView insertWorklist(ModelAndView mav, HttpSession session, @RequestParam int projectNo, @RequestParam String worklistTitle, @RequestParam String projectManager) {
 		
 		try {
 			//1.업무로직
