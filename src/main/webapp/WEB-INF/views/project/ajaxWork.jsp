@@ -35,7 +35,7 @@
 		                    <!-- 업무 설정 -->
 		                    <div class="addWork-btnLeft">
 		                    
-		                    	<c:if test="${project.privateYn == 'N'}">
+		                    	<c:if test="${privateYn == 'N'}">
 		                        <!-- 업무 멤버 배정 -->
 		                        <div class="add-member dropdown">
 		                        	<span class="badge navbar-badge addMem-badge"></span>

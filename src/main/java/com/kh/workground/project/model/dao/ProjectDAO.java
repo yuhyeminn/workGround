@@ -81,4 +81,6 @@ public interface ProjectDAO {
 
 	int deleteProject(int projectNo);
 
+	String selectProjectPrivateYn(int projectNo);
+
 }

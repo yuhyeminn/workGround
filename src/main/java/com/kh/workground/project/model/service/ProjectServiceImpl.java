@@ -753,4 +753,14 @@ public class ProjectServiceImpl implements ProjectService {
 		return result;
 	}
 
+	@Override
+	public String selectProjectPrivateYn(int projectNo) {
+		String result = projectDAO.selectProjectPrivateYn(projectNo);
+		
+		if(result==null)
+			throw new ProjectException("프로젝트 프라이빗 조회 오류!");
+		
+		return result;
+	}
+
 }
