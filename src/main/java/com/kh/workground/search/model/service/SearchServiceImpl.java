@@ -61,16 +61,6 @@ public class SearchServiceImpl implements SearchService {
 		return list;
 	}
 
-/*	@Override
-	public List<Map<String, Object>> selectClubListByKeyword(String keyword) {
-		List<Map<String, Object>> list = searchDAO.selectClubListByKeyword(keyword);
-		
-		if(list==null)
-			throw new SearchException("키워드로 동호회 조회 오류!");
-		
-		return list;
-	}
-*/	
 	@Override
 	public List<Club> selectClubListByKeyword(Map<String, String> param) {
 		List<Club> list = searchDAO.selectClubListByKeyword(param);
@@ -111,9 +101,9 @@ public class SearchServiceImpl implements SearchService {
 		return totalContents;
 	}
 
-	@Override
-	public List<Notice> selectTotalNoticeListByKeyword(int cPage, int numPerPage, String keyword) {
-		List<Notice> list = searchDAO.selectTotalNoticeListByKeyword(cPage, numPerPage, keyword);
+	@Override //공지 리스트
+	public List<Notice> selectNoticeListByPageBar(String keyword) {
+		List<Notice> list = searchDAO.selectNoticeListByPageBar(keyword);
 		
 		if(list==null)
 			throw new SearchException("전체공지 조회 오류!");
@@ -121,7 +111,7 @@ public class SearchServiceImpl implements SearchService {
 		return list;
 	}
 	
-	@Override
+	@Override //공지 콘텐츠
 	public int selectTotalNoticeTotalContents(String keyword) {
 		int totalContents = searchDAO.selectTotalNoticeTotalContents(keyword);
 		
@@ -141,13 +131,6 @@ public class SearchServiceImpl implements SearchService {
 		return list;
 	}
 
-/*<<<<<<< HEAD
-	public int selectDeptNoticeTotalContents(Map<String, String> param) {
-		int totalContents = searchDAO.selectDeptNoticeTotalContents(param);
-=======
-	public int selectDeptNoticeTotalContents(String keyword) {
-		int totalContents = searchDAO.selectDeptNoticeTotalContents(keyword);
->>>>>>> master*/
 	@Override
 	public int selectDeptNoticeTotalContents(Map<String, String> param) {
 		int totalContents = searchDAO.selectDeptNoticeTotalContents(param);
@@ -158,7 +141,7 @@ public class SearchServiceImpl implements SearchService {
 		return totalContents;
 	}
 
-	@Override
+	@Override //커뮤니티 리스트
 	public List<Community> selectCommuListByPageBar(int cPage, int numPerPage, String keyword) {
 		List<Community> list = searchDAO.selectCommuListByPageBar(cPage, numPerPage, keyword);
 		
@@ -168,7 +151,7 @@ public class SearchServiceImpl implements SearchService {
 		return list;
 	}
 	
-	@Override
+	@Override //커뮤콘텐츠
 	public int selectCommuListTotalContents(String keyword) {
 		int totalContents = searchDAO.selectCommuListTotalContents(keyword);
 		
@@ -198,15 +181,6 @@ public class SearchServiceImpl implements SearchService {
 		return totalContents;
 	}
 
-/*	@Override
-	public List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword) {
-		List<Map<String, Object>> list = searchDAO.selectClubListByPageBar(cPage, numPerPage, keyword);
-		
-		if(list==null)
-			throw new SearchException("동호회 조회 오류!");
-		
-		return list;
-	} */
 	@Override
 	public List<Club> selectClubListByPageBar(int cPage, int numPerPage, Map<String, String> param) {
 		List<Club> list = searchDAO.selectClubListByPageBar(cPage, numPerPage, param);
@@ -225,6 +199,26 @@ public class SearchServiceImpl implements SearchService {
 			throw new SearchException("동호회 조회 오류!");
 		
 		return totalContents;
+	}
+
+	@Override
+	public List<Notice> selectTotalNoticeListByPageBar(int cPage, int numPerPage, String keyword) {
+		List<Notice> list = searchDAO.selectTotalNoticeListByPageBar(cPage, numPerPage, keyword);
+		
+		if(list==null)
+			throw new SearchException("전체공지 조회 오류!");
+		
+		return list;
+	}
+
+	@Override
+	public List<Notice> selectDeptNoticeList(Map<String, String> param) {
+		List<Notice> list = searchDAO.selectDeptNoticeList(param);
+		
+		if(list==null)
+			throw new SearchException("전체공지 조회 오류!");
+		
+		return list;
 	}
 
 }

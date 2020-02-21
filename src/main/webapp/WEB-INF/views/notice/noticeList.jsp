@@ -9,6 +9,10 @@
 <style>
 .btn-showAll{float: right; margin-right: 1rem; border: 1.2px solid lightgray; border-radius: 3px; padding: .4rem; color: darkgray}
 .btn-showAll:hover{color: gray;}
+/* 검색 결과 없음 */
+#empty-wrapper{width: 800px; height: 450px; margin: 1rem auto 0; padding: 3rem; background: #fff; border: 1px solid rgba(29,34,43,.1); border-radius: 2px; margin-top: 3rem;}
+#empty-wrapper img{display: block; width: 30%; margin: 0 auto;}
+#empty-wrapper p{margin-top: 1rem; color: #464c59; font-weigth: bold; text-align: center;}
 </style>
 
 <script>
@@ -129,6 +133,15 @@ function noticeSearch(searchKeyword){
 			
 			listAjax(data);
 			$(".btn-add").css("display", "none"); //추가 버튼 없애기
+			
+			//검색 결과 없을 경우
+			if(Object.keys(data.noticeList).length + Object.keys(data.deptNoticeList).length + Object.keys(data.communityList).length == 0){
+				let emptyHtml = '';
+				emptyHtml += '<div id="empty-wrapper"><img src="${pageContext.request.contextPath}/resources/img/search-empty-state.png" alt="검색결과 없음" />'
+						  + '<p>검색 결과가 없습니다.</p></div>';
+				$(".notice-area").html(emptyHtml);
+			}
+			
 		},
 		error: (x,s,e) => {
 			console.log(x,s,e);

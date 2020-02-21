@@ -20,40 +20,36 @@ public interface SearchService {
 	List<Project> selectProjectListByKeyword(Map<String, String> param);
 
 	List<Club> selectClubListByKeyword(Map<String, String> param);
-/*	List<Map<String, Object>> selectClubListByKeyword(String keyword);
-*/
+
 	List<Member> selectMemberListByKeyword(String keyword);
 
 	List<Member> selectMemberListByPageBar(int cPage, int numPerPage, String keyword);
 
 	int selectMemberTotalContents(String keyword);
 
-	List<Notice> selectTotalNoticeListByKeyword(int cPage, int numPerPage, String keyword);
+	List<Notice> selectNoticeListByPageBar(String keyword); //공지 리스트
 
 	List<Notice> selectDeptNoticeListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
-/*<<<<<<< HEAD
-	int selectDeptNoticeTotalContents(Map<String, String> param);
-	int selectDeptNoticeTotalContents(Map<String, String> param);
-=======
-	int selectDeptNoticeTotalContents(String keyword);
->>>>>>> master*/
 	int selectDeptNoticeTotalContents(Map<String, String> param);
 
-	List<Community> selectCommuListByPageBar(int cPage, int numPerPage, String keyword);
+	List<Community> selectCommuListByPageBar(int cPage, int numPerPage, String keyword); //커뮤니티 리스트
 
 	List<Project> selectProjectListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
 	int selectProjectTotalContents(String keyword);
 
-/*	List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword); */
 	List<Club> selectClubListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
 	int selectClubTotalContents(String keyword);
 
-	int selectTotalNoticeTotalContents(String keyword);
+	int selectTotalNoticeTotalContents(String keyword); //공지토탈콘텐츠
 
-	int selectCommuListTotalContents(String keyword);
+	int selectCommuListTotalContents(String keyword); //커뮤토탈콘텐츠
+
+	List<Notice> selectTotalNoticeListByPageBar(int cPage, int numPerPage, String keyword); //공지목록(댓글 없는 뷰)
+
+	List<Notice> selectDeptNoticeList(Map<String, String> param); //부서별게시글모달
 
 
 }

@@ -52,12 +52,24 @@
 		</collection>
 	</resultMap>
 
+	<!-- 공지 모두보기 띄울용(댓글 없는 뷰 사용) -->
 	<select id="selectTotalNoticeListByKeyword" resultMap="noticeMap">
+		select * from view_noticeMember where dept_code is null and notice_title like '%'||#{keyword}||'%'
+		order by notice_no
+	</select>
+	<!-- 모달 불러올용(댓글 있는 뷰) -->
+	<select id="selectNoticeListByKeyword" resultMap="noticeMap">
 		select * from view_noticeMemberNoticeComment where dept_code is null and notice_title like '%'||#{keyword}||'%'
 		order by notice_no, notice_comment_no
 	</select>
 	
+	<!-- 부서글 모두보기 띄울용(댓글 없는 뷰 사용) -->
 	<select id="selectDeptNoticeListByKeyword" parameterType="hashMap" resultMap="noticeMap">
+		select * from view_noticeMember where dept_code=#{deptCode} and notice_title like '%'||#{keyword}||'%'
+		order by notice_no
+	</select>
+	<!-- 부서글 모달(댓글 있는 뷰 ) -->
+	<select id="selectDeptNoticeList" parameterType="hashMap" resultMap="noticeMap">
 		select * from view_noticeMemberNoticeComment where dept_code=#{deptCode} and notice_title like '%'||#{keyword}||'%'
 		order by notice_no, notice_comment_no
 	</select>
@@ -105,20 +117,6 @@
 		</collection>
 	</resultMap>
 	
-<!-- 	<select id="selectClubListByKeyword" resultMap="searchClubMap">
-		select C.club_no, C.club_name, C.club_category, C.club_enroll_date, M.member_name
-		from club C join member M on C.club_manager_id = M.member_id
-		where club_name like '%'||#{keyword}||'%'
-		order by club_category
-	</select>
-	<resultMap type="hashMap" id="searchClubMap">
-		<result column="club_no" property="clubNo"/>
-		<result column="club_name" property="clubName"/>
-		<result column="club_category" property="category"/>
-		<result column="club_enroll_date" property="enrollDate"/>
-		<result column="member_name" property="clubManager"/>
-	</resultMap> -->
-	
 	<select id="selectMemberListByKeyword" resultType="member">
 		select * 
 		from view_member 
@@ -134,18 +132,18 @@
 	</select>
 	
 	<select id="selectTotalNoticeTotalContents" resultType="_int">
-		select count(*) from view_noticeMemberNoticeComment where dept_code is null and notice_title like '%'||#{keyword}||'%'
-		order by notice_no, notice_comment_no
+		select count(*) from view_noticeMember where dept_code is null and notice_title like '%'||#{keyword}||'%'
+		order by notice_no
 	</select>
 	
 	<select id="selectDeptNoticeTotalContents" resultType="_int">
-		select count(*) from view_noticeMemberNoticeComment where dept_code=#{deptCode} and notice_title like '%'||#{keyword}||'%'
-		order by notice_no, notice_comment_no
+		select count(*) from view_noticeMember where dept_code=#{deptCode} and notice_title like '%'||#{keyword}||'%'
+		order by notice_no
 	</select>
 	
 	<select id="selectCommuListTotalContents" resultType="_int">
-		select count(*) from view_commuMemberCommuComment where commu_title like '%'||#{keyword}||'%'
-		order by commu_no, commu_comment_no
+		select count(*) from view_communityMember where commu_title like '%'||#{keyword}||'%'
+		order by commu_no
 	</select>
 	
 	<select id="selectProjectTotalContents" resultType="_int">
@@ -163,7 +161,7 @@
 			order by club_category)
 	</select>
 	
-	<!-- 클럽 수정 -->
+	<!-- 동호회 검색 -->
 	<resultMap type="club" id="searchClubMap">
 		<id column="club_no" property="clubNo"></id>
 		<result column="club_name" property="clubName"></result>
@@ -196,6 +194,7 @@
         where club_name like '%'||#{keyword}||'%'
         order by club_category
 	</select>
+
 	
 
 	

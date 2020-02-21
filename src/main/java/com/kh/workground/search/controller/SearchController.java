@@ -37,12 +37,14 @@ public class SearchController {
 		Map<String, String> param = new HashMap<>();
 		param.put("deptCode", memberLoggedIn.getDeptCode());
 		param.put("keyword", keyword);
-		param.put("memberId", memberId); //동호회 모달에서 가입을 위해 //@추가@
+		param.put("memberId", memberId); //동호회 모달에서 가입을 위해 
 		
 		try {
 			//1.업무로직
 			//a-1.공지
 			List<Notice> noticeList = searchService.selectTotalNoticeListByKeyword(keyword);
+			//logger.debug("noticeList={}", noticeList);
+			//logger.debug("noticeList.size={}", noticeList.size());
 			
 			//a-2.내 부서 게시글   @수정@
 			List<Notice> deptNoticeList = searchService.selectDeptNoticeListByKeyword(param);
@@ -53,8 +55,7 @@ public class SearchController {
 			//b.내 부서 프로젝트
 			List<Project> projectList = searchService.selectProjectListByKeyword(param);
 			
-			//c.동호회   @param수정@
-/*			List<Map<String, Object>> clubList = searchService.selectClubListByKeyword(param); */
+			//c.동호회 
 			List<Club> clubList = searchService.selectClubListByKeyword(param);
 			
 			//d.멤버
@@ -88,50 +89,37 @@ public class SearchController {
 		Map<String, String> param = new HashMap<>();
 		param.put("deptCode", memberLoggedIn.getDeptCode());
 		param.put("keyword", keyword);
-		param.put("memberId", memberId); //동호회 모달에서 가입을 위해 //@추가@
+		param.put("memberId", memberId); //동호회 모달에서 가입을 위해
 		final int numPerPage = 10; 
 		
 		try {
 			//1.업무로직
 			//공지인경우
 			if("total".equals(type)) {
-/*<<<<<<< HEAD
-				int totalContents = searchService.selectTotalNoticeTotalContents();
-				mav.addObject("noticeList", list);
-=======
+				List<Notice> totalNoticeList = searchService.selectTotalNoticeListByPageBar(cPage, numPerPage, keyword); //모두보기용(댓글 없는 뷰)	
+				List<Notice> noticeList = searchService.selectNoticeListByPageBar(keyword); //공지 모달(댓글 있는 뷰)
 				int totalContents = searchService.selectTotalNoticeTotalContents(keyword);
-				mav.addObject("list", list);
->>>>>>> master*/
-				List<Notice> list = searchService.selectTotalNoticeListByKeyword(cPage, numPerPage, keyword);	
-				int totalContents = searchService.selectTotalNoticeTotalContents(keyword);
-				mav.addObject("noticeList", list);
+				
+				mav.addObject("totalNoticeList", totalNoticeList);
+				mav.addObject("noticeList", noticeList);
 				mav.addObject("totalContents", totalContents);
 			}
 			//내 부서 게시글
 			if("dept".equals(type)) {
-/*<<<<<<< HEAD
+				List<Notice> deptList = searchService.selectDeptNoticeListByPageBar(cPage, numPerPage, param); //모두보기용(댓글 없는 뷰)
+				List<Notice> deptNoticeList = searchService.selectDeptNoticeList(param); //모달(댓글 있는 뷰)
 				int totalContents = searchService.selectDeptNoticeTotalContents(param);
-				mav.addObject("deptNoticeList", list);
-=======
-				int totalContents = searchService.selectDeptNoticeTotalContents(keyword);
-				mav.addObject("list", list);
->>>>>>> master*/
-				List<Notice> list = searchService.selectDeptNoticeListByPageBar(cPage, numPerPage, param);
-				int totalContents = searchService.selectDeptNoticeTotalContents(param);
-				mav.addObject("deptNoticeList", list);
+				
+				mav.addObject("deptList", deptList); //모두보기 띄울용
+				mav.addObject("deptNoticeList", deptNoticeList); //모달
 				mav.addObject("totalContents", totalContents);
 			}
 			//커뮤니티
 			if("commu".equals(type)) {
-/*<<<<<<< HEAD
-				int totalContents = searchService.selectCommuListTotalContents();
-				mav.addObject("communityList", list);
-=======
-				int totalContents = searchService.selectCommuListTotalContents(keyword);
-				mav.addObject("list", list);
->>>>>>> master*/
+
 				List<Community> list = searchService.selectCommuListByPageBar(cPage, numPerPage, keyword);
 				int totalContents = searchService.selectCommuListTotalContents(keyword);
+				
 				mav.addObject("communityList", list);
 				mav.addObject("totalContents", totalContents);
 			}
@@ -144,16 +132,7 @@ public class SearchController {
 			}
 			//동호회
 			if("club".equals(type)) {
-/*<<<<<<< HEAD
-				List<Map<String, Object>> list = searchService.selectClubListByPageBar(cPage, numPerPage, keyword); 
-				List<Club> list = searchService.selectClubListByPageBar(cPage, numPerPage, param);
-				int totalContents = searchService.selectClubTotalContents();
-				mav.addObject("clubList", list);
-=======
-				List<Map<String, Object>> list = searchService.selectClubListByPageBar(cPage, numPerPage, keyword);
-				int totalContents = searchService.selectClubTotalContents(keyword);
-				mav.addObject("list", list);
->>>>>>> master*/
+
 				List<Club> list = searchService.selectClubListByPageBar(cPage, numPerPage, param);
 				int totalContents = searchService.selectClubTotalContents(keyword);
 				mav.addObject("clubList", list);
@@ -164,8 +143,6 @@ public class SearchController {
 				List<Member> list = searchService.selectMemberListByPageBar(cPage, numPerPage, keyword);
 				int totalContents = searchService.selectMemberTotalContents(keyword);
 				
-				logger.debug("///////////////////////////////");
-				logger.debug("totalContents={}",totalContents);
 				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}

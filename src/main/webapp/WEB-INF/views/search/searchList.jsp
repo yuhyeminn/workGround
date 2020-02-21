@@ -337,7 +337,7 @@ function checkComment(commentContent){
         </c:if> 
         
         <!-- 조회된 게 하나도 없을 때 -->
-       	<c:if test="${empty noticeList && empty deptNoticeList && empty commuList && 
+       	<c:if test="${empty noticeList && empty deptNoticeList && empty communityList && 
        				 empty projectList && empty clubList && empty memList}">
        	<div id="empty-wrapper">
        		<img src="${pageContext.request.contextPath}/resources/img/search-empty-state.png" alt="검색결과 없음" />

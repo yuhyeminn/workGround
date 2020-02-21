@@ -140,7 +140,7 @@ public class NoticeController {
 	@RequestMapping("/notice/deleteNotice.do")
 	public ModelAndView deleteNotice(ModelAndView mav, @RequestParam String noticeNo) {
 		//logger.debug("noticeNo={}", noticeNo);
-		//에이젝스로 int 안넘어옴
+		//에이젝스로 int 안넘어옴 -> String으로 수정
 		try {
 				int noticeNo_ = Integer.parseInt(noticeNo);
 				
@@ -203,8 +203,8 @@ public class NoticeController {
 	@RequestMapping("/notice/deleteCommunity.do")
 	public ModelAndView deleteCommunity(ModelAndView mav, String commuNo) {
 		logger.debug("commuNo={}", commuNo);
-		//에이젝스로 int 안넘어옴
 		try {
+			//에이젝스로 int 안넘어옴
 			int commuNo_ = Integer.parseInt(commuNo);
 			int result = noticeService.deleteCommunity(commuNo_);
 			

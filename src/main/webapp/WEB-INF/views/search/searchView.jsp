@@ -87,7 +87,7 @@ $(function(){
 	showAll();
 });
 
-//모두보기 이동
+/* //모두보기 이동
 function showAll(){
 	$(".btn-more").on('click', (e)=>{
 		let val = e.target.value;
@@ -96,7 +96,7 @@ function showAll(){
 		
 		location.href="${pageContext.request.contextPath}/search/searchView.do?keyword="+keyword+"&type="+type;
 	});
-}
+} */
 
 //사이드바 비활성화
 function sidebarActive(){
@@ -146,27 +146,6 @@ function checkComment(commentContent){
         <div class="col-md-10" >
         	 <div class="card-wrapper">
 	             <div class="card-header">
-<%-- <<<<<<< HEAD
-	                 <i class="far fa-file-word"></i>&nbsp;&nbsp;
-	                 <c:if test="${type == 'total'}">
-	                  	공지 
-	                 </c:if>
-	                 <c:if test="${type == 'dept'}">
-	                  	${memberLoggedIn.deptTitle} 게시글
-	                 </c:if>
-	                 <span class="header-count">(${fn:length(type == 'total'?noticeList:deptNoticeList)})</span>
-=======
-	             	 <h3>
-		                 <i class="far fa-file-word"></i>&nbsp;&nbsp;
-		                 <c:if test="${type == 'total'}">
-		                  	공지 
-		                 </c:if>
-		                 <c:if test="${type == 'dept'}">
-		                  	${memberLoggedIn.deptTitle} 게시글
-		                 </c:if>
-		                 <span class="header-count">(${totalContents})</span>
-	                 </h3>
->>>>>>> master --%>
 	             	 <h3>
 		                 <i class="far fa-file-word"></i>&nbsp;&nbsp;
 		                 <c:if test="${type == 'total'}">
@@ -178,7 +157,7 @@ function checkComment(commentContent){
 		                 <span class="header-count">(${totalContents})</span>
 	                 </h3>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${type == 'total'?noticeList:deptNoticeList}" var="n">
+	             <c:forEach items="${type == 'total'?totalNoticeList:deptList}" var="n">
 		             <c:if test="${type == 'total'}">
 			             <div class="card-body" data-toggle="modal" data-target="#noticeViewModal${n.noticeNo}"> 
 		             </c:if>
@@ -198,11 +177,7 @@ function checkComment(commentContent){
 	             </c:forEach>
              </div>
         </div>
-<<<<<<< HEAD
-        ${pageBar}
-=======
         ${pageBar} 
->>>>>>> master
         </c:if>
         
         <c:if test="${type=='commu'}">
@@ -210,11 +185,12 @@ function checkComment(commentContent){
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-<<<<<<< HEAD
+<%-- <<<<<<< HEAD
 	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${fn:length(communityList)})</span></h3>
 =======
 	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${totalContents})</span></h3>
->>>>>>> master
+>>>>>>> master --%>
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${totalContents})</span></h3>
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${communityList}" var="c">
 	             <div class="card-body" data-toggle="modal" data-target="#boardViewModal${c.commuNo}">
@@ -307,11 +283,8 @@ function checkComment(commentContent){
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-<<<<<<< HEAD
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${fn:length(clubList)})</span></h3>
-=======
+
 	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;동호회 <span class="header-count">(${totalContents})</span></h3>
->>>>>>> master
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${clubList}" var="club" begin="0" end="4">
 	             <div class="card-body" data-toggle="modal" data-target="#modal-club-${club.clubNo}">
