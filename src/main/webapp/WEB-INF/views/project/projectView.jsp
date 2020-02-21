@@ -819,7 +819,7 @@ function checklist(){
     				        //체크리스트 완료 카운트 변경
     				        cntComp += 1;
     				        $spanCntComp.text(cntComp);
-    				        
+    				        $("section.work-item#"+workNo+" .chklt-cnt-completed").text(cntComp);
     				    }
     					//체크리스트 완료 해제한 경우
     				    else{
@@ -1119,7 +1119,7 @@ function updateTitle(){
 function closeSideBar(){
 	var $side = $("#setting-sidebar");
     if($side.hasClass('open')) {
-        $side.stop(true).animate({right:'-520px'});
+        $side.stop(true).animate({right:'-600px'});
         $side.removeClass('open');
     }
 }

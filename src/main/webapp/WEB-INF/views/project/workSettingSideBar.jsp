@@ -81,15 +81,15 @@
     </p>
     </div>
     
-    <ul class="nav work-setting-tabs nav-tabs" id="custom-content-above-tab" role="tablist">
+    <ul class="nav work-setting-tabs setting-tabs nav-tabs" id="work-setting-tabs" role="tablist">
         <li class="nav-item setting-navbar-tab">
-        <button type="button" id="custom-content-work-setting-tab" data-toggle="pill" href="#custom-content-work-setting" role="tab" aria-controls="custom-content-work-setting" aria-selected="true">속성</button>
+        <button type="button" class="nav-link active" id="custom-content-work-setting-tab" data-toggle="pill" href="#custom-content-work-setting" role="tab" aria-controls="custom-content-work-setting" aria-selected="true">속성</button>
         </li>
         <li class="nav-item setting-navbar-tab">
-        <button type="button" id="custom-content-above-comment-tab" data-toggle="pill" href="#custom-content-above-comment" role="tab" aria-controls="custom-content-above-comment" aria-selected="false">코멘트</button>
+        <button type="button" class="nav-link" id="custom-content-above-comment-tab" data-toggle="pill" href="#custom-content-above-comment" role="tab" aria-controls="custom-content-above-comment" aria-selected="false">코멘트</button>
         </li>
         <li class="nav-item setting-navbar-tab">
-        <button type="button" id="custom-content-above-file-tab" data-toggle="pill" href="#custom-content-above-file" role="tab" aria-controls="custom-content-file-comment" aria-selected="false">파일</button>
+        <button type="button" class="nav-link" id="custom-content-above-file-tab" data-toggle="pill" href="#custom-content-above-file" role="tab" aria-controls="custom-content-file-comment" aria-selected="false">파일</button>
         </li>
     </ul>
     </div>
@@ -203,6 +203,7 @@
                     </c:if>
             </div>
             <!-- 배정된 멤버-->
+            <c:if test="${project.privateYn=='N'}">
             <div class="row">
                 <label class="setting-content-label"><span><i class='fas fa-user-plus' style="width:20px;"></i></span> 배정된 멤버</label>
                 <div class='control-wrapper pv-multiselect-box'>
@@ -214,6 +215,7 @@
                 </div>
                 </div>
             </div>
+            </c:if>
             <!-- 태그 -->
             <div class="row">
                 <label class="setting-content-label"><span><i class="fa fa-tag" style="width:20px;"></i></span> 태그</label>
@@ -591,7 +593,7 @@ function sideClose(){
 	 $(".div-close").on('click',(e)=>{
 	     var $side = $("#setting-sidebar");
 	     if($side.hasClass('open')) {
-	         $side.stop(true).animate({right:'-520px'});
+	         $side.stop(true).animate({right:'-600px'});
 	         $side.removeClass('open');
 	     }
 	     $side.empty();
@@ -859,13 +861,14 @@ function updateWorkMember(){
 					 if(memberId != '' && memberId != null){
 						 var member = data.member;
 						 
-						 var profile = '<img src="${pageContext.request.contextPath}/resources/img/profile/'+member.originalFileName+'" data-toggle="dropdown" alt="User Avatar" class="img-circle img-profile ico-profile update-chk-charge" title="'+member.memberName+'">';
+						 var profile = '<img src="${pageContext.request.contextPath}/resources/img/profile/'+member.renamedFileName+'" data-toggle="dropdown" alt="User Avatar" class="img-circle img-profile ico-profile update-chk-charge" title="'+member.memberName+'">';
 						 $this.closest("td").prepend(profile);
 					 }
 					 else{
 						 var profile = '<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown" ><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div>';
 						 $this.closest("td").prepend(profile);
 					 }
+					 resetWorkView(); //업무 새로고침
 				 }
 			 },
 			 error:(jqxhr, textStatus, errorThrown)=>{
@@ -938,7 +941,7 @@ function updateWorkMember(){
 					 var member = data.member;
 					 var html;
 					 if(comment.workCommentLevel == 2){
-						 html ='<div class="card-comment work-comment comment-level2 work-ref-"'+comment.workCommentRef+' id="'+comment.workCommentNo+'">';
+						 html ='<div class="card-comment work-comment comment-level2 work-ref-'+comment.workCommentRef+' id="'+comment.workCommentNo+'">';
 					 }else{
 						 html ='<div class="card-comment work-comment" id="'+comment.workCommentNo+'">';
 					 }
@@ -1133,7 +1136,7 @@ function delWorkFile(){
 			}
 	 });
  }
- 
+
  
  </script>
  <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

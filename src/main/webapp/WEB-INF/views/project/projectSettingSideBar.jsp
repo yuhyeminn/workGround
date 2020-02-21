@@ -59,9 +59,9 @@
 	    </p>
     </div>
     
-    <ul class="nav project-setting-tabs" id="custom-content-above-tab" role="tablist">
+    <ul class="nav project-setting-tabs setting-tabs nav-tabs" id="custom-content-above-tab" role="tablist">
         <li class="nav-item setting-navbar-tab">
-        	<button type="button" id="custom-content-above-home-tab" data-toggle="pill" href="#custom-content-above-home" role="tab" aria-controls="custom-content-above-home" aria-selected="true">설정</button>
+        	<button type="button" class="nav-link active"  id="custom-content-above-home-tab" data-toggle="pill" href="#custom-content-above-home" role="tab" aria-controls="custom-content-above-home" aria-selected="true">설정</button>
         </li>
     </ul>
  </div>
@@ -263,7 +263,7 @@
             		<hr/>
 		            <div class="row setting-row">
 		                <label class="setting-content-label">프로젝트 삭제</label>
-		              <div style="width:60%">
+		              <div style="width:64%">
 		                <button type="button" class="sign-out-project" id="delete-project">프로젝트 삭제</button>
 		                <p style="text-align:center">해당 프로젝트는 영구삭제 됩니다.</p>
 		              </div>
@@ -288,7 +288,7 @@ $(()=>{
 $(".div-close").on('click',()=>{
     var $side = $("#setting-sidebar");
     if($side.hasClass('open')) {
-        $side.stop(true).animate({right:'-520px'});
+        $side.stop(true).animate({right:'-600px'});
         $side.removeClass('open');
     }
 });
