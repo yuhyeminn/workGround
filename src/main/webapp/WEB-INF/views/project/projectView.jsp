@@ -636,7 +636,7 @@ function deleteWork(){
 	//업무 삭제 클릭: 모달에 정보 뿌리기 
 	menu.addEventListener('click', (e)=>{
 		workNo = work.id*1;
-		title = $('#'+workNo).find('h6').text();
+		title = $('.work-item#'+workNo).find('h6').text();
 		cntChk = $(work).find('.chklt-cnt-total').text()*1;
 		cntComment = $(work).find('.comment-cnt').text()*1;
 		cntFile = $(work).find('.attach-cnt').text()*1;

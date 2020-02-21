@@ -140,9 +140,9 @@
 		                </div>
 	
 		                <!-- 체크리스트 -->
+		                <div class="work-checklist">
 		                <c:if test="${w.checklistList!=null && !empty w.checklistList}">
 		                <c:set var="clList" value="${w.checklistList}" />
-		                <div class="work-checklist">
 		                    <table class="tbl-checklist">
 			                    <tbody>
 				                	<c:forEach items="${clList}" var="chk">
@@ -175,8 +175,8 @@
 			                        </c:forEach>
 			                    </tbody>
 		                    </table>                
-	                	</div><!-- /.work-checklist -->
 						</c:if>
+	                	</div><!-- /.work-checklist -->
 						
 		                <!-- 날짜 설정 -->
 		                <div class="work-deadline">
