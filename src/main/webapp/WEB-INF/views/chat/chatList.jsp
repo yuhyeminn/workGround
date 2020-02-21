@@ -92,6 +92,7 @@ function sidebarActive(){
 	         	<h5>최근 메시지</h5>	
 	             <table id="dmList" class="table table-head-fixed text-nowrap">
 	                 <tbody class="td">
+	                 <c:if test="${not empty channelList }">
 	                 <c:forEach items="${channelList }" var="channel" varStatus="vs">
 	                 <tr onclick="loadChatList('${channel.channelNo }', '${channel.memberName }', '${channel.renamedFileName }', '${vs.index }');">
 	                     <td>
@@ -104,6 +105,7 @@ function sidebarActive(){
 	                     </td>
 	                 </tr>
 	                 </c:forEach>
+	                 </c:if>
 	                 </tbody>
 	             </table>
 	          </div><!-- /#aside-bottom -->      
@@ -114,8 +116,10 @@ function sidebarActive(){
         <div id="chatContent" class="chat-wrapper">
            	<!-- 채널 제목 -->
             <div class="user-block" id="chat_userName">
+            <c:if test="${not empty channelList }">
               <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[index].renamedFileName}" alt="user image">
               <span class="username">${channelList[index].memberName }</span> 
+            </c:if>
             </div>
             
             
@@ -317,12 +321,12 @@ function sidebarActive(){
         <div class="col-sm-12" style="float: right; padding: 1rem;">
             <div class="form-group">
                 <label>채널 이름</label>
-                <input type="text" class="form-control" name="channelTitle" id="channelTitle">
+                <input type="text" class="form-control" name="channelTitle" id="channelTitle" readonly="readonly">
             </div>
         </div>
         <div class="col-sm-12" style="float: right; padding: 1rem;">
             <div class="form-group" id="div-plusMember">
-                <label>채널 멤버 찾기</label>
+                <label style="margin-right: 7px;">채널 멤버 찾기</label>
                 <button type="button" id="plusChannel" class="btn btn-default" data-toggle="modal" data-target="#modal-sm">
                     <i class="fas fa-plus"></i>
                 </button>
@@ -393,7 +397,7 @@ $(document).ready(function() {
 $("#findMember").keyup(function() {
 	var keyword = $("#findMember").val().trim();
 	if(keyword == '') return;
-	console.log(keyword);
+	//console.log(keyword);
 	
 	$.ajax({
 		url: '${pageContext.request.contextPath}/chat/findMember.do', 
@@ -408,7 +412,7 @@ $("#findMember").keyup(function() {
 				$.each(data.memberList, (idx, list)=> {
 					html += '<tr onclick="plusMember(\''+list.memberId+'\');" data-dismiss="modal"><td><div class="col-9">';
 					html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">'
-	                html += '<h6 class="h6">'+list.memberName+'</h6>';
+	                html += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.memberName+'</h6>';
 	                html += '</div></td><tr>';
 	                
 				});
@@ -425,20 +429,23 @@ $("#findMember").keyup(function() {
 function plusMember(memberId) {
 	//console.log(memberId);
 	
+	$("#channelTitle").val('');
+	$("#div-plusMember").children("div").remove();
+	
 	$.ajax({
 		url: '${pageContext.request.contextPath}/chat/plusMember.do', 
 		data: {memberId:memberId}, 
 		dataType: 'json', 
 		success: data=> {
-			console.log(data.member.memberName);
-			console.log(plusMember);
+			//console.log(data.member.memberName);
+			//console.log(plusMember);
 			
-			let html = '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">';
+			let html = '<div class="card card-success" style="width: 8.8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">';
 	        html += '<div class="col-12">';
 	        html += '<input type="hidden" name="memberId" value="'+data.member.memberId+'">';
-	        html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+data.member.renamedFileName+'">';
-            html += '<h6 class="h6">'+data.member.memberName+'</h6>';
-            html += '<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;"><button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button></div></div></div>';
+	        html += '<img style="margin-right:10px;" class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+data.member.renamedFileName+'">';
+            html += '<h6 style="padding-top: 10px;">'+data.member.memberName+'</h6>';
+            html += '<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;"><button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" id="remove-channelTitle" style="color: black; margin-bottom: 18px;"></i></button></div></div></div>';
 			
 			$("#div-plusMember").append(html);
 			
@@ -446,7 +453,6 @@ function plusMember(memberId) {
 				$("#channelTitle").val(data.member.memberId+", ${memberLoggedIn.memberId}");
 			}
 			else {
-				$("#channelTitle").val($("#channelTitle").val()+", "+data.member.memberName);
 			}
 		}, 
 		error: (x, s, e)=> {
@@ -457,8 +463,8 @@ function plusMember(memberId) {
 }
 
 function loadChatList(channelNo, memberName, renamedFileName, index) {
-	console.log(channelNo);
-	console.log(index);
+	//console.log(channelNo);
+	//console.log(index);
 	//$("#chatContent").children().remove();
 	// name이 loadChatListFrm인 태그
       var f = document.loadChatListFrm;
@@ -474,6 +480,7 @@ function loadChatList(channelNo, memberName, renamedFileName, index) {
       f[index].method = "post";
       f[index].submit();
 }
+
 //웹소켓 선언
 //1.최초 웹소켓 생성 url: /chat
 let socket = new SockJS('<c:url value="/stomp" />');
@@ -497,13 +504,13 @@ stompClient.connect({}, function(frame) {
        		html += '<div class="direct-chat-msg right"><img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messageBody.renamedFileName+'">';
        		html += '<div class="chat-text"><div class="chat-infos">';
        		html += '<span class="chat-name">'+messageBody.memberName+'</span>';
-       		html += '<div class="chat-time">'+messageBody.sendDate+'</div></div>';
+       		html += '<div class="chat-time">'+messageBody.sendDate+'&nbsp;&nbsp;&nbsp;</div></div>';
        		html += '<p>'+messageBody.msg+'</p></div>';
        		/* <button type="button" class="btn-copyToNtc" title="개발부 게시글로 올리기"><i class="far fa-clipboard"></i></button> */
        		html += '</div>';
 		}
 		else {
-			html += '<div class="direct-chat-msg right"><img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messageBody.renamedFileName+'">';
+			html += '<div class="direct-chat-msg"><img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messageBody.renamedFileName+'">';
        		html += '<div class="chat-text"><div class="chat-infos">';
        		html += '<span class="chat-name">'+messageBody.memberName+'</span>';
        		html += '<div class="chat-time">'+messageBody.sendDate+'</div></div>';
@@ -550,6 +557,7 @@ function lastCheck() {
 	}
 	stompClient.send('<c:url value="/lastCheck" />', {}, JSON.stringity(data));
 }
+
 </script>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
