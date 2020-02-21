@@ -591,7 +591,7 @@ function addWork(){
 			$('.daterangepicker').remove();
 			
 			$(addWorkWrapper).removeClass("show");
-			
+			return;
 		}); 
 		
 	}); //end of 업무추가 +버튼 클릭
@@ -787,7 +787,7 @@ function checklist(){
 		let workNo = val.split(",")[0];
 		let chkNo = val.split(",")[1];
 		
-		let $workSection = $("section#"+workNo);
+		let $workSection = $("section#"+workNo+".work-item");
 		let $tr = $(btnChk.parentNode.parentNode);
 		let $tdChecklist = $(btnChk.parentNode.nextSibling.nextSibling);
 		let $icoChk = $(btnChk.firstChild);
@@ -854,8 +854,6 @@ function checklist(){
 				dataType: 'json',
 				type: 'POST',
 				success: data=>{
-					console.log(data);	
-					
 					//업데이트 성공한 경우
 					if(data.result===1){
 						let cntComp = $spanCntComp.text()*1;
@@ -873,7 +871,6 @@ function checklist(){
     				        //체크리스트 완료 카운트 변경
     				        cntComp += 1;
     				        $spanCntComp.text(cntComp);
-    				        $("section.work-item#"+workNo+" .chklt-cnt-completed").text(cntComp);
     				    }
     					//체크리스트 완료 해제한 경우
     				    else{
@@ -889,7 +886,6 @@ function checklist(){
 	   				        $spanCntComp.text(cntComp);
     				    }
 					}
-					
 				},
 				error: (x,s,e) => {
 						console.log(x,s,e);

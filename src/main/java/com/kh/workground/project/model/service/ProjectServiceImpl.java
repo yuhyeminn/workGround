@@ -30,7 +30,7 @@ public class ProjectServiceImpl implements ProjectService {
 	ProjectDAO projectDAO;
 
 	@Override
-	public Map<String, List<Project>> selectProjectListAll(Map<String, String> param,Member memberLoggedIn) {
+	public Map<String, List<Project>> selectProjectListAll(Map<String, String> param, Member memberLoggedIn) {
 		Map<String, List<Project>> map = new HashMap<>(); //조회한 프로젝트 담는 맵
 		String deptCode = memberLoggedIn.getDeptCode();
 		String memberId = memberLoggedIn.getMemberId();

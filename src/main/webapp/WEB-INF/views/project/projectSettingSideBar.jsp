@@ -291,6 +291,7 @@ $(".div-close").on('click',()=>{
         $side.stop(true).animate({right:'-600px'});
         $side.removeClass('open');
     }
+    $('.daterangepicker').remove();
 });
 
 $("#project_startdate").daterangepicker({

@@ -604,6 +604,7 @@ function sideClose(){
 	         $side.removeClass('open');
 	     }
 	     $side.empty();
+	     $('.daterangepicker').remove();
 	 });
 }
 
