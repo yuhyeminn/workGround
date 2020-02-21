@@ -100,18 +100,18 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			
 			
 			//채팅쪽
-			mav.addObject("memberId", memberLoggedIn.getMemberId());
+			/*mav.addObject("memberId", memberLoggedIn.getMemberId());
 			String channelNoTemp = "C"+club.getClubNo();
 			Channel channel = chatService.selectChannel(channelNoTemp);
 		
 			mav.addObject("channelNo", channel.getChannelNo());
 			
-			logger.info("channel에 대한정보: {}"+channel);
+			logger.info("channel에 대한정보: {}"+channel);*/
 			
 			//채팅리스트
-			List<Chat> chatList = chatService.getClubChatList(channel.getChannelNo());
+			/*List<Chat> chatList = chatService.getClubChatList(channel.getChannelNo());
 			logger.info("chatList에 대한정보: {}"+chatList);
-			mav.addObject("chatList", chatList);
+			mav.addObject("chatList", chatList);*/
 			
 			mav.addObject("club", club);
 			mav.addObject("clubPlanList", clubPlanList);

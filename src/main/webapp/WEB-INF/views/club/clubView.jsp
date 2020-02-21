@@ -6,6 +6,7 @@
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/club/clubViewModal.jsp"></jsp:include>
+<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
 
 <style>
 .note-editing-area {
@@ -153,6 +154,32 @@ $(function(){
 	sidebarActive(); //사이드바 활성화
 	tabActive(); //서브헤더 탭 활성화
 	
+	
+	//채팅방
+	$('#btn-openChatting').on('click', ()=>{
+			var $side = $("#setting-sidebar");
+			var clubNo = ${club.clubNo};
+			
+	    	$.ajax({
+				url: "${pageContext.request.contextPath}/chat/clubChatting.do",
+				type: "get",
+				data: {clubNo:clubNo},
+				dataType: "html",
+				success: data => {
+					$side.html("");
+					$side.html(data); 
+				},
+				error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+			});
+	        
+	        $side.addClass('open');
+	        if($side.hasClass('open')) {
+	        	$side.stop(true).animate({right:'0px'});
+	        }
+	    });
+	
 });
 
 function memberList(clubNo){
@@ -290,35 +317,7 @@ function fileDownload(oName, rName, clubNo) {
 	location.href = "${pageContext.request.contextPath}/club/clubFileDownload.do?clubNo="+clubNo+"&oName="+oName+"&rName="+rName;
 }
 
-
-
-
-
-
-/* 	//window focus이벤트핸들러 등록
-	$(window).on("focus", function() {
-		console.log("focus");
-		lastCheck();
-	}); */
-
-
-
-
-
-
-/*
- * 윈도우가 활성화 되었을때, chatroom테이블의 lastcheck(number)컬럼을 갱신한다.
- * 안읽은 메세지 읽음 처리
- */ 
-/* function lastCheck() {
-    let data = {
-        chatId : "${chatId}",
-        memberId : "${memberId}",
-        time : new Date().getTime()
-    }
-    stompClient.send('<c:url value="/lastCheck" />', {}, JSON.stringify(data));
-} */
-
+    
 </script>
 
 <!-- Navbar ClubView -->
@@ -362,7 +361,8 @@ function fileDownload(oName, rName, clubNo) {
 		<li class="nav-item">
 			<button type="button" onclick=""
 				class="btn btn-block btn-default btn-xs nav-link"
-				data-widget="control-sidebar" data-slide="true">
+				data-widget="control-sidebar" data-slide="true"
+				id="btn-openChatting">
 				<i class="far fa-comments"></i> 동호회 대화
 			</button>
 		</li>
@@ -400,6 +400,11 @@ function fileDownload(oName, rName, clubNo) {
 	</ul>
 </nav>
 <!-- /.navbar -->
+
+
+<!-- 오른쪽 채팅 사이드 바-->
+<aside class="work-setting" id="setting-sidebar" style="display: block;">
+</aside>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -1263,188 +1268,11 @@ function fileDownload(oName, rName, clubNo) {
 </div>
 <!-- /.content-wrapper -->
 
-<aside class="control-sidebar project-setting" style="display: block;">
-	<!-- Control sidebar content goes here -->
-	<div class="p-3">
-		<div class="card-header">
-			<div class="post">
-				<div class="user-block">
-					<img class="direct-chat-img"
-						src="${pageContext.request.contextPath}/resources/img/profile/default.jpg"
-						alt="Message User Image"> <span class="username">
-						<h3>${club.clubName }</h3>
-					</span>
-				</div>
-			</div>
-		</div>
-		<!-- /.card-header -->
-		<div class="card-body">
-			<!-- Conversations are loaded here -->
-			<div class="direct-chat-messages" id="direct-chat-messages" style="height: 25rem">
-				<!-- Message. Default to the left -->
-				<c:forEach items="${chatList }" var="chat">
-					<c:choose>
-						<c:when test="${chat.sender eq memberLoggedIn.memberId }">
-							<!-- Message to the right -->
-							<div class="direct-chat-msg right">
-								<div class="direct-chat-infos clearfix">
-									<span class="direct-chat-name float-right">나</span> <span
-										class="direct-chat-timestamp float-right">${chat.sendDate }
-										&nbsp;&nbsp;</span>
-								</div>
-						
-								<img class="direct-chat-img"
-									src="${pageContext.request.contextPath}/resources/img/profile/${chat.renamedFileName}"
-									alt="Message User Image">
-								<!-- /.direct-chat-img -->
-								<div class="direct-chat-text">${chat.msg }</div>
-								
-							</div>
-							
-						</c:when>
-						
-						<c:otherwise>
-							<div class="direct-chat-msg">
-								<div class="direct-chat-infos clearfix">
-									<span class="direct-chat-name float-left">${chat.sender }</span>
-									<span class="direct-chat-timestamp float-left">${chat.sendDate }</span>
-								</div>
-								<!-- /.direct-chat-infos -->
-			
-								<img class="direct-chat-img"
-									src="${pageContext.request.contextPath}/resources/img/profile/${chat.renamedFileName}"
-									alt="Message User Image"> 
-								<!-- /.direct-chat-img -->
-								<div class="direct-chat-text">${chat.msg }</div>
-								<!-- /.direct-chat-text -->
-							</div>
-							
-						</c:otherwise>
-					
-					</c:choose>
-					
-				
-				</c:forEach>
-				
-				
-
-				
-				<!-- /.direct-chat-msg -->
-			</div>
-			
-			<!-- /.direct-chat-messages -->
-		</div>
-		<!-- /.card-body -->
-
-		<div class="card-body pad">
-			<div class="mb-3">
-				
-                <input type="text" id="text-message" size="55%"/>
-                
-				<button type="button" id="send-msg-Btn" class="btn btn-info">send</button>
-			</div>
-
-		</div>
-		<div id="tt">
-		</div>	
-
-	</div>
-</aside> 
-
-
-<script type="text/javascript">
-
-
-$(document).ready(function() {
-	$(document).on("click", "#send-msg-Btn", function() {
-		console.log("#send-msg-Btn 실행성공");
-		sendMessage();
-	});
-	$(document).on("keydown", "#text-message", function(key) {
-		if (key.keyCode == 13) {// 엔터
-			sendMessage();
-		}
-	});
-	
-	//window focus이벤트핸들러 등록
-	$(window).on("focus", function() {
-		console.log("focus");
-		//lastCheck();
-	});
-});
 
 
 
-//웹소켓 선언
-//1.최초 웹소켓 생성 url: /stomp
-let socket = new SockJS('<c:url value="/chat" />');
-let stompClient = Stomp.over(socket);
-
-//connection이 맺어지면, 콜백함수가 호출된다.
-stompClient.connect({}, function(frame) {
-	console.log("connected stomp over sockjs");
-	console.log(frame);
-	
-
-	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
-	stompClient.subscribe('/chat/${channelNo}', function(message) {
-		console.log("receive from subscribe /chat/${channelNo} :", message);
-		let messsageBody = JSON.parse(message.body);
-		console.log("message="+messsageBody.sender);
-		let myMsgInfoHtml = '';
-		let otherMsg = '';
-
-		if(messsageBody.sender == "${memberLoggedIn.memberId}"){
-			alert("1");
-			myMsgInfoHtml +='<div class="direct-chat-msg right">'
-						  + '<div class="direct-chat-infos clearfix">'
-						  + '<span class="direct-chat-name float-right">'+messsageBody.sender+'</span>'
-						  + '<span class="direct-chat-timestamp float-right">'+messsageBody.sendDate+'</span></div>'
-						  + '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="Message User Image">'
-						  + '<div class="direct-chat-text">'+messsageBody.msg+'</div></div>';
-			
-			alert('messsageBody.sendTime');
-						
-			$("#direct-chat-messages").append(myMsgInfoHtml);
-			
-			
-		}
-		else{
-			
-			otherMsg += '<div class="direct-chat-msg">'
-					 + '<div class="direct-chat-infos clearfix">'
-					 + '<span class="direct-chat-name float-left">'+messsageBody.sender+'</span>'
-					 + '<span class="direct-chat-timestamp float-left">'+messsageBody.sendDate+'</span></div>'
-					 + '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" alt="Message User Image">'
-					 + '<div class="direct-chat-text">'+messsageBody.msg+'</div></div>';	
-			
-			
-			$("#direct-chat-messages").append(otherMsg);
-		
-		}
-		
-	});
-});
-
-function sendMessage() {
-	let data = {
-			channelNo : "${channelNo}",
-			sender : "${memberId}",
-			msg : $("#text-message").val(),
-			sendDate : new Date().getTime(),
-			type: "MESSAGE"
-		}
-	
-		var a = $("#text-message").val();
 
 
-		//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
-		stompClient.send('<c:url value="/chat/${channelNo}" />',{}, JSON.stringify(data));
-		
-		//message창 초기화
-		$('#text-message').val('');
-}
-</script>
 
 
 

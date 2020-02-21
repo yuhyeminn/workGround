@@ -403,6 +403,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 .btn-copyToNtc{display: none; position: absolute; right: .5rem; border: 1px solid #d4d6db; border-radius: 2px; padding: .1rem .4rem .2rem; color: #696f7a; font-size: .75rem;}
 .direct-chat-msg:hover .btn-copyToNtc{display: block;}
 .btn-copyToNtc:hover, .btn-copyToNtc:focus, .btn-copyToNtc:active{background: #d4d6db;}
+#setting-sidebar{z-index: 3;}
 /* 오른쪽: 내 메시지 */
 .direct-chat-msg.right .chat-text{float: right; margin-right: .8rem; text-align: right;}
 .direct-chat-msg.right .chat-name{float: right;}

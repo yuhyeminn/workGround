@@ -4,6 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
+<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
@@ -97,6 +98,31 @@ $(function(){
         "autoWidth": false,
     });
 	
+	//채팅방
+	$('#btn-openChatting').on('click', ()=>{
+			var $side = $("#setting-sidebar");
+			var clubNo = ${club.clubNo};
+			
+	    	$.ajax({
+				url: "${pageContext.request.contextPath}/chat/clubChatting.do",
+				type: "get",
+				data: {clubNo:clubNo},
+				dataType: "html",
+				success: data => {
+					$side.html("");
+					$side.html(data); 
+				},
+				error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+			});
+	        
+	        $side.addClass('open');
+	        if($side.hasClass('open')) {
+	        	$side.stop(true).animate({right:'0px'});
+	        }
+	  });
+	
 	sidebarActive(); //사이드바 활성화
 	tabActive(); //서브헤더 탭 활성화
 
@@ -179,7 +205,7 @@ function clubView(clubNo) {
 		style="margin-left: 20px"
 		action="${pageContext.request.contextPath }/club/searchClubContent.do"
 		method="POST">
-		<div class="input-group input-group-sm">
+		<div class="input-group input-group-sm" style="margin-top: 20px;">
 			<input class="form-control form-control-navbar" type="search"
 				placeholder="${club.clubName } 검색" aria-label="Search"
 				name="keyword"> <input type="hidden" name="clubNo"
@@ -211,7 +237,7 @@ function clubView(clubNo) {
 		<!-- 동호회 대화 -->
 		<li class="nav-item">
 			<button type="button"
-				class="btn btn-block btn-default btn-xs nav-link">
+				class="btn btn-block btn-default btn-xs nav-link" id="btn-openChatting">
 				<i class="far fa-comments"></i> 동호회 대화
 			</button>
 		</li>
@@ -250,10 +276,13 @@ function clubView(clubNo) {
 </nav>
 <!-- /.navbar -->
 
+<!-- 오른쪽 채팅 사이드 바-->
+<aside class="work-setting" id="setting-sidebar" style="display: block;">
+</aside>
+
 <!-- Content Wrapper. Contains page content -->
 <div id="member-list" class="content-wrapper">
 
-	<h2>동호회 상세보기</h2>
 
 	<div class="content">
 		<div class="container-fluid">

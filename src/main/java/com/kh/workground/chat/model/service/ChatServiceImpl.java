@@ -10,6 +10,7 @@ import com.kh.workground.chat.model.dao.ChatDAO;
 import com.kh.workground.chat.model.dao.ChatDAOImpl;
 import com.kh.workground.chat.model.vo.Channel;
 import com.kh.workground.chat.model.vo.Chat;
+import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.member.model.vo.Member;
 
 @Service

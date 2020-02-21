@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.kh.workground.chat.model.vo.Channel;
 import com.kh.workground.chat.model.vo.Chat;
+import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.member.model.vo.Member;
 
 public interface ChatService {
@@ -22,5 +23,6 @@ public interface ChatService {
 	Channel selectChannel(String channelNo);
 
 	List<Chat> getClubChatList(String channelNo);
+
 
 }

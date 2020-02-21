@@ -366,10 +366,12 @@ public class ClubController {
 			param.put("clubNo", clubNo);
 			
 			ClubMember clubMember = clubService2.selectOneClubMember(param);
+			Club club = clubService2.selectClub(clubNo);
 			
 			mav.addObject("calString", calString);
 			mav.addObject("managerYN", clubMember.getClubManagerYN());
 			mav.addObject("clubNo", clubNo);
+			mav.addObject("club", club);
 			
 
 		} catch (Exception e) {

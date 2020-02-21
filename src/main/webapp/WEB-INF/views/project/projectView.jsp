@@ -1011,7 +1011,7 @@ function setting(){
     //대화 사이드바 열기
     $('#btn-openChatting').on('click', ()=>{
     	$.ajax({
-			url: "${pageContext.request.contextPath}/project/projectChatting.do",
+			url: "${pageContext.request.contextPath}/chat/projectChatting.do",
 			type: "get",
 			data: {projectNo:projectNo},
 			dataType: "html",

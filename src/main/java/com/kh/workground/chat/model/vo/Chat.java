@@ -27,7 +27,7 @@ public class Chat implements Serializable {
 	private String channelNo;
 	private String sender;
 	
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:MM:SS")
 	private Date sendDate;
 	private String msg;
 	

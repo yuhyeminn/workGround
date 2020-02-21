@@ -510,21 +510,7 @@ public class ProjectController {
 		return mav;
 	}
 	
-	@RequestMapping("/project/projectChatting.do")
-	public ModelAndView projectChatting(ModelAndView mav, @RequestParam int projectNo) {
-		
-		try {
-			
-			mav.setViewName("project/projectChattingSideBar");
-			
-		} catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new ProjectException("프로젝트 채팅창 조회 오류!");
-		}
-		
-		return mav;
-	}
-	
+
 	
 	
 	
