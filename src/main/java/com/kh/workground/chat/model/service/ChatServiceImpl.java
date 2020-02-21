@@ -72,4 +72,9 @@ public class ChatServiceImpl implements ChatService {
 //		updateLastCheck(fromMessage);
 		return chatDAO.insertChatLog(fromMessage);
 	}
+
+	@Override
+	public List<Chat> selectChatList() {
+		return chatDAO.selectChatList();
+	}
 }

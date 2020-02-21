@@ -95,6 +95,54 @@ function projectStar(){
 
 //업무 검색
 function searchWork(){
+	let wrapper = document.querySelector(".container-fluid");
+	let frm = document.querySelector("#workSearchFrm");
+	let input = document.querySelector("input[name=searchWorkKeyword]");
+	let btn = document.querySelector("#btn-searchWork");
+	let keyword = $(input).val().trim(); 
+	
+	//엔터
+ 	$(document).on('keydown', '#workSearchFrm input', (e)=>{
+ 		let input = document.querySelector("input[name=searchWorkKeyword]");
+ 		let keyword = $(input).val().trim(); 
+ 		
+		if(e.which==13){
+			console.log(keyword);
+			
+			//유효성 검사
+			if(keyword==""){
+				alert("검색 키워드를 입력해 주세요!");
+			}
+			
+			let data = {
+					projectNo: ${project.projectNo},
+					keyword: keyword,
+					memberId: '${memberLoggedIn.memberId}'
+			};
+			console.log('${pageContext.request.contextPath}/project/searchWork');
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/project/searchWork',
+				data: data,
+				dataType: 'html',
+				type: 'GET',
+				success: data=>{
+					if(data!=null){
+						$(wrapper).html("");
+						$(wrapper).html(data);
+					}
+					else{
+						alert("업무 검색에 실패했습니다 :(");
+					}
+				},
+				error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+			}); 
+		}
+		
+	}); 
+	
 	
 	$(document).on('click', '#btn-searchWork', (e)=>{
 		let wrapper = document.querySelector(".container-fluid");
@@ -113,6 +161,7 @@ function searchWork(){
 				keyword: keyword,
 				memberId: '${memberLoggedIn.memberId}'
 		};
+		
 		$.ajax({
 			url: '${pageContext.request.contextPath}/project/searchWork',
 			data: data,
@@ -130,9 +179,9 @@ function searchWork(){
 			error: (x,s,e) => {
 				console.log(x,s,e);
 			}
-		});
+		}); 
 		
-	});
+	}); 
 }
 
 //새 업무리스트 만들기
@@ -1221,7 +1270,7 @@ function closeSideBar(){
         <h4 class="sr-only">업무</h4>
         
         <!-- SEARCH FORM -->
-        <form id="workSearchFrm" class="form-inline">
+        <form id="workSearchFrm" class="form-inline" onsubmit="return false;">
 	        <div class="input-group input-group-sm">
 	            <input class="form-control form-control-navbar" name="searchWorkKeyword" type="search" placeholder="업무 검색" aria-label="Search">
 	            <div class="input-group-append">

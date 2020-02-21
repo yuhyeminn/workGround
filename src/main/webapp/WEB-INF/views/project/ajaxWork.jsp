@@ -265,7 +265,7 @@
 	                        <c:if test="${vs.last}">
 	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
 	                   	 		<div class="work-coverImage">
-	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${project.projectNo}/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${projectNo}/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
 	                   	 		</div>
 	                   	 		</c:if>
 	                   	 	</c:if>
@@ -407,7 +407,7 @@
 	                        <c:if test="${vs.last}">
 	                   	 		<c:if test="${token=='bmp' || token=='jpg' || token=='jpeg' || token=='gif' || token=='png' || token=='tif' || token=='tiff' || token=='jfif'}">
 	                   	 		<div class="work-coverImage">
-	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${project.projectNo}/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
+	                   	 			<img src="${pageContext.request.contextPath}/resources/upload/project/${projectNo}/${w.attachmentList[0].renamedFilename}" class="img-cover" alt="커버이미지">
 	                   	 		</div>
 	                   	 		</c:if>
 	                   	 	</c:if>

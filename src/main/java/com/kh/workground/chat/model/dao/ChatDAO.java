@@ -30,4 +30,6 @@ public interface ChatDAO {
 
 	int insertChatLog(Chat fromMessage);
 
+	List<Chat> selectChatList();
+
 }

@@ -120,8 +120,6 @@ public class ProjectController {
 			
 			//1-3.관리자인 경우
 			if("admin".equals(loggedInMemberId)) bool = true;
-			logger.debug("//////////////////////////////////");
-			logger.debug("bool={}", bool);
 			
 			//2.뷰모델 처리: 프로젝트 속함 여부에 따라 분기
 			if(!bool) {
@@ -270,6 +268,7 @@ public class ProjectController {
 			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
 			
 			//2.뷰모델 처리
+			mav.addObject("projectNo", projectNo);
 			mav.addObject("wl", wl);
 			mav.addObject("inMemList", inMemList);
 			mav.addObject("projectManager", projectManager);
@@ -370,6 +369,7 @@ public class ProjectController {
 			//1-4.프로젝트에 속한 멤버
 			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
 			
+			mav.addObject("projectNo", projectNo);
 			mav.addObject("wl", wl);
 			mav.addObject("inMemList", inMemList);
 			mav.addObject("projectManager", projectManager);
@@ -418,6 +418,7 @@ public class ProjectController {
 			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
 			
 			//2.뷰모델 처리
+			mav.addObject("projectNo", projectNo);
 			mav.addObject("wl", wl);
 			mav.addObject("inMemList", inMemList);
 			mav.addObject("projectManager", projectManager);
@@ -491,6 +492,7 @@ public class ProjectController {
 	
 	@RequestMapping(value="/project/deleteProject.do", method= {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView deleteProject(ModelAndView mav, HttpSession session, @RequestParam int projectNo) {
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		
 		try {
 			//1.업무로직
@@ -499,7 +501,14 @@ public class ProjectController {
 			String viewName = "";
 			//2. 뷰모델처리 
 			if(result!=0) {
-				viewName = "redirect:/project/projectList.do";
+				//관리자인 경우
+				if("admin".equals(memberLoggedIn.getMemberId())) {
+					viewName = "redirect:/admin/adminProjectList.do";
+				}
+				//관리자 아닌 경우
+				else {
+					viewName = "redirect:/project/projectList.do";
+				}
 				mav.setViewName(viewName);
 			}
 			else {
