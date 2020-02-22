@@ -32,4 +32,6 @@ public interface ChatService {
 
 	List<Chat> selectChatList();
 
+	List<Channel> findChannelListByKeyword(Map<String, String> param);
+
 }

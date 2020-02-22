@@ -89,19 +89,25 @@ function sidebarActive(){
 	         
 	         <!-- 채널 목록 --> 
 	         <div id="aside-bottom">
-	         	<h5>최근 메시지</h5>	
+	         	<h5>채널 목록</h5>	
 	             <table id="dmList" class="table table-head-fixed text-nowrap">
 	                 <tbody class="td">
 	                 <c:if test="${not empty channelList }">
 	                 <c:forEach items="${channelList }" var="channel" varStatus="vs">
-	                 <tr onclick="loadChatList('${channel.channelNo }', '${channel.memberName }', '${channel.renamedFileName }', '${vs.index }');">
+	                 <tr id="channelNo${channel.channelNo }" onclick="loadChatList('${channel.channelNo }', '${channel.memberName }', '${channel.renamedFileName }', '${vs.index }');">
 	                     <td>
 	                         <form name="loadChatListFrm">
 							     <input type="hidden" name="channelNo" value="" />
 							     <input type="hidden" name="index" value="" />
 					  	     </form>
-		                     <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
-		                     <h6 class="h6">${channel.memberName }</h6>
+					  	     <c:if test="${channel.channelType == 'CH3' }">
+		                       <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
+		                       <h6 class="h6">${channel.memberName }</h6>
+					  	     </c:if>
+					  	     <c:if test="${channel.channelType != 'CH3' }">
+		                       <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
+		                       <h6 class="h6">${channel.channelTitle }</h6>
+					  	     </c:if>
 	                     </td>
 	                 </tr>
 	                 </c:forEach>
@@ -117,8 +123,14 @@ function sidebarActive(){
            	<!-- 채널 제목 -->
             <div class="user-block" id="chat_userName">
             <c:if test="${not empty channelList }">
-              <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[index].renamedFileName}" alt="user image">
+            <c:if test="${channelList[index].channelType == 'CH3' }">
+              <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[index].renamedFileName}">
               <span class="username">${channelList[index].memberName }</span> 
+            </c:if>
+            <c:if test="${channelList[index].channelType != 'CH3' }">
+              <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[index].renamedFileName}">
+              <span class="username">${channelList[index].channelTitle }</span> 
+            </c:if>
             </c:if>
             </div>
             
@@ -193,11 +205,11 @@ function sidebarActive(){
           <!-- <p>One fine body&hellip;</p> -->
           <div class="card-tools" style="margin-bottom:2rem">
               <div class="input-group input-group-sm" style="width: 20rem; margin: 0 auto;">
-                <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                <input type="text" id="searchChannel" name="table_search" class="form-control float-right" placeholder="Search">
 
-                <div class="input-group-append">
+                <!-- <div class="input-group-append">
                   <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
-                </div>
+                </div> -->
               </div>
             </div>
           <div class="col-9" style="margin: 0 auto;"> 
@@ -216,23 +228,8 @@ function sidebarActive(){
                                   <!-- /.card-header -->
                                   <div class="card-body table-responsive p-0" style="height: 300px;">
                                     <table class="table table-head-fixed text-nowrap">
-                                      <tbody class="td">
-                                        <tr>
-                                          <td>
-                                            <div class="col-9"> 
-                                              <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                              <h6 class="h6">이주현</h6>
-                                            </div> 
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                              <div class="col-9"> 
-                                                <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                                <h6 class="h6">개발</h6>
-                                              </div> 
-                                            </td>
-                                          </tr>
+                                      <tbody id="table-channel" class="td">
+                                        
                                       </tbody>
                                     </table>
                                   </div>
@@ -378,8 +375,17 @@ $(document).ready(function() {
 	let $note = $(".note-editor .note-editable");
 	$note.attr('role', 'input');
 	
-	$note.on('keydown', (key)=>{
+	$note.on('keydown', (key)=> {
+		let data = {
+				memberId : "${memberLoggedIn.memberId}", 
+				memberName : "${memberLoggedIn.memberName}", 
+				channelNo : "${channelNo}"
+		}
+		
+		stompClient.send('<c:url value="/chat/typing" />', {}, JSON.stringify(data));
+		
 		if (key.keyCode == 13) {// 엔터
+			$("#whoIsTyping").remove();
 			sendMessage();
 		}
 	});
@@ -392,6 +398,49 @@ $(document).ready(function() {
 	
 });
 
+
+//채널검색 ajax
+$("#searchChannel").keyup(function() {
+	//console.log("키업");
+	var keyword = $("#searchChannel").val().trim();
+	if(keyword == '') return;
+	
+	$.ajax({
+		url: '${pageContext.request.contextPath}/chat/findChannel.do',
+		data: {keyword : keyword}, 
+		dataType: 'json', 
+		success: data=> {
+			console.log(data);
+			$("#table-channel").children().remove();
+			
+			if(data.channelList != null) {
+				html = '';
+				$.each(data.channelList, (idx, list)=> {
+					//html += '<tr onclick="loadChatList(\''+list.channelNo+'\', \''+list.memberName+'\', \''+list.renamedFileName+'\', \''+idx+'\')"><td><div class="col-9">';
+					html += '<tr onclick="clickChannel(\''+list.channelNo+'\')"><td><div class="col-9">';
+					if(list.channelType == 'CH3') {
+						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">';
+						html += '<h6 class="h6">'+list.memberName+'</h6>';
+					}
+					else {
+						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">';
+						html += '<h6 class="h6">'+list.channelTitle+'</h6>';
+					}
+					html += '</div></td></tr>';
+				});
+				
+				$("#table-channel").append(html);
+			}
+		}, 
+		error: (x, s, e)=> {
+			console.log("ajax실행오류!!", x, s, e);
+		}
+	});
+});
+function clickChannel(channelNo) {
+	console.log()
+	$("#channelNo"+channelNo).click();
+}
 
 //대화상대찾기 ajax
 $("#findMember").keyup(function() {
@@ -521,8 +570,20 @@ stompClient.connect({}, function(frame) {
 		
 		$("#chatSide-msg-wrapper").append(html);
 	});
+	
+	stompClient.subscribe('/chat/typing', function(message) {
+		console.log("receive from subscribe /chat/typing : ", message);
+		let messageBody = JSON.parse(message.body);
+		
+		$("#whoIsTyping").remove();
+		if("${channelNo}" == messageBody.channelNo) {
+			$("#channelNo${channelNo}>td").append('<span id="whoIsTyping" style="margin-left: 5px; font-size: 10px; color: gray;">'+messageBody.memberName+' is typing...</span>');
+		}
+		setTimeout(function() {
+			$("#whoIsTyping").remove();
+			}, 1000);
+	});
 });
-
 
 function sendMessage() {
 	let $note = $(".note-editor .note-editable");

@@ -114,7 +114,7 @@ public class ChatController {
 	@RequestMapping("/chat/plusMember.do")
 	@ResponseBody
 	public Map<String, Object> plusMember(@RequestParam("memberId") String memberId) {
-		logger.debug("memberId={}", memberId);
+//		logger.debug("memberId={}", memberId);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("memberId", memberId);
@@ -122,7 +122,7 @@ public class ChatController {
 		Member member = chatService.selectOneMember(memberId);
 		map.put("member", member);
 		
-		logger.debug("map={}", map);
+//		logger.debug("map={}", map);
 		
 		return map;
 	}
@@ -226,47 +226,6 @@ public class ChatController {
 		return mav;
 	}
 	
-	@RequestMapping("/chat/loadChatList2.do")
-	@ResponseBody
-	public Map<String, Object> loadChatList2 (@RequestParam("channelNo") String channelNo, 
-											 @SessionAttribute("memberLoggedIn") Member memberLoggedIn, 
-											 HttpSession session, 
-											 HttpServletRequest request, 
-											 Model model) {
-		logger.debug("channelNo={}", channelNo);
-		logger.debug("memberLoggedIn={}", memberLoggedIn);
-		
-		Map<String, Object> map = new HashMap<>();
-		map.put("channelNo", channelNo);
-		
-		List<ChannelMember> channelMemberList = chatService.selectChannelMemberList(channelNo);
-		map.put("channelMemberList", channelMemberList);
-//		logger.debug("channelMemberList={}", channelMemberList);
-		
-		String chatMemberId = channelMemberList.get(0).getMemberId();
-		if(memberLoggedIn.getMemberId().equals(chatMemberId))
-			chatMemberId = channelMemberList.get(1).getMemberId();
-		map.put("chatMemberId", chatMemberId);
-//		logger.debug("chatMemberId={}", chatMemberId);
-		map.put("memberId", memberLoggedIn.getMemberId());
-		
-		List<Chat> chatList = chatService.findChatRoomByChannelNo(channelNo);
-		logger.debug("chatList={}", chatList);
-		map.put("chatList", chatList);
-		
-//		logger.debug("map={}", map);
-//		session.removeAttribute("channelNo");
-//		session.setAttribute("channelNo", channelNo);
-//		request.removeAttribute("channelNo");
-//		request.setAttribute("channelNo", channelNo);
-//		logger.debug("channelNo={}", channelNo);
-		
-		model.addAttribute("channelNo", channelNo);
-		logger.debug("model={}", model);
-		
-		return map;
-	}
-	
 	@MessageMapping("/chat/{channelNo}")
 	@SendTo("/chat/{channelNo}")
 	public Chat sendEcho(Chat fromMessage, 
@@ -283,4 +242,31 @@ public class ChatController {
 		return fromMessage;
 	}
 	
+	@MessageMapping("/chat/typing")
+	@SendTo("/chat/typing")
+	public Channel sendEcho2(Channel channel, 
+						    @Header(value="simpSessionId") String sessionId) {
+		return channel;
+	}
+	
+	@RequestMapping("/chat/findChannel.do")
+	@ResponseBody
+	public Map<String, Object> findChannel(@RequestParam("keyword") String keyword, 
+			@SessionAttribute(value="memberLoggedIn", required=false) Member memberLoggedIn) {
+		logger.debug("keyword={}", keyword);
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("keyword", keyword);
+		param.put("memberId", memberLoggedIn.getMemberId());
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("keyword", keyword);
+		
+		List<Channel> channelList = chatService.findChannelListByKeyword(param);
+		map.put("channelList", channelList);
+		
+		logger.debug("map={}", map);
+		
+		return map;
+	}
 }

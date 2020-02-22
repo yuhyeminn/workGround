@@ -77,4 +77,9 @@ public class ChatServiceImpl implements ChatService {
 	public List<Chat> selectChatList() {
 		return chatDAO.selectChatList();
 	}
+
+	@Override
+	public List<Channel> findChannelListByKeyword(Map<String, String> param) {
+		return chatDAO.findChannelListByKeyword(param);
+	}
 }
