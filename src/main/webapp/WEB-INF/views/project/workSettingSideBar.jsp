@@ -40,6 +40,8 @@
 
 <!-- 날짜 유효성 검사를 위한 프로젝트 시작일 -->
 <input type="hidden" id="hiddenProjectStartDate" value="${project.projectStartDate}" />
+<input type="hidden" id="settingWorkNo" value="${work.workNo}" />
+<input type="hidden" id="settingProjectNo" value="${project.projectNo}" />
 
 <section id="${work.workNo }" style="height:100%;overflow-y:scroll">
 	<!-- 업무배정된 멤버아이디 구하기 -->
@@ -566,13 +568,13 @@
 	updateWorkPoint();
 	insertCheckList();
 	updateWorkLocation();
-	updateChkChargedMember();
-	deleteChecklist();
+	/* updateChkChargedMember(); */
+	/* deleteChecklist(); */
 	insertWorkComment();
-	deleteWorkComment();
+	/* deleteWorkComment(); */
 	uploadWorkFile();
 	downloadWorkFile();
-	delWorkFile();
+	/* delWorkFile(); */
  });
  
  
@@ -852,84 +854,7 @@ function updateWorkMember(){
 		 })
 	 })
  }
- 
- function updateChkChargedMember(){
-	 var workNo = '${work.workNo}';
-	  $(document).on('click', ".chk-charge-member", function(){
-		 var $this = $(this);
-		 var memberId = $(this).attr('id');
-		 var checklistNo = $(this).closest("tr").attr('id');
-		 $.ajax({
-			 url:"${pageContext.request.contextPath}/project/updateChkChargedMember.do",
-			 data: {checklistNo:checklistNo, memberId:memberId, workNo:workNo},
-			 dataType:"json",
-			 success: data=>{
-				 if(data.isUpdated){
-						 var originImg = $this.closest("td").children(".update-chk-charge");
-						 originImg.remove();
-					 //멤버 수정할 때
-					 if(memberId != '' && memberId != null){
-						 var member = data.member;
-						 $this.closest("td").find(".del-chk-charge-member").show();
-						 var profile = '<img src="${pageContext.request.contextPath}/resources/img/profile/'+member.renamedFileName+'" data-toggle="dropdown" alt="User Avatar" class="img-circle img-profile ico-profile update-chk-charge" title="'+member.memberName+'">';
-						 $this.closest("td").prepend(profile);
-					 }
-					 //멤버 없앨 때
-					 else{
-						 $this.closest("td").find(".del-chk-charge-member").hide();
-						 var profile = '<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown" ><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div>';
-						 $this.closest("td").prepend(profile);
-					 }
-					 resetWorkView(); //업무 새로고침
-				 }
-			 },
-			 error:(jqxhr, textStatus, errorThrown)=>{
-				 console.log(jqxhr, textStatus, errorThrown);
-			 } 
-		 })
-	 })
- }
- 
- function deleteChecklist(){
-	 var workNo = '${work.workNo}';
-	 $(document).on('click', ".delete-checklist", function(){
-		 var checklistNo = $(this).attr("id");
-		 var isCompleted = $(this).closest("tr").hasClass("completed");
-		 $.ajax({
-			 url:"${pageContext.request.contextPath}/project/deleteChecklist.do",
-			 data: {checklistNo:checklistNo},
-			 dataType:"json",
-			 success: data=>{
-				 if(data.isUpdated){
-				 	$(".tbl-checklist tr#"+checklistNo).remove();
-				 	$(".work-item#"+workNo+" .work-checklist tbody tr#"+checklistNo).remove();
-				 	
-				 	//체크리스트 숫자 삭감
-				 	var cnt = Number($(".work-item#"+workNo+" .work-etc .chklt-cnt-total").text());
-					$(".work-item#"+workNo+" .work-etc span.chklt-cnt-total").text(cnt-1);
-				 	if(isCompleted){
-				 		var completecnt = Number($(".work-item#"+workNo+" .work-etc .chklt-cnt-completed").text());
-				 		$(".work-item#"+workNo+" .work-etc span.chklt-cnt-completed").text(completecnt-1);
-				 	}
-					
-					//체크리스트 테이블 없을 경우
-				 	if($(".work-item#"+workNo+" .work-checklist tbody>tr").length == 0){
-				 		$("section#"+workNo+".work-item .work-checklist table").remove();
-				 		console.log(workNo);
-				 		$("section#"+workNo+".work-item .work-etc").children(".chklt-cnt").eq(0).remove();
-						var cnthtml='<span class="ico"><i class="far fa-list-alt "></i> 0</span>'
-						$("section#"+workNo+".work-item .work-etc").prepend(cnthtml);
-				 	}
-				 }
-			 },
-			 error:(jqxhr, textStatus, errorThrown)=>{
-				 console.log(jqxhr, textStatus, errorThrown);
-			 } 
-		 })
-	 })
- }
- 
- function insertWorkComment(){
+function insertWorkComment(){
 	 $(document).on('click',".work-comment-reply", function(){
 		 var refNo = $(this).val();
 		 var refWriter = $(".work-comment#"+refNo+" span.comment-writer").text();
@@ -1011,43 +936,7 @@ function updateWorkMember(){
 	 })
  }
  
- function deleteWorkComment(){
-	 var workNo = '${work.workNo}';
-	 $(document).on('click',".work-comment-delete", function(){
-		 var commentNo = $(this).val();
-		 $.ajax({
-			 url:"${pageContext.request.contextPath}/project/deleteWorkComment.do",
-			 data: {commentNo:commentNo},
-			 dataType:"json",
-			 success: data=>{
-				 if(data.isUpdated){
-					 $(".work-comments-box .work-comment#"+commentNo).remove();
-					 //코멘트 숫자 1 삭감
-		             var cnt = Number($("section#"+workNo+".work-item .work-etc .comment-cnt").text());
-					 console.log($("section#"+workNo+".work-item .work-etc .comment-cnt"));
-					 console.log(workNo);
-				 	 $("section#"+workNo+".work-item .work-etc span.comment-cnt").text(cnt-1);
-				 	 
-					 if($(".work-ref-"+commentNo).length>0){
-						 var refcnt = Number($(".work-ref-"+commentNo).length);
-						 $("section#"+workNo+".work-item .work-etc .comment-cnt").text(cnt-refcnt-1); 
-						 
-						 $(".work-ref-"+commentNo).remove();
-					 }
-					 if($(".work-comments-box .card-comment").length==0){
-						 $(".work-comments-box").remove();
-						 var html ='<div id="null-comment-box" style="text-align:center;margin-top: 106px;"><img src="https://d30795irbdecem.cloudfront.net/assets/comment-empty-state@2x-d1554722.png" style="width:20rem;">'
-						 			+'<p style="font-size:10px; color:lightgray;">Comments are great for focusing conversation on the task at hand.</p></div>';
-						 $(".work-comment-box").append(html);
-					 }
-				 } 
-			 },
-			 error:(jqxhr, textStatus, errorThrown)=>{
-				 console.log(jqxhr, textStatus, errorThrown);
-			 } 
-		 });
-	 });
- }
+ 
  
  function uploadWorkFile(){
 	 $("#upload-file-btn").on('click',function(){
@@ -1098,52 +987,7 @@ function updateWorkMember(){
 		 });
 	 });
  }
- //파일 다운로드
-function downloadWorkFile(){
-	$(document).on('click', '.btn-work-file-down', e=>{
-		let btnDown = e.target;
-		let attachNo = btnDown.value;
-		let $tr = $('.work-attachment-tbl tr#'+attachNo);
-		let projectNo ='${project.projectNo}';
-		let oName = $tr.find('.oName').val();
-		let rName = $tr.find('.rName').val();
-		
-		location.href = "${pageContext.request.contextPath}/project/downloadFile.do?projectNo="+projectNo+"&oName="+oName+"&rName="+rName;
-	});
-}
-function delWorkFile(){
-	$(document).on('click', '.work-file-remove', e=>{
-		let btnRemove = e.target;
-		let attachNo = Number(btnRemove.value.split(',')[0]);
-		let rName = btnRemove.value.split(',')[1];
-		let projectNo ='${project.projectNo}';
-		
-		if(confirm("파일을 삭제하시겠습니까?")){
-			$.ajax({
-				url: '${pageContext.request.contextPath}/project/deleteFile',
-				data: {attachNo:attachNo,rName:rName,projectNo:projectNo},
-				dataType: 'json',
-				type: 'POST',
-				success: data=>{
-					if(data.result==='success'){
-						$(".work-attachment-tbl tr#"+attachNo).remove();
-						if($(".work-attachment-tbl tbody>tr").length==0){
-							var html = '<tr id="no-exist-file" style="text-align:center;"><td colspan="3" style="padding:1rem;">파일이 존재하지 않습니다.</td></tr>';
-							$(".work-attachment-tbl tbody").append(html);
-						}
-						resetWorkView(); //업무 새로고침
-					}
-					else{
-						alert("파일 삭제에 실패했습니다 :(");
-					}
-				},
-				error: (x,s,e)=>{
-					console.log(x,s,e);
-				}
-			});
-		}
-	});
-}
+
  $("[name=workFile]").on("change",function(){
 		//	파일 입력 취소
 		if($(this).prop("files")[0] === undefined){

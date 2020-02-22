@@ -54,8 +54,14 @@ $(()=>{
     goTabMenu(); //서브헤더 탭 링크 이동
     
     setting(); //설정창
+    
+    //projectView.js
     updateDesc(); //업무, 프로젝트 설명 수정
     updateTitle(); //업무, 프로젝트 제목 수정
+    updateChkChargedMember(); //체크리스트 업무 배정 멤버 변경
+	deleteChecklist(); //체크리스트 삭제
+	deleteWorkComment(); //업무 코멘트 삭제
+	delWorkFile(); //파일 삭제
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -1084,86 +1090,8 @@ function setting(){
         	$side.stop(true).animate({right:'0px'});
         }
     });
-    
 }
-//프로젝트 설명 수정, 업무 설명 수정
-function updateDesc(){
-  	 $(document).on('click',".add-description",function(){
-  		 $(this).hide();
-  		 $(".edit-description").show();
-  		 $("#desc").focus();
-  	 });
-  	 $(document).on('click',".update-description",function(){
-  		 var desc = $("#desc").val();
-  		 var no = $(this).attr("id");
-  		 var type;
-  		 if($(this).hasClass('wr-desc')) type = 'work';
-  		 else type= 'project';
-  		 
-  		 $.ajax({
-  			
-  			 url:"${pageContext.request.contextPath}/project/updateDesc.do",
-  			 data: {desc:desc,no:no,type:type},
-  			 dataType:"json",
-  			 success: data=>{
-  				 if(data.isUpdated){
- 					 $(".edit-description").hide();
- 					 if(desc != '' && desc != null){
- 						var html = '<div class="row setting-row add-description"><span style="color:#696f7a">'+desc+'</span></div>';
- 					 }
- 					 else{
- 						var html = '<div class="row setting-row add-description"><span>설명 추가</span></div>';
- 					 }
- 					 $(".add-description").remove();
- 					 $(".p-setting-container").prepend(html);
- 				 }
-  			 },
-  			 error:(jqxhr, textStatus, errorThrown)=>{
-  				 console.log(jqxhr, textStatus, errorThrown);
-  			 } 
-  		 }) 
-  	 })
-   }
-function updateTitle(){
-	$(document).on('click',".update-side-title",function(){
- 		 $(this).hide();
- 		 $(".edit-side-title").show();
- 		 $("#title").focus();
- 	 });
-	$(document).on('click',".update-title-btn",function(){
- 		 var title = $("#title").val();
- 		 var no = $(this).attr("id");
- 		 var type;
- 		 if($(this).hasClass('wr-title')) type = 'work';
- 		 else type= 'project';
- 		 
- 		 if(title == '' || title == null){alert('제목을 입력하세요.');return;}
- 		 
- 		 $.ajax({
- 			 url:"${pageContext.request.contextPath}/project/updateTitle.do",
- 			 data: {title:title,no:no,type:type},
- 			 dataType:"json",
- 			 success: data=>{
- 				if(data.isUpdated){
- 					 $(".edit-side-title").hide();
- 					 var html = '<p class="setting-side-title update-side-title">'+title+'<button class="update-title"><i class="fas fa-pencil-alt"></i></button></p>';
- 					 
- 					 $(".update-side-title").remove();
- 					 $("div.p-3").prepend(html);
- 					 if(type=='project'){
- 						$("#header-project-title").text(title);
- 					 }
- 					 else{
- 						$(".work-item#"+no+" .work-title h6>span").text(title);
- 					 }
- 				 }
- 			 },
- 			 error:(jqxhr, textStatus, errorThrown)=>{
- 				 console.log(jqxhr, textStatus, errorThrown);
- 			 } 
- 		 }) 
- 	 })
-}
+
 //사이드바 닫기
 function closeSideBar(){
 	var $side = $("#setting-sidebar");
