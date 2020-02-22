@@ -317,7 +317,8 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
 .setting-content-inform{display: block;border:none;border-radius:5px;padding:5px 10px;background-color:#e7e7e7;margin-top: -5px;}
 .setting-content-inform i{margin-right:5px;}
 .sign-out-project{background-color: #e7e7e7;width: 100%;padding: 8px 0px;border-radius: 5px;border-bottom: 1px solid gray;font-size:14px;}
-.setting-icon{border:1px solid #e7e7e7;padding: 4px 7px;border-radius:5px;margin-top: -5px;margin-right:10px;cursor: pointer;}
+.setting-icon{border:none;padding: 5px 8px;border-radius:5px;margin-top: -5px;margin-right:10px;cursor: pointer;background-color:#e7e7e7;color:#696f7a;}
+/*  .plusBtn{display: block;border:none;border:1px solid #e7e7e7;border-radius: 5px;padding:5px 10px;background-color:#e7e7e7;margin-top: -5px;height:32px;color:#696f7a} */
 .pv-multiselect-box{width:310px;}
 .setting-date-dropdown{padding:10px;width: 200px;}
 .setting-date-dropdown button{float: right;}
@@ -348,8 +349,8 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
     bottom:0px;
     z-index:1;
   }
-  .plusBtn{display: block;border:none;border-radius: 5px;padding:5px 10px;background-color:#e7e7e7;margin-top: -5px;height:32px;color:#696f7a}
-  .plusBtn:hover{background-color:#17a2b8;color:white;}
+ 
+  .setting-icon:hover{background-color:#17a2b8;color:white;}
   .setting-row .plusBtn{margin-right:10px;}
   .setting-point{margin-top:-5px;}
   .label-icon{width:5px;}

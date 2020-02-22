@@ -136,7 +136,7 @@
                 <!-- plus 버튼 눌렀을 때 dropdown-->
                 <div class="add-member-left dropdown">
                 	<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
-                   		 <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-pencil-alt"></i></button>
+                   		 <button class="setting-icon" data-toggle="dropdown"><i class="fas fa-pencil-alt"></i></button>
                     </c:if>
                     <div class="dropdown-menu location-dropdown"  aria-labelledby="dropdownMenuLink">
                     <span>업무리스트</span> 
@@ -158,7 +158,7 @@
                 <label class="setting-content-label"><span><i class="far fa-calendar-alt" style="width:20px;"></i></span> 시작일</label>
                 <div class="dropdown">
                    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
-                     <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
+                     <button class="setting-icon" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
                    </c:if>
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
@@ -183,7 +183,7 @@
                 <label class="setting-content-label"><span><i class="far fa-calendar-alt" style="width:20px;"></i></span> 마감일</label>
                 <div class="dropdown">
                    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
-                     <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
+                     <button class="setting-icon" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
                    </c:if>
                    <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
@@ -220,7 +220,7 @@
             <div class="row">
                 <label class="setting-content-label"><span><i class="fa fa-tag" style="width:20px;"></i></span> 태그</label>
                 <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
-                	<button class="plusBtn" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+                	<button class="setting-icon" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
                 </c:if>
                 <div class="work-tag" id="current-workTag">
                 	<c:if test="${work.workTagTitle != null and work.workTagTitle != ''}">
@@ -699,6 +699,7 @@ function updateWorkMember(){
 				success: data =>{
 					if(data.isUpdated){
 						 resetWorkView(); //업무 새로고침
+						 $("section#"+workNo+".work-item").click(); //체크리스트 배정멤버 드롭다운을 위한..설정창 새로고침,,?
 					}else{
 						alert("업무 배정에 실패하였습니다. :(");
 					}
@@ -913,11 +914,11 @@ function updateWorkMember(){
 					
 					//체크리스트 테이블 없을 경우
 				 	if($(".work-item#"+workNo+" .work-checklist tbody>tr").length == 0){
-				 		$(".work-item#"+workNo+" .work-checklist table").remove();
-				 		
-				 		$(".work-item#"+workNo+" .work-etc").children(".chklt-cnt").eq(0).remove();
+				 		$("section#"+workNo+".work-item .work-checklist table").remove();
+				 		console.log(workNo);
+				 		$("section#"+workNo+".work-item .work-etc").children(".chklt-cnt").eq(0).remove();
 						var cnthtml='<span class="ico"><i class="far fa-list-alt "></i> 0</span>'
-						$(".work-item#"+workNo+" .work-etc").prepend(cnthtml);
+						$("section#"+workNo+".work-item .work-etc").prepend(cnthtml);
 				 	}
 				 }
 			 },
@@ -996,7 +997,7 @@ function updateWorkMember(){
 		             
 		             //코멘트 숫자 증가
 		             var cnt = Number($(".work-item#"+workNo+" .work-etc .comment-cnt").text());
-				 	 $(".work-item#"+workNo+" .work-etc span.comment-cnt").text(cnt+1);
+				 	 $("section#"+workNo+".work-item .work-etc span.comment-cnt").text(cnt+1);
 		               
 				 }
 				 $("div.enroll-comment-inform textarea").val('');
@@ -1011,9 +1012,9 @@ function updateWorkMember(){
  }
  
  function deleteWorkComment(){
+	 var workNo = '${work.workNo}';
 	 $(document).on('click',".work-comment-delete", function(){
 		 var commentNo = $(this).val();
-		 var workNo = '${work.workNo}';
 		 $.ajax({
 			 url:"${pageContext.request.contextPath}/project/deleteWorkComment.do",
 			 data: {commentNo:commentNo},
@@ -1022,12 +1023,14 @@ function updateWorkMember(){
 				 if(data.isUpdated){
 					 $(".work-comments-box .work-comment#"+commentNo).remove();
 					 //코멘트 숫자 1 삭감
-		             var cnt = Number($(".work-item#"+workNo+" .work-etc .comment-cnt").text());
-				 	 $(".work-item#"+workNo+" .work-etc span.comment-cnt").text(cnt-1);
+		             var cnt = Number($("section#"+workNo+".work-item .work-etc .comment-cnt").text());
+					 console.log($("section#"+workNo+".work-item .work-etc .comment-cnt"));
+					 console.log(workNo);
+				 	 $("section#"+workNo+".work-item .work-etc span.comment-cnt").text(cnt-1);
 				 	 
 					 if($(".work-ref-"+commentNo).length>0){
 						 var refcnt = Number($(".work-ref-"+commentNo).length);
-						 $(".work-item#"+workNo+" .work-etc span.comment-cnt").text(cnt-refcnt-1); 
+						 $("section#"+workNo+".work-item .work-etc .comment-cnt").text(cnt-refcnt-1); 
 						 
 						 $(".work-ref-"+commentNo).remove();
 					 }
@@ -1062,7 +1065,7 @@ function updateWorkMember(){
 			 success: data=>{
 				 var a = data.attachment;
 				 var rArr = (a.renamedFilename).split(".");
-				 var ext = rArr[rArr.length-1];
+				 var ext = rArr[rArr.length-1].toLowerCase();
 				 
 				 if(data.isUpdated){
 					 if($("#no-exist-file").length != 0){
@@ -1084,6 +1087,7 @@ function updateWorkMember(){
 					 	 +'<div class="dropdown-menu dropdown-menu-right"><button type="button" class="dropdown-item btn-work-file-down" value="'+a.attachmentNo+'">다운로드</button>'
 					 	 +'<div class="dropdown-divider"></div><button type="button" class="dropdown-item work-file-remove" value="'+a.attachmentNo+','+a.renamedFilename+'" data-toggle="modal" data-target="#modal-file-remove">삭제</a>'
 				 		 +'</div></div></td></tr>';
+				 	 $(".custom-file-label").html("파일을 선택하세요.");
 				 	 $("#tbl-projectAttach tbody").append(html);
 				 	 resetWorkView(); //업무 새로고침
 				 }
