@@ -371,11 +371,17 @@ public class NoticeController {
    		logger.debug("noticeComment={}",noticeComment);
    
    		try {
+   			//XSS공격대비 &문자변환
+   			String noticeCommentContent = noticeComment.getNoticeCommentContent();
+   			noticeCommentContent = noticeCommentContent.replaceAll("<", "&lt;")
+   									   				   .replaceAll(">", "&gt;")
+   									   				   .replaceAll("\\n", "<br/>");//개행문자처리
+   			
    			Map<String, Object> noticeCommentMap = new HashMap<>();
    			noticeCommentMap.put("noticeRef", noticeComment.getNoticeRef());
    			noticeCommentMap.put("noticeCommentLevel", noticeComment.getNoticeCommentLevel());
    			noticeCommentMap.put("noticeCommentWriter", noticeComment.getNoticeCommentWriter());
-   			noticeCommentMap.put("noticeCommentContent", noticeComment.getNoticeCommentContent());
+   			noticeCommentMap.put("noticeCommentContent", noticeCommentContent);
    			noticeCommentMap.put("noticeCommentRef", noticeComment.getNoticeCommentRef()==0?null:noticeComment.getNoticeCommentRef());
    			
    			int result = noticeService.insertNoticeComment(noticeCommentMap);
@@ -422,11 +428,17 @@ public class NoticeController {
    		logger.debug("communityComment={}",communityComment);
    
    		try {
+   			//XSS공격대비 &문자변환
+   			String commuCommentContent = communityComment.getCommuCommentContent();
+   			commuCommentContent = commuCommentContent.replaceAll("<", "&lt;")
+   									   				   .replaceAll(">", "&gt;")
+   									   				   .replaceAll("\\n", "<br/>");//개행문자처리
+   			
    			Map<String, Object> communityCommentMap = new HashMap<>();
    			communityCommentMap.put("commuRef", communityComment.getCommuRef());
    			communityCommentMap.put("commuCommentLevel", communityComment.getCommuCommentLevel());
    			communityCommentMap.put("commuCommentWriter", communityComment.getCommuCommentWriter());
-   			communityCommentMap.put("commuCommentContent", communityComment.getCommuCommentContent());
+   			communityCommentMap.put("commuCommentContent", commuCommentContent);
    			communityCommentMap.put("commuCommentRef", communityComment.getCommuCommentRef()==0?null:communityComment.getCommuCommentRef());
    			
    			int result = noticeService.insertCommunityComment(communityCommentMap);
