@@ -213,9 +213,9 @@ function sidebarActive(){
               </div>
             </div>
           <div class="col-9" style="margin: 0 auto;"> 
-              <ul class="nav nav-pills" style="padding-left:2.5rem;">
+              <ul class="nav nav-pills">
                 <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">전체</a></li>
-                <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">채널</a></li>
+                <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">프로젝트/동호회</a></li>
                 <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">다이렉트 메시지</a></li>
               </ul>
           </div>
@@ -248,15 +248,8 @@ function sidebarActive(){
                                     <!-- /.card-header -->
                                     <div class="card-body table-responsive p-0" style="height: 300px;">
                                       <table class="table table-head-fixed text-nowrap">
-                                        <tbody class="td">
-                                          <tr>
-                                            <td>
-                                              <div class="col-9"> 
-                                                <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/userimage.jpg" alt="Message User Image">
-                                                <h6 class="h6">개발</h6>
-                                              </div> 
-                                            </td>
-                                          </tr>
+                                        <tbody id="table-channel-timeline" class="td">
+
                                         </tbody>
                                       </table>
                                     </div>
@@ -275,15 +268,8 @@ function sidebarActive(){
                                     <!-- /.card-header -->
                                     <div class="card-body table-responsive p-0" style="height: 300px;">
                                       <table class="table table-head-fixed text-nowrap">
-                                        <tbody class="td">
-                                          <tr>
-                                            <td>
-                                              <div class="col-9"> 
-                                                <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                                <h6 class="h6">이주현</h6>
-                                              </div> 
-                                            </td>
-                                          </tr>
+                                        <tbody id="table-channel-settings" class="td">
+
                                         </tbody>
                                       </table>
                                     </div>
@@ -412,24 +398,47 @@ $("#searchChannel").keyup(function() {
 		success: data=> {
 			console.log(data);
 			$("#table-channel").children().remove();
+			$("#table-channel-timeline").children().remove();
+			$("#table-channel-settings").children().remove();
 			
 			if(data.channelList != null) {
-				html = '';
+				html = ''; //전체
 				$.each(data.channelList, (idx, list)=> {
-					//html += '<tr onclick="loadChatList(\''+list.channelNo+'\', \''+list.memberName+'\', \''+list.renamedFileName+'\', \''+idx+'\')"><td><div class="col-9">';
 					html += '<tr onclick="clickChannel(\''+list.channelNo+'\')"><td><div class="col-9">';
 					if(list.channelType == 'CH3') {
 						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">';
-						html += '<h6 class="h6">'+list.memberName+'</h6>';
+						html += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.memberName+'</h6>';
 					}
 					else {
 						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">';
-						html += '<h6 class="h6">'+list.channelTitle+'</h6>';
+						html += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.channelTitle+'</h6>';
 					}
 					html += '</div></td></tr>';
 				});
 				
-				$("#table-channel").append(html);
+				html2 = ''; //단체방
+				$.each(data.channelList, (idx, list)=> {
+					if(list.channelType != 'CH3') {
+						html2 += '<tr onclick="clickChannel(\''+list.channelNo+'\')"><td><div class="col-9">';
+						html2 += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">';
+						html2 += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.channelTitle+'</h6>';
+						html2 += '</div></td></tr>';
+					}
+				});
+				
+				html3 = ''; //디엠
+				$.each(data.channelList, (idx, list)=> {
+					if(list.channelType == 'CH3') {
+						html3 += '<tr onclick="clickChannel(\''+list.channelNo+'\')"><td><div class="col-9">';
+						html3 += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">';
+						html3 += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.memberName+'</h6>';
+						html3 += '</div></td></tr>';
+					}
+				});
+				
+				$("#table-channel").append(html); //전체
+				$("#table-channel-timeline").append(html2); //단체방
+				$("#table-channel-settings").append(html3); //디엠
 			}
 		}, 
 		error: (x, s, e)=> {
