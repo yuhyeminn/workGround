@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +35,7 @@ import com.kh.workground.project.model.vo.Worklist;
 public class ProjectController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
+	private HttpSession session;
 	
 	@Autowired
 	ProjectService projectService;
@@ -95,6 +97,9 @@ public class ProjectController {
 	public ModelAndView projectView(ModelAndView mav, HttpSession session, HttpServletRequest request, @RequestParam int projectNo, 
 									@RequestParam(defaultValue="work", required=false) String tab) {
 		
+		session.setAttribute("projectNo", projectNo);
+		this.session = session;
+		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		String loggedInMemberId = memberLoggedIn.getMemberId();
 		
@@ -130,6 +135,7 @@ public class ProjectController {
 				mav.setViewName("/common/msg");
 			}
 			else {
+				mav.addObject("session", this.session);
 				mav.addObject("project", p);
 				mav.addObject("allMemList", list);
 				mav.addObject("inMemList", inMemList);
@@ -191,9 +197,12 @@ public class ProjectController {
 	}
 	
 	@PostMapping("/project/addWorklist.do")
-	public ModelAndView insertWorklist(ModelAndView mav, HttpSession session, @RequestParam int projectNo, @RequestParam String worklistTitle, @RequestParam String projectManager) {
+	public ModelAndView insertWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam String worklistTitle, @RequestParam String projectManager) {
 		
 		try {
+			//xss공격방어
+			worklistTitle = worklistTitle.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+			
 			//1.업무로직
 			Map<String, Object> param = new HashMap<>();
 			param.put("projectNo", projectNo);
@@ -215,9 +224,30 @@ public class ProjectController {
 		return mav;
 	}
 	
+	@PostMapping("/project/updateWorklistTitle.do")
+	@ResponseBody
+	public Map<String, Integer> updateWorklistTitle(@RequestParam int worklistNo, @RequestParam String worklistTitle){
+		Map<String, Integer> map = new HashMap<>();
+		Map<String, Object> param = new HashMap<>();
+		param.put("worklistNo", worklistNo);
+		param.put("worklistTitle", worklistTitle);
+		
+		try {
+			//1.업무로직
+			int result = projectService.updateWorklistTitle(param);
+			map.put("result", result);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무리스트 제목 수정 오류!");
+		}
+		
+		return map;
+	}
+	
 	@PostMapping("/project/deleteWorklist.do")
 	@ResponseBody
-	public Map<String, Integer> deleteWorklist(@RequestParam int worklistNo) {
+	public Map<String, Integer> deleteWorklist(@RequestParam int worklistNo, @RequestParam String worklistTitle) {
 		Map<String, Integer> map = new HashMap<>();
 		
 		try {
@@ -298,6 +328,9 @@ public class ProjectController {
 										   @RequestParam(value="workDate[]", required=false) List<String> workDate){
 		
 		try {
+			//xss공격방어
+			workTitle = workTitle.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+			
 			//1.업무로직
 			//1-1.파라미터 map에 담기
 			Map<String, Object> param = new HashMap<>();
@@ -327,7 +360,8 @@ public class ProjectController {
 	}
 	
 	@PostMapping("/project/deleteWork.do")
-	public ModelAndView deleteWork(ModelAndView mav, @RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo,
+	public ModelAndView deleteWork(ModelAndView mav, 
+									@RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo, @RequestParam String workTitle,
 									@RequestParam int cntChk, @RequestParam int cntComment, @RequestParam int cntFile,
 									@RequestParam String projectManager) {
 		
@@ -555,5 +589,16 @@ public class ProjectController {
 		
 		return mav;
 	}
+	
+	/*@Scheduled(cron="0/30 * * * * *")
+	public void deleteAllProjectLog() {
+		
+		try {
+				
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 활동로그 삭제 오류!");
+		}
+	}*/
 
 }

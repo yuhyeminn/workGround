@@ -57,4 +57,20 @@ public interface ProjectService {
 
 	String selectProjectPrivateYn(int projectNo);
 
+	int insertProjectLog(Map<String, Object> param);
+
+	String selectWorkTitle(int workNo);
+
+	Map<String, String> selectChecklistContent(int checklistNo);
+
+	String selectChkChargedMemberName(int checklistNo);
+
+	String selectMemberName(String chkChargedMemberId);
+
+	String selectWorklistTitle(int workNo);
+
+	String selectWorklistTitleByWlNo(int worklistNo);
+
+	int updateWorklistTitle(Map<String, Object> param);
+
 }

@@ -158,11 +158,17 @@ button:active, button:focus{outline: none;}
 .worklist{float: left; width: 19rem; margin-right: .5rem;}
 /* 업무리스트 타이틀 */
 .worklist-title{background: rgb(31, 92, 135);}
+.wlTitle-inner{height: 42px;}
 .worklist-title h5{float: left; margin: 0; padding: .8rem .6rem; color: #fff; font-size: .88rem;}
 .worklist-title .worklist-title-btn{float: right; padding: .5rem .6rem;}
 .worklist-title-btn button{width: 26px; border: 0; background: transparent; color: #fff; font-size: .88rem;}
 .worklist-title-btn button:hover, .worklist-title-btn button:active{background: rgb(24, 76, 113);}
-.worklist-title-btn button:last-of-type{margin-left: .3rem;}
+.worklist-title-btn .btn-showUpdateFrm{display:none; font-size: .85rem;}
+.wlTitle-inner:hover .btn-showUpdateFrm{display: inline-block;}
+/* 업무리스트 타이틀 수정폼 */
+.update-wlTitle-wrapper{display: none;}
+.update-wlTitle-wrapper .worklist-title{padding: .5rem .6rem;}
+.update-wlTitle-wrapper .worklist-title .worklist-title-btn{padding: 0;}
 /* 업무 체크버튼 */
 .btn-checkWork{font-size: 1rem; margin-right: .3rem; padding: 0 !important;}
 /* 진행 중인 업무 */
@@ -232,7 +238,7 @@ button:active, button:focus{outline: none;}
 #add-wkltfrm-wrapper{display: none;}
 #add-wkltfrm-wrapper .worklist-title{padding: .5rem .6rem; background: rgb(31, 92, 135);}
 #add-wkltfrm-wrapper .addWorkFrm{background: inherit;}
-input[name=worklistTitle]{width: 75%; height: 25px; border: 2px solid #27b6ba; border-radius: 3px; color: #464c59; font-size: .85rem;}
+input[name=worklistTitle], input[name=newWorklistTitle]{width: 75%; height: 25px; border: 2px solid #27b6ba; border-radius: 3px; color: #464c59; font-size: .85rem;}
 input[name=worklistTitle]::placeholder{font-size: .85rem;}
 #addWorklistFrm .worklist-title-btn{padding: 0;}
 
@@ -447,7 +453,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 #chatContent .user-block img{width: 50px; height: 50px; object-fit: cover;}
 #chatContent .username{display: inline-block; margin: 0.6rem 0 0 1rem; color: #464c59; font-size: 1.1rem;}
 #chatSide-msg-wrapper{height: 60%;}
-#chatSide-msg-wrapper .direct-chat-msg.right .chat-time{margin-right: -.3rem;}
+#chatSide-msg-wrapper .direct-chat-msg.right .chat-time{margin-right: .3rem;}
 .direct-chat-img{object-fit: cover;}
 
 
