@@ -98,6 +98,54 @@ function projectStar(){
 
 //업무 검색
 function searchWork(){
+	let wrapper = document.querySelector(".container-fluid");
+	let frm = document.querySelector("#workSearchFrm");
+	let input = document.querySelector("input[name=searchWorkKeyword]");
+	let btn = document.querySelector("#btn-searchWork");
+	let keyword = $(input).val().trim(); 
+	
+	//엔터
+ 	$(document).on('keydown', '#workSearchFrm input', (e)=>{
+ 		let input = document.querySelector("input[name=searchWorkKeyword]");
+ 		let keyword = $(input).val().trim(); 
+ 		
+		if(e.which==13){
+			console.log(keyword);
+			
+			//유효성 검사
+			if(keyword==""){
+				alert("검색 키워드를 입력해 주세요!");
+			}
+			
+			let data = {
+					projectNo: ${project.projectNo},
+					keyword: keyword,
+					memberId: '${memberLoggedIn.memberId}'
+			};
+			console.log('${pageContext.request.contextPath}/project/searchWork');
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/project/searchWork',
+				data: data,
+				dataType: 'html',
+				type: 'GET',
+				success: data=>{
+					if(data!=null){
+						$(wrapper).html("");
+						$(wrapper).html(data);
+					}
+					else{
+						alert("업무 검색에 실패했습니다 :(");
+					}
+				},
+				error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+			}); 
+		}
+		
+	}); 
+	
 	
 	$(document).on('click', '#btn-searchWork', (e)=>{
 		let wrapper = document.querySelector(".container-fluid");
@@ -116,6 +164,7 @@ function searchWork(){
 				keyword: keyword,
 				memberId: '${memberLoggedIn.memberId}'
 		};
+		
 		$.ajax({
 			url: '${pageContext.request.contextPath}/project/searchWork',
 			data: data,
@@ -133,9 +182,9 @@ function searchWork(){
 			error: (x,s,e) => {
 				console.log(x,s,e);
 			}
-		});
+		}); 
 		
-	});
+	}); 
 }
 
 //새 업무리스트 만들기
@@ -655,9 +704,10 @@ function workComplete(){
 		else btnChk = e.target;
 		
 		let workNo = btnChk.value;
-		let $workSection = $("section#"+workNo);
+		let $workSection = $(btnChk.parentNode.parentNode.parentNode);
 		let workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
 		let isValid = false;
+		
 		
 		//1.유효성 검사
 		//1-1.업무 배정된 멤버가 있는 경우
@@ -735,31 +785,44 @@ function checklist(){
 		let workNo = val.split(",")[0];
 		let chkNo = val.split(",")[1];
 		
-		let $workSection = $("section#"+workNo);
+		let $workSection = $(btnChk.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);
 		let $tr = $(btnChk.parentNode.parentNode);
 		let $tdChecklist = $(btnChk.parentNode.nextSibling.nextSibling);
 		let $icoChk = $(btnChk.firstChild);
-		let $spanCntComp = $("section.work-item#"+workNo).find('.chklt-cnt-completed');
+		let $spanCntComp = $workSection.find('.chklt-cnt-completed');
+		
+		let hiddenChargedMemIdVal = $workSection.find('.hiddenWorkChargedMemId').val();
 		let workChargedMemIdArr = null;
-		if($workSection.find('.hiddenWorkChargedMemId').val() != null && $workSection.find('.hiddenWorkChargedMemId').val() !=''){
-			workChargedMemIdArr = $workSection.find('.hiddenWorkChargedMemId').val().split(',');
+		
+		console.log("$workSection="+$workSection);
+		console.log("input:hiddenWorkChargedMemId="+$workSection.find('.hiddenWorkChargedMemId'));
+		console.log("hiddenChargedMemIdVal="+hiddenChargedMemIdVal);
+		
+		if(hiddenChargedMemIdVal !==''){
+			workChargedMemIdArr = hiddenChargedMemIdVal.split(',');
 		}
-		if($tdChecklist.length==0){
+		console.log("workChargedMemIdArr="+workChargedMemIdArr);
+		
+		console.log($tdChecklist);		
+		/* if($tdChecklist.length==0){
 			$tdChecklist = $(btnChk.parentNode.nextSibling);
-		}
-		console.log(workChargedMemIdArr);
+		} */
+		
 		let chkChargedMemId = btnChk.nextSibling.nextSibling.value;
 		let isValid = false;
 		
+		console.log("chkChargedMemId="+chkChargedMemId);
 		
 		//1.유효성 검사
 		//체크리스트에 배정된 멤버가 있다면
-		if(chkChargedMemId!==""){
+		if(chkChargedMemId!=""){
 			//체크리스트에 배정된 멤버, 프로젝트 팀장, admin만 클릭 가능
 			if(loggedInMemberId===chkChargedMemId || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
+				console.log("체크리스트 배정된 멤버 있고 그게 나야");
 				isValid = true;
 			}
 			else{
+				console.log("체크리스트 배정된 멤버 있는데 그게 난 아님");
 				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
 				return;
 			}
@@ -767,16 +830,18 @@ function checklist(){
 		//체크리스트에 배정된 멤버가 없다면, 업무에 배정된 멤버인지
 		else{
 			let chkbool = false;
-			if(workChargedMemIdArr !=null && workChargedMemIdArr !=''){
+			if(workChargedMemIdArr !=null){
 				workChargedMemIdArr.forEach(id=>{
 					if(loggedInMemberId===id) chkbool = true;
 				});
 			}
 			
 			if(chkbool===true || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
+				console.log("체크리스트 배정된 멤버 없고 업무배정된 멤버는 있는데 그게 나야");
 				isValid = true;
 			}
 			else{
+				console.log("체크리스트 배정된 멤버 없고 업무배정된 멤버도 없으니까 난 안돼");
 				alert(loggedInMemberName+"님은 이 체크리스트에 대한 권한이 없습니다 :(");
 				return;
 			}
@@ -1212,7 +1277,7 @@ function updateTitle(){
         <h4 class="sr-only">업무</h4>
         
         <!-- SEARCH FORM -->
-        <form id="workSearchFrm" class="form-inline">
+        <form id="workSearchFrm" class="form-inline" onsubmit="return false;">
 	        <div class="input-group input-group-sm">
 	            <input class="form-control form-control-navbar" name="searchWorkKeyword" type="search" placeholder="업무 검색" aria-label="Search">
 	            <div class="input-group-append">
@@ -1398,33 +1463,53 @@ function updateTitle(){
 	                	</div><!-- /.work-checklist -->
 						
 		                <!-- 날짜 설정 -->
-		                <c:if test="${w.workStartDate!=null}">
 		                <div class="work-deadline">
-		                    <p>
-		                    	<c:if test="${w.workEndDate!=null}">
-		                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
+		                <!-- 마감일 없고 시작일만 있는 경우 -->
+		                <c:if test="${w.workEndDate==null && w.workStartDate!=null}">
+		                	<p>
+		                	<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" />에 시작
+		                	</p>
+		                </c:if>
+		                <!-- 마감일 있는 경우 -->
+		                <c:if test="${w.workEndDate!=null}">
+		                	<c:set var="now" value="<%= new Date() %>"/>
+	                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	<fmt:parseDate var="enddate" value="${w.workEndDate}" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	
+		                	<!-- 시작일 있는 경우 -->
+		                	<c:if test="${w.workStartDate!=null}">
+		                		<p>
+			                	<!-- 마감일 안 지난 경우 -->
+			                	<c:if test="${today_D < enddate_D}">
+			                		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
 		                    		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />
-		                    	</c:if>
-		                    	<c:if test="${w.workEndDate==null}">
-		                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" />에 시작
-		                    	</c:if>
-		                    </p>
-		                    <!-- 마감일 있는데 업무 완료되지 않은 경우 -->
-		                    <c:if test="${w.workEndDate!=null && w.workCompleteYn=='N'}">
-		                    	<c:set var="now" value="<%= new Date() %>"/>
-		                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
-		                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
-		                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
-		                    	<fmt:parseDate var="enddate" value="${w.workEndDate}" pattern="yyyy-MM-dd"/>
-		                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
-		                    	
-								<c:if test="${today_D > enddate_D}">
+								</c:if> 
+			                	<!-- 마감일 지난 경우 -->
+			                	<c:if test="${today_D > enddate_D}">
 									<p class="over">마감일 ${today_D - enddate_D}일 지남</p>
-								</c:if>               	
-		                    </c:if>
+								</c:if>      
+		                		</p>
+		                	</c:if>
+		                	
+		                	<!-- 시작일 없는 경우 -->
+		                	<c:if test="${w.workStartDate==null}">
+		                		<p>
+			                	<!-- 마감일 안 지난 경우 -->
+			                	<c:if test="${today_D < enddate_D}">
+			                		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />에 마감
+								</c:if> 
+			                	<!-- 마감일 지난 경우 -->
+			                	<c:if test="${today_D > enddate_D}">
+									<p class="over">마감일 ${today_D - enddate_D}일 지남</p>
+								</c:if>
+								</p>
+		                	</c:if>
+		                </c:if>
 		                </div><!-- /.work-deadline -->
-						</c:if>
-						
+		                
 						<!-- 완료 체크리스트 수 구하기 -->
 						<c:set var="chkCnt" value="0"/>
 						<c:forEach items="${w.checklistList}" var="chk">

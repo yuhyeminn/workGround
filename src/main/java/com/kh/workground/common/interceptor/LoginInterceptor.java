@@ -11,7 +11,7 @@ import com.kh.workground.member.model.vo.Member;
 
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 	
-	final static Logger logger = LoggerFactory.getLogger(LoggerInterceptor.class);
+	final static Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)

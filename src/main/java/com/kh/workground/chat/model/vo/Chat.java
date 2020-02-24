@@ -26,6 +26,7 @@ public class Chat implements Serializable {
 	private int chatNo;
 	private String channelNo;
 	private String sender;
+<<<<<<< HEAD
 	
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:MM:SS")
 	private Date sendDate;
@@ -34,4 +35,17 @@ public class Chat implements Serializable {
 	//가상컬럼
 	private String renamedFileName;
 	private String memberName;
+=======
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:MM")
+	private Date sendDate;
+	private String msg;
+	
+	//필요한 컬럼
+	private long time;
+	private MsgType type;
+	
+	//가상컬럼
+	private String memberName;
+	private String renamedFileName;
+>>>>>>> club
 }

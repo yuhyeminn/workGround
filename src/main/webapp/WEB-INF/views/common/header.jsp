@@ -32,6 +32,11 @@
   <link href="https://cdn.syncfusion.com/ej2/ej2-base/styles/material.css" rel="stylesheet" type="text/css"/>
   <link href="https://cdn.syncfusion.com/ej2/ej2-inputs/styles/material.css" rel="stylesheet" type="text/css"/>
   <link href="https://cdn.syncfusion.com/ej2/ej2-dropdowns/styles/material.css" rel="stylesheet" type="text/css"/>
+  <!-- fullCalendar -->
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/fullcalendar/main.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-daygrid/main.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-timegrid/main.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-bootstrap/main.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/adminlte.min.css">
   <!-- WorkGround Custom Css -->
@@ -64,8 +69,8 @@
   <script src="${pageContext.request.contextPath}/resources/plugins/datatables/jquery.dataTables.js"></script>
   <script src="${pageContext.request.contextPath}/resources/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
   <!-- Summernote -->
-<script src="${pageContext.request.contextPath}/resources/plugins/summernote/summernote-lite.js"></script>
-<script src="${pageContext.request.contextPath}/resources/plugins/summernote/lang/summernote-ko-KR.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/plugins/summernote/summernote-lite.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/plugins/summernote/lang/summernote-ko-KR.js"></script>
   <!-- Select2 -->
   <script src="${pageContext.request.contextPath}/resources/plugins/select2/js/select2.full.min.js"></script>
   <!-- InputMask -->
@@ -84,40 +89,27 @@
   <script src="https://cdn.syncfusion.com/ej2/ej2-lists/dist/global/ej2-lists.min.js" type="text/javascript"></script>
   <script src="https://cdn.syncfusion.com/ej2/ej2-popups/dist/global/ej2-popups.min.js" type="text/javascript"></script>
   <script src="https://cdn.syncfusion.com/ej2/ej2-dropdowns/dist/global/ej2-dropdowns.min.js" type="text/javascript"></script>
+  <!-- WebSocket: stomp.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+  <!-- WebSocket:sock.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.js"></script>
   <!-- jQuery UI -->
-<script
-	src="${pageContext.request.contextPath}/resources/plugins/jquery-ui/jquery-ui.min.js"></script>
-<!-- fullCalendar 2.2.5 -->
-<script
-	src="${pageContext.request.contextPath}/resources/plugins/moment/moment.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar/main.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-daygrid/main.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-timegrid/main.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-interaction/main.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-bootstrap/main.min.js"></script>
-<!-- fullCalendar -->
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/plugins/fullcalendar/main.min.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-daygrid/main.min.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-timegrid/main.min.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/plugins/fullcalendar-bootstrap/main.min.css">
+  <script src="${pageContext.request.contextPath}/resources/plugins/jquery-ui/jquery-ui.min.js"></script>
+  <!-- fullCalendar 2.2.5 -->
+  <script src="${pageContext.request.contextPath}/resources/plugins/moment/moment.min.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/plugins/fullcalendar/main.min.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-daygrid/main.min.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-timegrid/main.min.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-interaction/main.min.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/plugins/fullcalendar-bootstrap/main.min.js"></script>
+  
   <!-- Page Script -->
   <script>
   $(function(){
-	 //전체 검색
-	 $("#btn-totalSearch").on('click', ()=>{
+	  //마우스 클릭
+	  $("#btn-totalSearch").on('click', ()=>{
 		 let input = document.querySelector('input[name=totalSearchKeyword]');
 		 let keyword = $(input).val().trim();
-		 console.log(input);
-		 console.log(keyword);
 		 
 		 //유효성 검사
 		 if(keyword==""){
@@ -126,9 +118,23 @@
 		 }
 		 
 		 location.href='${pageContext.request.contextPath}/search/searchList.do?keyword='+keyword;
-		 
-	 });
+	  });
   });
+  
+  //전체검색 엔터키
+  function searchByEnter(keyword){
+	  
+	  if(event.keyCode==13){
+		  console.log(keyword);
+		 //유효성 검사
+		 if(keyword==""){
+			 alert("검색어를 입력해 주세요!");
+			 return;
+		 }
+		 
+		 location.href='${pageContext.request.contextPath}/search/searchList.do?keyword='+keyword;
+	  }
+  }
   
   //목록 슬라이드토글
   function toggleList(obj){
@@ -149,9 +155,9 @@
     </ul>
 
     <!-- SEARCH FORM -->
-    <form class="form-inline ml-3">
+    <form class="form-inline ml-3" onsubmit="return false;">
       <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" name="totalSearchKeyword" placeholder="KHJAVA Co. 검색" aria-label="Search">
+        <input id="input-totalSearch" class="form-control form-control-navbar" type="search" name="totalSearchKeyword" onkeydown="searchByEnter(this.value);" placeholder="KHJAVA Co. 검색" aria-label="Search">
         <div class="input-group-append">
           <!-- <button class="btn btn-navbar" type="submit"> -->
           <button class="btn btn-navbar" type="button" id="btn-totalSearch">
