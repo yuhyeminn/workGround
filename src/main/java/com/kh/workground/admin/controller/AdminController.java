@@ -11,15 +11,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.admin.model.service.AdminService;
 import com.kh.workground.admin.model.vo.AdminClub;
 import com.kh.workground.admin.model.vo.AdminProject;
+import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.notice.model.service.NoticeService;
 import com.kh.workground.notice.model.vo.Community;
 import com.kh.workground.notice.model.vo.Notice;
-import com.kh.workground.project.model.service.ProjectService;
 
 @Controller
 public class AdminController {

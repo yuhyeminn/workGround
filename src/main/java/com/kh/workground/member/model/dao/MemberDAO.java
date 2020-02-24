@@ -16,5 +16,6 @@ public interface MemberDAO {
 	int updatePhone(Map<String, String> map);
 	int deleteMember(String memberId);
 	int updatePassword(Map<String, String> map);
+	List<Member> selectSearchList(String keyword);
 
 }

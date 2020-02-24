@@ -307,7 +307,7 @@ public class MemberController {
 		}
 
 		//신규첨부파일이 있는 경우, 기존첨부파일 삭제(기본이미지 제외)
-		if(!upFile.getOriginalFilename().equals("default.jpg")){
+		if(upFile.getOriginalFilename()==null && (!upFile.getOriginalFilename().equals("default.jpg"))){
 			File delFile = new File(saveDirectory, oldRenamedFileName);
 			boolean result = delFile.delete();
 			logger.debug("기존첨부파일삭제={}",result?"성공!":"실패!");
@@ -480,6 +480,18 @@ public class MemberController {
 				e.getStackTrace();
 			}
 		}
+		return mav;
+	}
+	
+	@RequestMapping("/member/searchList.do")
+	public ModelAndView adminSearchList(ModelAndView mav, @RequestParam String keyword) {
+		logger.debug(keyword);
+		List<Member> list = memberSerivce.selectSearchList(keyword);
+		logger.debug(list.toString());
+		
+		mav.addObject("list", list);
+		mav.setViewName("/member/memberList");
+		
 		return mav;
 	}
 }

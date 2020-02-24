@@ -11,6 +11,7 @@ import com.kh.workground.admin.model.dao.AdminDAO;
 import com.kh.workground.admin.model.dao.AdminDAOImpl;
 import com.kh.workground.admin.model.vo.AdminClub;
 import com.kh.workground.admin.model.vo.AdminProject;
+import com.kh.workground.member.model.vo.Member;
 
 @Service
 public class AdminServiceImpl implements AdminService {

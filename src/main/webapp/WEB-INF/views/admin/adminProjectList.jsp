@@ -54,12 +54,13 @@ function goMemberProfile(memberId){
 function deleteChk(projectNo){
 	var result = confirm("프로젝트를 삭제하시겠습니까?"); 
 	if(result == true){
-		location.href = "${pageContext.request.contextPath}/project/deleteProject.do?projectNo="+projectNo;
+		location.href = '${pageContext.request.contextPath}/project/deleteProject.do?projectNo='+projectNo;
 	}
 }
 
 //프로젝트로 이동
 function goProjectInfo(projectNo){
+	
 	location.href = '${pageContext.request.contextPath}/project/projectView.do?projectNo='+projectNo;
 }
 </script>	

@@ -487,19 +487,31 @@ public class ProjectController {
 	
 	@RequestMapping(value="/project/deleteProject.do", method= {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView deleteProject(ModelAndView mav, HttpSession session, @RequestParam int projectNo) {
-		
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		logger.debug("///////////////////////////////////////");
+		logger.debug("projectNo={}", projectNo);
 		try {
 			//1.업무로직
 			int result = projectService.deleteProject(projectNo);
 			
-			//2. 뷰모델처리 
+			String viewName = "";
+			//2. 뷰모델처리
 			if(result!=0) {
-				projectList(mav, session);
+				//관리자인 경우
+				if("admin".equals(memberLoggedIn.getMemberId())) {
+					viewName = "redirect:/admin/adminProjectList.do";
+				}
+				//관리자 아닌 경우
+				else {
+					viewName = "redirect:/project/projectList.do";
+				}
+				mav.setViewName(viewName);
 			}
 			else {
+				viewName = "/common/msg";
 				mav.addObject("msg", "프로젝트 삭제에 실패했습니다!");
 				mav.addObject("loc", "/project/projectList");
-				mav.setViewName("/common/msg");
+				mav.setViewName(viewName);
 			}
 			
 		} catch(Exception e) {

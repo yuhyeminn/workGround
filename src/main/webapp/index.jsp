@@ -22,7 +22,19 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900&display=swap" rel="stylesheet">
 </head>
-<body class="hold-transition login-page"  style="background: white;">
+<style>
+.col-md-11{
+position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-repeat: no-repeat;
+    background-position: 50% 0;
+    background-size: cover;
+}
+</style>
+<body class="hold-transition login-page">
 <%
 //쿠키관련
 	boolean saveId = false;
@@ -39,13 +51,14 @@
 		}
 	}
 %>
-<div class="col-md-8">
+<div class="col-md-11" style="background-image:url(${pageContext.request.contextPath}/resources/img/bg_login_white.png);">
   <div class="login-logo">
     <b>COMPANY NAME</b>
   </div>
   <!-- /.login-logo -->
   <!-- <div class="card">  -->
-    <div class="col-sm-6" style="display:inline-block; padding: 60px; box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2); height: 23rem;">
+    <div class="col-sm-9" style="display:inline-block; padding: 60px; box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2); height: 23rem;background-image:url(${pageContext.request.contextPath}/resources/img/bg_login_white.png);">
+	  <img src="${pageContext.request.contextPath}/resources/img/bg_login_white.png;"  style="z-index:100rem;" alt="" />
       <p class="login-box-msg" style="font-weight: 700; font-size: 22px;">로그인</p>
       <form action="${pageContext.request.contextPath}/member/memberLogin.do" method="post">
         <div class="input-group mb-3">
@@ -119,7 +132,7 @@
       <!-- /.modal -->
     </div>
     <!-- /.login-card-body -->
-    <div class="col-sm-6" style="display: inline-block; float: right; padding: 40px; background: rgb(220, 234, 247); box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2); height: 23rem;">
+    <%-- <div class="col-sm-6" style="display: inline-block; float: right; padding: 40px; background: rgb(220, 234, 247); box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2); height: 23rem;">
       <h2 style="font-weight:700; font-size:3rem; color: #2d235f;">WorkGround</h2>
       <p>
 		비밀번호 없이 바로 사번 복사해서 로그인하세요~<br>
@@ -133,8 +146,8 @@
 		kh2020127 이주현
 		</p>
       <p class="mb-0">아직 계정이 없으신가요?&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/member/memberRegister.do" class="text-center">가입하기</a></p>
-    </div>
-  </div>
+    </div> --%>
+  </div> 
 <!-- </div> -->
 <!-- /.login-box -->
 
