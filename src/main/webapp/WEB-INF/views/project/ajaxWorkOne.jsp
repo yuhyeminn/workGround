@@ -48,9 +48,9 @@
                 </div>
 	
                 <!-- 체크리스트 -->
+                <div class="work-checklist">
                 <c:if test="${w.checklistList!=null && !empty w.checklistList}">
                 <c:set var="clList" value="${w.checklistList}" />
-                <div class="work-checklist">
                     <table class="tbl-checklist">
 	                    <tbody>
 		                	<c:forEach items="${clList}" var="chk">
@@ -59,7 +59,7 @@
 			                    <c:set var="chkChargedMemId" value="${m.memberId}"/>
 			                    
 			                	<c:if test="${chk.completeYn=='Y'}">
-		                        <tr class="completed">
+		                        <tr class="completed" id="${chk.checklistNo}">
 			                		<th>
 			                			<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>
 			                			<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>	
@@ -67,7 +67,7 @@
 			                        <td style="text-decoration:line-through;">
 			                    </c:if>
 			                    <c:if test="${chk.completeYn=='N'}">
-		                        <tr>
+		                        <tr id="${chk.checklistNo}">
 		                        	<th>
 		                        		<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>
 		                        		<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>
@@ -83,45 +83,56 @@
 	                        </c:forEach>
 	                    </tbody>
                     </table>                
-               	</div><!-- /.work-checklist -->
 				</c:if>
+               	</div><!-- /.work-checklist -->
 				
                 <!-- 날짜 설정 -->
-                <c:if test="${w.workRealEndDate==null}">
-                <c:if test="${w.workStartDate!=null}">
                 <div class="work-deadline">
-                    <p>
-                    	<c:if test="${w.workEndDate!=null}">
-                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
+                <!-- 마감일 없고 시작일만 있는 경우 -->
+                <c:if test="${w.workEndDate==null && w.workStartDate!=null}">
+                	<p>
+                	<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" />에 시작
+                	</p>
+                </c:if>
+                <!-- 마감일 있는 경우 -->
+                <c:if test="${w.workEndDate!=null}">
+                	<c:set var="now" value="<%= new Date() %>"/>
+                   	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
+                   	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
+                   	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
+                   	<fmt:parseDate var="enddate" value="${w.workEndDate}" pattern="yyyy-MM-dd"/>
+                   	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
+                   	
+                	<!-- 시작일 있는 경우 -->
+                	<c:if test="${w.workStartDate!=null}">
+                		<p>
+	                	<!-- 마감일 안 지난 경우 -->
+	                	<c:if test="${today_D < enddate_D}">
+	                		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
                     		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />
-                    	</c:if>
-                    	<c:if test="${w.workEndDate==null}">
-                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" />에 시작
-                    	</c:if>
-                    </p>
-                    <!-- 마감일 있는데 업무 완료되지 않은 경우 -->
-                    <c:if test="${w.workEndDate!=null && w.workCompleteYn=='N'}">
-                    	<c:set var="now" value="<%= new Date() %>"/>
-                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
-                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
-                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
-                    	<fmt:parseDate var="enddate" value="${w.workEndDate}" pattern="yyyy-MM-dd"/>
-                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
-                    	
-						<c:if test="${today_D > enddate_D}">
+						</c:if> 
+	                	<!-- 마감일 지난 경우 -->
+	                	<c:if test="${today_D > enddate_D}">
 							<p class="over">마감일 ${today_D - enddate_D}일 지남</p>
-						</c:if>               	
-                    </c:if>
+						</c:if>      
+                		</p>
+                	</c:if>
+                	
+                	<!-- 시작일 없는 경우 -->
+                	<c:if test="${w.workStartDate==null}">
+                		<p>
+	                	<!-- 마감일 안 지난 경우 -->
+	                	<c:if test="${today_D < enddate_D}">
+	                		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />에 마감
+						</c:if> 
+	                	<!-- 마감일 지난 경우 -->
+	                	<c:if test="${today_D > enddate_D}">
+							<p class="over">마감일 ${today_D - enddate_D}일 지남</p>
+						</c:if>
+						</p>
+                	</c:if>
+                </c:if>
                 </div><!-- /.work-deadline -->
-				</c:if>
-				</c:if>
-				
-				<!-- 날짜 설정 -->
-		        <c:if test="${w.workRealEndDate!=null}">
-		        <div class="work-deadline">
-		            <p class="complete"><fmt:formatDate value="${w.workRealEndDate}" type="date" pattern="MM월dd일"/>에 완료</p>
-		        </div><!-- /.work-deadline -->
-				</c:if>
 						
 				<!-- 완료 체크리스트 수 구하기 -->
 				<c:set var="chkCnt" value="0"/>
@@ -143,8 +154,8 @@
                     		<span class="chklt-cnt-completed">${chkCnt}</span>/<span class="chklt-cnt-total">${fn:length(w.checklistList)}</span>
                     	</span>
                     </c:if>
-                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
-                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+                    <span class="ico"><i class="far fa-comment"></i> <span class="comment-cnt">${fn:length(w.workCommentList)}</span></span>
+		            <span class="ico"><i class="fas fa-paperclip"></i> <span class="attach-cnt-total">${fn:length(w.attachmentList)}</span></span>
                     
                     <!-- 업무 배정된 멤버 -->
                     <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">

@@ -6,6 +6,7 @@
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
+<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
 <style>
 .note-editing-area {
 	min-height: 100px;
@@ -66,6 +67,31 @@ $(function(){
         "info": false,
         "autoWidth": false,
     });
+	//채팅방
+	$('#btn-openChatting').on('click', ()=>{
+			var $side = $("#setting-sidebar");
+			var clubNo = ${club.clubNo};
+			
+	    	$.ajax({
+				url: "${pageContext.request.contextPath}/chat/clubChatting.do",
+				type: "get",
+				data: {clubNo:clubNo},
+				dataType: "html",
+				success: data => {
+					$side.html("");
+					$side.html(data); 
+				},
+				error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+			});
+	        
+	        $side.addClass('open');
+	        if($side.hasClass('open')) {
+	        	$side.stop(true).animate({right:'0px'});
+	        }
+	  });
+
 	
 	sidebarActive(); //사이드바 활성화
 	tabActive(); //서브헤더 탭 활성화
@@ -154,7 +180,7 @@ function clubFileList(clubNo) {
 	<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
 		<!-- 동호회 대화 -->
 		<li class="nav-item">
-			<button type="button" class="btn btn-block btn-default btn-xs nav-link">
+			<button type="button" id="btn-openChatting" class="btn btn-block btn-default btn-xs nav-link">
 				<i class="far fa-comments"></i> 동호회 대화
 			</button>
 		</li>
@@ -190,6 +216,10 @@ function clubFileList(clubNo) {
 	</ul>
 </nav>
 <!-- /.navbar -->
+
+<!-- 오른쪽 채팅 사이드 바-->
+<aside class="work-setting" id="setting-sidebar" style="display: block;">
+</aside>
 
 <!-- Content Wrapper. Contains page content -->
 <div id="member-list" class="content-wrapper" style="padding-top: 50px;">

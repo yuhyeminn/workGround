@@ -11,7 +11,7 @@ import com.kh.workground.project.model.vo.Worklist;
 
 public interface ProjectService {
 
-	Map<String, List<Project>> selectProjectListAll(Member memberLoggedIn);
+	Map<String, List<Project>> selectProjectListAll(Map<String, String> param, Member m);
 
 	List<Member> selectMemberListByDept(String deptCode);
 
@@ -54,5 +54,23 @@ public interface ProjectService {
 	List<Member> selectProjectMemberListByQuitYn(int projectNo);
 
 	int deleteProject(int projectNo);
+
+	String selectProjectPrivateYn(int projectNo);
+
+	int insertProjectLog(Map<String, Object> param);
+
+	String selectWorkTitle(int workNo);
+
+	Map<String, String> selectChecklistContent(int checklistNo);
+
+	String selectChkChargedMemberName(int checklistNo);
+
+	String selectMemberName(String chkChargedMemberId);
+
+	String selectWorklistTitle(int workNo);
+
+	String selectWorklistTitleByWlNo(int worklistNo);
+
+	int updateWorklistTitle(Map<String, Object> param);
 
 }

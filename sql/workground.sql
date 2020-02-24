@@ -263,6 +263,27 @@ create table attachment(
 -----------------------------------------------------------------------
 CREATE SEQUENCE seq_attachment;
 
+--------------------------------------------------
+--project_log 테이블
+--------------------------------------------------
+create table project_log(
+    log_no number not null,
+    project_no number not null,
+    log_type varchar(50) not null,
+    log_content varchar2(1000) not null,
+    log_date date not null,
+    constraint pk_project_log primary key(log_no),
+    constraint fk_project_log_project_no foreign key(project_no) references project(project_no) on delete cascade
+);
+
+--------------------------------------------------
+--project_log 테이블 시퀀스 생성
+--------------------------------------------------
+create sequence seq_project_log;
+
+commit;
+select * from project_log order by log_no;
+
 --================================================
 --notice/community 관련 테이블/시퀀스
 --================================================
@@ -677,3 +698,4 @@ begin
     end if;
 end;
 /
+

@@ -9,9 +9,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.kh.workground.member.model.vo.Member;
 
-public class LoginInterceptor extends HandlerInterceptorAdapter {
+public class AdminInterceptor extends HandlerInterceptorAdapter {
 	
-	final static Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
+	final static Logger logger = LoggerFactory.getLogger(AdminInterceptor.class);
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -19,8 +19,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		
 		Member memberLoggedIn = (Member)request.getSession().getAttribute("memberLoggedIn");
 		
-		if(memberLoggedIn==null) {
-			request.setAttribute("msg", "로그인 후 이용하세요.");
+		if(!"admin".equals(memberLoggedIn.getMemberId())) {
+			request.setAttribute("msg", "이 페이지는 관리자만 접근할 수 있습니다.");
 			request.setAttribute("loc", "/");
 			request.getRequestDispatcher("/WEB-INF/views/common/msg.jsp").forward(request, response);
 			

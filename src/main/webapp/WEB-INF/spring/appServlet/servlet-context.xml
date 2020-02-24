@@ -2,9 +2,11 @@
 <beans:beans xmlns="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 	
 	<!-- #5. appServlet관련 빈설정: application내에 servlet이 여러 개 존재할 수 있다. -->
@@ -36,6 +38,7 @@
 	<!-- 스프링컨테이너에 bean 등록: 지정한 패키지를 포함, 하위의 모든 @Component어노테이션이 붙은 클래스를 bean으로 생성 관리함.
 								bean의 이름은 소문자로 시작하는 클래스명이다. -->
 	<context:component-scan base-package="com.kh.workground" />
+	<task:annotation-driven/><!-- 스프링 스케쥴러 어노테이션  -->
 	
 	<!-- #15.1 @Responsebody사용을 위한 의존 : 빈등록 (스프링 5.x.x => MappingJackson2HttpMessageConverter) -->
 	<beans:bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
@@ -52,8 +55,15 @@
 	<interceptors>
 		<interceptor>
 			<mapping path="/**"/>
-			<exclude-mapping path="/member/**"/>
+			<exclude-mapping path="/member/memberLog*.do"/>
+			<exclude-mapping path="/member/forgotPassword.do"/>
+			<exclude-mapping path="/member/memberRegister*.do"/>
+			<exclude-mapping path="/member/checkIdExistence.do"/>
 			<beans:bean id="loginInterceptor" class="com.kh.workground.common.interceptor.LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
+			<mapping path="/admin/**"/>
+			<beans:bean id="adminInterceptor" class="com.kh.workground.common.interceptor.AdminInterceptor"/>
 		</interceptor>
 		<!-- 로그아웃 후 뒤로가기 방지 -->
 		<interceptor>
@@ -89,5 +99,7 @@
 			</beans:props>
 		</beans:property>
 	</beans:bean>
+	
+
 
 </beans:beans>

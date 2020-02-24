@@ -72,4 +72,24 @@ public class ChatServiceImpl implements ChatService {
 //		updateLastCheck(fromMessage);
 		return chatDAO.insertChatLog(fromMessage);
 	}
+
+	@Override
+	public List<Chat> selectChatList() {
+		return chatDAO.selectChatList();
+	}
+
+	@Override
+	public List<Channel> findChannelListByKeyword(Map<String, String> param) {
+		return chatDAO.findChannelListByKeyword(param);
+	}
+	
+//	sh start
+	@Override
+	public Channel selectChannel(String channelNo) {
+		return chatDAO.selectChannel(channelNo);
+	}
+	@Override
+	public List<Chat> getClubChatList(String channelNo) {
+		return chatDAO.getClubChatList(channelNo);
+	}
 }
