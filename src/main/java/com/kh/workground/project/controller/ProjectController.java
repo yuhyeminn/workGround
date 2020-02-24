@@ -102,6 +102,7 @@ public class ProjectController {
 		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		String loggedInMemberId = memberLoggedIn.getMemberId();
+		String loggedInMemberJobCode = memberLoggedIn.getJobCode();
 		
 		try {
 			//1.업무로직
@@ -123,8 +124,9 @@ public class ProjectController {
 					inMemList.add(m);
 			}
 			
-			//1-3.관리자인 경우
-			if("admin".equals(loggedInMemberId)) bool = true;
+			//1-3.관리자인 경우, 직급이 팀장인 경우는 조회 가능
+			if("admin".equals(loggedInMemberId) || "J2".equals(loggedInMemberJobCode)) bool = true;
+			
 			
 			//2.뷰모델 처리: 프로젝트 속함 여부에 따라 분기
 			if(!bool) {

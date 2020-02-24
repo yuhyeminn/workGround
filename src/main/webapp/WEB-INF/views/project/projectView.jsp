@@ -57,6 +57,8 @@ $(()=>{
     setting(); //설정창
     updateDesc(); //업무, 프로젝트 설명 수정
     updateTitle(); //업무, 프로젝트 제목 수정
+    projectLog(); //활동로그
+    
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -1223,6 +1225,12 @@ function setting(){
         }
     });
     
+    //활동로그 열기 
+    $("#btn-projectLog").on('click', ()=>{
+    	
+    
+    });
+    
 }
 //프로젝트 설명 수정, 업무 설명 수정
 function updateDesc(){
@@ -1384,10 +1392,11 @@ function closeSideBar(){
         </li>
 
         <!-- 프로젝트 설정 -->
-        <li class="nav-item">
+        <li id="nav-psetting" class="nav-item">
             <button type="button" class="btn btn-block btn-default btn-xs nav-link" id="project-setting-toggle">
             	<i class="fas fa-cog"></i>
             </button>
+            <button type="button" class="btn btn-block btn-default btn-xs nav-link" id="btn-projectLog"><i class="fas fa-file-contract"></i></button>
         </li>
     </c:if>
     </ul>

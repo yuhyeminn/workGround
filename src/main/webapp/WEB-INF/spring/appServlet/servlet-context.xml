@@ -61,6 +61,10 @@
 			<exclude-mapping path="/member/checkIdExistence.do"/>
 			<beans:bean id="loginInterceptor" class="com.kh.workground.common.interceptor.LoginInterceptor"/>
 		</interceptor>
+		<interceptor>
+			<mapping path="/admin/**"/>
+			<beans:bean id="adminInterceptor" class="com.kh.workground.common.interceptor.AdminInterceptor"/>
+		</interceptor>
 		<!-- 로그아웃 후 뒤로가기 방지 -->
 		<interceptor>
 			<mapping path="/**"/>
