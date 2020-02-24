@@ -49,7 +49,7 @@ $(function () {
             ['para', ['ul', 'ol']],
             ['insert', ['picture', 'link']]
         ],
-        placeholder: '내 메시지...'
+        placeholder: 'type your message here'
     });
   
   sidebarActive(); //사이드바 활성화
@@ -184,6 +184,7 @@ function sidebarActive(){
               <input type="text" id="message" class="form-control" placeholder="Message to "><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>
             </div> -->
             <input type="text" class="input-group mb-3" id="div_textarea">
+            <div id="typing${channelNo}"></div>
         </div><!-- /#chatContent -->
             
     </section>
@@ -302,13 +303,8 @@ function sidebarActive(){
       <form name="insertChannelFrm" action="${pageContext.request.contextPath }/chat/insertChannel.do" method="POST">
       <div class="modal-body">
         <div class="col-sm-12" style="float: right; padding: 1rem;">
-            <div class="form-group">
-                <label>채널 이름</label>
-                <input type="text" class="form-control" name="channelTitle" id="channelTitle" readonly="readonly">
-            </div>
-        </div>
-        <div class="col-sm-12" style="float: right; padding: 1rem;">
             <div class="form-group" id="div-plusMember">
+	            <input type="hidden" class="form-control" name="channelTitle" id="channelTitle" readonly="readonly">
                 <label style="margin-right: 7px;">채널 멤버 찾기</label>
                 <button type="button" id="plusChannel" class="btn btn-default" data-toggle="modal" data-target="#modal-sm">
                     <i class="fas fa-plus"></i>
@@ -585,12 +581,12 @@ stompClient.connect({}, function(frame) {
 		let messageBody = JSON.parse(message.body);
 		
 		$("#whoIsTyping").remove();
-		if("${channelNo}" == messageBody.channelNo) {
-			$("#channelNo${channelNo}>td").append('<span id="whoIsTyping" style="margin-left: 5px; font-size: 10px; color: gray;">'+messageBody.memberName+' is typing...</span>');
+		if("${channelNo}" == messageBody.channelNo && "${memberLoggedIn.memberId}" != messageBody.memberId) {
+			$("#typing${channelNo}").append('<span id="whoIsTyping" style="padding-left: 10px; font-size: 15px; color: gray;">'+messageBody.memberName+' is typing...</span>');
 		}
 		setTimeout(function() {
 			$("#whoIsTyping").remove();
-			}, 1000);
+			}, 1800);
 	});
 });
 
