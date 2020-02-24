@@ -41,6 +41,7 @@ $(()=>{
 	searchWork(); //업무검색
 	
     addWorklist(); //새 업무리스트 만들기
+    updateWorklistTitle(); //업무리스트 제목 수정
     deleteWorklist(); //업무리스트 삭제하기
     
     addWork(); //새 업무 만들기
@@ -62,6 +63,9 @@ $(()=>{
 	deleteChecklist(); //체크리스트 삭제
 	deleteWorkComment(); //업무 코멘트 삭제
 	delWorkFile(); //파일 삭제
+	
+    projectLog(); //활동로그
+    
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -266,6 +270,107 @@ function addWorklist(){
     }
 }
 
+//업무리스트 제목 수정하기
+function updateWorklistTitle(){
+	
+	$(document).on('click', '.btn-showUpdateFrm', (e)=>{
+		let btnShow;		
+		if(e.target.tagName==='I') btnShow = e.target.parentNode;	
+		else btnShow = e.target;
+		
+		let worklistNo = btnShow.value*1;
+		let wlTitle = $('#worklist-'+worklistNo+' h5').text();
+		let $wlInner = $('#worklist-'+worklistNo+' .wlTitle-inner');
+		let $updateTitleWrapper = $('#worklist-'+worklistNo+' .update-wlTitle-wrapper');
+		let $input = $('#worklist-'+worklistNo+' input[name=newWorklistTitle]');
+		let $btnUpdate = $('#worklist-'+worklistNo+' .btn-updateWlTitle');
+		let url = '${pageContext.request.contextPath}/project/updateWorklistTitle.do';
+		
+		//수정폼 보이기 		
+		$wlInner.hide();
+		$updateTitleWrapper.show();
+		$input.val(wlTitle);
+		$input.focus();
+		
+		
+		//엔터키 입력시 제목 수정
+	    $input.on('keydown', key=>{
+	    	if(key.keyCode==13){
+	    		let val = $input.val().trim();
+	    		
+	    		//유효성 검사
+	            if(val===""){
+	            	alert("추가할 업무리스트의 이름을 입력해 주세요!");
+	            	return;
+	            }
+	    		
+	            let data = {
+	            		worklistNo: worklistNo,
+	            		worklistTitle: val
+	            };
+	            
+	            ajax(data);
+	            
+	    	}
+	    });
+	    
+	    //연필버튼 클릭시 제목 수정
+	    $btnUpdate.on('click', ()=>{
+	        let val = $input.val().trim();
+	        
+	        //유효성 검사
+	        if(val===""){
+	        	alert("추가할 업무리스트의 이름을 입력해 주세요!");
+	        	return;
+	        }
+	        
+	        let data = {
+            		worklistNo: worklistNo,
+            		worklistTitle: val
+            };
+	        
+	        ajax(data);
+	        
+	    }); //end of +버튼 클릭
+		
+		
+		//x버튼 클릭시 되돌리기
+	    $(document).on('click', '#worklist-'+worklistNo+' .btn-cancel-updateWlTitle', (e)=>{
+	    	$wlInner.show();
+			$updateTitleWrapper.hide();
+			$input.val("");
+	    });
+	    
+		function ajax(data) {
+			let $wlTitle = $('#worklist-'+worklistNo+' h5');
+			let newWlTitle = data.worklistTitle;
+			
+	    	$.ajax({
+	        	url: url,
+	        	data: data,
+	        	dataType: 'html',
+	        	type: 'POST',
+	        	success: data=>{
+	        		if(data.result!=0){
+	        			$wlTitle.text(newWlTitle);
+	        			
+	        			//되돌리기
+	        			$wlInner.show();
+	        			$updateTitleWrapper.hide();
+	        			$input.val("");
+	        		}
+	        		else{
+	        			alert("업무리스트 제목 수정에 실패했습니다 :(");
+	        		}
+	        	},
+	        	error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+	        }); 
+	    }
+	});
+}
+
 //업무리스트 삭제하기
 function deleteWorklist(){
 	let modal = document.querySelector("#modal-worklist-remove");
@@ -302,7 +407,10 @@ function deleteWorklist(){
 		if(val.split('-')[0] == 'worklist'){
 			$.ajax({
 	        	url: '${pageContext.request.contextPath}/project/deleteWorklist.do',
-	        	data: {worklistNo: worklistNo},
+	        	data: {
+	        		worklistNo: worklistNo,
+	        		worklistTitle: $(delTitle).text()
+	        	},
 	        	dataType: 'json',
 	        	type: 'POST',
 	        	success: data=>{
@@ -344,11 +452,12 @@ function addWork(){
 		worklistNo = btnPlus.value*1;
     	btnCancel = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-cancel');
     	
+		let wlSection = document.querySelector('#worklist-'+worklistNo);
+		let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
     	let btnSubmit = document.querySelector('#worklist-'+worklistNo+' .btn-addWork-submit');
    		let addWorkWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-wrapper');
    		let btnRWrapper = document.querySelector('#worklist-'+worklistNo+' .addWork-btnRight'); 
 		let dateWrapper = document.querySelector('#worklist-'+worklistNo+' .add-date'); 
-   		let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
    		
    		//설정 버튼: 멤버, 태그, 날짜 
    		let btnAddMem = document.querySelector('#worklist-'+worklistNo+' .btn-addWorkMember');
@@ -526,13 +635,37 @@ function addWork(){
 		}); //end of 날짜버튼 클릭
 		
 		
+		//엔터키 입력
+		workTitle.addEventListener('keydown', e=>{
+			if(e.which==13){
+				let title = $(workTitle).val().trim();
+				
+				//유효성 검사
+				if(title===""){
+					alert("새 업무의 이름을 입력해 주세요!");
+					return;
+				}
+					
+				let data = {
+						projectManager: '${projectManager}',
+						projectNo: ${project.projectNo},
+						worklistNo: worklistNo,
+						workTitle: title,
+						workChargedMember: addMemberArr,
+						workTag: addTag,
+						workDate: addDateArr
+				}
+				
+				ajax(data);
+			}
+		});
+		
 		//만들기버튼 클릭
 		btnSubmit.addEventListener('click', e=>{
-			let workTitle = document.querySelector('#worklist-'+worklistNo+' textarea[name=workTitle]');
-			let wlSection = document.querySelector('#worklist-'+worklistNo);
+			let title = $(workTitle).val().trim();
 			
 			//유효성 검사
-			if($(workTitle).val().trim()==""){
+			if(title===""){
 				alert("새 업무의 이름을 입력해 주세요!");
 				return;
 			}
@@ -541,34 +674,14 @@ function addWork(){
 					projectManager: '${projectManager}',
 					projectNo: ${project.projectNo},
 					worklistNo: worklistNo,
-					workTitle: $(workTitle).val().trim(),
+					workTitle: title,
 					workChargedMember: addMemberArr,
 					workTag: addTag,
 					workDate: addDateArr
 			}
 			
-			$.ajax({
-				url: '${pageContext.request.contextPath}/project/insertWork.do',
-				data: data,
-				dataType: 'html',
-				type: 'POST',
-				success: data=>{
-					if(data!=null){
-						$(wlSection).html(data);
-						
-						addTag = "";
-						addMemberArr.length = 0;
-						addDateArr.length = 0;
-						$('.daterangepicker').remove();
-					}
-					else{
-						alert("새 업무 만들기에 실패했습니다 :(");
-					}
-				},
-				error: (x,s,e) => {
-					console.log(x,s,e);
-				}
-			}); 
+			ajax(data);
+			
 		}) //end of 만들기 버튼클릭
 		
 		
@@ -602,6 +715,32 @@ function addWork(){
 		
 	}); //end of 업무추가 +버튼 클릭
 	
+	function ajax(data) {
+		let wlSection = document.querySelector('#worklist-'+worklistNo);
+		
+		$.ajax({
+			url: '${pageContext.request.contextPath}/project/insertWork.do',
+			data: data,
+			dataType: 'html',
+			type: 'POST',
+			success: data=>{
+				if(data!=null){
+					$(wlSection).html(data);
+					
+					addTag = "";
+					addMemberArr.length = 0;
+					addDateArr.length = 0;
+					$('.daterangepicker').remove();
+				}
+				else{
+					alert("새 업무 만들기에 실패했습니다 :(");
+				}
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		}); 
+	}
 }
 
 //업무 삭제하기
@@ -664,6 +803,7 @@ function deleteWork(){
 				projectNo: ${project.projectNo},
 				worklistNo: worklistNo,
 				workNo: workNo,
+				workTitle: $(delTitle).text().trim(),
 				cntChk: cntChk,
 				cntComment: cntComment,
 				cntFile: cntFile,
@@ -1090,6 +1230,16 @@ function setting(){
         	$side.stop(true).animate({right:'0px'});
         }
     });
+<<<<<<< HEAD
+=======
+    
+    //활동로그 열기 
+    $("#btn-projectLog").on('click', ()=>{
+    	
+    
+    });
+    
+>>>>>>> refs/heads/project-danbi
 }
 
 //사이드바 닫기
@@ -1174,10 +1324,11 @@ function closeSideBar(){
         </li>
 
         <!-- 프로젝트 설정 -->
-        <li class="nav-item">
+        <li id="nav-psetting" class="nav-item">
             <button type="button" class="btn btn-block btn-default btn-xs nav-link" id="project-setting-toggle">
             	<i class="fas fa-cog"></i>
             </button>
+            <button type="button" class="btn btn-block btn-default btn-xs nav-link" id="btn-projectLog"><i class="fas fa-file-contract"></i></button>
         </li>
     </c:if>
     </ul>
@@ -1215,15 +1366,33 @@ function closeSideBar(){
         <section class="worklist" id="worklist-${wl.worklistNo}">
             <!-- 업무리스트 타이틀 -->
             <div class="worklist-title">
-                <h5>${wl.worklistTitle}</h5>
-                
-                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
-                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
-                <div class="worklist-title-btn">
-	                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
-	                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
+            	<div class="wlTitle-inner">
+	                <h5>${wl.worklistTitle}</h5>
+	                
+	                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
+	                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
+	                <div class="worklist-title-btn">
+	                	<button type="button" class="btn-showUpdateFrm" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
+		                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
+		                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
+	                </div>
+	                </c:if>
                 </div>
-                </c:if>
+                
+                <!-- 업무리스트 타이틀 수정폼 -->
+               	<section class="update-wlTitle-wrapper" role="button" tabindex="0">
+		            <!-- 타이틀 -->
+		            <div class="worklist-title update-wklt">
+		                <form claa="updateWlTitleFrm" onsubmit="return false;">
+		                    <input type="text" name="newWorklistTitle" required/>
+		                    <div class="worklist-title-btn">
+		                        <button type="button" class="btn-updateWlTitle" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
+		                        <button type="button" class="btn-cancel-updateWlTitle"><i class="fas fa-times"></i></button>
+		                    </div>
+		                </form>
+		                <div class="clear"></div>
+		            </div><!-- /.worklist-title -->
+		        </section><!-- /.worklist -->
                 
                 <!-- 새 업무 만들기 -->
                 <div class="addWork-wrapper">
@@ -1324,7 +1493,7 @@ function closeSideBar(){
 		                <div class="work-title">
 		                    <h6>
 		                    	<button type="button" class="btn-check btn-checkWork" value="${w.workNo}"><i class="far fa-square"></i></button>
-		                    	<span id="work-workTitle">${w.workTitle}</span>
+		                    	${w.workTitle}
 		                    </h6>
 		                    <div class="work-importances">
 		                    <c:set var="point" value="${w.workPoint}" />
