@@ -48,9 +48,9 @@
                 </div>
 	
                 <!-- 체크리스트 -->
+                <div class="work-checklist">
                 <c:if test="${w.checklistList!=null && !empty w.checklistList}">
                 <c:set var="clList" value="${w.checklistList}" />
-                <div class="work-checklist">
                     <table class="tbl-checklist">
 	                    <tbody>
 		                	<c:forEach items="${clList}" var="chk">
@@ -59,7 +59,7 @@
 			                    <c:set var="chkChargedMemId" value="${m.memberId}"/>
 			                    
 			                	<c:if test="${chk.completeYn=='Y'}">
-		                        <tr class="completed">
+		                        <tr class="completed" id="${chk.checklistNo}">
 			                		<th>
 			                			<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>
 			                			<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>	
@@ -67,7 +67,7 @@
 			                        <td style="text-decoration:line-through;">
 			                    </c:if>
 			                    <c:if test="${chk.completeYn=='N'}">
-		                        <tr>
+		                        <tr id="${chk.checklistNo}">
 		                        	<th>
 		                        		<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>
 		                        		<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>
@@ -83,8 +83,8 @@
 	                        </c:forEach>
 	                    </tbody>
                     </table>                
-               	</div><!-- /.work-checklist -->
 				</c:if>
+               	</div><!-- /.work-checklist -->
 				
                 <!-- 날짜 설정 -->
                 <div class="work-deadline">
@@ -154,8 +154,8 @@
                     		<span class="chklt-cnt-completed">${chkCnt}</span>/<span class="chklt-cnt-total">${fn:length(w.checklistList)}</span>
                     	</span>
                     </c:if>
-                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
-                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+                    <span class="ico"><i class="far fa-comment"></i> <span class="comment-cnt">${fn:length(w.workCommentList)}</span></span>
+		            <span class="ico"><i class="fas fa-paperclip"></i> <span class="attach-cnt-total">${fn:length(w.attachmentList)}</span></span>
                     
                     <!-- 업무 배정된 멤버 -->
                     <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">

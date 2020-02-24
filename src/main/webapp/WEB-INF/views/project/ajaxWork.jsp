@@ -9,15 +9,33 @@
 
             <!-- 업무리스트 타이틀 -->
             <div class="worklist-title">
-                <h5>${wl.worklistTitle}</h5>
-                
-                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
-                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
-                <div class="worklist-title-btn">
-	                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
-	                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
+                <div class="wlTitle-inner">
+	                <h5>${wl.worklistTitle}</h5>
+	                
+	                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
+	                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
+	                <div class="worklist-title-btn">
+	                	<button type="button" class="btn-showUpdateFrm" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
+		                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
+		                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
+	                </div>
+	                </c:if>
                 </div>
-                </c:if>
+                
+                <!-- 업무리스트 타이틀 수정폼 -->
+               	<section class="update-wlTitle-wrapper" role="button" tabindex="0">
+		            <!-- 타이틀 -->
+		            <div class="worklist-title update-wklt">
+		                <form claa="updateWlTitleFrm" onsubmit="return false;">
+		                    <input type="text" name="newWorklistTitle" required/>
+		                    <div class="worklist-title-btn">
+		                        <button type="button" class="btn-updateWlTitle" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
+		                        <button type="button" class="btn-cancel-updateWlTitle"><i class="fas fa-times"></i></button>
+		                    </div>
+		                </form>
+		                <div class="clear"></div>
+		            </div><!-- /.worklist-title -->
+		        </section><!-- /.worklist -->
                 
                 <!-- 진행 중인 업무 -->
                 <div class="worklist-titleInfo-top">
@@ -35,7 +53,7 @@
 		                    <!-- 업무 설정 -->
 		                    <div class="addWork-btnLeft">
 		                    
-		                    	<c:if test="${project.privateYn == 'N'}">
+		                    	<c:if test="${privateYn == 'N'}">
 		                        <!-- 업무 멤버 배정 -->
 		                        <div class="add-member dropdown">
 		                        	<span class="badge navbar-badge addMem-badge"></span>
@@ -140,9 +158,9 @@
 		                </div>
 	
 		                <!-- 체크리스트 -->
+		                <div class="work-checklist">
 		                <c:if test="${w.checklistList!=null && !empty w.checklistList}">
 		                <c:set var="clList" value="${w.checklistList}" />
-		                <div class="work-checklist">
 		                    <table class="tbl-checklist">
 			                    <tbody>
 				                	<c:forEach items="${clList}" var="chk">
@@ -175,8 +193,8 @@
 			                        </c:forEach>
 			                    </tbody>
 		                    </table>                
-	                	</div><!-- /.work-checklist -->
 						</c:if>
+	                	</div><!-- /.work-checklist -->
 						
 		                <!-- 날짜 설정 -->
 		                <div class="work-deadline">
@@ -246,8 +264,8 @@
 		                    		<span class="chklt-cnt-completed">${chkCnt}</span>/<span class="chklt-cnt-total">${fn:length(w.checklistList)}</span>
 		                    	</span>
 		                    </c:if>
-		                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
-		                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+		                    <span class="ico"><i class="far fa-comment"></i> <span class="comment-cnt">${fn:length(w.workCommentList)}</span></span>
+		                    <span class="ico"><i class="fas fa-paperclip"></i> <span class="attach-cnt-total">${fn:length(w.attachmentList)}</span></span>
 		                    
 		                    <!-- 업무 배정된 멤버 -->
 		                    <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">
@@ -323,9 +341,9 @@
 		                </div>
 	
 		                <!-- 체크리스트 -->
+		                <div class="work-checklist">
 		                <c:if test="${w.checklistList!=null && !empty w.checklistList}">
 		                <c:set var="clList" value="${w.checklistList}" />
-		                <div class="work-checklist">
 		                    <table class="tbl-checklist">
 			                    <tbody>
 				                	<c:forEach items="${clList}" var="chk">
@@ -334,7 +352,7 @@
 					                    <c:set var="chkChargedMemId" value="${m.memberId}"/>
 					                    
 					                	<c:if test="${chk.completeYn=='Y'}">
-				                        <tr class="completed">
+				                        <tr class="completed" id="${chk.checklistNo}">
 					                		<th>
 					                			<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>
 					                			<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>	
@@ -342,7 +360,7 @@
 					                        <td style="text-decoration:line-through;">
 					                    </c:if>
 					                    <c:if test="${chk.completeYn=='N'}">
-				                        <tr>
+				                        <tr id="${chk.checklistNo}">
 				                        	<th>
 				                        		<button type="button" class="btn-check" value="${w.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>
 				                        		<input type="hidden" class="hiddenChkChargedMemId" value="${chkChargedMemId}"/>
@@ -358,8 +376,8 @@
 			                        </c:forEach>
 			                    </tbody>
 		                    </table>                
-	                	</div><!-- /.work-checklist -->
 						</c:if>
+	                	</div><!-- /.work-checklist -->
 						
 		                <!-- 날짜 설정 -->
 		                <c:if test="${w.workRealEndDate!=null}">
@@ -388,8 +406,8 @@
 		                    		<span class="chklt-cnt-completed">${chkCnt}</span>/<span class="chklt-cnt-total">${fn:length(w.checklistList)}</span>
 		                    	</span>
 		                    </c:if>
-		                    <span class="ico"><i class="far fa-comment"></i> ${fn:length(w.workCommentList)}</span>
-		                    <span class="ico"><i class="fas fa-paperclip"></i> ${fn:length(w.attachmentList)}</span>
+		                    <span class="ico"><i class="far fa-comment"></i> <span class="comment-cnt">${fn:length(w.workCommentList)}</span></span>
+		                    <span class="ico"><i class="fas fa-paperclip"></i> <span class="attach-cnt-total">${fn:length(w.attachmentList)}</span></span>
 		                    
 		                    <!-- 업무 배정된 멤버 -->
 		                    <c:if test="${w.workChargedMemberList!=null && !empty w.workChargedMemberList}">

@@ -10,15 +10,33 @@
 <section class="worklist" id="worklist-${wl.worklistNo}">
             <!-- 업무리스트 타이틀 -->
             <div class="worklist-title">
-                <h5>${wl.worklistTitle}</h5>
-                
-                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
-                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
-                <div class="worklist-title-btn">
-	                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
-	                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
+                <div class="wlTitle-inner">
+	                <h5>${wl.worklistTitle}</h5>
+	                
+	                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
+	                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
+	                <div class="worklist-title-btn">
+	                	<button type="button" class="btn-showUpdateFrm" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
+		                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
+		                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
+	                </div>
+	                </c:if>
                 </div>
-                </c:if>
+                
+                <!-- 업무리스트 타이틀 수정폼 -->
+               	<section class="update-wlTitle-wrapper" role="button" tabindex="0">
+		            <!-- 타이틀 -->
+		            <div class="worklist-title update-wklt">
+		                <form claa="updateWlTitleFrm" onsubmit="return false;">
+		                    <input type="text" name="newWorklistTitle" required/>
+		                    <div class="worklist-title-btn">
+		                        <button type="button" class="btn-updateWlTitle" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
+		                        <button type="button" class="btn-cancel-updateWlTitle"><i class="fas fa-times"></i></button>
+		                    </div>
+		                </form>
+		                <div class="clear"></div>
+		            </div><!-- /.worklist-title -->
+		        </section><!-- /.worklist -->
                 
                 <!-- 진행 중인 업무 -->
                 <div class="worklist-titleInfo-top">

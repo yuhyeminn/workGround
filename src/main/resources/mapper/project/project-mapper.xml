@@ -74,7 +74,13 @@
 	<select id="selectListByDept" resultMap="viewProjectMemberCollectionMap">
 		select * from view_projectMember 
 		where private_yn = 'N' and dept_code = #{deptCode}
-		order by project_no desc
+		<if test="statusCode != null and statusCode !='' and statusCode != 'ALL' and statusCode != 'NONE'">
+			and project_status_code = #{statusCode}
+		</if>
+		<if test="statusCode == 'NONE'">
+		and project_status_code is null
+		</if>
+		order by ${sortType}
 	</select>
 	
 	<!-- projectList 뿌리기 : 총업무수/완료된 업무수 조회 -->
@@ -93,7 +99,7 @@
 	
 	<!-- projectList 뿌리기 : 중요 표시된 프로젝트 번호 조회 -->
 	<select id="selectImportantProjectNo" resultType="_int">
-		select project_no from project_important where member_id=#{memberId} order by project_no desc
+		select PI.project_no from project_important PI left join project P on PI.project_no = P.project_no where member_id=#{memberId} order by ${sortType}
 	</select>
 	
 	<!-- projectList 뿌리기 : 내 워크패드 조회 -->
@@ -301,20 +307,53 @@
 		delete from project where project_no = #{projectNo}
 	</delete>
 	
+	<select id="selectProjectPrivateYn" resultType="string">
+		select private_yn from project where project_no = #{projectNo}
+	</select>
 	
+	<insert id="insertProjectLog" parameterType="hashMap">
+		insert into project_log 
+		values(seq_project_log.nextval, #{projectNo}, #{logType}, #{logContent}, to_date(#{logDate}, 'YYYYMMDDHH24MISS'))
+	</insert>
 	
+	<select id="selectWorkTitle" resultType="string">
+		select work_title from work where work_no = #{workNo}
+	</select>
 	
+	<select id="selectChecklistContent" resultMap="chkContentMap">
+		select work_title, checklist_content 
+		from checklist C join work W on C.work_no = W.work_no 
+		where C.checklist_no = #{checklistNo}
+	</select>
+	<resultMap type="hashMap" id="chkContentMap">
+		<result column="work_title" property="workTitle"/>
+		<result column="checklist_content" property="chkContent"/>
+	</resultMap>
 	
+	<select id="selectChkChargedMemberName" resultType="string">
+		select M.member_name
+		from checklist C join work_charged_members WCM on C.checklist_charged_members_no = WCM.work_charged_members_no
+		                join member M on WCM.charged_member_id = M.member_id
+		where checklist_no = #{checklistNo}
+	</select>
 	
+	<select id="selectMemberName" resultType="string">
+		select member_name from member where member_id = #{chkChargedMemberId}
+	</select>
 	
+	<select id="selectWorklistTitle" resultType="string">
+		select worklist_title 
+		from work W join worklist WL on W.worklist_no = WL.worklist_no
+		where W.work_no = #{workNo}
+	</select>
 	
+	<select id="selectWorklistTitleByWlNo" resultType="string">
+		select worklist_title from worklist where worklist_no = #{worklistNo}
+	</select>
 	
-	
-	
-	
-	
-	
-	
+	<update id="updateWorklistTitle" parameterType="hashMap">
+		update worklist set worklist_title=#{worklistTitle} where worklist_no=#{worklistNo}
+	</update>
 	
 	
 	
@@ -399,6 +438,7 @@
 		<if test="!(statusCode !='' and statusCode != null)">
 		and project_status_code is null
 		</if>
+		order by ${sortType}
 	</select>
 	
 	<!-- projectListByStatusCode.do : 상태코드별 중요 표시된 프로젝트 조회 -->
@@ -412,6 +452,7 @@
 		<if test="!(statusCode !='' and statusCode != null)">
 		and P.project_status_code is null
 		</if>
+		order by ${sortType}
 	</select>
 	
 	<!-- projectSetting.do : 프로젝트 설정 사이드바에서 조회할 프로젝트 정보 조회 .-->
@@ -437,7 +478,7 @@
 		select A.*, VM.*
 		from attachment A join project_members PM on A.attachment_writer_no = PM.project_members_no left join view_member VM on PM.member_id = VM.member_id
 		where A.work_no = #{workNo}
-		order by A.attachment_no desc
+		order by attachment_enrolldate
 	</select>
 	<resultMap type="attachment" id="attachmentMemberMap">
 		<id column="attachment_no" property="attachmentNo"></id>

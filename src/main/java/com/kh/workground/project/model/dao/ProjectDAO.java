@@ -13,7 +13,7 @@ import com.kh.workground.project.model.vo.Worklist;
 
 public interface ProjectDAO {
 
-	List<Project> selectListByDept(String deptCode);
+	List<Project> selectListByDept(Map<String, String> param);
 
 	List<Project> selectListByImportant(String memberId);
 
@@ -37,7 +37,7 @@ public interface ProjectDAO {
 
 	int selectTotalWorkCompleteYn(int worklistNo);
 
-	List<Integer> selectListByImportantProjectNo(String memberId);
+	List<Integer> selectListByImportantProjectNo(Map<String, String> param);
 
 	Map<String, Object> selectProjectImportantOne(Map<String, Object> param);
 
@@ -80,5 +80,23 @@ public interface ProjectDAO {
 	List<Member> selectProjectMemberListByQuitYn(int projectNo);
 
 	int deleteProject(int projectNo);
+
+	String selectProjectPrivateYn(int projectNo);
+
+	int insertProjectLog(Map<String, Object> param);
+
+	String selectWorkTitle(int workNo);
+
+	Map<String, String> selectChecklistContent(int checklistNo);
+
+	String selectChkChargedMemberName(int checklistNo);
+
+	String selectMemberName(String chkChargedMemberId);
+
+	String selectWorklistTitle(int workNo);
+
+	String selectWorklistTitleByWlNo(int worklistNo);
+
+	int updateWorklistTitle(Map<String, Object> param);
 
 }

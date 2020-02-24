@@ -88,7 +88,7 @@ $(document).ready(function() {
 	$(".div-close").on('click',()=>{
 	    var $side = $("#setting-sidebar");
 	    if($side.hasClass('open')) {
-	        $side.stop(true).animate({right:'-520px'});
+	        $side.stop(true).animate({right:'-600px'});
 	        $side.removeClass('open');
 	    }
 	});

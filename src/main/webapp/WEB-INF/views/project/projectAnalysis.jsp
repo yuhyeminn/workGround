@@ -70,7 +70,7 @@
 		   <c:set var="myplanWorkCnt" value="${myplanWorkCnt+1}"/>
 		 </c:if>
 		 <!-- 마감일 없음 -->
-		 <c:if test="${work.workEndDate == null or work.workEndDate ==''}">
+		 <c:if test="${myworkEndDate == null or myworkEndDate ==''}">
 		   <c:set var="mynullEndWorkCnt" value="${mynullEndWorkCnt+1}"/>
 		 </c:if>
       </c:if>

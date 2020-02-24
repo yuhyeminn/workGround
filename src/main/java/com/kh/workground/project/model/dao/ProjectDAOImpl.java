@@ -27,8 +27,8 @@ public class ProjectDAOImpl implements ProjectDAO {
 	SqlSessionTemplate sqlSession;
 	
 	@Override
-	public List<Project> selectListByDept(String deptCode) {
-		return sqlSession.selectList("project.selectListByDept", deptCode);
+	public List<Project> selectListByDept(Map<String, String> param) {
+		return sqlSession.selectList("project.selectListByDept", param);
 	}
 
 	@Override
@@ -87,8 +87,8 @@ public class ProjectDAOImpl implements ProjectDAO {
 	}
 
 	@Override
-	public List<Integer> selectListByImportantProjectNo(String memberId) {
-		return sqlSession.selectList("project.selectImportantProjectNo", memberId);
+	public List<Integer> selectListByImportantProjectNo(Map<String, String> param) {
+		return sqlSession.selectList("project.selectImportantProjectNo", param);
 	}
 
 	@Override
@@ -195,5 +195,51 @@ public class ProjectDAOImpl implements ProjectDAO {
 	public int deleteProject(int projectNo) {
 		return sqlSession.delete("project.deleteProject", projectNo);
 	}
+
+	@Override
+	public String selectProjectPrivateYn(int projectNo) {
+		return sqlSession.selectOne("project.selectProjectPrivateYn", projectNo);
+	}
+
+	@Override
+	public int insertProjectLog(Map<String, Object> param) {
+		return sqlSession.insert("project.insertProjectLog", param);
+	}
+
+	@Override
+	public String selectWorkTitle(int workNo) {
+		return sqlSession.selectOne("project.selectWorkTitle", workNo);
+	}
+
+	@Override
+	public Map<String, String> selectChecklistContent(int checklistNo) {
+		return sqlSession.selectOne("project.selectChecklistContent", checklistNo);
+	}
+
+	@Override
+	public String selectChkChargedMemberName(int checklistNo) {
+		return sqlSession.selectOne("project.selectChkChargedMemberName", checklistNo);
+	}
+
+	@Override
+	public String selectMemberName(String chkChargedMemberId) {
+		return sqlSession.selectOne("project.selectMemberName", chkChargedMemberId);
+	}
+
+	@Override
+	public String selectWorklistTitle(int workNo) {
+		return sqlSession.selectOne("project.selectWorklistTitle", workNo);
+	}
+
+	@Override
+	public String selectWorklistTitleByWlNo(int worklistNo) {
+		return sqlSession.selectOne("project.selectWorklistTitleByWlNo", worklistNo);
+	}
+
+	@Override
+	public int updateWorklistTitle(Map<String, Object> param) {
+		return sqlSession.update("project.updateWorklistTitle", param);
+	}
+
 
 }
