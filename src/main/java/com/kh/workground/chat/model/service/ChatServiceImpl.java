@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.kh.workground.chat.model.dao.ChatDAO;
 import com.kh.workground.chat.model.dao.ChatDAOImpl;
 import com.kh.workground.chat.model.vo.Channel;
+import com.kh.workground.chat.model.vo.ChannelMember;
 import com.kh.workground.chat.model.vo.Chat;
-import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.member.model.vo.Member;
 
 @Service
@@ -35,25 +35,61 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	@Override
-	public String findChannelByMemberId(Map<String, String> param) {
+	public List<Channel> findChannelByMemberId(Map<String, String> param) {
 		return chatDAO.findChannelNoListByMemberId(param);
 	}
 
 	@Override
+	public int insertChannel(Channel channel) {
+		return chatDAO.insertChannel(channel);
+	}
+
+	@Override
+	public int insertChannelMember(List<ChannelMember> channelMemberList) {
+		int result = 0;
+		for(ChannelMember channelMember : channelMemberList)
+			result += chatDAO.insertChannelMember(channelMember);
+		return result;
+	}
+
+	@Override
+	public List<Chat> findChatRoomByChannelNo(String channelNo) {
+		return chatDAO.findChatRoomByChannelNo(channelNo);
+	}
+
+	@Override
+	public List<ChannelMember> selectChannelMemberList(String channelNo) {
+		return chatDAO.selectChannelMemberList(channelNo);
+	}
+	
+	@Override
+	public int updateLastCheck(Chat fromMessage) {
+		return chatDAO.updateLastCheck(fromMessage);
+	}
+	
+	@Override
 	public int insertChatLog(Chat fromMessage) {
+//		updateLastCheck(fromMessage);
 		return chatDAO.insertChatLog(fromMessage);
 	}
 
 	@Override
-	public Channel selectChannel(String channelNo) {
-
-		return chatDAO.selectChannel(channelNo);
+	public List<Chat> selectChatList() {
+		return chatDAO.selectChatList();
 	}
 
+	@Override
+	public List<Channel> findChannelListByKeyword(Map<String, String> param) {
+		return chatDAO.findChannelListByKeyword(param);
+	}
+	
+//	sh start
+	@Override
+	public Channel selectChannel(String channelNo) {
+		return chatDAO.selectChannel(channelNo);
+	}
 	@Override
 	public List<Chat> getClubChatList(String channelNo) {
 		return chatDAO.getClubChatList(channelNo);
 	}
-
-
 }

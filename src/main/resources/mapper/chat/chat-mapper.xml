@@ -3,17 +3,22 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="chat">
+	<!-- br start -->
 	<select id="findChannelNoListByMemberId" resultType="channel">
-		select C.* 
+		select C.*, B.member_name, B.renamed_filename, B.member_id 
 		from channel C 
-			left join channel_member M on C.channel_no = M.channel_no
-		where M.member_id = #{memberId} and C.channel_type = 'CH3'
+			left join channel_member M on C.channel_no = M.channel_no 
+			left join member B on M.member_id = B.member_id
+		where (C.channel_no in (select C.channel_no from channel C left join channel_member M on C.channel_no = M.channel_no where M.member_id = #{memberId} and C.channel_type = 'CH3') and M.member_id != #{memberId})
+    		or (C.channel_no in (select C.channel_no from channel C left join channel_member M on C.channel_no = M.channel_no where M.member_id = #{memberId} and C.channel_type != 'CH3') and M.member_id = #{memberId})
+    	order by channel_type, B.member_name
 	</select>
 	
 	<select id="selectMemberList" resultType="member">
 		select * 
 		from member 
-		where member_name like '%'||#{keyword}||'%' or email like '%'||#{keyword}||'%'
+		where member_name like '%'||#{keyword}||'%' or email like '%'||#{keyword}||'%' 
+		order by member_name 
 	</select>
 	
 	<select id="selectOneMember" resultType="member">
@@ -21,17 +26,64 @@
 	</select>
 	
 	<select id="findChannelByMemberId" resultType="channel">
-		select C.channel_no  
+		select C.*, B.member_name, B.renamed_filename, B.member_id 
 		from channel C 
 			left join channel_member M on C.channel_no = M.channel_no 
-		where M.
+			left join member B on M.member_id = B.member_id 
+		where C.channel_type = 'CH3'and (M.member_id = #{chatMember} or M.member_id = #{memberId})
+			and C.channel_title like '%'||#{chatMember}||'%' and C.channel_title like '%'||#{memberId}||'%'
 	</select>
 	
-	<insert id="insertChatLog">
-		INSERT INTO CHAT (chat_no, channel_no, sender, send_date, msg)
-		VALUES(seq_chat_no.nextval, #{channelNo}, #{sender}, #{sendDate}, #{msg})
+	<insert id="insertChannel">
+		insert into channel values(#{channelNo}, #{channelType}, #{channelTitle}, #{status}, #{lastCheck}, #{projectOrClubNo})
 	</insert>
 	
+	<insert id="insertChannelMember">
+		insert into channel_member 
+		values(seq_channel_member_no.nextval, #{channelNo}, #{memberId})
+	</insert>
+	
+	<select id="findChatRoomByChannelNo" resultType="chat">
+		select C.*, M.member_name, M.renamed_filename  
+		from chat C left join member M on C.sender = M.member_id 
+		where channel_no = #{channelNo}
+		order by send_date
+	</select>
+	
+	<select id="selectChatList" resultType="chat">
+		select C.*, M.member_name, M.renamed_filename  
+		from chat C 
+			left join member M on C.sender = M.member_id 
+			left join channel H on C.channel_no = H.channel_no 
+		order by send_date
+	</select>
+	
+	<select id="selectChannelMemberList" resultType="channelMember">
+		select C.*, M.renamed_filename 
+		from channel_member C left join member M on C.member_id = M.member_id 
+		where channel_no = #{channelNo} 
+	</select>
+	
+	<update id="updateLastCheck">
+		update channel set lastcheck = #{time} 
+		where channel_no = #{channelNo} and sender = #{sender}
+	</update>
+	
+	<insert id="insertChatLog">
+		insert into chat(chat_no, channel_no, sender, send_date, msg) 
+		values(seq_chat_no.nextval, #{channelNo}, #{sender}, default, #{msg})
+	</insert>
+	
+	<select id="findChannelListByKeyword" resultType="channel">
+		select C.*, B.member_name, B.renamed_filename, B.member_id  
+		from channel C 
+		    left join channel_member M on C.channel_no = M.channel_no 
+		    left join member B on M.member_id = B.member_id 
+		where (B.member_id = #{memberId} and channel_type != 'CH3' and channel_title like '%'||#{keyword}||'%') or (channel_title like '%'||#{memberId}||'%' and channel_type = 'CH3' and B.member_name like '%'||#{keyword}||'%')
+	</select>
+	<!-- br end -->
+	
+	<!-- sh start -->
 	<select id="selectChannel" resultType="channel">
 		select *
 		from channel
@@ -43,4 +95,5 @@
 		from (select * from chat where channel_no = #{channelNo} order by chat_no asc) C
 		left join member M on M.member_id = C.sender
 	</select>
+	<!-- sh end -->
 </mapper>

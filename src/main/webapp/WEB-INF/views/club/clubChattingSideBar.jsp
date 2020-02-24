@@ -172,8 +172,6 @@ function sendMessage() {
 			type: "MESSAGE"
 		}
 	
-		
-
 
 		//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
 		stompClient.send('<c:url value="/chat/${channelNo}" />',{}, JSON.stringify(data));
