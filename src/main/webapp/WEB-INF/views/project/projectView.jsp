@@ -1232,8 +1232,6 @@ function setting(){
         	$side.stop(true).animate({right:'0px'});
         }
     });
-<<<<<<< HEAD
-=======
     
     //활동로그 열기 
     $("#btn-projectLog").on('click', ()=>{
@@ -1241,7 +1239,6 @@ function setting(){
     
     });
     
->>>>>>> refs/heads/project-danbi
 }
 
 //사이드바 닫기
