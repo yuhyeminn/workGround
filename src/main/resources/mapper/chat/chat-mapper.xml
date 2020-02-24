@@ -3,6 +3,7 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="chat">
+	<!-- br start -->
 	<select id="findChannelNoListByMemberId" resultType="channel">
 		select C.*, B.member_name, B.renamed_filename, B.member_id 
 		from channel C 
@@ -80,4 +81,19 @@
 		    left join member B on M.member_id = B.member_id 
 		where (B.member_id = #{memberId} and channel_type != 'CH3' and channel_title like '%'||#{keyword}||'%') or (channel_title like '%'||#{memberId}||'%' and channel_type = 'CH3' and B.member_name like '%'||#{keyword}||'%')
 	</select>
+	<!-- br end -->
+	
+	<!-- sh start -->
+	<select id="selectChannel" resultType="channel">
+		select *
+		from channel
+		where channel_no = #{channel_no}
+	</select>
+	
+	<select id="getClubChatList" resultType="chat">
+		select C.*,M.renamed_filename, M.member_name
+		from (select * from chat where channel_no = #{channelNo} order by chat_no asc) C
+		left join member M on M.member_id = C.sender
+	</select>
+	<!-- sh end -->
 </mapper>

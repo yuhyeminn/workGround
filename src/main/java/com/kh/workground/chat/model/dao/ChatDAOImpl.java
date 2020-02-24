@@ -78,4 +78,13 @@ public class ChatDAOImpl implements ChatDAO {
 		return sqlSession.selectList("chat.findChannelListByKeyword", param);
 	}
 	
+//	sh start
+	@Override
+	public Channel selectChannel(String channelNo) {
+		return sqlSession.selectOne("chat.selectChannel", channelNo);
+	}
+	@Override
+	public List<Chat> getClubChatList(String channelNo) {
+		return sqlSession.selectList("chat.getClubChatList", channelNo);
+	}
 }

@@ -33,5 +33,9 @@ public interface ChatDAO {
 	List<Chat> selectChatList();
 
 	List<Channel> findChannelListByKeyword(Map<String, String> param);
-
+	
+//	sh start
+	Channel selectChannel(String channelNo);
+	
+	List<Chat> getClubChatList(String channelNo);
 }
