@@ -17,10 +17,12 @@
 
 <!-- 프로젝트 관리자 -->
 <c:set var="projectManager" value=""/>
+<c:set var="pmObj" value=""/>
 <c:set var="isprojectManager" value="false"/>
 <c:forEach var="pm" items="${project.projectMemberList}">
 	<c:if test="${pm.managerYn eq 'Y'}">
 		<c:set var="projectManager" value="${projectManager=pm.memberId}" />
+		<c:set var="pmObj" value="${pm}"/>
 	</c:if>
 	<c:if test="${pm.memberId eq memberLoggedIn.memberId }">
 		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
@@ -56,6 +58,7 @@ $(()=>{
     setting(); //설정창
     updateDesc(); //업무, 프로젝트 설명 수정
     updateTitle(); //업무, 프로젝트 제목 수정
+   
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -1011,7 +1014,7 @@ function setting(){
     //대화 사이드바 열기
     $('#btn-openChatting').on('click', ()=>{
     	$.ajax({
-			url: "${pageContext.request.contextPath}/project/projectChatting.do",
+			url: "${pageContext.request.contextPath}/chat/projectChatting.do",
 			type: "get",
 			data: {projectNo:projectNo},
 			dataType: "html",
@@ -1692,6 +1695,56 @@ function updateTitle(){
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
+</div>
+
+<!-- 대화창에서 공지 올리기 모달 -->
+<!-- 내가 속한 부서의 공지 추가 모달 -->
+<!-- 관리자: 전체/부서별 공지 작성 가능 -->
+<!-- 부서별: 자기 부서는 selected / 나머지 부서 disabled -->
+<div class="modal fade" id="addNoticeForDeptModal" tabindex="-1" role="dialog" aria-labelledby="addNoticeForDeptModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-edit"></i>&nbsp; 부서 게시글 작성</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="chatNoticeFrm"
+      		method="post"
+      		enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="addNotice" style="padding: 1rem;">
+            <div class="form-group">
+              <label for="inputDept">부서</label>
+              <input type="text" class="form-control" value="${pmObj.deptTitle}" readonly/>
+              <input type="hidden" name="deptCode" value="${pmObj.deptCode}" readonly/>
+            </div>
+            <div class="form-group" style="display:none;">
+              <label for="inputWriter">작성자</label>
+              <input type="text" name="noticeWriter" value="${memberLoggedIn.memberId}" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="inputName">게시글 제목</label>
+              <input type="text" name="noticeTitle" id="noticeTitle" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="inputDescription">게시글 내용</label>
+              <textarea class="textarea" name="noticeContent" id="noticeContent" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlFile1">파일 첨부</label>
+              <input type="file" class="form-control-file" id="noticeFile" name="upFile">
+            </div>
+          </div><!-- /.card-body -->
+        </div> <!--/.modal-body-->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-success" id="chatNtc-upload">작성</button>
+          <button type="button" class="btn btn-outline-success" data-dismiss="modal">취소</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

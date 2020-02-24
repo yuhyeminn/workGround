@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.workground.chat.model.vo.Channel;
 import com.kh.workground.chat.model.vo.Chat;
+import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.member.model.vo.Member;
 
 @Repository
@@ -53,5 +54,7 @@ public class ChatDAOImpl implements ChatDAO {
 
 		return sqlSession.selectList("chat.getClubChatList", channelNo);
 	}
+
+	
 	
 }

@@ -6,6 +6,7 @@
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/club/clubViewModal.jsp"></jsp:include>
+<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
 
 <style>
 .note-editing-area {
@@ -154,6 +155,32 @@ $(function(){
 	tabActive(); //서브헤더 탭 활성화
 	setting(); //설정창
 	
+	
+	//채팅방
+	$('#btn-openChatting').on('click', ()=>{
+			var $side = $("#setting-sidebar");
+			var clubNo = ${club.clubNo};
+			
+	    	$.ajax({
+				url: "${pageContext.request.contextPath}/chat/clubChatting.do",
+				type: "get",
+				data: {clubNo:clubNo},
+				dataType: "html",
+				success: data => {
+					$side.html("");
+					$side.html(data); 
+				},
+				error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+			});
+	        
+	        $side.addClass('open');
+	        if($side.hasClass('open')) {
+	        	$side.stop(true).animate({right:'0px'});
+	        }
+	    });
+	
 });
 
 function memberList(clubNo){
@@ -243,6 +270,7 @@ function fileDownload(oName, rName, clubNo) {
 	location.href = "${pageContext.request.contextPath}/club/clubFileDownload.do?clubNo="+clubNo+"&oName="+oName+"&rName="+rName;
 }
 
+<<<<<<< HEAD
 // 사이드바 관련
 function setting(){
     var $side = $("#setting-sidebar");
@@ -275,6 +303,9 @@ function setting(){
 
 
 
+=======
+    
+>>>>>>> f5b3ad28b09e1ccf655bcb2ed21b0accc3004208
 </script>
 
 <!-- Navbar ClubView -->
@@ -318,7 +349,8 @@ function setting(){
 		<li class="nav-item">
 			<button type="button" id="btn-openChatting"
 				class="btn btn-block btn-default btn-xs nav-link"
-				data-widget="control-sidebar" data-slide="true">
+				data-widget="control-sidebar" data-slide="true"
+				id="btn-openChatting">
 				<i class="far fa-comments"></i> 동호회 대화
 			</button>
 		</li>
@@ -356,6 +388,11 @@ function setting(){
 	</ul>
 </nav>
 <!-- /.navbar -->
+
+
+<!-- 오른쪽 채팅 사이드 바-->
+<aside class="work-setting" id="setting-sidebar" style="display: block;">
+</aside>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -1219,6 +1256,7 @@ function setting(){
 </div>
 <!-- /.content-wrapper -->
 
+<<<<<<< HEAD
 <aside class="control-sidebar project-setting" style="display: block;">
 	<!-- Control sidebar content goes here -->
 	<div class="p-3">
@@ -1338,13 +1376,11 @@ $(document).ready(function() {
 //1.최초 웹소켓 생성 url: /stomp
 let socket = new SockJS('<c:url value="/chat" />');
 let stompClient = Stomp.over(socket);
+=======
+>>>>>>> f5b3ad28b09e1ccf655bcb2ed21b0accc3004208
 
-//connection이 맺어지면, 콜백함수가 호출된다.
-stompClient.connect({}, function(frame) {
-	console.log("connected stomp over sockjs");
-	console.log(frame);
-	
 
+<<<<<<< HEAD
 	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
 	stompClient.subscribe('/chat/${channelNo}', function(message) {
 		console.log("receive from subscribe /chat/${channelNo} :", message);
@@ -1396,15 +1432,11 @@ function sendMessage() {
 		}
 	
 		var a = $("#text-message").val();
+=======
+
+>>>>>>> f5b3ad28b09e1ccf655bcb2ed21b0accc3004208
 
 
-		//채팅메세지: 1:1채팅을 위해 고유한 chatId를 서버측에서 발급해 관리한다.
-		stompClient.send('<c:url value="/chat/${channelNo}" />',{}, JSON.stringify(data));
-		
-		//message창 초기화
-		$('#text-message').val('');
-}
-</script>
 
 
 
