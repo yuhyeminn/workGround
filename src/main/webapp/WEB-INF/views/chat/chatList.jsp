@@ -536,7 +536,7 @@ function loadChatList(channelNo, memberName, renamedFileName, index) {
 }
 
 //웹소켓 선언
-//1.최초 웹소켓 생성 url: /chat
+//1.최초 웹소켓 생성 url: /stomp
 let socket = new SockJS('<c:url value="/stomp" />');
 let stompClient = Stomp.over(socket);
 

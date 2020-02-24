@@ -270,7 +270,6 @@ function fileDownload(oName, rName, clubNo) {
 	location.href = "${pageContext.request.contextPath}/club/clubFileDownload.do?clubNo="+clubNo+"&oName="+oName+"&rName="+rName;
 }
 
-<<<<<<< HEAD
 // 사이드바 관련
 function setting(){
     var $side = $("#setting-sidebar");
@@ -302,10 +301,6 @@ function setting(){
 
 
 
-
-=======
-    
->>>>>>> f5b3ad28b09e1ccf655bcb2ed21b0accc3004208
 </script>
 
 <!-- Navbar ClubView -->
@@ -1376,12 +1371,8 @@ $(document).ready(function() {
 //1.최초 웹소켓 생성 url: /stomp
 let socket = new SockJS('<c:url value="/chat" />');
 let stompClient = Stomp.over(socket);
-=======
->>>>>>> f5b3ad28b09e1ccf655bcb2ed21b0accc3004208
 
-
-<<<<<<< HEAD
-	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
+//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
 	stompClient.subscribe('/chat/${channelNo}', function(message) {
 		console.log("receive from subscribe /chat/${channelNo} :", message);
 		let messsageBody = JSON.parse(message.body);
@@ -1432,9 +1423,6 @@ function sendMessage() {
 		}
 	
 		var a = $("#text-message").val();
-=======
-
->>>>>>> f5b3ad28b09e1ccf655bcb2ed21b0accc3004208
 
 
 

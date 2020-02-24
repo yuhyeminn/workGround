@@ -878,19 +878,4 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		return mav;
 	}
 	
-	
-	@RequestMapping("/club/clubChatting.do")
-	public ModelAndView projectChatting(ModelAndView mav, @RequestParam int clubNo) {
-		
-		try {
-			
-			mav.setViewName("club/clubChattingSideBar");
-			
-		} catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new ProjectException("동호회 채팅창 조회 오류!");
-		}
-		
-		return mav;
-	}
 }

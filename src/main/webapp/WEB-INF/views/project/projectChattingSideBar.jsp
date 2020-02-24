@@ -110,7 +110,7 @@ $(document).ready(function() {
 
 //웹소켓 선언
 //1.최초 웹소켓 생성 url: /stomp
-let socket = new SockJS('<c:url value="/chat" />');
+let socket = new SockJS('<c:url value="/stomp" />');
 let stompClient = Stomp.over(socket);
 
 //connection이 맺어지면, 콜백함수가 호출된다.
