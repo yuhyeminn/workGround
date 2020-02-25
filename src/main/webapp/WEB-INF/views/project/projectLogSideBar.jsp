@@ -263,7 +263,7 @@
             		<hr/>
 		            <div class="row setting-row">
 		                <label class="setting-content-label">프로젝트 삭제</label>
-		              <div style="width:62%">
+		              <div style="width:64%">
 		                <button type="button" class="sign-out-project" id="delete-project">프로젝트 삭제</button>
 		                <p style="text-align:center">해당 프로젝트는 영구삭제 됩니다.</p>
 		              </div>

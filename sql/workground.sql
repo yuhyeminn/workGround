@@ -263,6 +263,27 @@ create table attachment(
 -----------------------------------------------------------------------
 CREATE SEQUENCE seq_attachment;
 
+--------------------------------------------------
+--project_log 테이블
+--------------------------------------------------
+create table project_log(
+    log_no number not null,
+    project_no number not null,
+    log_type varchar(50) not null,
+    log_content varchar2(1000) not null,
+    log_date date not null,
+    constraint pk_project_log primary key(log_no),
+    constraint fk_project_log_project_no foreign key(project_no) references project(project_no) on delete cascade
+);
+
+--------------------------------------------------
+--project_log 테이블 시퀀스 생성
+--------------------------------------------------
+create sequence seq_project_log;
+
+commit;
+select * from project_log order by log_no;
+
 --================================================
 --notice/community 관련 테이블/시퀀스
 --================================================
@@ -677,3 +698,313 @@ begin
     end if;
 end;
 /
+
+
+
+-- club 관련 테이블
+
+--========================================
+-- 동호회
+--========================================
+create table club (
+    club_no number, 
+    club_name varchar2(30) not null, 
+    club_enroll_date date default sysdate, 
+    club_introduce varchar2(1000) not null, 
+    club_meeting_date varchar2(100), 
+    club_category varchar2(10) not null, 
+    club_manager_id varchar2(30) not null,
+    constraint pk_club_no primary key(club_no),
+    constraint fk_club_manager_id foreign key(club_manager_id) references member(member_id)
+);
+create sequence seq_club_no;
+
+--========================================
+-- 동호회 활동사진
+--========================================
+create table club_photo(
+    club_photo_no number, 
+    club_photo_title varchar2(50) not null, 
+    club_photo_original varchar2(50) not null, 
+    club_photo_renamed varchar2(50) not null, 
+    club_no not null, 
+    club_photo_date date default sysdate, 
+    constraint pk_club_photo_no primary key(club_photo_no), 
+    constraint fk_club_no foreign key(club_no) references club(club_no) on delete cascade
+);
+create sequence seq_club_photo_no;
+
+create table club_photo_comment(
+    club_photo_comment_no number, 
+    club_photo_no number, 
+    club_photo_comment_level number, 
+    club_member_no number, 
+    club_photo_comment_content varchar2(3000), 
+    club_photo_comment_date date default sysdate, 
+    club_photo_comment_ref number, 
+    club_no number, 
+    constraint pk_club_photo_comment_no primary key(club_photo_comment_no), 
+    constraint fk_club_photo_co_notice_no foreign key(club_photo_no) references club_photo(club_photo_no) on delete cascade, 
+    constraint fk_club_photo_co_member_no foreign key(club_member_no) references club_member(club_member_no) on delete cascade, 
+    constraint ck_club_photo_comment_level check (club_photo_comment_level in(1, 2)), 
+    constraint fk_club_photo_com_ref foreign key(club_photo_comment_ref) references club_photo_comment(club_photo_comment_no) on delete cascade, 
+    constraint fk_club_photo_comment_club_no foreign key(club_no) references club(club_no) on delete cascade
+);
+create sequence seq_club_photo_comment_no;
+
+--=====================================
+-- 동호회 멤버
+--=====================================
+create table club_member(
+    club_member_no number,
+    emp_id varchar2(20) not null,
+    club_code number not null,
+    club_manager_YN char(2),
+    club_approve_YN char(2),
+    constraint pk_club_member_no primary key(club_member_no),
+    constraint fk_emp_id foreign key(emp_id) references member(member_id) on delete cascade,
+    constraint fk_club_code foreign key(club_code) references club(club_no) on delete cascade,
+    constraint ck_club_manager_YN check(club_manager_YN in ('Y','N')),
+    constraint ck_club_approve_YN check(club_approve_YN in ('Y','N'))
+);
+create sequence seq_club_member_no;
+
+--=====================================
+-- 동호회 일정
+--=====================================
+create table club_plan(
+    club_plan_no number, 
+    club_plan_title varchar2(100) not null, 
+    club_plan_content varchar2(4000), 
+    club_plan_start date not null, 
+    club_plan_end date not null, 
+    club_plan_state varchar2(6), 
+    club_plan_place varchar2(50) not null, 
+    club_plan_manager varchar2(30) not null, 
+    club_no number, 
+    constraint pk_club_plan_no primary key(club_plan_no), 
+    constraint fk_club_plan_club_no foreign key(club_no) references club(club_no) on delete cascade, 
+    constraint ck_club_plan_state check (club_plan_state in('예정', '완료', '취소'))
+);
+create sequence seq_club_plan_no;
+
+--drop table club_plan;
+--drop sequence seq_club_plan_no;
+
+--=====================================
+-- 동호회 공지
+--=====================================
+create table club_notice (
+    club_notice_no number, 
+    club_notice_title varchar2(100) not null, 
+    club_notice_content varchar2(4000) not null, 
+    club_no number, 
+    club_member_no number, 
+    club_notice_date date default sysdate, 
+    constraint pk_club_notice_no primary key (club_notice_no), 
+    constraint fk_club_notice_club_no foreign key (club_no) references club(club_no) on delete cascade, 
+    constraint fk_club_notice_club_member_no foreign key (club_member_no) references club_member(club_member_no) on delete cascade
+);
+create sequence seq_club_notice_no;
+
+--drop table club_notice;
+--drop sequence seq_club_notice_no;
+
+create table club_notice_comment(
+    club_notice_comment_no number, 
+    club_notice_no number, 
+    club_notice_comment_level number, 
+    club_member_no number, 
+    club_notice_comment_content varchar2(3000), 
+    club_notice_comment_date date default sysdate, 
+    club_notice_comment_ref number, 
+    club_no number, 
+    constraint pk_club_notice_comment_no primary key(club_notice_comment_no), 
+    constraint fk_club_notice_co_notice_no foreign key(club_notice_no) references club_notice(club_notice_no) on delete cascade, 
+    constraint fk_club_notice_co_member_no foreign key(club_member_no) references club_member(club_member_no) on delete cascade, 
+    constraint ck_club_notice_comment_level check (club_notice_comment_level in(1, 2)), 
+    constraint fk_club_notice_com_ref foreign key(club_notice_comment_ref) references club_notice_comment(club_notice_comment_no) on delete cascade, 
+    constraint fk_club_notice_comment_club_no foreign key(club_no) references club(club_no) on delete cascade
+);
+create sequence seq_club_notice_comment_no;
+
+create or replace procedure update_club_plan_state 
+    is
+begin
+    update club_plan set club_plan_state = '완료', club_plan_color = 'warning' where club_plan_start < sysdate and club_plan_state = '예정';
+commit;
+end;
+/
+
+declare
+    v_job_no number;
+begin
+    dbms_job.submit(job=> v_job_no, 
+                  what=> 'update_club_plan_state;', 
+                  next_date=> sysdate, 
+                  interval=> 'sysdate + 1');
+commit;
+    dbms_output.put_line('v_job_no : ' || v_job_no);
+end;
+/
+
+-- =====================================
+-- Trigger
+-- 동호회 개설시 개설자 자동으로 클럽 멤버에 등록
+-- =====================================
+commit;
+
+create table club_plan(
+    club_plan_no number, 
+    club_plan_title varchar2(100) not null, 
+    club_plan_content varchar2(4000), 
+    club_plan_start date not null, 
+    club_plan_end date not null, 
+    club_plan_state varchar2(6), 
+    club_plan_color varchar2(10), 
+    club_plan_place varchar2(50) not null, 
+    club_plan_manager varchar2(30) not null, 
+    club_no number, 
+    constraint pk_club_plan_no primary key(club_plan_no), 
+    constraint fk_club_plan_club_no foreign key(club_no) references club(club_no) on delete cascade, 
+    constraint ck_club_plan_state check(club_plan_state in('예정', '완료', '취소')), 
+    constraint ck_club_plan_color check(club_plan_color in('success', 'warning', 'danger'))
+);
+create sequence seq_club_plan_no;
+
+--============================================
+-- 동호회장이 동호회 생성시 자동으로 동호회장을 멤버리스트에 삽입
+--============================================
+create or replace trigger trig_insert_manager
+after insert on CLUB
+for each row
+begin
+        insert into club_member values(seq_club_member_no.nextval,:NEW.club_manager_id,:NEW.club_no,'Y','Y');
+        end;
+/        
+
+--drop trigger trig_insert_manager;
+
+
+-- channel 관련 테이블
+
+--========================================
+-- 채팅
+--========================================
+--채널 종류
+create table channel_sort(
+    channel_type char(3) NOT NULL,
+	channel_sort_name varchar2(35) NOT NULL, 
+    constraint pk_channel_type primary key(channel_type)
+);
+--채널
+create table channel(
+    channel_no varchar2(30), 
+    channel_type char(3), 
+    channel_title varchar2(30),
+    status char(2) default 'Y', 
+    last_check number default 0, 
+    project_or_club_no number, 
+    constraint pk_channel_no primary key(channel_no), 
+    constraint fk_channel_type foreign key(channel_type) references channel_sort(channel_type) on delete cascade
+);
+--채널 멤버
+create table channel_member(
+    channel_member_no number, 
+    channel_no varchar2(30), 
+    member_id varchar2(30), 
+    constraint pk_channel_member_no primary key(channel_member_no), 
+    constraint fk_channel_mem_channel_no foreign key(channel_no) references channel(channel_no) on delete cascade, 
+    constraint fk_channel_mem_mem_id foreign key(member_id) references member(member_id) on delete cascade
+);
+
+create sequence seq_channel_member_no;
+--채팅 목록
+create table chat(
+    chat_no number, 
+    channel_no varchar2(30), 
+    sender varchar2(30) not null, 
+    send_date date default sysdate, 
+    msg varchar2(3000) not null, 
+    constraint pk_chat_no primary key(chat_no), 
+    constraint fk_chat_channel_no foreign key(channel_no) references channel(channel_no) on delete cascade
+);
+create sequence seq_chat_no;
+
+--trigger
+--동호회생성시 동호회장 club_member에 넣고, 채팅방 개설하고, 채팅멤버 넣어주기(성공)
+create or replace trigger trig_insert_manager
+    after insert on CLUB
+    for each row
+begin
+    insert into club_member values(seq_club_member_no.nextval,:NEW.club_manager_id,:NEW.club_no,'Y','Y');
+    insert into channel values('C' || :NEW.club_no,'CH2',:NEW.club_name,default,default,:NEW.club_no);
+    insert into channel_member values(seq_channel_member_no.nextval, (select channel_no from channel where project_or_club_no = :NEW.club_no), :NEW.club_manager_id);
+end;
+/
+--drop trigger trig_insert_manager;
+
+-- 클럽멤버의 승인이 이루어질때 채팅멤버에 추가(성공)
+create or replace trigger trig_update_c_chatroom_member
+    after update on club_member
+    for each row
+begin
+    if (:NEW.club_approve_yn = 'Y') then
+        insert into channel_member values(seq_channel_member_no.nextval, (select channel_no from channel where project_or_club_no = :NEW.club_code), :NEW.emp_id);
+    end if;
+end;
+/
+
+-- 클럽이 삭제 될때
+create or replace trigger trig_delete_c_channel
+    before delete on club
+    for each row
+begin
+        delete from channel where project_or_club_no = :OLD.club_no;
+end;
+/
+
+--프로젝트가 개설되면 채팅방 생성
+create or replace trigger trig_insert_p_channel
+        after insert on project
+    for each row
+begin
+    insert into channel values('P' || :NEW.project_no,'CH2',:NEW.project_title,default,default,:NEW.project_no);
+end;
+/
+
+--프로젝트가 삭제되면 채팅방, 멤버 삭제
+create or replace trigger trig_delete_p_channel
+    before delete on project
+    for each row
+begin
+        delete from channel where project_or_club_no = :OLD.project_no;
+end;
+/
+	
+--프로젝트에 멤버가 추가될때
+create or replace trigger trig_insert_p_channel_member
+    after insert on project_members
+    for each row
+begin
+        insert into channel_member values(seq_channel_member_no.nextval, (select channel_no from channel where project_or_club_no = :NEW.project_no), :NEW.member_id);
+end;
+/
+
+--프로젝트에 멤버가 quit될때
+create or replace trigger trig_delete_p_channel_member
+    after update on project_members
+    for each row
+begin
+        if (:NEW.project_quit_yn = 'Y') then
+            delete channel_member where channel_no = 'P'||:NEW.project_no;
+    end if;
+end;
+/
+
+SELECT * FROM ALL_TRIGGERS;
+
+
+
+
+

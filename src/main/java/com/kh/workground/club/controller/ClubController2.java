@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -17,7 +16,6 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,14 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
+import com.kh.workground.chat.model.service.ChatService;
+import com.kh.workground.chat.model.vo.Channel;
+import com.kh.workground.chat.model.vo.Chat;
 import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.service.ClubService;
 import com.kh.workground.club.model.service.ClubService2;
@@ -47,6 +44,7 @@ import com.kh.workground.club.model.vo.ClubPhotoComment;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;
 import com.kh.workground.member.model.vo.Member;
+import com.kh.workground.project.model.exception.ProjectException;
 
 @Controller
 public class ClubController2 {
@@ -57,6 +55,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	ClubService2 clubService2;
 	@Autowired
 	ClubService clubService1;
+	@Autowired
+	ChatService chatService;
 	
 	@RequestMapping("/club/clubView.do")
 	public ModelAndView clubView(ModelAndView mav,
@@ -81,7 +81,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
 //			logger.debug("clubMemberList={}", clubMemberList);
 			List<ClubPhotoComment> clubPhotoCommentList = clubService2.selectClubPhotoCommentList(clubNo);
-			logger.debug("clubPhotoCommentList={}", clubPhotoCommentList);
+//			logger.debug("clubPhotoCommentList={}", clubPhotoCommentList);
 			
 			Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
 //			logger.debug("memberLoggedIn={}", memberLoggedIn);
@@ -98,6 +98,21 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 				isManager = true;
 			}
 //			logger.debug("isManager={}", isManager);
+			
+			
+			//채팅쪽
+			/*mav.addObject("memberId", memberLoggedIn.getMemberId());
+			String channelNoTemp = "C"+club.getClubNo();
+			Channel channel = chatService.selectChannel(channelNoTemp);
+		
+			mav.addObject("channelNo", channel.getChannelNo());
+			
+			logger.info("channel에 대한정보: {}"+channel);*/
+			
+			//채팅리스트
+			/*List<Chat> chatList = chatService.getClubChatList(channel.getChannelNo());
+			logger.info("chatList에 대한정보: {}"+chatList);
+			mav.addObject("chatList", chatList);*/
 			
 			mav.addObject("club", club);
 			mav.addObject("clubPlanList", clubPlanList);
@@ -121,7 +136,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		return mav;
 	}
-	
+
 	@RequestMapping("/club/clubIntroduceUpdate.do")
 	public ModelAndView clubIntroduceUpdate(ModelAndView mav, 
 											Club club) {
@@ -647,7 +662,9 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@RequestMapping("/club/clubFileList.do")
 	public ModelAndView clubFileList(ModelAndView mav, 
-									 @RequestParam("clubNo") int clubNo) {
+									 @RequestParam("clubNo") int clubNo, 
+									 HttpServletRequest request
+									) {
 		try {
 			Club club = clubService2.selectClub(clubNo);
 //			logger.info("club={}", club);
@@ -659,10 +676,27 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
 //			logger.debug("clubMemberList={}", clubMemberList);
 			
+			Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
+
+			Map<String, String> param = new HashMap<>();
+			param.put("clubNo", clubNo+"");
+			param.put("memberId", memberLoggedIn.getMemberId());
+			ClubMember clubMember = clubService2.selectOneClubMember(param);
+//			logger.debug("clubMember={}", clubMember);
+			
+			boolean isManager = false;
+//			logger.debug("clubManagerYN={}", clubMember.getClubManagerYN());
+			if("admin".equals(memberLoggedIn.getMemberId()) || 'Y'==clubMember.getClubManagerYN().charAt(0)) {
+				isManager = true;
+			}
+//			logger.debug("isManager={}", isManager);
+	
+			
 			mav.addObject("club", club);
 			mav.addObject("clubPhotoList", clubPhotoList);
 			mav.addObject("clubNoticeList", clubNoticeList);
 			mav.addObject("clubMemberList", clubMemberList);
+			mav.addObject("isManager", isManager);
 			mav.setViewName("club/clubFileList");
 			
 		} catch (Exception e) {
@@ -859,4 +893,5 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 		
 		return mav;
 	}
+	
 }

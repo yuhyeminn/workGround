@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -605,4 +606,50 @@ public class NoticeController {
 	}
 	
 	
+
+
+	@RequestMapping("/notice/uploadChatNotice.do")
+	@ResponseBody
+	public Map<String,Object> uploadChatNotice(Model m ,Notice notice,
+									 	@RequestParam(value="upFile", required=false) MultipartFile upFile,
+									 HttpServletRequest request) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+			String saveDirectory = request.getSession()
+					.getServletContext()
+					.getRealPath("/resources/upload/notice");
+			File dir = new File(saveDirectory);
+			if(dir.exists() == false)
+				dir.mkdir();
+			MultipartFile f = upFile;
+			if(!f.isEmpty()) {
+				String originalFileName = f.getOriginalFilename();
+				String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+				int rndNum = (int)(Math.random()*1000);
+				String renamedFileName = sdf.format(new Date())+"_"+rndNum+ext;
+				try {
+					f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				notice.setNoticeOriginalFileName(originalFileName);
+				notice.setNoticeRenamedFileName(renamedFileName);
+			}
+			
+			if(notice.getDeptCode().equals("all")) notice.setDeptCode(null);
+			
+			int result = noticeService.insertNotice(notice);
+			
+			boolean isUploaded = result>0?true:false;
+			map.put("isUploaded", isUploaded);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new NoticeException("채팅 공지 올리기 오류!");
+		}
+		return map;
+	}
 }

@@ -5,8 +5,8 @@
     transform: none;
 }
 
-.reply-work-ref-writer{background: #17a2b8; color: white;padding: 2px;border-radius: 5px;margin-right: 5px;}
-.reply-work-ref-content{float: right;width: 78%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;display: inline-block;}
+.reply-work-ref-writer{background: #17a2b8; color: white;padding: 4px;border-radius: 5px;margin-right: 5px;}
+.reply-work-ref-content{float: right;width: 83%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;display: inline-block;}
 .reply-work-ref{background: #f8f9fa;padding: 7px 5px;margin-bottom: 10px;border-radius: 5px;font-size: 14px;width: 95%;display: inline-block;}
 .reply-work-ref-wrapper{display:none}
 
@@ -304,48 +304,53 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
 .setting-contents-inform .setting-contents-date{color:rgb(180, 183, 185);}
 .project-setting-tabs .nav-item{width:100%}
 .project-setting-tabs .nav-item button{width:100%}
-.p-setting-container{padding: 0px 20px;}
+.p-setting-container{padding: 20px 30px;}
 .setting-row{padding:15px 0px;}
 .add-description{color:#17a2b8;}
 .add-description:hover{background: #e7e7e7;cursor: pointer;}
-.tab-content{background:#f3f4f5; font-size:15px;}
-.setting-content-label{margin:0px;width:9rem;font-size:14px;}
+.work-setting .tab-content{background:#f3f4f5; font-size:15px;padding:0px;}
+.setting-content-label{margin:0px;width:10rem;font-size:14px;margin-left: 10px;}
 .setting-row .row{padding:15px 0px;}
 .status-dropdown .status-dot{float:right;}
 .status-dropdown button{border:1px solid #e7e7e7;width:6rem;text-align: initial; background-color:white;}
 .icon-box{border:1px solid #e7e7e7;display: inline-block;margin-left: -4px;padding: 1px 7px;background-color:white;}
 .setting-content-inform{display: block;border:none;border-radius:5px;padding:5px 10px;background-color:#e7e7e7;margin-top: -5px;}
 .setting-content-inform i{margin-right:5px;}
-.sign-out-project{background-color: #e7e7e7;width: 100%;padding: 8px 0px;border-radius: 5px;border-bottom: 1px solid gray;}
-.setting-icon{border:1px solid #e7e7e7;padding: 4px 7px;border-radius:5px;margin-top: -5px;margin-right:10px;cursor: pointer;}
-.pv-multiselect-box{width:240px;}
+.sign-out-project{background-color: #e7e7e7;width: 100%;padding: 8px 0px;border-radius: 5px;border-bottom: 1px solid gray;font-size:14px;}
+.setting-icon{border:none;padding: 5px 8px;border-radius:5px;margin-top: -5px;margin-right:10px;cursor: pointer;background-color:#e7e7e7;color:#696f7a;}
+/*  .plusBtn{display: block;border:none;border:1px solid #e7e7e7;border-radius: 5px;padding:5px 10px;background-color:#e7e7e7;margin-top: -5px;height:32px;color:#696f7a} */
+.pv-multiselect-box{width:310px;}
 .setting-date-dropdown{padding:10px;width: 200px;}
 .setting-date-dropdown button{float: right;}
 .setting-date-dropdown .date-update{margin-left:5px;}
 .setting-date-dropdown .date-update, .setting-date-dropdown .date-cancel{font-size:14px;padding:0.2rem .5rem;}
 .work-date-dropdown{width:250px;}
+
 /* 업무 설정 사이드 바*/
 .work-setting-tabs .nav-item{width:33.3%}
-.work-setting-tabs .nav-item button{width:100%}
+.setting-tabs .nav-item button{width:100%}
 /* .work-setting{width: 475px;display: block;top: 92px!important;overflow: hidden;background-color: #fff;box-shadow: -1px 6px 10px 0 rgba(0,0,0,.2);color: #696f7a;} */
 
- /* Middle navbar links */
+.setting-tabs.nav-tabs .nav-link:hover{color: #464c59;}
+.setting-tabs.nav-tabs .nav-link.active{border: 0; background: transparent; color: #007bff; cursor: default;border-bottom: 2px solid #007bff;}
+.project-setting-tabs .nav-item{width:100%}
+/* Middle navbar links */
  .setting-navbar-tab button{display: inline-block; height: 46px; padding: 0 .8rem; border: 0; color: #696f7a; font-size: .85rem; background: transparent;}
  .setting-navbar-tab button:hover{color: #007bff;}
- .setting-navbar-tab button:active, .navbar-tab button:focus{outline: none; border-bottom: 2px solid #007bff; color: #007bff;}
-  
+ #work-setting-tabs.nav-tabs button.nav-link:active{outline: none;  } 
+
 .work-setting {
     position: fixed;
     background-color: #f3f4f5;
     box-shadow: -1px 6px 10px 0 rgba(0,0,0,.2);
-    right: -520px;
-    width: 475px;
+    right: -600px;
+    width: 555px;
     overflow: visible;
     bottom:0px;
     z-index:1;
   }
-  .plusBtn{display: block;border:none;border-radius: 5px;padding:5px 10px;background-color:#e7e7e7;margin-top: -5px;height:32px;}
-  .plusBtn:hover{background-color:#17a2b8;color:white;}
+ 
+  .setting-icon:hover{background-color:#17a2b8;color:white;}
   .setting-row .plusBtn{margin-right:10px;}
   .setting-point{margin-top:-5px;}
   .label-icon{width:5px;}
@@ -355,7 +360,7 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .checklist-box-row .work-checklist{width:100%;font-size:14px;}
   .checklist-box-row .tbl-checklist th{height: 50px;padding: 5px;font-size: 20px;}
   .checklist-box-row .tbl-checklist td{font-size: 14px;}
-  .checklist-box-row .tbl-checklist td img{width:25px;margin-right: .5rem;}
+  .checklist-box-row .tbl-checklist td img{width:25px; height: 25px; margin-right: .5rem; object-fit: cover;}
   .checklist-box-row .tbl-checklist td div.ico-profile{width:25px;height:25px;margin-right: .5rem;text-align: center;background-color: #e7e7e7;}
   #chk-add-tr{border-top: 3px double rgb(248, 188, 182);}
   .btn-add-checklist{padding: .3rem .5rem;background: transparent;color: #d4d6db;}
@@ -370,10 +375,11 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   .setting-navbar-tab button:active, .navbar-tab button:focus{outline: none; border-bottom: 2px solid #007bff; color: #007bff;}
    
   /*업무 코멘트 탭*/
+  #custom-content-above-comment{padding:0px;}
   .comment-box{height:500px;overflow-y: scroll;/* border:1px solid #e7e7e7; */font-size:14px;}
   .comment-level2{margin-left: 3rem;}
   .comment-count{margin-bottom: 0.5rem; color: rgb(93, 93, 93);}
-  .comment-text-area{display: inline-block; width: 82%; height: 2rem; margin-right: .3rem;}
+  .comment-text-area{display: inline-block; width: 86%; height: 2rem; margin-right: .3rem;}
   .comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
   .comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
   .comment-submit{border: 0;background: darkgray;border-radius: 3px;width: 3.5rem;height: 3.3rem;color: white;float: right;}
@@ -383,7 +389,7 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
   /* 업무 파일 탭*/
   .work-file-upload-box{margin-bottom:20px;font-size:14px;}
   .work-file-upload-box .input-group-text{font-size:14px;}
-  .file-tab-pane{padding-top:20px;}
+  .file-tab-pane{padding:30px;}
 
   /* 분석 페이지 */
   .analysis-content{padding:50px 80px;}
@@ -440,3 +446,17 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
 #chk-add-tr:hover{
 	background-color:white;
 }
+section::-webkit-scrollbar-track, .comment-box::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+section::-webkit-scrollbar, .comment-box::-webkit-scrollbar {
+	width: 10px;
+	background: transparent;
+}
+
+section::-webkit-scrollbar-thumb, .comment-box::-webkit-scrollbar-thumb {
+	background-color: #b9b3b3;
+	/* border: 2px solid #555555; */
+}
+

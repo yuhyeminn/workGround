@@ -40,6 +40,8 @@
 
 <!-- 날짜 유효성 검사를 위한 프로젝트 시작일 -->
 <input type="hidden" id="hiddenProjectStartDate" value="${project.projectStartDate}" />
+<input type="hidden" id="settingWorkNo" value="${work.workNo}" />
+<input type="hidden" id="settingProjectNo" value="${project.projectNo}" />
 
 <section id="${work.workNo }" style="height:100%;overflow-y:scroll">
 	<!-- 업무배정된 멤버아이디 구하기 -->
@@ -81,15 +83,15 @@
     </p>
     </div>
     
-    <ul class="nav work-setting-tabs nav-tabs" id="custom-content-above-tab" role="tablist">
+    <ul class="nav work-setting-tabs setting-tabs nav-tabs" id="work-setting-tabs" role="tablist">
         <li class="nav-item setting-navbar-tab">
-        <button type="button" id="custom-content-work-setting-tab" data-toggle="pill" href="#custom-content-work-setting" role="tab" aria-controls="custom-content-work-setting" aria-selected="true">속성</button>
+        <button type="button" class="nav-link active" id="custom-content-work-setting-tab" data-toggle="pill" href="#custom-content-work-setting" role="tab" aria-controls="custom-content-work-setting" aria-selected="true">속성</button>
         </li>
         <li class="nav-item setting-navbar-tab">
-        <button type="button" id="custom-content-above-comment-tab" data-toggle="pill" href="#custom-content-above-comment" role="tab" aria-controls="custom-content-above-comment" aria-selected="false">코멘트</button>
+        <button type="button" class="nav-link" id="custom-content-above-comment-tab" data-toggle="pill" href="#custom-content-above-comment" role="tab" aria-controls="custom-content-above-comment" aria-selected="false">코멘트</button>
         </li>
         <li class="nav-item setting-navbar-tab">
-        <button type="button" id="custom-content-above-file-tab" data-toggle="pill" href="#custom-content-above-file" role="tab" aria-controls="custom-content-file-comment" aria-selected="false">파일</button>
+        <button type="button" class="nav-link" id="custom-content-above-file-tab" data-toggle="pill" href="#custom-content-above-file" role="tab" aria-controls="custom-content-file-comment" aria-selected="false">파일</button>
         </li>
     </ul>
     </div>
@@ -136,7 +138,7 @@
                 <!-- plus 버튼 눌렀을 때 dropdown-->
                 <div class="add-member-left dropdown">
                 	<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
-                   		 <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-pencil-alt"></i></button>
+                   		 <button class="setting-icon" data-toggle="dropdown"><i class="fas fa-pencil-alt"></i></button>
                     </c:if>
                     <div class="dropdown-menu location-dropdown"  aria-labelledby="dropdownMenuLink">
                     <span>업무리스트</span> 
@@ -158,7 +160,7 @@
                 <label class="setting-content-label"><span><i class="far fa-calendar-alt" style="width:20px;"></i></span> 시작일</label>
                 <div class="dropdown">
                    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
-                     <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
+                     <button class="setting-icon" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
                    </c:if>
                     <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
@@ -183,7 +185,7 @@
                 <label class="setting-content-label"><span><i class="far fa-calendar-alt" style="width:20px;"></i></span> 마감일</label>
                 <div class="dropdown">
                    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
-                     <button class="plusBtn" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
+                     <button class="setting-icon" data-toggle="dropdown"><i class="fas fa-cog"></i></button>
                    </c:if>
                    <div class="dropdown-menu setting-date-dropdown">
                         <div class="form-group">
@@ -203,6 +205,7 @@
                     </c:if>
             </div>
             <!-- 배정된 멤버-->
+            <c:if test="${project.privateYn=='N'}">
             <div class="row">
                 <label class="setting-content-label"><span><i class='fas fa-user-plus' style="width:20px;"></i></span> 배정된 멤버</label>
                 <div class='control-wrapper pv-multiselect-box'>
@@ -214,11 +217,12 @@
                 </div>
                 </div>
             </div>
+            </c:if>
             <!-- 태그 -->
             <div class="row">
                 <label class="setting-content-label"><span><i class="fa fa-tag" style="width:20px;"></i></span> 태그</label>
                 <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
-                	<button class="plusBtn" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+                	<button class="setting-icon" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
                 </c:if>
                 <div class="work-tag" id="current-workTag">
                 	<c:if test="${work.workTagTitle != null and work.workTagTitle != ''}">
@@ -315,9 +319,9 @@
 									                </div>
 								                </div>
 								            </c:forEach>
-								            <div class="media dropdown-item chk-charge-member" id="" >
-									         <p style="color:red;font-size:14px;">배정 멤버 삭제</p>
-								         	</div>
+										    	<div class="dropdown-item chk-charge-member del-chk-charge-member" id="" <c:if test="${chk.checklistChargedMemberId==null}">style="display:none"</c:if>>
+											         <p style="color:red;font-size:14px;">배정 멤버 삭제</p>
+										        </div>
 								      </c:if>
 								      <c:if test="${work.workChargedMemberList == null or empty work.workChargedMemberList }">
 								    	<span style="margin-left:10px;">없음</span>
@@ -354,9 +358,11 @@
 									         </div>
 								         </div>
 								    </c:forEach>
-								    	<div class="dropdown-item chk-charge-member" id="">
+								     
+								    	<div class="dropdown-item chk-charge-member del-chk-charge-member" id="" <c:if test="${chk.checklistChargedMemberId==null}">style="display:none"</c:if>>
 									         <p style="color:red;font-size:14px;">배정 멤버 삭제</p>
-								         </div>
+								        </div>
+								        
 								    </c:if>
 								    <c:if test="${work.workChargedMemberList == null or empty work.workChargedMemberList }">
 								    	<span style="margin-left:10px;">없음</span>
@@ -408,7 +414,7 @@
                 <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/${writer.renamedFileName}" alt="User Image">
                 <div class="comment-text">
                     <span class="username"><span class="comment-writer">${writer.memberName}</span><span class="text-muted float-right">${wc.workCommentEnrollDate }</span></span>
-                    <span class="comment-content">${wc.workCommentContent}</span>
+                    <div style="word-wrap:break-word;"><span class="comment-content">${wc.workCommentContent}</span></div>
                     <c:if test="${memberLoggedIn.memberId eq writer.memberId || memberLoggedIn.memberId eq project.projectWriter || memberLoggedIn.memberId eq 'admin'}">
                     <button class="comment-delete work-comment-delete float-right" value="${wc.workCommentNo}">삭제</button>
                     </c:if>
@@ -480,9 +486,9 @@
             <table id="tbl-projectAttach" class="table table-hover text-nowrap work-attachment-tbl">
                 <thead>
                     <tr>
-                        <th>이름</th>
-                        <th>공유한 날짜</th>
-                        <th>공유한 사람</th>
+                        <th style="width:42%;">이름</th>
+                        <th style="width:23%;">공유한 날짜</th>
+                        <th style="width:30%;">공유한 사람</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -491,7 +497,7 @@
                     <tr id="${a.attachmentNo}">
                      <input type="hidden" class="oName" value="${a.originalFilename}" />
                      <input type="hidden" class="rName" value="${a.renamedFilename}" />
-                     <td style="width:42%;">
+                     <td>
                              <div class="img-wrapper">
                              	 <c:forTokens items="${fn:toLowerCase(a.renamedFilename)}" var="token" delims="." varStatus="vs">
                              	 <c:if test="${vs.last}">
@@ -510,8 +516,8 @@
                                  <p class="filename">${a.originalFilename}</p>
                              </div>
                      </td>
-                     <td style="width:23%;">${a.attachmentEnrollDate}</td>
-                     <td style="width:30%;">
+                     <td>${a.attachmentEnrollDate}</td>
+                     <td>
                         <span>${a.attachmentWriterMember.memberName}</span>
                          <!-- 첨부파일 옵션 버튼 -->
                          <div class="dropdown ">
@@ -529,6 +535,11 @@
                      </td>
                     </tr>
                     </c:forEach>
+		    </c:if>
+		    <c:if test="${work.attachmentList==null || empty work.attachmentList}">
+		    <tr id="no-exist-file" style="text-align:center;">
+		    	<td colspan="3" style="padding:1rem;">파일이 존재하지 않습니다.</td>
+            </tr>
 		    </c:if>
           </tbody>
     </table>
@@ -557,13 +568,13 @@
 	updateWorkPoint();
 	insertCheckList();
 	updateWorkLocation();
-	updateChkChargedMember();
-	deleteChecklist();
+	/* updateChkChargedMember(); */
+	/* deleteChecklist(); */
 	insertWorkComment();
-	deleteWorkComment();
+	/* deleteWorkComment(); */
 	uploadWorkFile();
 	downloadWorkFile();
-	delWorkFile();
+	/* delWorkFile(); */
  });
  
  
@@ -591,10 +602,11 @@ function sideClose(){
 	 $(".div-close").on('click',(e)=>{
 	     var $side = $("#setting-sidebar");
 	     if($side.hasClass('open')) {
-	         $side.stop(true).animate({right:'-520px'});
+	         $side.stop(true).animate({right:'-600px'});
 	         $side.removeClass('open');
 	     }
 	     $side.empty();
+	     $('.daterangepicker').remove();
 	 });
 }
 
@@ -689,6 +701,7 @@ function updateWorkMember(){
 				success: data =>{
 					if(data.isUpdated){
 						 resetWorkView(); //업무 새로고침
+						 $("section#"+workNo+".work-item").click(); //체크리스트 배정멤버 드롭다운을 위한..설정창 새로고침,,?
 					}else{
 						alert("업무 배정에 실패하였습니다. :(");
 					}
@@ -712,8 +725,6 @@ function updateWorkMember(){
 				if(data.isUpdated){
 					var currentWorkTag = $(this).html();
 					var view = $(".work-item#"+workNo+" div.work-tag");
-					console.log(view);
-					console.log(view.length);
 					if(workTag !='' && workTag != null){
 						$("#current-workTag").html(currentWorkTag);
 						
@@ -775,7 +786,7 @@ function updateWorkMember(){
 			 success: data=>{
 				 var chk = data.checklist
 				 let html = '<tr id="'+chk.checklistNo+'"><th><button type="button" class="btn-check" value="'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>        '
-					      +'<input type="hidden" class="hiddenChkChargedMemId" value=" "/></th><td style="width:100%">'
+					      +'<input type="hidden" class="hiddenChkChargedMemId" value=""/></th><td style="width:100%">'
 					      +'<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown"><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div>'
 	             		  + chk.checklistContent +'<button class="delete-checklist" id="'+chk.checklistNo+'" style="float:right;"><i class="fas fa-times"></i></button>';
 	             //멤버 배정 위한 드롭다운 메뉴 추가
@@ -786,15 +797,15 @@ function updateWorkMember(){
 		               		+'<img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">'	
 		               		+'<div class="media-body"><p class="memberName">${m.memberName}</p></div></div>';
 				    </c:forEach> 
-		          	html +='<div class="media dropdown-item chk-charge-member" id="" ><p style="color:red;font-size:14px;">배정 멤버 삭제</p></div>';
-		         </c:if>	
+ 		          	html +='<div class="media dropdown-item chk-charge-member del-chk-charge-member" id="" style="display:none"><p style="color:red;font-size:14px;">배정 멤버 삭제</p></div>';
+ 		         </c:if>	
 		         <c:if test="${work.workChargedMemberList == null or empty work.workChargedMemberList }">
 			    	html += '<span style="margin-left:10px;">없음</span>';
 			   	 </c:if>
 					html+='</div></td></tr>';
 					
 		         var viewhtml = '<tr id="'+chk.checklistNo+'"><th><button type="button" class="btn-check" value="'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>      '
-		   			      	  +'<input type="hidden" class="hiddenChkChargedMemId" value=" "/></th><td>'+ chk.checklistContent +'</td></tr>';
+		   			      	  +'<input type="hidden" class="hiddenChkChargedMemId" value=""/></th><td>'+ chk.checklistContent +'</td></tr>';
 		          		 	  
 				 $("#chk-add-tr").before(html); 
 				 
@@ -833,7 +844,9 @@ function updateWorkMember(){
 			 success: data=>{
 				 var $workSection = $("section.work-item#"+workNo+" .work-title").parent();
 				 $workSection.remove();
+				 $("#current-worklist").text(worklistTitle);
 				 //해당 worklist 새로고침
+				 resetWorklist(worklistNo);
 			 },
 			 error:(jqxhr, textStatus, errorThrown)=>{
 				 console.log(jqxhr, textStatus, errorThrown);
@@ -841,66 +854,7 @@ function updateWorkMember(){
 		 })
 	 })
  }
- 
- function updateChkChargedMember(){
-	 var workNo = '${work.workNo}';
-	  $(document).on('click', ".chk-charge-member", function(){
-		 var $this = $(this);
-		 var memberId = $(this).attr('id');
-		 var checklistNo = $(this).closest("tr").attr('id');
-		 $.ajax({
-			 url:"${pageContext.request.contextPath}/project/updateChkChargedMember.do",
-			 data: {checklistNo:checklistNo, memberId:memberId, workNo:workNo},
-			 dataType:"json",
-			 success: data=>{
-				 if(data.isUpdated){
-						 var originImg = $this.closest("td").children(".update-chk-charge");
-						 originImg.remove();
-					 if(memberId != '' && memberId != null){
-						 var member = data.member;
-						 
-						 var profile = '<img src="${pageContext.request.contextPath}/resources/img/profile/'+member.originalFileName+'" data-toggle="dropdown" alt="User Avatar" class="img-circle img-profile ico-profile update-chk-charge" title="'+member.memberName+'">';
-						 $this.closest("td").prepend(profile);
-					 }
-					 else{
-						 var profile = '<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown" ><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div>';
-						 $this.closest("td").prepend(profile);
-					 }
-				 }
-			 },
-			 error:(jqxhr, textStatus, errorThrown)=>{
-				 console.log(jqxhr, textStatus, errorThrown);
-			 } 
-		 })
-	 })
- }
- 
- function deleteChecklist(){
-	 var workNo = '${work.workNo}';
-	 $(document).on('click', ".delete-checklist", function(){
-		 var checklistNo = $(this).attr("id");
-		 $.ajax({
-			 url:"${pageContext.request.contextPath}/project/deleteChecklist.do",
-			 data: {checklistNo:checklistNo},
-			 dataType:"json",
-			 success: data=>{
-				 if(data.isUpdated){
-				 	$(".tbl-checklist tr#"+checklistNo).remove();
-				 	$(".work-item#"+workNo+" .work-checklist tbody tr#"+checklistNo).remove();
-				 	console.log($(".work-item#"+workNo+" .work-checklist tbody").length);
-				 	if($(".work-item#"+workNo+" .work-checklist tbody>tr").length == 0){
-				 		$(".work-item#"+workNo+" .work-checklist table").remove();
-				 	}
-				 }
-			 },
-			 error:(jqxhr, textStatus, errorThrown)=>{
-				 console.log(jqxhr, textStatus, errorThrown);
-			 } 
-		 })
-	 })
- }
- 
- function insertWorkComment(){
+function insertWorkComment(){
 	 $(document).on('click',".work-comment-reply", function(){
 		 var refNo = $(this).val();
 		 var refWriter = $(".work-comment#"+refNo+" span.comment-writer").text();
@@ -931,6 +885,7 @@ function updateWorkMember(){
 		 $.ajax({
 			 url:"${pageContext.request.contextPath}/project/insertWorkComment.do",
 			 data: {workNo:workNo,commentContent:commentContent,commentWriter:commentWriter,commentLevel:commentLevel,commentRef:commentRef},
+			 type:"POST",
 			 dataType:"json",
 			 success: data=>{
 				 if(data.isUpdated){
@@ -938,14 +893,14 @@ function updateWorkMember(){
 					 var member = data.member;
 					 var html;
 					 if(comment.workCommentLevel == 2){
-						 html ='<div class="card-comment work-comment comment-level2 work-ref-"'+comment.workCommentRef+' id="'+comment.workCommentNo+'">';
+						 html ='<div class="card-comment work-comment comment-level2 work-ref-'+comment.workCommentRef+'" id="' + comment.workCommentNo + '">';
 					 }else{
 						 html ='<div class="card-comment work-comment" id="'+comment.workCommentNo+'">';
 					 }
 					 
 					 html +='<img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/img/profile/'+member.renamedFileName+'" alt="User Image">'
 		                  +'<div class="comment-text"><span class="username"><span class="comment-writer">'+member.memberName+'</span><span class="text-muted float-right">'+getToday()+'</span></span>'
-		                  +'<span class="comment-content">'+comment.workCommentContent+'</span>'
+		                  +'<div style="word-wrap:break-word;"><span class="comment-content">'+comment.workCommentContent+'</span></div>'
 		                  +'<button class="comment-delete work-comment-delete float-right" value="'+comment.workCommentNo+'">삭제</button>';
 		             
 		             if(comment.workCommentLevel == 1) html +='<button class="comment-reply work-comment-reply float-right" value="'+comment.workCommentNo+'">답글</button>';   
@@ -964,6 +919,10 @@ function updateWorkMember(){
 		            	 var chtml='<div class="card-footer card-comments work-comments-box">'+html+'</div>';
 		            	 $(".work-comment-box").html(chtml);
 		             }
+		             
+		             //코멘트 숫자 증가
+		             var cnt = Number($(".work-item#"+workNo+" .work-etc .comment-cnt").text());
+				 	 $("section#"+workNo+".work-item .work-etc span.comment-cnt").text(cnt+1);
 		               
 				 }
 				 $("div.enroll-comment-inform textarea").val('');
@@ -977,33 +936,7 @@ function updateWorkMember(){
 	 })
  }
  
- function deleteWorkComment(){
-	 $(document).on('click',".work-comment-delete", function(){
-		 var commentNo = $(this).val();
-		 $.ajax({
-			 url:"${pageContext.request.contextPath}/project/deleteWorkComment.do",
-			 data: {commentNo:commentNo},
-			 dataType:"json",
-			 success: data=>{
-				 if(data.isUpdated){
-					 $(".work-comments-box .card-comment#"+commentNo).remove();
-					 if($(".work-ref-"+commentNo).length>0){
-						 $(".work-ref-"+commentNo).remove();
-					 }
-					 if($(".work-comments-box .card-comment").length==0){
-						 $(".work-comments-box").remove();
-						 var html ='<div id="null-comment-box" style="text-align:center;margin-top: 106px;"><img src="https://d30795irbdecem.cloudfront.net/assets/comment-empty-state@2x-d1554722.png" style="width:20rem;">'
-						 			+'<p style="font-size:10px; color:lightgray;">Comments are great for focusing conversation on the task at hand.</p></div>';
-						 $(".work-comment-box").append(html);
-					 }
-				 } 
-			 },
-			 error:(jqxhr, textStatus, errorThrown)=>{
-				 console.log(jqxhr, textStatus, errorThrown);
-			 } 
-		 });
-	 });
- }
+ 
  
  function uploadWorkFile(){
 	 $("#upload-file-btn").on('click',function(){
@@ -1021,9 +954,13 @@ function updateWorkMember(){
 			 success: data=>{
 				 var a = data.attachment;
 				 var rArr = (a.renamedFilename).split(".");
-				 var ext = rArr[rArr.length-1];
+				 var ext = rArr[rArr.length-1].toLowerCase();
 				 
 				 if(data.isUpdated){
+					 if($("#no-exist-file").length != 0){
+						 $("#no-exist-file").remove()
+					 }
+						 
 					 var html = '<tr id="'+a.attachmentNo+'"><input type="hidden" class="oName" value="'+a.originalFilename+'" />'
 					 		  +'<input type="hidden" class="rName" value="'+a.renamedFilename+'" /><td><a href=""><div class="img-wrapper">';
 					 if(ext =='bmp' || ext =='jpg' || ext=='jpeg' || ext =='gif' || ext=='png' || ext=='tif' || ext=='tiff' || ext=='jfif'){
@@ -1039,6 +976,7 @@ function updateWorkMember(){
 					 	 +'<div class="dropdown-menu dropdown-menu-right"><button type="button" class="dropdown-item btn-work-file-down" value="'+a.attachmentNo+'">다운로드</button>'
 					 	 +'<div class="dropdown-divider"></div><button type="button" class="dropdown-item work-file-remove" value="'+a.attachmentNo+','+a.renamedFilename+'" data-toggle="modal" data-target="#modal-file-remove">삭제</a>'
 				 		 +'</div></div></td></tr>';
+				 	 $(".custom-file-label").html("파일을 선택하세요.");
 				 	 $("#tbl-projectAttach tbody").append(html);
 				 	 resetWorkView(); //업무 새로고침
 				 }
@@ -1049,48 +987,7 @@ function updateWorkMember(){
 		 });
 	 });
  }
- //파일 다운로드
-function downloadWorkFile(){
-	$(document).on('click', '.btn-work-file-down', e=>{
-		let btnDown = e.target;
-		let attachNo = btnDown.value;
-		let $tr = $('.work-attachment-tbl tr#'+attachNo);
-		let projectNo ='${project.projectNo}';
-		let oName = $tr.find('.oName').val();
-		let rName = $tr.find('.rName').val();
-		
-		location.href = "${pageContext.request.contextPath}/project/downloadFile.do?projectNo="+projectNo+"&oName="+oName+"&rName="+rName;
-	});
-}
-function delWorkFile(){
-	$(document).on('click', '.work-file-remove', e=>{
-		let btnRemove = e.target;
-		let attachNo = Number(btnRemove.value.split(',')[0]);
-		let rName = btnRemove.value.split(',')[1];
-		let projectNo ='${project.projectNo}';
-		
-		if(confirm("파일을 삭제하시겠습니까?")){
-			$.ajax({
-				url: '${pageContext.request.contextPath}/project/deleteFile',
-				data: {attachNo:attachNo,rName:rName,projectNo:projectNo},
-				dataType: 'json',
-				type: 'POST',
-				success: data=>{
-					if(data.result==='success'){
-						$(".work-attachment-tbl tr#"+attachNo).remove();
-						resetWorkView(); //업무 새로고침
-					}
-					else{
-						alert("파일 삭제에 실패했습니다 :(");
-					}
-				},
-				error: (x,s,e)=>{
-					console.log(x,s,e);
-				}
-			});
-		}
-	});
-}
+
  $("[name=workFile]").on("change",function(){
 		//	파일 입력 취소
 		if($(this).prop("files")[0] === undefined){
@@ -1124,7 +1021,6 @@ function delWorkFile(){
 			data:{workNo:workNo, worklistTitle:worklistTitle,projectNo:projectNo},
 			dataType: "html",
 			success: data => {
-				console.log($workSection);
 				$workSection.html("");
 				$workSection.html(data);
 			},
@@ -1133,7 +1029,24 @@ function delWorkFile(){
 			}
 	 });
  }
- 
+ function resetWorklist(worklistNo){
+		$.ajax({
+			url: '${pageContext.request.contextPath}/project/resetWorklist.do',
+			data: {projectManager: '${projectManager}',projectNo: ${project.projectNo},worklistNo: worklistNo},
+			dataType: 'html',
+			type: 'POST',
+			success: data=>{
+				if(data!=null){
+					$("#worklist-"+worklistNo).html(data);
+				}
+				
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		}); 
+ }
+
  
  </script>
  <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

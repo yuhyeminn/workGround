@@ -19,6 +19,19 @@
 		</layout>
 	</appender>
 	
+	<appender name="projectLogger" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="${catalina.base}/logs/spring/projectActivities.log" />
+		<param name="Append" value="true" />
+		<param name="datePattern" value=".yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy-MM-dd}] %m%n"/>
+		</layout>
+		<!-- <filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="debug" />
+			<param name="LevelMax" value="debug" />
+		</filter> -->
+	</appender>
+	
 	<!-- #10.2.log4jdbc-remix 로그 출력 appender 추가 -->
 	<appender name="sqlLogger" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
@@ -40,6 +53,11 @@
 	<!-- Application Loggers -->
 	<logger name="com.kh.workground">
 		<level value="debug" />
+	</logger>
+	<!-- 프로젝트 활동로그를 위한 로거 -->
+	<logger name="com.kh.workground.common.aop.ProjectLoggerAspect" additivity="false">
+		<level value="debug"/>
+		<appender-ref ref="projectLogger"/>
 	</logger>
 	
 	<!-- 3rdparty Loggers -->

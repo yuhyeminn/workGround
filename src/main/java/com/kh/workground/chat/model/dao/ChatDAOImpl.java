@@ -67,5 +67,24 @@ public class ChatDAOImpl implements ChatDAO {
 	public int insertChatLog(Chat fromMessage) {
 		return sqlSession.insert("chat.insertChatLog", fromMessage);
 	}
+
+	@Override
+	public List<Chat> selectChatList() {
+		return sqlSession.selectList("chat.selectChatList");
+	}
+
+	@Override
+	public List<Channel> findChannelListByKeyword(Map<String, String> param) {
+		return sqlSession.selectList("chat.findChannelListByKeyword", param);
+	}
 	
+//	sh start
+	@Override
+	public Channel selectChannel(String channelNo) {
+		return sqlSession.selectOne("chat.selectChannel", channelNo);
+	}
+	@Override
+	public List<Chat> getClubChatList(String channelNo) {
+		return sqlSession.selectList("chat.getClubChatList", channelNo);
+	}
 }

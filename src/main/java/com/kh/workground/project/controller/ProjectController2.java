@@ -94,24 +94,30 @@ public class ProjectController2 {
 	
 	@RequestMapping("/project/projectListByStatusCode.do")
 	@ResponseBody
-	public Map<String, List<Project>> projectListByStatusCode(HttpServletRequest request, HttpSession session){
+	public ModelAndView projectListByStatusCode(ModelAndView mav,HttpServletRequest request, HttpSession session){
 		String statusCode = request.getParameter("statusCode");
+		String sortType = request.getParameter("sortType");
+		
 		Map<String, List<Project>> projectMap = null; //조회한 프로젝트 리스트 담는 맵
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		logger.debug("statusCode= {}",statusCode);
+		logger.debug("sortType= {}",sortType);
 		try {
 			Map<String, Object> param = new HashMap<>();
 			param.put("memberLoggedIn", memberLoggedIn);
 			param.put("statusCode", statusCode);
+			param.put("sortType", sortType);
 			
 			projectMap = projectService.selectProjectListByStatusCode(param);
+			mav.addObject("projectMap",projectMap);
+			mav.setViewName("/project/ajaxProjectSort");
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("상태코드별 프로젝트 정렬 오류!");
 		}
 		
-		return projectMap;
+		return mav;
 	}
 	
 	@RequestMapping("/project/projectSetting.do")
@@ -305,9 +311,16 @@ public class ProjectController2 {
 			}else {
 				result = projectService.updateProjectMember(updateMemberStr, projectNo);
 			}
+			boolean isIncludeManager = true;
+			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+			List<Member> memberList = p.getProjectMemberList();
+			
+			int memberCnt = memberList.size();
 			
 			boolean isUpdated = result>0?true:false;
-			map.put("isUpdated",isUpdated );
+			map.put("isUpdated",isUpdated);
+			map.put("memberList",memberList);
+			map.put("memberCnt",memberCnt);
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -606,6 +619,11 @@ public class ProjectController2 {
 			@RequestParam String commentWriter, @RequestParam int commentLevel, @RequestParam String commentRef){
 		Map<String, Object> result = new HashMap<>();
 		try {
+			//XSS공격대비 &문자변환
+			commentContent = commentContent.replaceAll("<", "&lt;")
+									   .replaceAll(">", "&gt;")
+									   .replaceAll("\\n", "<br/>");//개행문자처리
+			
 			WorkComment wc = new WorkComment();
 			wc.setWorkNo(workNo);
 			wc.setWorkCommentContent(commentContent);

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,16 +28,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
-import com.kh.workground.project.model.vo.Attachment;
-import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
-import com.kh.workground.project.model.vo.WorkComment;
 import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
 public class ProjectController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
+	private HttpSession session;
 	
 	@Autowired
 	ProjectService projectService;
@@ -56,13 +55,20 @@ public class ProjectController {
 		try {
 			//1.업무로직
 			//1-1.부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
-			projectMap = projectService.selectProjectListAll(memberLoggedIn);
+			String sortType = "project_startdate";
+			String statusCode = "ALL";
+			
+			Map<String, String> param = new HashMap<>();
+			param.put("statusCode", statusCode);
+			param.put("sortType", sortType);
+			
+			projectMap = projectService.selectProjectListAll(param, memberLoggedIn);
 			
 			//1-2.부서 전체 프로젝트 상태 카운트
 			List<Project> listByDept = projectMap.get("listByDept");
 			
 			for(Project p: listByDept) {
-				String statusCode = p.getProjectStatusCode();
+				statusCode = p.getProjectStatusCode();
 				
 				if("PS1".equals(statusCode)) ps1++;
 				else if("PS2".equals(statusCode)) ps2++;
@@ -91,8 +97,12 @@ public class ProjectController {
 	public ModelAndView projectView(ModelAndView mav, HttpSession session, HttpServletRequest request, @RequestParam int projectNo, 
 									@RequestParam(defaultValue="work", required=false) String tab) {
 		
+		session.setAttribute("projectNo", projectNo);
+		this.session = session;
+		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		String loggedInMemberId = memberLoggedIn.getMemberId();
+		String loggedInMemberJobCode = memberLoggedIn.getJobCode();
 		
 		try {
 			//1.업무로직
@@ -114,10 +124,9 @@ public class ProjectController {
 					inMemList.add(m);
 			}
 			
-			//1-3.관리자인 경우
-			if("admin".equals(loggedInMemberId)) bool = true;
-			logger.debug("//////////////////////////////////");
-			logger.debug("bool={}", bool);
+			//1-3.관리자인 경우, 직급이 팀장인 경우는 조회 가능
+			if("admin".equals(loggedInMemberId) || "J2".equals(loggedInMemberJobCode)) bool = true;
+			
 			
 			//2.뷰모델 처리: 프로젝트 속함 여부에 따라 분기
 			if(!bool) {
@@ -128,6 +137,7 @@ public class ProjectController {
 				mav.setViewName("/common/msg");
 			}
 			else {
+				mav.addObject("session", this.session);
 				mav.addObject("project", p);
 				mav.addObject("allMemList", list);
 				mav.addObject("inMemList", inMemList);
@@ -192,6 +202,9 @@ public class ProjectController {
 	public ModelAndView insertWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam String worklistTitle, @RequestParam String projectManager) {
 		
 		try {
+			//xss공격방어
+			worklistTitle = worklistTitle.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+			
 			//1.업무로직
 			Map<String, Object> param = new HashMap<>();
 			param.put("projectNo", projectNo);
@@ -213,9 +226,30 @@ public class ProjectController {
 		return mav;
 	}
 	
+	@PostMapping("/project/updateWorklistTitle.do")
+	@ResponseBody
+	public Map<String, Integer> updateWorklistTitle(@RequestParam int worklistNo, @RequestParam String worklistTitle){
+		Map<String, Integer> map = new HashMap<>();
+		Map<String, Object> param = new HashMap<>();
+		param.put("worklistNo", worklistNo);
+		param.put("worklistTitle", worklistTitle);
+		
+		try {
+			//1.업무로직
+			int result = projectService.updateWorklistTitle(param);
+			map.put("result", result);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무리스트 제목 수정 오류!");
+		}
+		
+		return map;
+	}
+	
 	@PostMapping("/project/deleteWorklist.do")
 	@ResponseBody
-	public Map<String, Integer> deleteWorklist(@RequestParam int worklistNo) {
+	public Map<String, Integer> deleteWorklist(@RequestParam int worklistNo, @RequestParam String worklistTitle) {
 		Map<String, Integer> map = new HashMap<>();
 		
 		try {
@@ -229,54 +263,6 @@ public class ProjectController {
 		}
 		
 		return map;
-	}
-	
-	@PostMapping("/project/insertWork.do")
-	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="projectManager") String projectManager,
-										   @RequestParam(value="projectNo") int projectNo, 
-									       @RequestParam(value="worklistNo") int worklistNo, 
-										   @RequestParam(value="workTitle") String workTitle,
-										   @RequestParam(value="workChargedMember[]", required=false) List<String> workChargedMember,
-										   @RequestParam(value="workTag", required=false) String workTag,
-										   @RequestParam(value="workDate[]", required=false) List<String> workDate){
-		
-		try {
-			//1.업무로직
-			//1-1.파라미터 map에 담기
-			Map<String, Object> param = new HashMap<>();
-			param.put("worklistNo", worklistNo);
-			param.put("workTitle", workTitle);
-			
-			if(workChargedMember==null) param.put("workChargedMember", null);
-			else param.put("workChargedMember", workChargedMember);
-			
-			if(workTag==null) param.put("workTag", null);
-			else param.put("workTag", workTag);
-			
-			if(workDate==null) param.put("workDate", null);
-			else param.put("workDate", workDate);
-			
-			//1-2.추가
-			int result = projectService.insertWork(param);
-			
-			//1-3.업무리스트 가져오기
-			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
-			
-			//1-4.프로젝트에 속한 멤버
-			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
-			
-			//2.뷰모델 처리
-			mav.addObject("wl", wl);
-			mav.addObject("inMemList", inMemList);
-			mav.addObject("projectManager", projectManager);
-			mav.setViewName("/project/ajaxWork");
-			
-		} catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new ProjectException("새 업무 만들기 오류!");
-		}
-		
-		return mav;
 	}
 	
 	@PostMapping("/project/updateChklistCompleteYn.do")
@@ -334,8 +320,50 @@ public class ProjectController {
 		return mav;
 	}
 	
+	@PostMapping("/project/insertWork.do")
+	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="projectManager") String projectManager,
+										   @RequestParam(value="projectNo") int projectNo, 
+									       @RequestParam(value="worklistNo") int worklistNo, 
+										   @RequestParam(value="workTitle") String workTitle,
+										   @RequestParam(value="workChargedMember[]", required=false) List<String> workChargedMember,
+										   @RequestParam(value="workTag", required=false) String workTag,
+										   @RequestParam(value="workDate[]", required=false) List<String> workDate){
+		
+		try {
+			//xss공격방어
+			workTitle = workTitle.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+			
+			//1.업무로직
+			//1-1.파라미터 map에 담기
+			Map<String, Object> param = new HashMap<>();
+			param.put("worklistNo", worklistNo);
+			param.put("workTitle", workTitle);
+			
+			if(workChargedMember==null) param.put("workChargedMember", null);
+			else param.put("workChargedMember", workChargedMember);
+			
+			if(workTag==null) param.put("workTag", null);
+			else param.put("workTag", workTag);
+			
+			if(workDate==null) param.put("workDate", null);
+			else param.put("workDate", workDate);
+			
+			//1-2.추가
+			int result = projectService.insertWork(param);
+			
+			ajaxWorkSetView(mav, projectNo, worklistNo, projectManager);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("새 업무 만들기 오류!");
+		}
+		
+		return mav;
+	}
+	
 	@PostMapping("/project/deleteWork.do")
-	public ModelAndView deleteWork(ModelAndView mav, @RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo,
+	public ModelAndView deleteWork(ModelAndView mav, 
+									@RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo, @RequestParam String workTitle,
 									@RequestParam int cntChk, @RequestParam int cntComment, @RequestParam int cntFile,
 									@RequestParam String projectManager) {
 		
@@ -360,16 +388,7 @@ public class ProjectController {
 				result = projectService.deleteWork(workNo);
 			}
 			
-			//1-3. 업무가 삭제된 업무리스트 가져오기
-			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
-			
-			//1-4.프로젝트에 속한 멤버
-			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
-			
-			mav.addObject("wl", wl);
-			mav.addObject("inMemList", inMemList);
-			mav.addObject("projectManager", projectManager);
-			mav.setViewName("/project/ajaxWork");
+			ajaxWorkSetView(mav, projectNo, worklistNo, projectManager);
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -407,17 +426,7 @@ public class ProjectController {
 			//1-2.완료여부 업데이트하기
 			int result = projectService.updateWorkCompleteYn(param);
 			
-			//1-3.변동된 worklist가져오기
-			Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
-			
-			//1-4.프로젝트에 속한 멤버
-			List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
-			
-			//2.뷰모델 처리
-			mav.addObject("wl", wl);
-			mav.addObject("inMemList", inMemList);
-			mav.addObject("projectManager", projectManager);
-			mav.setViewName("/project/ajaxWork");
+			ajaxWorkSetView(mav, projectNo, worklistNo, projectManager);
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -425,6 +434,25 @@ public class ProjectController {
 		}
 		
 		return mav;
+	}
+	
+	public void ajaxWorkSetView(ModelAndView mav, int projectNo, int worklistNo, String projectManager) {
+		//1-3.변동된 worklist가져오기
+		Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
+		
+		//1-4.프로젝트에 속한 멤버
+		List<Member> inMemList = projectService.selectProjectMemberListByQuitYn(projectNo);
+		
+		//1-5.프로젝트 private여부
+		String privateYn = projectService.selectProjectPrivateYn(projectNo);
+		
+		//2.뷰모델 처리
+		mav.addObject("projectNo", projectNo);
+		mav.addObject("privateYn", privateYn);
+		mav.addObject("wl", wl);
+		mav.addObject("inMemList", inMemList);
+		mav.addObject("projectManager", projectManager);
+		mav.setViewName("/project/ajaxWork");
 	}
 	
 	@RequestMapping("/project/downloadFile.do")
@@ -487,19 +515,30 @@ public class ProjectController {
 	
 	@RequestMapping(value="/project/deleteProject.do", method= {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView deleteProject(ModelAndView mav, HttpSession session, @RequestParam int projectNo) {
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		
 		try {
 			//1.업무로직
 			int result = projectService.deleteProject(projectNo);
 			
+			String viewName = "";
 			//2. 뷰모델처리 
 			if(result!=0) {
-				projectList(mav, session);
+				//관리자인 경우
+				if("admin".equals(memberLoggedIn.getMemberId())) {
+					viewName = "redirect:/admin/adminProjectList.do";
+				}
+				//관리자 아닌 경우
+				else {
+					viewName = "redirect:/project/projectList.do";
+				}
+				mav.setViewName(viewName);
 			}
 			else {
+				viewName = "/common/msg";
 				mav.addObject("msg", "프로젝트 삭제에 실패했습니다!");
 				mav.addObject("loc", "/project/projectList");
-				mav.setViewName("/common/msg");
+				mav.setViewName(viewName);
 			}
 			
 		} catch(Exception e) {
@@ -510,6 +549,7 @@ public class ProjectController {
 		return mav;
 	}
 	
+
 	@RequestMapping("/project/projectChatting.do")
 	public ModelAndView projectChatting(ModelAndView mav, @RequestParam int projectNo) {
 		
@@ -524,11 +564,60 @@ public class ProjectController {
 		
 		return mav;
 	}
+		
+	@RequestMapping("/project/sortProjectList.do")
+	public ModelAndView sortProjectList(ModelAndView mav, HttpSession session, @RequestParam(value="statusCode",defaultValue="ALL") String statusCode,
+			@RequestParam(value="sortType",defaultValue="project_startdate") String sortType) {
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		List<Member> memberListByDept = null; //부서 사람들 담는 리스트
+		Map<String, List<Project>> projectMap = null; //조회한 프로젝트 리스트 담는 맵
+		
+		try {
+			//1.업무로직
+			//1-1.부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
+			Map<String, String> param = new HashMap<>();
+			param.put("statusCode", statusCode);
+			param.put("sortType", sortType);
+			
+			projectMap = projectService.selectProjectListAll(param,memberLoggedIn);
+			
+			//2.뷰모델 처리
+			mav.addObject("projectMap", projectMap);
+			mav.setViewName("/project/ajaxProjectSort"); 
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 목록 조회 오류!");
+		}
+		
+		return mav;
+	}
+
+	@PostMapping("/project/resetWorklist.do")
+	public ModelAndView resetWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam int worklistNo,@RequestParam String projectManager) {
+		
+		try {
+			
+			ajaxWorkSetView(mav, projectNo, worklistNo, projectManager);
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무리스트 삭제 오류!");
+		}
+		
+		return mav;
+	}
 	
-	
-	
-	
-	
-	
-	
+
+	/*@Scheduled(cron="0/30 * * * * *")
+	public void deleteAllProjectLog() {
+		
+		try {
+				
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 활동로그 삭제 오류!");
+		}
+	}*/
+
 }

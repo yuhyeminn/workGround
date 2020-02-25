@@ -119,7 +119,7 @@ function clubFunc(){
 		    	//삭제하기 버튼
 		    	if( (list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{
-			    	allClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
+			    	allClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool"'
 		    			   	   +'onclick="delClubFunc('+list.clubNo+')">'
 		    			   	   +'<i class="fas fa-times"></i></button></div>';
 		    	}
@@ -186,7 +186,7 @@ function clubFunc(){
 				//삭제버튼 부분
 				if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin'){
 
-					myClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
+					myClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool"'
 	    			   	   	  +'onclick="delClubFunc('+list.clubNo+')">'
 	    			   	      +'<i class="fas fa-times"></i></button></div>';	
 				}
@@ -233,7 +233,7 @@ function clubFunc(){
 		    	//삭제하기 버튼
 		    	if((list.clubManagerYN != null && list.clubManagerYN.charAt(0) == 'Y')||'${memberLoggedIn.memberId}' == 'admin')
 		    	{
-		    		standByClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool" data-card-widget="remove"'
+		    		standByClubHtml+='<div class="card-tools text-right"><button type="button" class="btn btn-tool"'
 		    			   	   +'onclick="delClubFunc('+list.clubNo+')">'
 		    			   	   +'<i class="fas fa-times"></i></button></div>';
 		    	}
@@ -291,6 +291,8 @@ function clubFunc(){
 </script>
 
 <style>
+
+
 /*card*/
 .card-club-image img {
 	margin-top: 0.5rem;

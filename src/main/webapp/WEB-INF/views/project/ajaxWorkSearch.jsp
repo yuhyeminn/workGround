@@ -32,7 +32,7 @@ $(function(){
 </script>
 
 		<!-- SEARCH FORM -->
-        <form id="workSearchFrm" class="form-inline">
+        <form id="workSearchFrm" class="form-inline" onsubmit="return false;">
 	        <div class="input-group input-group-sm">
 	            <input class="form-control form-control-navbar" name="searchWorkKeyword" type="search" placeholder="업무 검색" value="${keywordBefore}" aria-label="Search">
 	            <div class="input-group-append">
@@ -50,15 +50,33 @@ $(function(){
         <section class="worklist" id="worklist-${wl.worklistNo}">
             <!-- 업무리스트 타이틀 -->
             <div class="worklist-title">
-                <h5>${wl.worklistTitle}</h5>
-                
-                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
-                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
-                <div class="worklist-title-btn">
-	                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
-	                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
+                <div class="wlTitle-inner">
+	                <h5>${wl.worklistTitle}</h5>
+	                
+	                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
+	                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
+	                <div class="worklist-title-btn">
+	                	<button type="button" class="btn-showUpdateFrm" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
+		                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
+		                <button type="button" class="btn-removeWorklist-modal" value="${wl.worklistNo},${wl.worklistTitle}" data-toggle="modal" data-target="#modal-worklist-remove"><i class="fas fa-times"></i></button>
+	                </div>
+	                </c:if>
                 </div>
-                </c:if>
+                
+                <!-- 업무리스트 타이틀 수정폼 -->
+               	<section class="update-wlTitle-wrapper" role="button" tabindex="0">
+		            <!-- 타이틀 -->
+		            <div class="worklist-title update-wklt">
+		                <form claa="updateWlTitleFrm" onsubmit="return false;">
+		                    <input type="text" name="newWorklistTitle" required/>
+		                    <div class="worklist-title-btn">
+		                        <button type="button" class="btn-updateWlTitle" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
+		                        <button type="button" class="btn-cancel-updateWlTitle"><i class="fas fa-times"></i></button>
+		                    </div>
+		                </form>
+		                <div class="clear"></div>
+		            </div><!-- /.worklist-title -->
+		        </section><!-- /.worklist -->
                 
                 <!-- 진행 중인 업무 -->
                 <div class="worklist-titleInfo-top">
@@ -220,32 +238,52 @@ $(function(){
 						</c:if>
 						
 		                <!-- 날짜 설정 -->
-		                <c:if test="${w.workStartDate!=null}">
 		                <div class="work-deadline">
-		                    <p>
-		                    	<c:if test="${w.workEndDate!=null}">
-		                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
+		                <!-- 마감일 없고 시작일만 있는 경우 -->
+		                <c:if test="${w.workEndDate==null && w.workStartDate!=null}">
+		                	<p>
+		                	<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" />에 시작
+		                	</p>
+		                </c:if>
+		                <!-- 마감일 있는 경우 -->
+		                <c:if test="${w.workEndDate!=null}">
+		                	<c:set var="now" value="<%= new Date() %>"/>
+	                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	<fmt:parseDate var="enddate" value="${w.workEndDate}" pattern="yyyy-MM-dd"/>
+	                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
+	                    	
+		                	<!-- 시작일 있는 경우 -->
+		                	<c:if test="${w.workStartDate!=null}">
+		                		<p>
+			                	<!-- 마감일 안 지난 경우 -->
+			                	<c:if test="${today_D < enddate_D}">
+			                		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" /> - 
 		                    		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />
-		                    	</c:if>
-		                    	<c:if test="${w.workEndDate==null}">
-		                    		<fmt:formatDate value="${w.workStartDate}" type="date" pattern="MM월dd일" />에 시작
-		                    	</c:if>
-		                    </p>
-		                    <!-- 마감일 있는데 업무 완료되지 않은 경우 -->
-		                    <c:if test="${w.workEndDate!=null && w.workCompleteYn=='N'}">
-		                    	<c:set var="now" value="<%= new Date() %>"/>
-		                    	<fmt:formatDate var="nowStr" value="${now}" type="date" pattern="yyyy-MM-dd"/>
-		                    	<fmt:parseDate var="today" value="${nowStr}" type="date" pattern="yyyy-MM-dd"/>
-		                    	<fmt:parseNumber var="today_D" value="${today.time/(1000*60*60*24)}" integerOnly="true"/>
-		                    	<fmt:parseDate var="enddate" value="${w.workEndDate}" pattern="yyyy-MM-dd"/>
-		                    	<fmt:parseNumber var="enddate_D" value="${enddate.time/(1000*60*60*24)}" integerOnly="true"/>
-		                    	
-								<c:if test="${today_D > enddate_D}">
+								</c:if> 
+			                	<!-- 마감일 지난 경우 -->
+			                	<c:if test="${today_D > enddate_D}">
 									<p class="over">마감일 ${today_D - enddate_D}일 지남</p>
-								</c:if>               	
-		                    </c:if>
+								</c:if>      
+		                		</p>
+		                	</c:if>
+		                	
+		                	<!-- 시작일 없는 경우 -->
+		                	<c:if test="${w.workStartDate==null}">
+		                		<p>
+			                	<!-- 마감일 안 지난 경우 -->
+			                	<c:if test="${today_D < enddate_D}">
+			                		<fmt:formatDate value="${w.workEndDate}" type="date" pattern="MM월dd일" />에 마감
+								</c:if> 
+			                	<!-- 마감일 지난 경우 -->
+			                	<c:if test="${today_D > enddate_D}">
+									<p class="over">마감일 ${today_D - enddate_D}일 지남</p>
+								</c:if>
+								</p>
+		                	</c:if>
+		                </c:if>
 		                </div><!-- /.work-deadline -->
-						</c:if>
 						
 						<!-- 완료 체크리스트 수 구하기 -->
 						<c:set var="chkCnt" value="0"/>
