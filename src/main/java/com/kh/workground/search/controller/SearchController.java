@@ -33,32 +33,26 @@ public class SearchController {
 	@RequestMapping("/search/searchList.do")
 	public ModelAndView searchList(ModelAndView mav, HttpSession session, @RequestParam String keyword) {
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		String memberId = memberLoggedIn.getMemberId(); 
-		String deptCode = memberLoggedIn.getDeptCode();
-		
 		Map<String, String> param = new HashMap<>();
 		param.put("deptCode", memberLoggedIn.getDeptCode());
 		param.put("keyword", keyword);
-		param.put("memberId", memberId); //동호회 모달에서 가입을 위해 
 		
 		try {
 			//1.업무로직
 			//a-1.공지
-			List<Notice> noticeList = searchService.selectTotalNoticeListByKeyword(keyword);
-			//logger.debug("noticeList={}", noticeList);
-			//logger.debug("noticeList.size={}", noticeList.size());
+			List<Notice> totalNoticeList = searchService.selectTotalNoticeListByKeyword(keyword);
 			
-			//a-2.내 부서 게시글 
+			//a-2.내 부서 게시글
 			List<Notice> deptNoticeList = searchService.selectDeptNoticeListByKeyword(param);
 			
 			//a-3.커뮤니티
-			List<Community> communityList = searchService.selectCommuListByKeyword(keyword);
+			List<Community> commuList = searchService.selectCommuListByKeyword(keyword);
 			
 			//b.내 부서 프로젝트
 			List<Project> projectList = searchService.selectProjectListByKeyword(param);
 			
-			//c.동호회 
-			List<Club> clubList = searchService.selectClubListByKeyword(param);
+			//c.동호회
+			List<Map<String, Object>> clubList = searchService.selectClubListByKeyword(keyword);
 			
 			//d.멤버
 			List<Member> memList = searchService.selectMemberListByKeyword(keyword);
@@ -66,10 +60,9 @@ public class SearchController {
 			
 			//2.뷰모델 처리
 			mav.addObject("keyword", keyword);
-			mav.addObject("noticeList", noticeList);
-			mav.addObject("deptNoticeList", deptNoticeList); //목록 띄워줄용
-			mav.addObject(deptCode.equals("D1")?"planningDeptNoticeList":deptCode.equals("D2")?"designDeptNoticeList":"developmentDeptNoticeList", deptNoticeList); //모달
-			mav.addObject("communityList", communityList);
+			mav.addObject("totalNoticeList", totalNoticeList);
+			mav.addObject("deptNoticeList", deptNoticeList);
+			mav.addObject("commuList", commuList);
 			mav.addObject("projectList", projectList);
 			mav.addObject("clubList", clubList);
 			mav.addObject("memList", memList);
@@ -88,44 +81,32 @@ public class SearchController {
 									@RequestParam String keyword, @RequestParam String type, @RequestParam(defaultValue="1") int cPage) {
 		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		String memberId = memberLoggedIn.getMemberId(); //추가
-		String deptCode = memberLoggedIn.getDeptCode();
-		
 		Map<String, String> param = new HashMap<>();
 		param.put("deptCode", memberLoggedIn.getDeptCode());
 		param.put("keyword", keyword);
-		param.put("memberId", memberId); //동호회 모달에서 가입을 위해
 		final int numPerPage = 10; 
 		
 		try {
 			//1.업무로직
 			//공지인경우
 			if("total".equals(type)) {
-				List<Notice> totalNoticeList = searchService.selectTotalNoticeListByPageBar(cPage, numPerPage, keyword); //모두보기용(댓글 없는 뷰)	
-				List<Notice> noticeList = searchService.selectNoticeListByPageBar(keyword); //공지 모달(댓글 있는 뷰)
+				List<Notice> list = searchService.selectTotalNoticeListByKeyword(cPage, numPerPage, keyword);	
 				int totalContents = searchService.selectTotalNoticeTotalContents(keyword);
-				
-				mav.addObject("totalNoticeList", totalNoticeList);
-				mav.addObject("noticeList", noticeList);
+				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//내 부서 게시글
 			if("dept".equals(type)) {
-				List<Notice> deptList = searchService.selectDeptNoticeListByPageBar(cPage, numPerPage, param); //모두보기용(댓글 없는 뷰)
-				List<Notice> deptNoticeList = searchService.selectDeptNoticeList(param); //모달(댓글 있는 뷰)
-				int totalContents = searchService.selectDeptNoticeTotalContents(param);
-				
-				mav.addObject(deptCode.equals("D1")?"planningDeptNoticeList":deptCode.equals("D2")?"designDeptNoticeList":"developmentDeptNoticeList", deptNoticeList);
-				mav.addObject("deptList", deptList); //모두보기 띄울용
+				List<Notice> list = searchService.selectDeptNoticeListByPageBar(cPage, numPerPage, param);
+				int totalContents = searchService.selectDeptNoticeTotalContents(keyword);
+				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//커뮤니티
 			if("commu".equals(type)) {
-
 				List<Community> list = searchService.selectCommuListByPageBar(cPage, numPerPage, keyword);
 				int totalContents = searchService.selectCommuListTotalContents(keyword);
-				
-				mav.addObject("communityList", list);
+				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//내 부서 프로젝트
@@ -137,10 +118,9 @@ public class SearchController {
 			}
 			//동호회
 			if("club".equals(type)) {
-
-				List<Club> list = searchService.selectClubListByPageBar(cPage, numPerPage, param);
+				List<Map<String, Object>> list = searchService.selectClubListByPageBar(cPage, numPerPage, keyword);
 				int totalContents = searchService.selectClubTotalContents(keyword);
-				mav.addObject("clubList", list);
+				mav.addObject("list", list);
 				mav.addObject("totalContents", totalContents);
 			}
 			//멤버

@@ -1,11 +1,11 @@
-
-package com.kh.workground.club.model.vo;
+package com.kh.workground.admin.model.vo;
 
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kh.workground.club.model.vo.ClubPhoto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,8 +18,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Club implements Serializable {
-
+public class AdminClub implements Serializable{
 	/**
 	 * 
 	 */
@@ -27,9 +26,10 @@ public class Club implements Serializable {
 	
 	private int clubNo;
 	private String clubName;
-	
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
 	private Date clubEnrollDate;
+	private String memberName;
+	
 	private String clubIntroduce;
 	private String clubMeetingCycle;
 	private String clubMeetingDate;
@@ -44,8 +44,5 @@ public class Club implements Serializable {
 	
 	//동호회 사진 가상컬럼
 	private List<ClubPhoto> clubPhotoList;
-	
-
-	
 	
 }

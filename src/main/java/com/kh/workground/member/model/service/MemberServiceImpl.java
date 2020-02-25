@@ -55,4 +55,8 @@ public class MemberServiceImpl implements MemberService {
 	public int updatePassword(Map<String, String> map) {
 		return memberDAO.updatePassword(map);
 	}
+	@Override
+	public List<Member> selectSearchList(String keyword) {
+		return memberDAO.selectSearchList(keyword);
+	}
 }

@@ -41,8 +41,8 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public List<Club> selectClubListByKeyword(Map<String, String> param) {
-		return sqlSession.selectList("search.selectClubListByKeyword", param);
+	public List<Map<String, Object>> selectClubListByKeyword(String keyword) {
+		return sqlSession.selectList("search.selectClubListByKeyword", keyword);
 	}
 
 	@Override
@@ -61,12 +61,13 @@ public class SearchDAOImpl implements SearchDAO {
 		return sqlSession.selectOne("search.selectMemberTotalContents", keyword);
 	}
 
-	@Override //공지
-	public List<Notice> selectNoticeListByPageBar(String keyword) {
-		return sqlSession.selectList("search.selectNoticeListByKeyword", keyword);
+	@Override
+	public List<Notice> selectTotalNoticeListByKeyword(int cPage, int numPerPage, String keyword) {
+		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
+		return sqlSession.selectList("search.selectTotalNoticeListByKeyword", keyword, rowBounds);
 	}
 
-	@Override //공지콘텐츠
+	@Override
 	public int selectTotalNoticeTotalContents(String keyword) {
 		return sqlSession.selectOne("search.selectTotalNoticeTotalContents", keyword);
 	}
@@ -78,17 +79,17 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public int selectDeptNoticeTotalContents(Map<String, String> param) {
-		return sqlSession.selectOne("search.selectDeptNoticeTotalContents", param);
+	public int selectDeptNoticeTotalContents(String keyword) {
+		return sqlSession.selectOne("search.selectDeptNoticeTotalContents", keyword);
 	}
 
-	@Override //커뮤니티
+	@Override
 	public List<Community> selectCommuListByPageBar(int cPage, int numPerPage, String keyword) {
 		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
 		return sqlSession.selectList("search.selectCommuListByKeyword", keyword, rowBounds);
 	}
 
-	@Override //커뮤콘텐츠
+	@Override
 	public int selectCommuListTotalContents(String keyword) {
 		return sqlSession.selectOne("search.selectCommuListTotalContents", keyword);
 	}
@@ -105,25 +106,14 @@ public class SearchDAOImpl implements SearchDAO {
 	}
 
 	@Override
-	public List<Club> selectClubListByPageBar(int cPage, int numPerPage, Map<String, String> param) {
+	public List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword) {
 		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
-		return sqlSession.selectList("search.selectClubListByKeyword", param, rowBounds);
+		return sqlSession.selectList("search.selectClubListByKeyword", keyword, rowBounds);
 	}
 
 	@Override
 	public int selectClubTotalContents(String keyword) {
 		return sqlSession.selectOne("search.selectClubTotalContents", keyword);
-	}
-
-	@Override
-	public List<Notice> selectTotalNoticeListByPageBar(int cPage, int numPerPage, String keyword) {
-		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
-		return sqlSession.selectList("search.selectTotalNoticeListByKeyword", keyword, rowBounds);	
-	}
-
-	@Override
-	public List<Notice> selectDeptNoticeList(Map<String, String> param) {
-		return sqlSession.selectList("search.selectDeptNoticeList", param);
 	}
 
 }

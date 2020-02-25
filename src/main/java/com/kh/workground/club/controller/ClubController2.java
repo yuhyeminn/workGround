@@ -81,7 +81,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
 //			logger.debug("clubMemberList={}", clubMemberList);
 			List<ClubPhotoComment> clubPhotoCommentList = clubService2.selectClubPhotoCommentList(clubNo);
-//			logger.debug("clubPhotoCommentList={}", clubPhotoCommentList);
+			logger.debug("clubPhotoCommentList={}", clubPhotoCommentList);
 			
 			Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
 //			logger.debug("memberLoggedIn={}", memberLoggedIn);
@@ -662,8 +662,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@RequestMapping("/club/clubFileList.do")
 	public ModelAndView clubFileList(ModelAndView mav, 
-									 @RequestParam("clubNo") int clubNo, 
-									 HttpServletRequest request
+									 @RequestParam("clubNo") int clubNo
 									) {
 		try {
 			Club club = clubService2.selectClub(clubNo);
@@ -676,27 +675,12 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
 //			logger.debug("clubMemberList={}", clubMemberList);
 			
-			Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
-
-			Map<String, String> param = new HashMap<>();
-			param.put("clubNo", clubNo+"");
-			param.put("memberId", memberLoggedIn.getMemberId());
-			ClubMember clubMember = clubService2.selectOneClubMember(param);
-//			logger.debug("clubMember={}", clubMember);
-			
-			boolean isManager = false;
-//			logger.debug("clubManagerYN={}", clubMember.getClubManagerYN());
-			if("admin".equals(memberLoggedIn.getMemberId()) || 'Y'==clubMember.getClubManagerYN().charAt(0)) {
-				isManager = true;
-			}
-//			logger.debug("isManager={}", isManager);
 	
 			
 			mav.addObject("club", club);
 			mav.addObject("clubPhotoList", clubPhotoList);
 			mav.addObject("clubNoticeList", clubNoticeList);
 			mav.addObject("clubMemberList", clubMemberList);
-			mav.addObject("isManager", isManager);
 			mav.setViewName("club/clubFileList");
 			
 		} catch (Exception e) {

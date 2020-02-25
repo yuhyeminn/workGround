@@ -5,19 +5,69 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
-<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/notice.css">
+
 <style>
-.btn-showAll{float: right; margin-right: 1rem; border: 1.2px solid lightgray; border-radius: 3px; padding: .4rem; color: darkgray}
-.btn-showAll:hover{color: gray;}
-/* 검색 결과 없음 이미지 */
-#empty-wrapper{width: 800px; height: 450px; margin: 1rem auto 0; padding: 3rem; background: #fff; border: 1px solid rgba(29,34,43,.1); border-radius: 2px; margin-top: 3rem;}
-#empty-wrapper img{display: block; width: 30%; margin: 0 auto;}
-#empty-wrapper p{margin-top: 1rem; color: #464c59; font-weigth: bold; text-align: center;}
+/* 공지, 게시판 카드 */
+#noticeSearchFrm{margin: 15px 1rem 15px;} /*공지, 게시판 검색*/
+div.content-wrapper>div.content{padding-bottom: 5rem;} /*페이지 아래 길이 늘려주기*/
+div.header-line{padding: 1rem .5rem .8rem; margin: 1rem 0 .5rem; color: rgba(0,0,0,.5);}
+div.header-line h6{font-weight: bold;}
+i.fa-plus-square{float: right; font-size: 2rem; margin-right: .5rem; cursor: pointer; color: darkgray;} /*공지, 게시판 추가 버튼*/
+i.fa-plus-square:hover{color: gray;}
+.card{height: 20rem;}
+.card-body{overflow: hidden;} /*카드내용 밖으로 넘어감 처리*/
+img.card-img-top{height: 10rem; object-fit: cover; margin-bottom: 1.5rem; border-radius: 5px;}
+.card-title{margin-bottom: .5rem; font-size: 1rem; font-weight: bold;}
+.carousel-item-next, .carousel-item-prev, .carousel-item.active{display: flex;}
+.carousel-indicators{bottom: -3rem;} 
+.carousel-indicators li{background-color: gray;}
+i.slide-arrow{color: rgb(199, 195, 195); font-size: 2rem; cursor: pointer; position: absolute; top: 45%;}
+i.slide-arrow:hover{color:gray;}
+i.slide-arrow-left{left: -2rem;}
+i.slide-arrow-right{right: -1rem;}
+.btn-moreMenu{position: absolute; border: 0; background: #00ff0000; color: darkgray; font-size: .8rem; right: .1rem; top: .3rem;} /*수정, 삭제*/
+.btn-moreMenu:hover{color: gray;}
+a.dropdown-item{color: gray;}
+span#myDept{width: 1rem; height: 1rem; border: 2px solid lightgray; background: white; border-radius: 5px; padding: 0 .3rem;}
+/* 공지, 게시판 상세보기 모달 */
+div.modal-dialog{max-width: 50%;}
+.modal-header .close{margin: -1.5rem -1rem -1.5rem auto;}
+.modal-header .close>span{font-size: 2rem;}
+.modal-title{color: #5a5454;}
+.noticeView, .deptNoticeView, .boardView{margin-bottom: 1rem;}
+.user-block{float: none;}
+.view-img{width: 100%; display: block; margin: 0 auto;}
+.noticeView>.view-title, .deptNoticeView>.view-title, .boardView>.view-title{margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 1px solid lightgray;}
+p.view-title{font-size: 1.2rem; font-weight: bold;}
+p.view-content{margin: 1rem 1rem 2.5rem;}
+.comment-count{margin: 2.5rem 0 0.5rem; color: rgb(93, 93, 93);}
+.comment-text-area{display: inline-block; width: 90%; height: 2rem; margin-right: .3rem;}
+.comment-reply{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white;}
+.comment-delete{border: 0; background: darkgray; border-radius: 3px; color: white;}
+.comment-submit{border: 0; background: darkgray; border-radius: 3px; width: 3rem; height: 2rem; color: white;}
+.comment-submit:hover, .comment-reply:hover{background: #007bff;}
+.comment-delete:hover{background: #dc3545;}
+.comment-level2{margin-left: 3rem;}
+.btn-outline-success{border: 0; background: darkgray; border-radius: 3px; color: white;}
+.btn-outline-success:hover{background: #007bff;}
+.note-editor.note-frame{border: 1px solid #ced4da; width: 100%; height: 100%;} /*텍스트 에디터*/
+.note-editable{height: 10rem;}
+
+.fname{background: white; position: relative; bottom: 1.5rem; left: 4.6rem; padding-right:10rem;}
+.deleteFileSpan{position: absolute; left: 2.4rem; bottom: 0.8rem;}
+/* 답글 텍스트 */
+form.comment-level2{margin: 1rem 0 1rem 7rem;}
+.comment-submit-level2{border: 0; background: darkgray; border-radius: 3px; margin-right: .3rem; color: white; height: 2rem; width: 2.5rem}
+.comment-submit-level2:hover{background: #007bff;}
+div.level-2-border{border-bottom: 1px solid #e9ecef;}
+/*검색*/
+div#searchLine{color: rgba(0,0,0,.5); margin: 1rem 0 -0.5rem; font-size: 1.2rem; padding: 0; display:none;font-size: 1rem; font-weight: bold;}
+#searchLine>h6, span#searchCount{font-size: 1rem; font-weight: bold;}
+
 </style>
 
 <script>
 var nowSearchKeyword = '';
-var keyword = '';
 
 $(function(){
 	
@@ -56,6 +106,7 @@ $(function(){
 		} else {
 			sortByMenu($(this).text());
 		}
+		
 	});
   
 });
@@ -71,12 +122,6 @@ function sidebarActive(){
 	});
 	
 	$("#sidebar-notice").addClass("active");
-}
-
-//모두보기 버튼 클릭
-function showAll(type){
-	keyword = nowSearchKeyword;
-	location.href="${pageContext.request.contextPath}/notice/noticeShowAll.do?keyword="+keyword+"&type="+type;
 }
 
 //정렬
@@ -133,15 +178,6 @@ function noticeSearch(searchKeyword){
 			
 			listAjax(data);
 			$(".btn-add").css("display", "none"); //추가 버튼 없애기
-			
-			//검색 결과 없을 경우
-			if(Object.keys(data.noticeList).length + Object.keys(data.deptNoticeList).length + Object.keys(data.communityList).length == 0){
-				let emptyHtml = '';
-				emptyHtml += '<div id="empty-wrapper"><img src="${pageContext.request.contextPath}/resources/img/search-empty-state.png" alt="검색결과 없음" />'
-						  + '<p>검색 결과가 없습니다.</p></div>';
-				$(".notice-area").html(emptyHtml);
-			}
-			
 		},
 		error: (x,s,e) => {
 			console.log(x,s,e);
@@ -168,18 +204,13 @@ function listAjax(data){
 	//헤더
 	noticeHtml += '<div class="header-line"><h6><i class="fas fa-exclamation-circle"></i>&nbsp; 전체 공지 '
 					+'<span class="header-count">('+Object.keys(data.noticeList).length+')</span>'
-					+'<i class="fas fa-plus-square btn-add float-right" data-toggle="modal" data-target="#addNoticeModal"';	
+					+'<i class="fas fa-plus-square btn-add" data-toggle="modal" data-target="#addNoticeModal"';	
 	if('${memberLoggedIn.jobTitle}' == '관리자'){
-		noticeHtml += 'style = "display:block";></i>';
+		noticeHtml += 'style = "display:block";></i></h6></div>';
 	}
 	else{
-		noticeHtml += 'style = "display:none";></i>';
+		noticeHtml += 'style = "display:none";></i></h6></div>';
 	}
-	
-	if(Object.keys(data.noticeList).length > 12){
-		noticeHtml += '<button class="btn-showAll" onclick=showAll("total");>모두보기</button>';
-	}
-	noticeHtml += '</h6></div>';
 	
 	//슬라이드 바
 	noticeHtml += '<div id="notice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">'
@@ -189,7 +220,7 @@ function listAjax(data){
 		noticeHtml += '<li data-target="#notice_indicators" data-slide-to="0" class="active"></li>';
 	}
 	
- 	for(var i=1; i< Math.ceil(Object.keys(data.noticeList).length/4) && i<3; i++){
+	for(var i=1; i< Math.ceil(Object.keys(data.noticeList).length/4); i++){
 		noticeHtml += '<li data-target="#notice_indicators" data-slide-to="'+i+'"></li>';
 	}
 	
@@ -197,51 +228,47 @@ function listAjax(data){
 	
 	$.each(data.noticeList, (idx, list)=>{
 		
-		if(idx < 12){
-			if(idx+1 == 1){
-				noticeHtml += '<div class="row card-content carousel-item active">'; 
-			}
-			
-			if((idx+1)%4 == 1 && (idx+1) != 1){
-				noticeHtml += '<div class="row card-content carousel-item">'; 
-			}
-			
-			//카드부분
-			noticeHtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card">';
-			//: 버튼
-			noticeHtml += '<div class="dropleft">'
-							+'<button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"';
-			if('${memberLoggedIn.memberId}' == 'admin'){
-				noticeHtml += 'style = "display:block";>';
-			}
-			else{
-				noticeHtml += 'style = "display:none";>';
-			}
-			noticeHtml += '<i class="fas fa-ellipsis-v"></i></button>';
-	
-			//수정, 삭제 메뉴
-			noticeHtml += '<div class="dropdown-menu">'
-							+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal'+list.noticeNo+'">공지 수정</a>'
-							+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item">공지 삭제</a>'
-							+'</div></div>';
-			
-			//카드 바디
-			noticeHtml += '<div class="card-body" data-toggle="modal" data-target="#noticeViewModal'+list.noticeNo+'">';
-			//이미지
-			if(list.noticeRenamedFileName != null && list.noticeRenamedFileName.trim().length != 0){
-				noticeHtml += '<img src="${pageContext.request.contextPath}/resources/upload/notice/'+list.noticeRenamedFileName+'" class="card-img-top">';
-			}
-			
-			//카드 제목, 내용
-			noticeHtml += '<h5 class="card-title">'+list.noticeTitle+'</h5>'
-							+'<p class="card-text">'+list.noticeContent+'</p></div></div></div>';
-			
-			if((idx+1)%4 == 0 || (idx+1) == Object.keys(data.noticeList).length){
-				noticeHtml += '</div>';
-			}
-			
+		if(idx+1 == 1){
+			noticeHtml += '<div class="row card-content carousel-item active">'; 
 		}
 		
+		if((idx+1)%4 == 1 && (idx+1) != 1){
+			noticeHtml += '<div class="row card-content carousel-item">'; 
+		}
+		
+		//카드부분
+		noticeHtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card">';
+		//: 버튼
+		noticeHtml += '<div class="dropleft">'
+						+'<button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"';
+		if('${memberLoggedIn.memberId}' == 'admin'){
+			noticeHtml += 'style = "display:block";>';
+		}
+		else{
+			noticeHtml += 'style = "display:none";>';
+		}
+		noticeHtml += '<i class="fas fa-ellipsis-v"></i></button>';
+
+		//수정, 삭제 메뉴
+		noticeHtml += '<div class="dropdown-menu">'
+						+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal'+list.noticeNo+'">공지 수정</a>'
+						+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item">공지 삭제</a>'
+						+'</div></div>';
+		
+		//카드 바디
+		noticeHtml += '<div class="card-body" data-toggle="modal" data-target="#noticeViewModal'+list.noticeNo+'">';
+		//이미지
+		if(list.noticeRenamedFileName != null && list.noticeRenamedFileName.trim().length != 0){
+			noticeHtml += '<img src="${pageContext.request.contextPath}/resources/upload/notice/'+list.noticeRenamedFileName+'" class="card-img-top">';
+		}
+		
+		//카드 제목, 내용
+		noticeHtml += '<h5 class="card-title">'+list.noticeTitle+'</h5>'
+						+'<p class="card-text">'+list.noticeContent+'</p></div></div></div>';
+		
+		if((idx+1)%4 == 0 || (idx+1) == Object.keys(data.noticeList).length){
+			noticeHtml += '</div>';
+		}
 		
 	});//$.each(noticeList)
 	
@@ -265,13 +292,7 @@ function listAjax(data){
 	}
 	
 	deptNoticeHtml += '<span class="header-count">('+Object.keys(data.deptNoticeList).length+')</span>'
-				   + '<i class="fas fa-plus-square btn-add" data-toggle="modal" data-target="#addNoticeForDeptModal"></i>';
-				   
-	if(Object.keys(data.deptNoticeList).length > 12){
-		deptNoticeHtml += '<button class="btn-showAll" onclick=showAll("dept");>모두보기</button></h6></div>';
-	}
-	deptNoticeHtml += '</h6></div>';
-	
+						+'<i class="fas fa-plus-square btn-add" data-toggle="modal" data-target="#addNoticeForDeptModal"></i></h6></div>';
 	
 	//슬라이드 바
 	deptNoticeHtml += '<div id="myDeptNotice_indicators" class="carousel slide" data-ride="carousel" data-interval="false">'
@@ -280,8 +301,8 @@ function listAjax(data){
 	if(data.deptNoticeList != null && Object.keys(data.deptNoticeList).length != 0){
 		deptNoticeHtml += '<li data-target="#myDeptNotice_indicators" data-slide-to="0" class="active"></li>';
 	}
-
- 	for(var i=1; i< Math.ceil(Object.keys(data.deptNoticeList).length/4) && i<3; i++){ 
+	
+	for(var i=1; i< Math.ceil(Object.keys(data.deptNoticeList).length/4); i++){
 		deptNoticeHtml += '<li data-target="#myDeptNotice_indicators" data-slide-to="'+i+'"></li>';
 	}
 	
@@ -290,49 +311,47 @@ function listAjax(data){
 	
 	$.each(data.deptNoticeList, (idx, list)=>{
 		
-		if(idx < 12){
-			if(idx+1 == 1){
-				deptNoticeHtml += '<div class="row card-content carousel-item active">'; 
-			}
-			
-			if((idx+1)%4 == 1 && (idx+1) != 1){
-				deptNoticeHtml += '<div class="row card-content carousel-item">'; 
-			}	
-	
-			//카드부분
-			deptNoticeHtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card">';
-			//: 버튼
-			deptNoticeHtml += '<div class="dropleft">'
-							+'<button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"';
-			if('${memberLoggedIn.memberId}' == list.noticeWriter || '${memberLoggedIn.memberId}' == 'admin'){
-				deptNoticeHtml += 'style = "display:block";>';
-			}
-			else{
-				deptNoticeHtml += 'style = "display:none";>';
-			}
-			
-			deptNoticeHtml += '<i class="fas fa-ellipsis-v"></i></button>';
-	
-	 		//수정, 삭제 메뉴
-			deptNoticeHtml += '<div class="dropdown-menu">'
-							+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateDeptNoticeModal'+list.noticeNo+'">게시글 수정</a>'
-							+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item">게시글 삭제</a>'
-							+'</div></div>';
-			
-			//카드 바디
-			deptNoticeHtml += '<div class="card-body" data-toggle="modal" data-target="#myDeptNoticeViewModal'+list.noticeNo+'">';
-			//이미지
-			if(list.noticeRenamedFileName != null && list.noticeRenamedFileName.trim().length != 0){
-				deptNoticeHtml += '<img src="${pageContext.request.contextPath}/resources/upload/notice/'+list.noticeRenamedFileName+'" class="card-img-top">';
-			}
-			
-			//카드 제목, 내용
-			deptNoticeHtml += '<h5 class="card-title">'+list.noticeTitle+'</h5>'
-							+'<p class="card-text">'+list.noticeContent+'</p></div></div></div>';
-			
-			if((idx+1)%4 == 0 || (idx+1) == Object.keys(data.deptNoticeList).length){
-				deptNoticeHtml += '</div>';
-			}
+		if(idx+1 == 1){
+			deptNoticeHtml += '<div class="row card-content carousel-item active">'; 
+		}
+		
+		if((idx+1)%4 == 1 && (idx+1) != 1){
+			deptNoticeHtml += '<div class="row card-content carousel-item">'; 
+		}	
+
+		//카드부분
+		deptNoticeHtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card">';
+		//: 버튼
+		deptNoticeHtml += '<div class="dropleft">'
+						+'<button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"';
+		if('${memberLoggedIn.memberId}' == list.noticeWriter || '${memberLoggedIn.memberId}' == 'admin'){
+			deptNoticeHtml += 'style = "display:block";>';
+		}
+		else{
+			deptNoticeHtml += 'style = "display:none";>';
+		}
+		
+		deptNoticeHtml += '<i class="fas fa-ellipsis-v"></i></button>';
+
+ 		//수정, 삭제 메뉴
+		deptNoticeHtml += '<div class="dropdown-menu">'
+						+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateDeptNoticeModal'+list.noticeNo+'">게시글 수정</a>'
+						+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item">게시글 삭제</a>'
+						+'</div></div>';
+		
+		//카드 바디
+		deptNoticeHtml += '<div class="card-body" data-toggle="modal" data-target="#myDeptNoticeViewModal'+list.noticeNo+'">';
+		//이미지
+		if(list.noticeRenamedFileName != null && list.noticeRenamedFileName.trim().length != 0){
+			deptNoticeHtml += '<img src="${pageContext.request.contextPath}/resources/upload/notice/'+list.noticeRenamedFileName+'" class="card-img-top">';
+		}
+		
+		//카드 제목, 내용
+		deptNoticeHtml += '<h5 class="card-title">'+list.noticeTitle+'</h5>'
+						+'<p class="card-text">'+list.noticeContent+'</p></div></div></div>';
+		
+		if((idx+1)%4 == 0 || (idx+1) == Object.keys(data.deptNoticeList).length){
+			deptNoticeHtml += '</div>';
 		}
 		
 	}); //$.each(deptNoticeList)
@@ -349,14 +368,8 @@ function listAjax(data){
 	
 	//헤더
 	communityHtml += '<div class="header-line"><h6><i class="fas fa-sticky-note"></i>&nbsp; 커뮤니티 '
-					+ '<span class="header-count">('+Object.keys(data.communityList).length+')</span>'
-					+ '<i class="fas fa-plus-square btn-add" data-toggle="modal" data-target="#addBoardModal"></i>';
-	if(Object.keys(data.communityList).length > 12){
-		communityHtml += '<button class="btn-showAll" onclick=showAll("commu");>모두보기</button>';
-	}
-					
-	communityHtml += '</h6></div>';
-						
+					+'<span class="header-count">('+Object.keys(data.communityList).length+')</span>'
+					+'<i class="fas fa-plus-square btn-add" data-toggle="modal" data-target="#addBoardModal"></i></h6></div>';	
 	//슬라이드 바
 	communityHtml += '<div id="board_indicators" class="carousel slide" data-ride="carousel" data-interval="false">'
 					+'<ol class="carousel-indicators">';
@@ -365,57 +378,55 @@ function listAjax(data){
 		communityHtml += '<li data-target="#board_indicators" data-slide-to="0" class="active"></li>';
 	}
 	
- 	for(var i=1; i< Math.ceil(Object.keys(data.communityList).length/4) && i<3; i++){ 
+	for(var i=1; i< Math.ceil(Object.keys(data.communityList).length/4); i++){
 		communityHtml += '<li data-target="#board_indicators" data-slide-to="'+i+'"></li>';
 	}
 	
 	communityHtml += '</ol><div class="carousel-inner">';
 	
 	$.each(data.communityList, (idx, list)=>{
-		if(idx < 12){
-			
-			if(idx+1 == 1){
-				communityHtml += '<div class="row card-content carousel-item active">'; 
-			}
-			
-			if((idx+1)%4 == 1 && (idx+1) != 1){
-				communityHtml += '<div class="row card-content carousel-item">'; 
-			}	
-	
-			//카드부분
-			communityHtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card">';
-			//: 버튼
-			communityHtml += '<div class="dropleft">'
-							+'<button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"';
-			if('${memberLoggedIn.memberId}' == list.commuWriter || '${memberLoggedIn.memberId}' == 'admin'){
-				communityHtml += 'style = "display:block";>';
-			}
-			else{
-				communityHtml += 'style = "display:none";>';
-			}
-			
-			communityHtml += '<i class="fas fa-ellipsis-v"></i></button>';
-	
-	 		//수정, 삭제 메뉴
-			communityHtml += '<div class="dropdown-menu">'
-							+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateCommuModal'+list.commuNo+'">게시글 수정</a>'
-							+'<a href="javascript:void(0)" onclick="deleteChkforCommu('+list.commuNo+')" class="dropdown-item">게시글 삭제</a>'
-							+'</div></div>';
-			
-			//카드 바디
-			communityHtml += '<div class="card-body" data-toggle="modal" data-target="#boardViewModal'+list.commuNo+'">';
-			//이미지
-			if(list.commuRenamedFileName != null && list.commuRenamedFileName.trim().length != 0){
-				communityHtml += '<img src="${pageContext.request.contextPath}/resources/upload/community/'+list.commuRenamedFileName+'" class="card-img-top">';
-			}
-			
-			//카드 제목, 내용
-			communityHtml += '<h5 class="card-title">'+list.commuTitle+'</h5>'
-							+'<p class="card-text">'+list.commuContent+'</p></div></div></div>';
-			
-			if((idx+1)%4 == 0 || (idx+1) == Object.keys(data.communityList).length){
-				communityHtml += '</div>';
-			}
+		
+		if(idx+1 == 1){
+			communityHtml += '<div class="row card-content carousel-item active">'; 
+		}
+		
+		if((idx+1)%4 == 1 && (idx+1) != 1){
+			communityHtml += '<div class="row card-content carousel-item">'; 
+		}	
+
+		//카드부분
+		communityHtml += '<div class="col-12 col-sm-6 col-md-3"><div class="card">';
+		//: 버튼
+		communityHtml += '<div class="dropleft">'
+						+'<button class="btn-moreMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"';
+		if('${memberLoggedIn.memberId}' == list.commuWriter || '${memberLoggedIn.memberId}' == 'admin'){
+			communityHtml += 'style = "display:block";>';
+		}
+		else{
+			communityHtml += 'style = "display:none";>';
+		}
+		
+		communityHtml += '<i class="fas fa-ellipsis-v"></i></button>';
+
+ 		//수정, 삭제 메뉴
+		communityHtml += '<div class="dropdown-menu">'
+						+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateCommuModal'+list.commuNo+'">게시글 수정</a>'
+						+'<a href="javascript:void(0)" onclick="deleteChkforCommu('+list.commuNo+')" class="dropdown-item">게시글 삭제</a>'
+						+'</div></div>';
+		
+		//카드 바디
+		communityHtml += '<div class="card-body" data-toggle="modal" data-target="#boardViewModal'+list.commuNo+'">';
+		//이미지
+		if(list.commuRenamedFileName != null && list.commuRenamedFileName.trim().length != 0){
+			communityHtml += '<img src="${pageContext.request.contextPath}/resources/upload/community/'+list.commuRenamedFileName+'" class="card-img-top">';
+		}
+		
+		//카드 제목, 내용
+		communityHtml += '<h5 class="card-title">'+list.commuTitle+'</h5>'
+						+'<p class="card-text">'+list.commuContent+'</p></div></div></div>';
+		
+		if((idx+1)%4 == 0 || (idx+1) == Object.keys(data.communityList).length){
+			communityHtml += '</div>';
 		}
 		
 	}); //$.each(communityList)
@@ -488,6 +499,28 @@ function checkComment(commentContent){
 } 
 
 </script>
+
+
+<!-- #############주현 할 일############
+[할 일]
+#댓글 -> ajax? / 대댓글?#
+@ - 관리자: 모든 게시물 수정/삭제 가능?
+- 카드 내용 ...
+- 이미지 없을 때 내용 가운데로?
+- DB 내용 정리
+- 상세보기 작성자 클릭 시 프로필 이동?
+@ - **부서별공지, 자유게시판 작성자 이름으로
+@ - 슬라이드 바 개수 맞추기!!
+- 바가 헤더 앞으로 나옴 / 카드 호버시 안 움직임
+@- 바 누르는 거 이상함
+ -->
+ 
+ <!-- @@
+  공지 이름 / 아이콘 바꾸기  / 예외처리 -->
+
+<!-- 효정 할 일
+-수정 시, 기존파일 보이게 하기
+ -->
 
 <!-- Navbar NoticeList -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">

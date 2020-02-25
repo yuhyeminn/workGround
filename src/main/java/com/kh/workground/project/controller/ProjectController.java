@@ -516,13 +516,18 @@ public class ProjectController {
 	@RequestMapping(value="/project/deleteProject.do", method= {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView deleteProject(ModelAndView mav, HttpSession session, @RequestParam int projectNo) {
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		
+
+		logger.debug("///////////////////////////////////////");
+		logger.debug("projectNo={}", projectNo);
+
 		try {
 			//1.업무로직
 			int result = projectService.deleteProject(projectNo);
 			
 			String viewName = "";
-			//2. 뷰모델처리 
+
+			//2. 뷰모델처리
+
 			if(result!=0) {
 				//관리자인 경우
 				if("admin".equals(memberLoggedIn.getMemberId())) {

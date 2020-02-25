@@ -14,7 +14,6 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.notice.model.exception.NoticeException;
@@ -33,6 +31,7 @@ import com.kh.workground.notice.model.vo.CommunityComment;
 import com.kh.workground.notice.model.vo.Notice;
 import com.kh.workground.notice.model.vo.NoticeComment;
 
+//Exception 던지기!!!!!
 
 @Controller
 public class NoticeController {
@@ -46,7 +45,6 @@ public class NoticeController {
 	public ModelAndView noticeList(ModelAndView mav) {
 		
 		try {
-				
 				Map<String, String> noticeMap = new HashMap<>();
 				Map<String, String> commuMap = new HashMap<>();
 				
@@ -79,9 +77,7 @@ public class NoticeController {
 				mav.addObject("designDeptNoticeList", designDeptNoticeList);
 				mav.addObject("developmentDeptNoticeList", developmentDeptNoticeList);
 				mav.addObject("communityList", communityList);
-				
 				mav.setViewName("/notice/noticeList");
-				
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new NoticeException("공지 조회 오류!");
@@ -141,7 +137,7 @@ public class NoticeController {
 	@RequestMapping("/notice/deleteNotice.do")
 	public ModelAndView deleteNotice(ModelAndView mav, @RequestParam String noticeNo) {
 		//logger.debug("noticeNo={}", noticeNo);
-		//에이젝스로 int 안넘어옴 -> String으로 수정
+		//에이젝스로 int 안넘어옴
 		try {
 				int noticeNo_ = Integer.parseInt(noticeNo);
 				
@@ -204,8 +200,8 @@ public class NoticeController {
 	@RequestMapping("/notice/deleteCommunity.do")
 	public ModelAndView deleteCommunity(ModelAndView mav, String commuNo) {
 		logger.debug("commuNo={}", commuNo);
+		//에이젝스로 int 안넘어옴
 		try {
-			//에이젝스로 int 안넘어옴
 			int commuNo_ = Integer.parseInt(commuNo);
 			int result = noticeService.deleteCommunity(commuNo_);
 			
@@ -367,30 +363,21 @@ public class NoticeController {
 	//공지 댓글 추가
 	@PostMapping("/notice/noticeCommentInsert.do")
 	public ModelAndView noticeCommentInsert(ModelAndView mav,
-									  NoticeComment noticeComment,
-									  HttpServletRequest request) {
+									  NoticeComment noticeComment) {
    		logger.debug("noticeComment={}",noticeComment);
    
    		try {
-   			//XSS공격대비 &문자변환
-   			String noticeCommentContent = noticeComment.getNoticeCommentContent();
-   			noticeCommentContent = noticeCommentContent.replaceAll("<", "&lt;")
-   									   				   .replaceAll(">", "&gt;")
-   									   				   .replaceAll("\\n", "<br/>");//개행문자처리
-   			
    			Map<String, Object> noticeCommentMap = new HashMap<>();
    			noticeCommentMap.put("noticeRef", noticeComment.getNoticeRef());
    			noticeCommentMap.put("noticeCommentLevel", noticeComment.getNoticeCommentLevel());
    			noticeCommentMap.put("noticeCommentWriter", noticeComment.getNoticeCommentWriter());
-   			noticeCommentMap.put("noticeCommentContent", noticeCommentContent);
+   			noticeCommentMap.put("noticeCommentContent", noticeComment.getNoticeCommentContent());
    			noticeCommentMap.put("noticeCommentRef", noticeComment.getNoticeCommentRef()==0?null:noticeComment.getNoticeCommentRef());
    			
    			int result = noticeService.insertNoticeComment(noticeCommentMap);
-   			//리다이렉트 주소 (공지페이지/검색페이지)
-   		    String referer = request.getHeader("Referer");
    			
    			mav.addObject("msg", result>0?"댓글이 작성되었습니다.":"댓글 작성에 실패하셨습니다.");
-   			mav.addObject("loc", referer.substring(32)); //http://localhost:9090/workground의 다음 주소부터
+   			mav.addObject("loc", "/notice/noticeList.do");
    			mav.setViewName("common/msg");
    		} catch(Exception e) {
    			logger.error(e.getMessage(), e);
@@ -400,18 +387,16 @@ public class NoticeController {
    		return mav;
 	}
 	
+	
 	//공지 댓글 삭제
 	@RequestMapping("/notice/noticeCommentDelete.do")
 	public ModelAndView noticeCommentDelete(ModelAndView mav,
-											@RequestParam("noticeCommentNo") int noticeCommentNo,
-											HttpServletRequest request) {
+											@RequestParam("noticeCommentNo") int noticeCommentNo) {
 		try {
 			int result = noticeService.deleteNoticeComment(noticeCommentNo);
-   			//리다이렉트 주소 (공지페이지/검색페이지)
-   		    String referer = request.getHeader("Referer");
 			
 			mav.addObject("msg", result>0?"댓글이 삭제되었습니다.":"댓글 삭제가 실패되었습니다.");
-   			mav.addObject("loc", referer.substring(32)); //http://localhost:9090/workground의 다음 주소부터
+			mav.addObject("loc", "/notice/noticeList.do");
 			mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -424,30 +409,21 @@ public class NoticeController {
 	//자유게시판 댓글 등록
 	@PostMapping("/community/communityCommentInsert.do")
 	public ModelAndView communityCommentInsert(ModelAndView mav,
-									  CommunityComment communityComment,
-									  HttpServletRequest request) {
+									  CommunityComment communityComment) {
    		logger.debug("communityComment={}",communityComment);
    
    		try {
-   			//XSS공격대비 &문자변환
-   			String commuCommentContent = communityComment.getCommuCommentContent();
-   			commuCommentContent = commuCommentContent.replaceAll("<", "&lt;")
-   									   				   .replaceAll(">", "&gt;")
-   									   				   .replaceAll("\\n", "<br/>");//개행문자처리
-   			
    			Map<String, Object> communityCommentMap = new HashMap<>();
    			communityCommentMap.put("commuRef", communityComment.getCommuRef());
    			communityCommentMap.put("commuCommentLevel", communityComment.getCommuCommentLevel());
    			communityCommentMap.put("commuCommentWriter", communityComment.getCommuCommentWriter());
-   			communityCommentMap.put("commuCommentContent", commuCommentContent);
+   			communityCommentMap.put("commuCommentContent", communityComment.getCommuCommentContent());
    			communityCommentMap.put("commuCommentRef", communityComment.getCommuCommentRef()==0?null:communityComment.getCommuCommentRef());
    			
    			int result = noticeService.insertCommunityComment(communityCommentMap);
-   			//리다이렉트 주소 (공지페이지/검색페이지)
-   		    String referer = request.getHeader("Referer");
    			
    			mav.addObject("msg", result>0?"댓글이 작성되었습니다.":"댓글 작성에 실패하셨습니다.");
-   			mav.addObject("loc", referer.substring(32)); //http://localhost:9090/workground의 다음 주소부터
+   			mav.addObject("loc", "/notice/noticeList.do");
    			mav.setViewName("common/msg");
    		} catch(Exception e) {
    			logger.error(e.getMessage(), e);
@@ -460,15 +436,12 @@ public class NoticeController {
 	//게시판 댓글 삭제
 	@RequestMapping("/community/communityCommentDelete.do")
 	public ModelAndView communityCommentDelete(ModelAndView mav,
-												@RequestParam("communityCommentNo") int communityCommentNo,
-												HttpServletRequest request) {
+												@RequestParam("communityCommentNo") int communityCommentNo) {
 		try {
 			int result = noticeService.deleteCommunityComment(communityCommentNo);
-   			//리다이렉트 주소 (공지페이지/검색페이지)
-   		    String referer = request.getHeader("Referer");
 			
 			mav.addObject("msg", result>0?"댓글이 삭제되었습니다.":"댓글 삭제가 실패되었습니다.");
-   			mav.addObject("loc", referer.substring(32)); //http://localhost:9090/workground의 다음 주소부터
+			mav.addObject("loc", "/notice/noticeList.do");
 			mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -560,49 +533,6 @@ public class NoticeController {
 		
 		return map;
 		
-	}
-	
-	@RequestMapping("/notice/noticeShowAll.do")
-	public ModelAndView noticeShowAll(ModelAndView mav, HttpSession session,
-									  @RequestParam String keyword, @RequestParam String type) {
-		
-		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		String memberDeptCode = memberLoggedIn.getDeptCode();
-		Map<String, String> noticeMap = new HashMap<>();
-		Map<String, String> commuMap = new HashMap<>();
-		
-		try {
-			//검색어
-			noticeMap.put("searchKeyword", keyword);
-			noticeMap.put("sort", "notice_no desc");
-			commuMap.put("searchKeyword", keyword);
-			commuMap.put("sort", "commu_no desc");
-		
-			//공지
-			if("total".equals(type)) {
-				List<Notice> noticeList = noticeService.searchNoticeList(noticeMap);
-				mav.addObject("noticeList", noticeList);
-			}
-			//부서별 게시글
-			if("dept".equals(type)) {
-				List<Notice> planningDeptNoticeList = noticeService.searchPlanningDeptNoticeList(noticeMap); //기획부
-				List<Notice> designDeptNoticeList = noticeService.searchDesignDeptNoticeList(noticeMap); //디자인부
-				List<Notice> developmentDeptNoticeList = noticeService.searchDevelopmentDeptNoticeList(noticeMap); //개발부
-				mav.addObject("deptNoticeList", memberDeptCode.equals("D1")?planningDeptNoticeList:memberDeptCode.equals("D2")?designDeptNoticeList:developmentDeptNoticeList);
-			}
-			//커뮤니티
-			if("commu".equals(type)) {
-				List<Community> communityList = noticeService.searchCommunityList(commuMap); //커뮤니티
-				mav.addObject("communityList", communityList);
-			}
-			mav.setViewName("/notice/noticeShowAll");
-			mav.addObject("type", type);
-			
-		} catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new NoticeException("게시판 모두보기 오류!", e);
-		}
-		return mav;
 	}
 	
 	
