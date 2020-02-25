@@ -6,6 +6,8 @@
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/notice.css">
+
 <style>
 .btn-drop{background-color:transparent; border:0px transparent solid;}
 .navbar-project .dropdown-menu{min-width: 6rem;}
