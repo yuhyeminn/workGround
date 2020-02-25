@@ -323,4 +323,7 @@ function sidebarActive(){
 </div>
 <!-- /.content-wrapper -->
 
+
+<jsp:include page="/WEB-INF/views/club/clubListModal.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>
