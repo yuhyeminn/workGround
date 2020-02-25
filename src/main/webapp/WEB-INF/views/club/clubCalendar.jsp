@@ -7,11 +7,10 @@
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/club/clubViewModal.jsp"></jsp:include>
 
-<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
+<link rel="stylesheet" property="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/hyemin.css">
 
 <style>
-
-
 </style>
 
 <script>
@@ -321,8 +320,8 @@ $(function () {
 		<!-- Left navbar links -->
 		<!-- SEARCH FORM -->
 		<form id="noticeSearchFrm" class="form-inline"
-		action="${pageContext.request.contextPath }/club/searchClubContent.do"
-		method="POST">
+			action="${pageContext.request.contextPath }/club/searchClubContent.do"
+			method="POST">
 			<div class="input-group input-group-sm" style="margin-left: 20px;">
 				<input class="form-control form-control-navbar" type="search"
 					placeholder="${club.clubName } 검색" aria-label="Search"
@@ -335,30 +334,35 @@ $(function () {
 				</div>
 			</div>
 		</form>
-		
+
 		<!-- Middle navbar links -->
 		<ul id="navbar-tab" class="navbar-nav ml-auto">
-			<li id="tab-club" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubView.do?clubNo='+${clubNo}">동호회</button></li>
-			<li id="tab-calendar" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+${clubNo}">일정</button></li>
+			<li id="tab-club" class="nav-item"><button type="button"
+					onclick="location.href='${pageContext.request.contextPath}/club/clubView.do?clubNo='+${clubNo}">동호회</button></li>
+			<li id="tab-calendar" class="nav-item"><button type="button"
+					onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+${clubNo}">일정</button></li>
 			<c:if
 				test="${memberLoggedIn.memberId == 'admin' or fn:contains(managerYN,'Y')}">
 				<li id="tab-member" class="nav-item">
-					<button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubMemberList.do?clubNo='+${clubNo}">동호회멤버</button>
+					<button type="button"
+						onclick="location.href='${pageContext.request.contextPath}/club/clubMemberList.do?clubNo='+${clubNo}">동호회멤버</button>
 				</li>
 			</c:if>
-			<li id="tab-attachment" class="nav-item"><button type="button" onclick="location.href='${pageContext.request.contextPath}/club/clubFileList.do?clubNo='+${clubNo}">파일</button></li>
+			<li id="tab-attachment" class="nav-item"><button type="button"
+					onclick="location.href='${pageContext.request.contextPath}/club/clubFileList.do?clubNo='+${clubNo}">파일</button></li>
 		</ul>
 
 		<!-- Right navbar links -->
-	
-		
+
+
 		<ul id="viewRightNavbar-wrapper" class="navbar-nav ml-auto">
-		
-			
+
+
 			<!-- 동호회 대화 -->
 			<li class="nav-item">
 				<button type="button"
-					class="btn btn-block btn-default btn-xs nav-link" id="btn-openChatting">
+					class="btn btn-block btn-default btn-xs nav-link"
+					id="btn-openChatting">
 					<i class="far fa-comments"></i> 동호회 대화
 				</button>
 			</li>
@@ -369,54 +373,22 @@ $(function () {
 					class="far fa-user"></i> 6
 			</a>
 				<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-					<a href="#" class="dropdown-item"> <!-- Message Start -->
-						<div class="media">
-							<img
-								src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-								alt="User Avatar" class="img-circle img-profile ico-profile" />
-							<div class="media-body">
-								<p class="memberName">Brad Diesel</p>
-							</div>
-						</div> <!-- Message End -->
-					</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
-						<div class="media">
-							<img
-								src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-								alt="User Avatar" class="img-circle img-profile ico-profile">
-							<div class="media-body">
-								<p class="memberName">Brad Diesel</p>
-							</div>
-						</div> <!-- Message End -->
-					</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
-						<div class="media">
-							<img
-								src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-								alt="User Avatar" class="img-circle img-profile ico-profile">
-							<div class="media-body">
-								<p class="memberName">Brad Diesel</p>
-							</div>
-						</div> <!-- Message End -->
-					</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
-						<div class="media">
-							<img
-								src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-								alt="User Avatar" class="img-circle img-profile ico-profile">
-							<div class="media-body">
-								<div class="media-body">
-									<p class="memberName">Brad Diesel</p>
-								</div>
-							</div>
-						</div> <!-- Message End -->
-					</a> <a href="#" class="dropdown-item"> <!-- Message Start -->
-						<div class="media">
-							<img
-								src="${pageContext.request.contextPath}/resources/img/profile.jfif"
-								alt="User Avatar" class="img-circle img-profile ico-profile">
-							<div class="media-body">
-								<p class="memberName">Brad Diesel</p>
-							</div>
-						</div> <!-- Message End -->
-					</a>
+					<c:if test="${not empty clubMemberList }">
+						<c:forEach items="${clubMemberList }" var="clubMember">
+							<a
+								href="${pageContext.request.contextPath }/member/memberView.do?memberId=${clubMember.empId }"
+								class="dropdown-item"> <!-- Message Start -->
+								<div class="media">
+									<img
+										src="${pageContext.request.contextPath}/resources/img/profile/${clubMember.clubMemberList[0].renamedFileName }"
+										alt="User Avatar" class="img-circle img-profile ico-profile" />
+									<div class="media-body">
+										<p class="memberName">${clubMember.clubMemberList[0].memberName }</p>
+									</div>
+								</div> <!-- Message End -->
+							</a>
+						</c:forEach>
+					</c:if>
 				</div></li>
 
 			<!-- 동호회 설정 -->
@@ -431,9 +403,9 @@ $(function () {
 	<!-- /.navbar -->
 
 	<!-- 오른쪽 채팅 사이드 바-->
-	<aside class="work-setting" id="setting-sidebar" style="display: block;">
-	</aside>
-	
+	<aside class="work-setting" id="setting-sidebar"
+		style="display: block;"></aside>
+
 	<!-- Content Wrapper. Contains page content -->
 	<div class="content-wrapper">
 		<!-- Content Header (Page header) -->
@@ -447,18 +419,17 @@ $(function () {
 		<!-- Main content -->
 		<section class="content">
 			<div class="container-fluid">
-			
-				
+
+
 
 				<div class="col-md-9" style="margin: 0 auto">
 					<div class="card cal">
 
 						<div class="card-body ">
-							
+
 							<!-- the events -->
 							<div id="external-events">
-								<div id="calendar">
-								</div>
+								<div id="calendar"></div>
 							</div>
 						</div>
 						<!-- /.card-body -->
@@ -469,13 +440,13 @@ $(function () {
 			</div>
 			<!-- /.container-fluid -->
 		</section>
-		
-		
+
+
 		<div id="club-plan-modal-content"></div>
 		<div id="club-plan-modify-modal-content"></div>
-		
-		
-		
+
+
+
 
 		<!-- /.content -->
 	</div>

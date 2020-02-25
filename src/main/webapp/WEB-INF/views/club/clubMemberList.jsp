@@ -364,10 +364,15 @@ function clubView(clubNo) {
 												aria-expanded="false">
 												<i class="fas fa-ellipsis-v"></i>
 											</button>
+										
 											<div class="dropdown-menu dropdown-menu-right">
-												<a href="#" class="dropdown-item"
-													onclick="deleteClubMem('${m.clubMemberNo}')"><i
-													class="far fa-trash-alt"></i> 탈퇴</a>
+												
+												<c:if test="${club.clubManagerId ne m.clubMemberList[0].memberId}">
+														<a href="#" class="dropdown-item"
+														onclick="deleteClubMem('${m.clubMemberNo}')"><i
+														class="far fa-trash-alt"></i> 탈퇴</a>
+												</c:if>
+											
 
 												<c:if
 													test="${fn:contains(m.clubManagerYN,'N') and fn:contains(m.clubApproveYN,'Y')}">

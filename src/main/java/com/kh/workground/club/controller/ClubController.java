@@ -1,10 +1,13 @@
 package com.kh.workground.club.controller;
 
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -217,14 +220,25 @@ public class ClubController {
 
 	@RequestMapping("/club/deleteClubMember.do")
 	public ModelAndView deleteClubMEmber(ModelAndView mav, @RequestParam(value = "clubNo") int clubNo,
-			@RequestParam(value = "clubMemberNo") int clubMemberNo) {
+										 @RequestParam(value = "clubMemberNo") int clubMemberNo, HttpServletRequest request) {
+		
+	
+
 		try {
 
 			logger.info("clubMemberNo{}", clubMemberNo);
 			int result = clubService.deleteClubMember(clubMemberNo);
 
 			mav.addObject("msg", result > 0 ? "회원 탈퇴 성공" : "회원 탈퇴 실패");
-			mav.addObject("loc", "/club/clubMemberList.do?clubNo=" + clubNo);
+			
+			String referer = request.getHeader("Referer");
+			mav.addObject("loc", "/club/clubList.do");
+			logger.info("referer={}",referer);
+//			if("referer".equals("/club/clubMemberList.do?clubNo="+clubNo)) {
+//				mav.addObject("loc", "/club/clubMemberList.do?clubNo=" + clubNo);
+//			}
+		
+		
 			mav.setViewName("common/msg");
 
 		} catch (Exception e) {
@@ -367,11 +381,13 @@ public class ClubController {
 			
 			ClubMember clubMember = clubService2.selectOneClubMember(param);
 			Club club = clubService2.selectClub(clubNo);
+			List<ClubMember> clubMemberList = clubService.selectClubMemberList(clubNo);
 			
 			mav.addObject("calString", calString);
 			mav.addObject("managerYN", clubMember.getClubManagerYN());
 			mav.addObject("clubNo", clubNo);
 			mav.addObject("club", club);
+			mav.addObject("clubMemberList", clubMemberList);
 			
 
 		} catch (Exception e) {
