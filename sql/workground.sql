@@ -855,18 +855,20 @@ end;
 commit;
 
 create table club_plan(
-    club_plan_no number,
-    club_plan_title varchar2(100) not null,
-    club_plan_content varchar2(4000),
-    club_plan_start date not null,
-    club_plan_end date not null,
-    club_plan_state varchar2(5),
-    club_plan_place varchar2(50) not null,
-    club_plan_manager varchar2(30) not null,
-    club_no number,
-    constraint pk_club_plan_no primary key(club_plan_no),
-    constraint fk_club_plan_club_no foreign key(club_no) references club(club_no) on delete cascade,
-    constraint ck_club_plan_state check (club_plan_state in('예정', '완료', '취소'))
+    club_plan_no number, 
+    club_plan_title varchar2(100) not null, 
+    club_plan_content varchar2(4000), 
+    club_plan_start date not null, 
+    club_plan_end date not null, 
+    club_plan_state varchar2(6), 
+    club_plan_color varchar2(10), 
+    club_plan_place varchar2(50) not null, 
+    club_plan_manager varchar2(30) not null, 
+    club_no number, 
+    constraint pk_club_plan_no primary key(club_plan_no), 
+    constraint fk_club_plan_club_no foreign key(club_no) references club(club_no) on delete cascade, 
+    constraint ck_club_plan_state check(club_plan_state in('예정', '완료', '취소')), 
+    constraint ck_club_plan_color check(club_plan_color in('success', 'warning', 'danger'))
 );
 create sequence seq_club_plan_no;
 
