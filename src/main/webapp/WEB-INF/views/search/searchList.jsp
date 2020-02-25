@@ -6,6 +6,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
+<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/notice.css">
 
 <style>
 .td{
@@ -93,6 +94,31 @@ function sidebarActive(){
 			$obj.removeClass('active');
 	});
 }
+
+//공지/커뮤니티 상세보기에서 댓글 작성, 삭제
+//공지 댓글 삭제
+function deleteNoticeComment(noticeCommentNo){
+	if(!confirm("댓글을 삭제하시겠습니까?"))
+		return;
+	location.href = "${pageContext.request.contextPath}/notice/noticeCommentDelete.do?noticeCommentNo="+noticeCommentNo;
+}
+
+//게시판 댓글 삭제
+function deleteCommunityComment(communityCommentNo){
+	if(!confirm("댓글을 삭제하시겠습니까?"))
+		return;
+	location.href = "${pageContext.request.contextPath}/community/communityCommentDelete.do?communityCommentNo="+communityCommentNo;
+
+}
+
+//댓글 유효성 검사
+function checkComment(commentContent){
+	if(commentContent.trim() == 0){
+		alert("댓글을 입력하지 않으셨습니다!");
+		return false;
+	}
+	return true;
+} 
 </script>
 
 <!-- Content Wrapper. Contains page content -->
@@ -101,18 +127,18 @@ function sidebarActive(){
     <!-- Main content -->
     <div id="attachment-wrapper" class="content view">
     
-    	<c:if test="${totalNoticeList!=null && !empty totalNoticeList}">
+    	<c:if test="${noticeList!=null && !empty noticeList}">
     	<!-- 공지 -->
         <div class="col-md-10" >
         	 <div class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;공지 <span class="header-count">(${fn:length(totalNoticeList)})</span></h3>
-	                 <c:if test="${fn:length(totalNoticeList) > 5}">
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;공지 <span class="header-count">(${fn:length(noticeList)})</span></h3>
+	                 <c:if test="${fn:length(noticeList) > 5}">
 	                 <button type="button" class="btn-more" value="${keyword},total">모두 보기</button>
 	                 </c:if>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${totalNoticeList}" var="n" begin="0" end="4">
-	             <div class="card-body"> 
+	             <c:forEach items="${noticeList}" var="n" begin="0" end="4">
+	             <div class="card-body" data-toggle="modal" data-target="#noticeViewModal${n.noticeNo}"> 
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
 	                         <h5>${n.noticeTitle}</h5>
@@ -139,7 +165,7 @@ function sidebarActive(){
 	                 </c:if>
 	             </div><!-- /.card-header -->
 	             <c:forEach items="${deptNoticeList}" var="n" begin="0" end="4">
-	             <div class="card-body">
+	             <div class="card-body" data-toggle="modal" data-target="#myDeptNoticeViewModal${n.noticeNo}">
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
 	                         <h5>${n.noticeTitle}</h5>
@@ -155,18 +181,18 @@ function sidebarActive(){
         </div>
         </c:if>
         
-        <c:if test="${commuList!=null && !empty commuList}">
+        <c:if test="${communityList!=null && !empty communityList}">
         <!-- 커뮤니티 -->
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
-	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${fn:length(commuList)})</span></h3>
-	                 <c:if test="${fn:length(commuList) > 5}">
+	                 <h3><i class="far fa-file-word"></i>&nbsp;&nbsp;커뮤니티 <span class="header-count">(${fn:length(communityList)})</span></h3>
+	                 <c:if test="${fn:length(communityList) > 5}">
 	                 <button type="button" class="btn-more" value="${keyword},commu">모두 보기</button>
 	                 </c:if>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${commuList}" var="n" begin="0" end="4">
-	             <div class="card-body">
+	             <c:forEach items="${communityList}" var="n" begin="0" end="4">
+	             <div class="card-body" data-toggle="modal" data-target="#boardViewModal${n.commuNo}">
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
 	                         <h5>${n.commuTitle}</h5>
@@ -255,7 +281,7 @@ function sidebarActive(){
         </c:if>
         
         <c:if test="${clubList!=null && !empty clubList}">
-        <!-- 동호회 -->
+        <!-- 동호회 --> <!-- @수정@ -->
         <div class="col-md-10" >
         	 <div id="community-wrapper" class="card-wrapper">
 	             <div class="card-header">
@@ -264,15 +290,15 @@ function sidebarActive(){
 	                 <button type="button" class="btn-more" value="${keyword},club">모두 보기</button>
 	                 </c:if>
 	             </div><!-- /.card-header -->
-	             <c:forEach items="${clubList}" var="map" begin="0" end="4">
-	             <div class="card-body">
+	             <c:forEach items="${clubList}" var="club" begin="0" end="4">
+	             <div class="card-body" data-toggle="modal" data-target="#modal-club-${club.clubNo}">
 	                 <div class="tab-content">
 	                     <div class="active tab-pane">
-	                         <h5>${map['clubName']}</h5>
-	                         <button type="button" class="btn btn-outline-warning btn-xs btn-admin btn-clubCate">${map['category']}</button>
+	                         <h5>${club.clubName}</h5>
+	                         <button type="button" class="btn btn-outline-warning btn-xs btn-admin btn-clubCate">${club.clubCategory}</button>
 	                         <div class="card-status">
-                                <span class="date"><fmt:formatDate value="${map['enrollDate']}" type="date" pattern="yyyy-MM-dd" /></span>
-                                <span class="writer">${map['clubManager']}</span>
+                                <span class="date"><fmt:formatDate value="${club.clubEnrollDate}" type="date" pattern="yyyy-MM-dd" /></span>
+                                <span class="writer">${club.clubManagerName}</span>
                              </div>
 	                     </div>
 	                 </div>
@@ -311,7 +337,7 @@ function sidebarActive(){
         </c:if> 
         
         <!-- 조회된 게 하나도 없을 때 -->
-       	<c:if test="${empty totalNoticeList && empty deptNoticeList && empty commuList && 
+       	<c:if test="${empty noticeList && empty deptNoticeList && empty communityList && 
        				 empty projectList && empty clubList && empty memList}">
        	<div id="empty-wrapper">
        		<img src="${pageContext.request.contextPath}/resources/img/search-empty-state.png" alt="검색결과 없음" />
@@ -322,7 +348,6 @@ function sidebarActive(){
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-
 
 <jsp:include page="/WEB-INF/views/club/clubListModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>

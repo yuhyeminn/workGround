@@ -3,19 +3,80 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="search">
-	<select id="selectTotalNoticeListByKeyword" resultType="notice">
+	<!-- 공지 + 공지댓글 -->
+	<resultMap type="notice" id="noticeMap">
+ 		<id column="notice_no" property="noticeNo"/>
+		<result column="notice_writer" property="noticeWriter"/>
+		<result column="notice_title" property="noticeTitle"/>
+		<result column="notice_date" property="noticeDate"/>
+		<result column="notice_content" property="noticeContent"/>
+		<result column="notice_original_filename" property="noticeOriginalFileName"/>
+		<result column="notice_renamed_filename" property="noticeRenamedFileName"/>
+		<result column="dept_code" property="deptCode"/>
+		<result column="member_name" property="memberName"/>
+		<result column="renamed_filename" property="renamedFileName"/>
+		<collection property="noticeCommentList" ofType="noticeComment">
+			<id column="notice_comment_no" property="noticeCommentNo"></id>	
+			<result column="notice_ref" property="noticeRef"></result>
+			<result column="notice_comment_level" property="noticeCommentLevel"></result>
+			<result column="notice_comment_writer" property="noticeCommentWriter"></result>
+			<result column="notice_comment_content" property="noticeCommentContent"></result>
+			<result column="notice_comment_date" property="noticeCommentDate"></result>
+			<result column="notice_comment_ref" property="noticeCommentRef"></result>
+			<result column="comment_writer_name" property="commentWriterName"/>
+			<result column="comment_writer_profile" property="commentWriterProfile"/>
+		</collection>
+	</resultMap>
+	
+	<!-- 게시판 + 댓글 -->
+	<resultMap type="community" id="communityMap">
+ 		<id column="commu_no" property="commuNo"/>
+		<result column="commu_writer" property="commuWriter"/>
+		<result column="commu_title" property="commuTitle"/>
+		<result column="commu_content" property="commuContent"/>
+		<result column="commu_date" property="commuDate"/>
+		<result column="commu_original_filename" property="commuOriginalFileName"/>
+		<result column="commu_renamed_filename" property="commuRenamedFileName"/>
+		<result column="member_name" property="memberName"/>
+		<result column="renamed_filename" property="renamedFileName"/>
+		<collection property="communityCommentList" ofType="communityComment">
+			<id column="commu_comment_no" property="commuCommentNo"></id>	
+			<result column="commu_ref" property="commuRef"></result>
+			<result column="commu_comment_level" property="commuCommentLevel"></result>
+			<result column="commu_comment_writer" property="commuCommentWriter"></result>
+			<result column="commu_comment_content" property="commuCommentContent"></result>
+			<result column="commu_comment_date" property="commuCommentDate"></result>
+			<result column="commu_comment_ref" property="commuCommentRef"></result>
+			<result column="comment_writer_name" property="commentWriterName"/>
+			<result column="comment_writer_profile" property="commentWriterProfile"/>
+		</collection>
+	</resultMap>
+
+	<!-- 공지 모두보기 띄울용(댓글 없는 뷰 사용) -->
+	<select id="selectTotalNoticeListByKeyword" resultMap="noticeMap">
 		select * from view_noticeMember where dept_code is null and notice_title like '%'||#{keyword}||'%'
 		order by notice_no
 	</select>
+	<!-- 모달 불러올용(댓글 있는 뷰) -->
+	<select id="selectNoticeListByKeyword" resultMap="noticeMap">
+		select * from view_noticeMemberNoticeComment where dept_code is null and notice_title like '%'||#{keyword}||'%'
+		order by notice_no, notice_comment_no
+	</select>
 	
-	<select id="selectDeptNoticeListByKeyword" parameterType="hashMap" resultType="notice">
+	<!-- 부서글 모두보기 띄울용(댓글 없는 뷰 사용) -->
+	<select id="selectDeptNoticeListByKeyword" parameterType="hashMap" resultMap="noticeMap">
 		select * from view_noticeMember where dept_code=#{deptCode} and notice_title like '%'||#{keyword}||'%'
 		order by notice_no
 	</select>
+	<!-- 부서글 모달(댓글 있는 뷰 ) -->
+	<select id="selectDeptNoticeList" parameterType="hashMap" resultMap="noticeMap">
+		select * from view_noticeMemberNoticeComment where dept_code=#{deptCode} and notice_title like '%'||#{keyword}||'%'
+		order by notice_no, notice_comment_no
+	</select>
 
-	<select id="selectCommuListByKeyword" resultType="community">
-		select * from view_communityMember where commu_title like '%'||#{keyword}||'%'
-		order by commu_no
+	<select id="selectCommuListByKeyword" resultMap="communityMap">
+		select * from view_commuMemberCommuComment where commu_title like '%'||#{keyword}||'%'
+		order by commu_no, commu_comment_no
 	</select>
 	
 	<select id="selectProjectListByKeyword" resultMap="viewProjectMemberCollectionMap">
@@ -54,20 +115,6 @@
 			<result column="manager_yn" property="managerYn"></result>
 			<result column="project_quit_yn" property="projectQuitYn"></result>
 		</collection>
-	</resultMap>
-	
-	<select id="selectClubListByKeyword" resultMap="searchClubMap">
-		select C.club_no, C.club_name, C.club_category, C.club_enroll_date, M.member_name
-		from club C join member M on C.club_manager_id = M.member_id
-		where club_name like '%'||#{keyword}||'%'
-		order by club_category
-	</select>
-	<resultMap type="hashMap" id="searchClubMap">
-		<result column="club_no" property="clubNo"/>
-		<result column="club_name" property="clubName"/>
-		<result column="club_category" property="category"/>
-		<result column="club_enroll_date" property="enrollDate"/>
-		<result column="member_name" property="clubManager"/>
 	</resultMap>
 	
 	<select id="selectMemberListByKeyword" resultType="member">
@@ -113,4 +160,44 @@
 			where club_name like '%'||#{keyword}||'%'
 			order by club_category)
 	</select>
+	
+	<!-- 동호회 검색 -->
+	<resultMap type="club" id="searchClubMap">
+		<id column="club_no" property="clubNo"></id>
+		<result column="club_name" property="clubName"></result>
+		<result column="club_enroll_date" property="clubEnrollDate"></result>
+		<result column="club_introduce" property="clubIntroduce"></result>
+		<result column="club_meeting_cycle" property="clubMeetingCycle"></result>
+		<result column="club_meeting_date" property="clubMeetingDate"></result>
+		<result column="club_category" property="clubCategory"></result>
+		<result column="club_manager_id" property="clubManagerId"></result>
+		<result column="club_approve_YN" property="clubApproveYN"></result>
+		<result column="club_manager_yn" property="clubManagerYN"></result>
+		<result column="member_name" property="clubManagerName"></result>
+		<collection property="clubPhotoList" ofType="clubPhoto">
+			<id column="club_photo_no" property="clubPhotoNo"></id>
+			<result column="club_photo_title" property="clubPhotoTitle"></result>
+			<result column="club_photo_original" property="clubPhotoOriginal"></result>
+			<result column="club_photo_renamed" property="clubPhotoRenamed"></result>
+			<result column="club_no" property="clubNo"></result>
+			<result column="club_photo_date" property="clubPhotoDate"></result>
+		</collection>
+	</resultMap>
+	
+	<select id="selectClubListByKeyword" resultMap="searchClubMap">
+		select C.*, P.*, M.member_name,
+			   (select club_approve_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_approve_yn,
+			   (select club_manager_yn from club_member where club_code = C.club_no and emp_id=#{memberId}) club_manager_yn 
+		from (select * from club order by club_enroll_date asc) C
+			left join club_photo P on C.club_no = P.club_no
+            left join member M on C.club_manager_id = M.member_id
+        where club_name like '%'||#{keyword}||'%'
+        order by club_category
+	</select>
+
+	
+
+	
+	
+	
 </mapper>
