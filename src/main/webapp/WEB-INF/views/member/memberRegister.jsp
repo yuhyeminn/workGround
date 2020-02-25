@@ -22,101 +22,74 @@
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/acb5cef700.js" crossorigin="anonymous"></script>
 </head>
-<body class="hold-transition register-page" style="background: white;">
-<div class="register-box">
-  <div class="register-logo">
-      <b>COMPANY NAME</b>
-  </div>
-
-  <div class="card">
-    <div class="card-body register-card-body">
-      <p class="login-box-msg" style="font-weight: 700; font-size: 22px;">회원가입</p>
-
-      <form action="${pageContext.request.contextPath}/member/memberRegisterEnd.do" method="post" onsubmit="return checkValidate();">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" id="memberId_" name="memberId" placeholder="아이디"  required value=${member.memberId}>
-          <div class="input-group-append">
-            <div class="input-group-text">
-            </div>
-            <button type="button" class="btn btn-block btn-outline-primary" 
-            		onclick="checkIdExistence();">확인</button>
-          </div>
-        </div>
-        <input type="hidden" id="idValid" value=${idValid} />
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" name="memberName" placeholder="이름"  readOnly required value=${member.memberName}>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-user"></span>
-            </div>
-          </div>
-        </div>
-        <div class="input-group mb-3">
-          <input type="password" class="form-control" name="password" id="password_" placeholder="비밀번호" required>
-          <div class="input-group-append">
-            <div class="input-group-text" id="passwordDiv">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
-        </div>
-        <p id="warningPwd" style="font-size:.7rem; position:relative; top:-.5rem; margin-bottom:.2rem; margin-left:.4rem; display:none;">
-        	비밀번호는 8~15자리 숫자/문자/특수문자를 포함해야합니다.
-        </p>
-        <div class="input-group mb-3">
-          <input type="password" class="form-control" id="passwordChk_" placeholder="비밀번호 확인" required>
-          <div class="input-group-append">
-            <div class="input-group-text" id="passwordChkDiv">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
-        </div>
-        <p id="warningPwdChk" style="font-size:.7rem; position:relative; top:-.5rem; margin-bottom:.2rem; margin-left:.4rem; display:none;">
-        	비밀번호와 일치하지 않습니다.
-        </p>
-        <div class="input-group mb-3">
-          <input type="email" class="form-control" name="email" id="email_" placeholder="이메일" required value=${member.email }>
-          <div class="input-group-append">
-            <div class="input-group-text" id="emailDiv">
-              <span class="fas fa-envelope"></span>
-            </div>
-          </div>
-        </div>
-        <p id="warningEmail" style="font-size:.7rem; position:relative; top:-.5rem; margin-bottom:.2rem; margin-left:.4rem; display:none;">
-        	이메일 형식에 맞지 않습니다.
-        </p>
-        <div class="input-group mb-3">
-          <input type="tel" class="form-control" name="phone" id="phone_" placeholder="전화번호" required value=${member.phone }>
-          <div class="input-group-append">
-            <div class="input-group-text" id="phoneDiv">
-              <i class="fas fa-phone"></i>
-            </div>
-          </div>
-        </div>
-        <p id="warningPhone" style="font-size:.7rem; position:relative; top:-.5rem; margin-bottom:.2rem; margin-left:.4rem; display:none;">
-        	전화번호 형식에 맞지 않습니다.('-' 제외) 
-        </p>
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" name="dateOfBirth" id="dateOfBirth_" placeholder="생년월일" readOnly value=${member.dateOfBirth}>
-          <div class="input-group-append">
-            <div class="input-group-text" id="dateOfBirthDiv">
-              <i class="far fa-calendar-alt"></i>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <!-- /.col -->
-         <div class="col-4" style="margin-left: 14rem;"> 
-            <button type="submit" class="btn btn-primary btn-block" style="float: right;">가입하기</button>
-          </div>
-          <!-- /.col -->
-        </div>
-      </form>
-      <p class="mb-0">이미 회원이신가요?&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/" class="text-center">로그인</a>
-    </div>
-    <!-- /.form-box -->
-  </div><!-- /.card -->
+<style>
+body{font-family: 'Noto Sans KR', 'Source Sans Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';}
+#main{background-image:url(//t1.daumcdn.net/tistory_admin/static/top/pc/bg_login_white.png); position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-repeat: no-repeat; background-position: 50% 0; background-size: cover; background-attachment: scroll;}
+#content-signUp{position: relative; width: 712px; margin: 0 auto; padding: 59px 0 20px;}
+.cont-data{overflow: hidden; width: 100%; margin: 0 auto; display: block;}
+.cont-data dl:first-child{border-top: 1px solid #ddd; border-top-left-radius: 3px; border-top-right-radius: 3px;float: left;}
+.cont-data dl{float: left; width: 100%; font-size: 0; border: 1px solid #ddd; border-top: 0; box-sizing: border-box; display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;}
+.cont-data dt{float: left; width: 141px; padding: 18px 0 16px 19px; font-size: 13px; color: #333;}
+.cont-data dd{overflow: hidden; position: relative; min-height: 22px; padding: 18px 0 16px 0;}
+input{width: 440px; display: inline-block; height: 100%; font-size: 13px; color: #000; border: none; outline: 0; -webkit-appearance: none; background-color: transparent;}
+button{background-color: white; margin: 0 4px; display: inline-block; min-width: 120px; height: 40px; padding: 0 23px; border-radius: 20px; border: 1px solid #e0e0e0; font-size: 13px; box-sizing: border-box; text-align: center;}
+.span-error{display: none; padding: 3px 0; font-size: 13px; line-height: 19px; color: red;}
+#wrap-btn{padding: 40px 0 0; font-size: 0;line-height: 0;text-align: center;}
+#a-login{min-width: 120px; height: 40px; padding: 0 23px; border-radius: 20px; border: 1px solid #e0e0e0; font-size: 13px; color: #000; line-height: 38px; box-sizing: border-box; text-align: center; background-color: #fff}
+button:hover{color: #fff; background-color: #007bff; border: 1px solid #007bff; text-decoration: none;}
+</style>
+<body class="hold-transition register-page">
+<div id="main">
+	<div id="content-signUp">
+		<p>회원가입</p>
+		<form action="${pageContext.request.contextPath}/member/memberRegisterEnd.do" method="post" onsubmit="return checkValidate();">
+			<div class="cont-data">
+				<dl class="dl">
+					<dt><label for="">아이디</label></dt>
+					<dd><input type="text" id="memberId_" name="memberId" placeholder="아이디를 입력해주세요." required value=${member.memberId}>
+						<button type="button" onclick="checkIdExistence();">확인</button>
+					</dd>
+				</dl>
+				<dl>
+					<dt><label for="">이름</label></dt>
+					<dd><input type="text" name="memberName" readOnly required value=${member.memberName}></dd>
+				</dl>
+				<dl id="dl-password">
+					<dt><label for="">비밀번호</label></dt>
+					<dd><input type="password" name="password" id="password_" placeholder="비밀번호는 8~15자리 숫자/문자/특수문자를 포함해야합니다." required>
+						<span id="warningPwd" class="span-error">비밀번호는 8~15자리 숫자/문자/특수문자를 포함해야합니다.</span>
+					</dd>
+				</dl>
+				<dl id="dl-passwordChk">
+					<dt><label for="">비밀번호 확인</label></dt>
+					<dd><input type="password" id="passwordChk_" placeholder="비밀번호를 한번 더 입력해 주세요." required>
+						<span id="warningPwdChk" class="span-error">비밀번호와 일치하지 않습니다.</span>
+					</dd>
+				</dl>
+				<dl id="dl-email">
+					<dt><label for="">이메일</label></dt>
+					<dd><input type="email" name="email" id="email_" placeholder="이메일주소를 입력해 주세요." required value=${member.email }>
+						<span id="warningEmail" class="span-error">이메일 형식에 맞지 않습니다.</span>
+					</dd>
+				</dl>
+				<dl id="dl-phone">
+					<dt><label for="">전화번호</label></dt>
+					<dd><input type="tel" name="phone" id="phone_" placeholder="전화번호를 입력해주세요.('-'제외)" required value=${member.phone }>
+						<span id="warningPhone" class="span-error">전화번호 형식에 맞지 않습니다.('-' 제외)</span>
+					</dd>
+				</dl>
+				<dl>
+					<dt><label for="">생년월일</label></dt>
+					<dd><input type="text" name="dateOfBirth" id="dateOfBirth_" readOnly value=${member.dateOfBirth}></dd>
+				</dl>
+			</div>
+			<div id="wrap-btn">
+				<button onclick="goLogin();">이전</button>
+				<button type="submit">가입하기</button>
+			</div>
+		</form>
+	</div>
 </div>
-<!-- /.register-box -->
 
 <!-- jQuery -->
 <script src="${pageContext.request.contextPath}/resources/plugins/jquery/jquery.min.js"></script>
@@ -153,6 +126,9 @@ function checkValidate(){
 	return true;
 	
 }
+function goLogin(){
+	location.href="${pageContext.request.contextPath}/";
+}
 </script>
 <script>
 $("#password_").keyup(function(){
@@ -162,20 +138,11 @@ $("#password_").keyup(function(){
 	$("#passwordChk_").val('');
 	
 	if(!regPassword.test(password)){
-		$("#password_").css("border-left", "1px solid red")
-					   .css("border-top", "1px solid red")
-					   .css("border-bottom", "1px solid red");
-		$("#passwordDiv").css("border-right", "1px solid red")
-						 .css("border-top", "1px solid red")
-						 .css("border-bottom", "1px solid red");
+		$("#dl-password").css("border", "1px solid red");
 		$("#warningPwd").css("display", "block");
 	}else{
-		$("#password_").css("border-left", "1px solid #ced4da")
-		  			   .css("border-top", "1px solid #ced4da")
-		               .css("border-bottom", "1px solid #ced4da");
-		$("#passwordDiv").css("border-right", "1px solid #ced4da")
-			             .css("border-top", "1px solid #ced4da")
-			             .css("border-bottom", "1px solid #ced4da");
+		$("#dl-password").css("border", "1px solid #ddd")
+						 .css("border-top", "0px");
 		$("#warningPwd").css("display", "none");
 	}
 });
@@ -190,21 +157,12 @@ $("#passwordChk_").keyup(function(){
 		$("#password_").focus();
 	}
 	else if(password != passwordchk){
-		$("#passwordChk_").css("border-left", "1px solid red")
-		   				  .css("border-top", "1px solid red")
-		  				  .css("border-bottom", "1px solid red");
-		$("#passwordChkDiv").css("border-right", "1px solid red")
-			 			 .css("border-top", "1px solid red")
-			 			 .css("border-bottom", "1px solid red");
+		$("#dl-passwordChk").css("border", "1px solid red");
 		$("#warningPwdChk").css("display", "block");
 	}
 	else{
-		$("#passwordChk_").css("border-left", "1px solid #ced4da")
-		   			   	  .css("border-top", "1px solid #ced4da")
-        			      .css("border-bottom", "1px solid #ced4da");
-		$("#passwordChkDiv").css("border-right", "1px solid #ced4da")
-          				 .css("border-top", "1px solid #ced4da")
-          				 .css("border-bottom", "1px solid #ced4da");
+		$("#dl-passwordChk").css("border", "1px solid #ddd")
+		   			   	  	.css("border-top", "0px");
 		$("#warningPwdChk").css("display", "none");
 	} 
 });
@@ -214,21 +172,12 @@ $("#email_").keyup(function(){
 	var regEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
 	
 	if(!regEmail.test(email)){
-		$("#email_").css("border-left", "1px solid red")
-		   				  .css("border-top", "1px solid red")
-		  				  .css("border-bottom", "1px solid red");
-		$("#emailDiv").css("border-right", "1px solid red")
-			 			 .css("border-top", "1px solid red")
-			 			 .css("border-bottom", "1px solid red");
+		$("#dl-email").css("border", "1px solid red");
 		$("#warningEmail").css("display", "block");
 	}
 	else{
-		$("#email_").css("border-left", "1px solid #ced4da")
-		   			   	  .css("border-top", "1px solid #ced4da")
-        			      .css("border-bottom", "1px solid #ced4da");
-		$("#emailDiv").css("border-right", "1px solid #ced4da")
-          				 .css("border-top", "1px solid #ced4da")
-          				 .css("border-bottom", "1px solid #ced4da");
+		$("#dl-email").css("border", "1px solid #ddd")
+					  .css("border-top", "0px");
 		$("#warningEmail").css("display", "none");
 	}
 });
@@ -238,21 +187,12 @@ $("#phone_").keyup(function(){
 	var regPhone = /^[0-9]{10,11}$/;
 	
 	if(!regPhone.test(phone)){
-		$("#phone_").css("border-left", "1px solid red")
-		   				  .css("border-top", "1px solid red")
-		  				  .css("border-bottom", "1px solid red");
-		$("#phoneDiv").css("border-right", "1px solid red")
-			 			 .css("border-top", "1px solid red")
-			 			 .css("border-bottom", "1px solid red");
+		$("#dl-phone").css("border", "1px solid red");
 		$("#warningPhone").css("display", "block");
 	}
 	else{
-		$("#phone_").css("border-left", "1px solid #ced4da")
-		   			   	  .css("border-top", "1px solid #ced4da")
-        			      .css("border-bottom", "1px solid #ced4da");
-		$("#phoneDiv").css("border-right", "1px solid #ced4da")
-          				 .css("border-top", "1px solid #ced4da")
-          				 .css("border-bottom", "1px solid #ced4da");
+		$("#dl-phone").css("border", "1px solid #ddd")
+		   			  .css("border-top", "0px");
 		$("#warningPhone").css("display", "none");
 	}
 });

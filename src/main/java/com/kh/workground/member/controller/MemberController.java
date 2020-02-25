@@ -400,7 +400,7 @@ public class MemberController {
 			mav.setViewName("common/msg");
 		} 
 		else {
-			mav.addObject("msg", "비밀번호를 정확하게 입력해 주세요.");
+			mav.addObject("msg", "현재 비밀번호가 일치하지 않습니다.");
 			mav.addObject("loc", "/member/memberView.do?memberId="+memberId);
 			mav.setViewName("common/msg");
 			
