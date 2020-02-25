@@ -9,7 +9,7 @@
 <style>
 .btn-showAll{float: right; margin-right: 1rem; border: 1.2px solid lightgray; border-radius: 3px; padding: .4rem; color: darkgray}
 .btn-showAll:hover{color: gray;}
-/* 검색 결과 없음 */
+/* 검색 결과 없음 이미지 */
 #empty-wrapper{width: 800px; height: 450px; margin: 1rem auto 0; padding: 3rem; background: #fff; border: 1px solid rgba(29,34,43,.1); border-radius: 2px; margin-top: 3rem;}
 #empty-wrapper img{display: block; width: 30%; margin: 0 auto;}
 #empty-wrapper p{margin-top: 1rem; color: #464c59; font-weigth: bold; text-align: center;}
@@ -488,28 +488,6 @@ function checkComment(commentContent){
 } 
 
 </script>
-
-
-<!-- #############주현 할 일############
-[할 일]
-#댓글 -> ajax? / 대댓글?#
-@ - 관리자: 모든 게시물 수정/삭제 가능?
-- 카드 내용 ...
-- 이미지 없을 때 내용 가운데로?
-- DB 내용 정리
-- 상세보기 작성자 클릭 시 프로필 이동?
-@ - **부서별공지, 자유게시판 작성자 이름으로
-@ - 슬라이드 바 개수 맞추기!!
-- 바가 헤더 앞으로 나옴 / 카드 호버시 안 움직임
-@- 바 누르는 거 이상함
- -->
- 
- <!-- @@
-  공지 이름 / 아이콘 바꾸기  / 예외처리 -->
-
-<!-- 효정 할 일
--수정 시, 기존파일 보이게 하기
- -->
 
 <!-- Navbar NoticeList -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">

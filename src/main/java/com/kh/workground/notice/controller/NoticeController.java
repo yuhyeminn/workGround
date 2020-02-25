@@ -33,7 +33,6 @@ import com.kh.workground.notice.model.vo.CommunityComment;
 import com.kh.workground.notice.model.vo.Notice;
 import com.kh.workground.notice.model.vo.NoticeComment;
 
-//Exception 던지기!!!!!
 
 @Controller
 public class NoticeController {
@@ -44,11 +43,9 @@ public class NoticeController {
 	NoticeService noticeService;
 	
 	@RequestMapping("/notice/noticeList.do")
-	public ModelAndView noticeList(ModelAndView mav, HttpSession session) {
+	public ModelAndView noticeList(ModelAndView mav) {
 		
 		try {
-				Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-				String memberDeptCode = memberLoggedIn.getDeptCode();
 				
 				Map<String, String> noticeMap = new HashMap<>();
 				Map<String, String> commuMap = new HashMap<>();
@@ -78,8 +75,11 @@ public class NoticeController {
 				
 				
 				mav.addObject("noticeList", noticeList);
-				mav.addObject("deptNoticeList", memberDeptCode.equals("D1")?planningDeptNoticeList:memberDeptCode.equals("D2")?designDeptNoticeList:developmentDeptNoticeList);
+				mav.addObject("planningDeptNoticeList", planningDeptNoticeList);
+				mav.addObject("designDeptNoticeList", designDeptNoticeList);
+				mav.addObject("developmentDeptNoticeList", developmentDeptNoticeList);
 				mav.addObject("communityList", communityList);
+				
 				mav.setViewName("/notice/noticeList");
 				
 		} catch(Exception e) {

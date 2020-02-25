@@ -103,7 +103,7 @@
 
 
 <!-- 부서별 공지 상세보기 모달 -->
-<c:forEach items="${deptNoticeList}" var="deptn" varStatus="deptnvs">
+<c:forEach items="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}" var="deptn" varStatus="deptnvs">
 	<div class="modal fade" id="myDeptNoticeViewModal${deptn.noticeNo}" tabindex="-1" role="dialog" aria-labelledby="myDeptNoticeViewModal${deptn.noticeNo}" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
@@ -454,9 +454,9 @@
 	                <label for="inputDept">부서</label>
 	                <select class="form-control custom-select" name="deptCode">
 	                 	<option value="all" selected>전체</option>
-						<option value="D1">기획부</option>
-		                <option value="D2">디자인부</option>
-		                <option value="D3">개발부</option>
+						<option value="D1" ${n.deptCode=='D1'?'selected="selected"':''}>기획부</option>
+		                <option value="D2" ${n.deptCode=='D2'?'selected="selected"':'' }>디자인부</option>
+		                <option value="D3" ${n.deptCode=='D3'?'selected="selected"':''}>개발부</option>
               	  	</select>
 	              </div>
 	              <div class="form-group">
@@ -500,7 +500,7 @@
 	</div>
 </c:forEach>
 <!-- 내가 속한 부서 공지 수정 모달 -->
-<c:forEach items="${deptNoticeList}" var="deptn" varStatus="deptnvs">
+<c:forEach items="${memberLoggedIn.deptCode=='D1'?planningDeptNoticeList:memberLoggedIn.deptCode=='D2'?designDeptNoticeList:developmentDeptNoticeList}" var="deptn" varStatus="deptnvs">
 	<div class="modal fade" id="updateDeptNoticeModal${deptn.noticeNo}" tabindex="-1" role="dialog" aria-labelledby="updateNoticeModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">

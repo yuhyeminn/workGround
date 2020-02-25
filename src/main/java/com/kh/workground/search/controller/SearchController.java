@@ -33,7 +33,9 @@ public class SearchController {
 	@RequestMapping("/search/searchList.do")
 	public ModelAndView searchList(ModelAndView mav, HttpSession session, @RequestParam String keyword) {
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		String memberId = memberLoggedIn.getMemberId(); //추가
+		String memberId = memberLoggedIn.getMemberId(); 
+		String deptCode = memberLoggedIn.getDeptCode();
+		
 		Map<String, String> param = new HashMap<>();
 		param.put("deptCode", memberLoggedIn.getDeptCode());
 		param.put("keyword", keyword);
@@ -46,7 +48,7 @@ public class SearchController {
 			//logger.debug("noticeList={}", noticeList);
 			//logger.debug("noticeList.size={}", noticeList.size());
 			
-			//a-2.내 부서 게시글   @수정@
+			//a-2.내 부서 게시글 
 			List<Notice> deptNoticeList = searchService.selectDeptNoticeListByKeyword(param);
 			
 			//a-3.커뮤니티
@@ -65,7 +67,8 @@ public class SearchController {
 			//2.뷰모델 처리
 			mav.addObject("keyword", keyword);
 			mav.addObject("noticeList", noticeList);
-			mav.addObject("deptNoticeList", deptNoticeList);
+			mav.addObject("deptNoticeList", deptNoticeList); //목록 띄워줄용
+			mav.addObject(deptCode.equals("D1")?"planningDeptNoticeList":deptCode.equals("D2")?"designDeptNoticeList":"developmentDeptNoticeList", deptNoticeList); //모달
 			mav.addObject("communityList", communityList);
 			mav.addObject("projectList", projectList);
 			mav.addObject("clubList", clubList);
@@ -86,6 +89,8 @@ public class SearchController {
 		
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 		String memberId = memberLoggedIn.getMemberId(); //추가
+		String deptCode = memberLoggedIn.getDeptCode();
+		
 		Map<String, String> param = new HashMap<>();
 		param.put("deptCode", memberLoggedIn.getDeptCode());
 		param.put("keyword", keyword);
@@ -110,8 +115,8 @@ public class SearchController {
 				List<Notice> deptNoticeList = searchService.selectDeptNoticeList(param); //모달(댓글 있는 뷰)
 				int totalContents = searchService.selectDeptNoticeTotalContents(param);
 				
+				mav.addObject(deptCode.equals("D1")?"planningDeptNoticeList":deptCode.equals("D2")?"designDeptNoticeList":"developmentDeptNoticeList", deptNoticeList);
 				mav.addObject("deptList", deptList); //모두보기 띄울용
-				mav.addObject("deptNoticeList", deptNoticeList); //모달
 				mav.addObject("totalContents", totalContents);
 			}
 			//커뮤니티
