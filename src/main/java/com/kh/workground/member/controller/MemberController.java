@@ -179,7 +179,11 @@ public class MemberController {
 			} else {
 				//로그인 한 경우
 				mav.addObject("memberLoggedIn", m);
-				viewName="redirect:/notice/noticeList.do";
+				if(m.getMemberId().equals("admin")) {
+					viewName="redirect:/admin/adminAllNoticesList.do";
+				}else {
+					viewName="redirect:/notice/noticeList.do";					
+				}
 			}
 
 			// 2. view모델 처리
@@ -303,7 +307,7 @@ public class MemberController {
 		}
 
 		//신규첨부파일이 있는 경우, 기존첨부파일 삭제(기본이미지 제외)
-		if(!upFile.getOriginalFilename().equals("default.jpg")){
+		if(upFile.getOriginalFilename()==null && (!upFile.getOriginalFilename().equals("default.jpg"))){
 			File delFile = new File(saveDirectory, oldRenamedFileName);
 			boolean result = delFile.delete();
 			logger.debug("기존첨부파일삭제={}",result?"성공!":"실패!");
@@ -353,10 +357,20 @@ public class MemberController {
 	
 	@RequestMapping("/member/deleteMember.do")
 	public ModelAndView deleteMember(@RequestParam("memberId") String memberId,
-									 ModelAndView mav) {
+									 ModelAndView mav, HttpSession session) {
+		
+		Member memberLoggedIn = (Member) session.getAttribute("memberLoggedIn");
+		
+		//logger.debug(memberId);
 		int result = memberSerivce.deleteMember(memberId);
 		mav.addObject("msg", result>0?"계정이 삭제되었습니다.":"계정 삭제 실패! 깔깔깔");
-		mav.addObject("loc", "/");
+		
+		if(memberLoggedIn.getMemberId().equals("admin")) {
+			mav.addObject("loc", "/member/memberList.do");
+		}
+		else {
+			mav.addObject("loc", "/");			
+		}
 		mav.setViewName("common/msg");
 		return mav;
 	}
@@ -386,7 +400,7 @@ public class MemberController {
 			mav.setViewName("common/msg");
 		} 
 		else {
-			mav.addObject("msg", "비밀번호를 정확하게 입력해 주세요.");
+			mav.addObject("msg", "현재 비밀번호가 일치하지 않습니다.");
 			mav.addObject("loc", "/member/memberView.do?memberId="+memberId);
 			mav.setViewName("common/msg");
 			
@@ -466,6 +480,18 @@ public class MemberController {
 				e.getStackTrace();
 			}
 		}
+		return mav;
+	}
+	
+	@RequestMapping("/member/searchList.do")
+	public ModelAndView adminSearchList(ModelAndView mav, @RequestParam String keyword) {
+		logger.debug(keyword);
+		List<Member> list = memberSerivce.selectSearchList(keyword);
+		logger.debug(list.toString());
+		
+		mav.addObject("list", list);
+		mav.setViewName("/member/memberList");
+		
 		return mav;
 	}
 }

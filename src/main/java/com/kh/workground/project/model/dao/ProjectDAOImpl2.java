@@ -247,5 +247,10 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	public int updateChklist(Map<String, String> param) {
 		return sqlSession.update("project.updateChklist",param);
 	}
+	
+	@Override
+	public List<Map<String, Object>> selectProjectLogList(int projectNo) {
+		return sqlSession.selectList("project.selectProjectLogList", projectNo);
+	}
 
 }

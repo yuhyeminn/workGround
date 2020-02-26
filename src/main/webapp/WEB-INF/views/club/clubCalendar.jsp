@@ -7,7 +7,10 @@
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/club/clubViewModal.jsp"></jsp:include>
 
+<link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/hyemin.css">
+
 <style>
+
 
 </style>
 
@@ -23,6 +26,31 @@ $(function(){
 	    locale: {
 		    format: 'YYYY-MM-DD'
 	    }
+	  });
+	
+	//채팅방
+	$('#btn-openChatting').on('click', ()=>{
+			var $side = $("#setting-sidebar");
+			var clubNo = ${clubNo};
+			
+	    	$.ajax({
+				url: "${pageContext.request.contextPath}/chat/clubChatting.do",
+				type: "get",
+				data: {clubNo:clubNo},
+				dataType: "html",
+				success: data => {
+					$side.html("");
+					$side.html(data); 
+				},
+				error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+			});
+	        
+	        $side.addClass('open');
+	        if($side.hasClass('open')) {
+	        	$side.stop(true).animate({right:'0px'});
+	        }
 	  });
 
 	
@@ -292,10 +320,14 @@ $(function () {
 		class="main-header navbar navbar-expand navbar-white navbar-light navbar-project">
 		<!-- Left navbar links -->
 		<!-- SEARCH FORM -->
-		<form id="noticeSearchFrm" class="form-inline">
-			<div class="input-group input-group-sm">
+		<form id="noticeSearchFrm" class="form-inline"
+		action="${pageContext.request.contextPath }/club/searchClubContent.do"
+		method="POST">
+			<div class="input-group input-group-sm" style="margin-left: 20px;">
 				<input class="form-control form-control-navbar" type="search"
-					placeholder="oo동호회 검색" aria-label="Search">
+					placeholder="${club.clubName } 검색" aria-label="Search"
+					name="keyword"> <input type="hidden" name="clubNo"
+					value="${club.clubNo }" />
 				<div class="input-group-append">
 					<button class="btn btn-navbar" type="submit">
 						<i class="fas fa-search"></i>
@@ -326,7 +358,7 @@ $(function () {
 			<!-- 동호회 대화 -->
 			<li class="nav-item">
 				<button type="button"
-					class="btn btn-block btn-default btn-xs nav-link">
+					class="btn btn-block btn-default btn-xs nav-link" id="btn-openChatting">
 					<i class="far fa-comments"></i> 동호회 대화
 				</button>
 			</li>
@@ -398,6 +430,10 @@ $(function () {
 	</nav>
 	<!-- /.navbar -->
 
+	<!-- 오른쪽 채팅 사이드 바-->
+	<aside class="work-setting" id="setting-sidebar" style="display: block;">
+	</aside>
+	
 	<!-- Content Wrapper. Contains page content -->
 	<div class="content-wrapper">
 		<!-- Content Header (Page header) -->
@@ -411,14 +447,18 @@ $(function () {
 		<!-- Main content -->
 		<section class="content">
 			<div class="container-fluid">
+			
+				
 
 				<div class="col-md-9" style="margin: 0 auto">
-					<div class="card">
+					<div class="card cal">
 
-						<div class="card-body">
+						<div class="card-body ">
+							
 							<!-- the events -->
 							<div id="external-events">
-								<div id="calendar"></div>
+								<div id="calendar">
+								</div>
 							</div>
 						</div>
 						<!-- /.card-body -->

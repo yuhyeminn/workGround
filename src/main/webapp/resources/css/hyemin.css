@@ -333,7 +333,7 @@ aside.control-sidebar, .work-setting{display: block;top: 92px!important;overflow
 
 .setting-tabs.nav-tabs .nav-link:hover{color: #464c59;}
 .setting-tabs.nav-tabs .nav-link.active{border: 0; background: transparent; color: #007bff; cursor: default;border-bottom: 2px solid #007bff;}
-.project-setting-tabs .nav-item{width:100%}
+.project-setting-tabs .nav-item{width:50%}
 /* Middle navbar links */
  .setting-navbar-tab button{display: inline-block; height: 46px; padding: 0 .8rem; border: 0; color: #696f7a; font-size: .85rem; background: transparent;}
  .setting-navbar-tab button:hover{color: #007bff;}

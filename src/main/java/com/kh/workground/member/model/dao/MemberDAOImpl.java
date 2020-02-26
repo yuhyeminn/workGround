@@ -54,4 +54,9 @@ public class MemberDAOImpl implements MemberDAO {
 	public int updatePassword(Map<String, String> map) {
 		return sqlSession.update("member.updatePassword", map);
 	}
+
+	@Override
+	public List<Member> selectSearchList(String keyword) {
+		return sqlSession.selectList("member.selectSearchList", keyword);
+	}
 }

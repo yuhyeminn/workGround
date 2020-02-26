@@ -516,5 +516,12 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		}
 		return result;
 	}
+	
+	@Override
+	public List<Map<String, Object>> selectProjectLogList(int projectNo) {
+		List<Map<String, Object>> result = projectDAO.selectProjectLogList(projectNo);
+		if(result==null) throw new ProjectException("프로젝트 활동로그 조회 오류!");
+		return result;
+	}
 
 }

@@ -54,4 +54,10 @@
 		where member_id = #{memberId} 
 	</update>
 	
+	<select id="member.selectSearchList" resultType="member">
+		select * 
+		from view_member 
+		where member_id != 'admin' and (member_name like '%'||#{keyword}||'%' or email like '%'||#{keyword}||'%' or dept_title like '%'||#{keyword}||'%' or job_title like '%'||#{keyword}||'%')
+		order by member_name
+	</select>
 </mapper>

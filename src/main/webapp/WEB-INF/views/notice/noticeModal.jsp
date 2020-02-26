@@ -454,9 +454,9 @@
 	                <label for="inputDept">부서</label>
 	                <select class="form-control custom-select" name="deptCode">
 	                 	<option value="all" selected>전체</option>
-						<option value="D1">기획부</option>
-		                <option value="D2">디자인부</option>
-		                <option value="D3">개발부</option>
+						<option value="D1" ${n.deptCode=='D1'?'selected="selected"':''}>기획부</option>
+		                <option value="D2" ${n.deptCode=='D2'?'selected="selected"':'' }>디자인부</option>
+		                <option value="D3" ${n.deptCode=='D3'?'selected="selected"':''}>개발부</option>
               	  	</select>
 	              </div>
 	              <div class="form-group">

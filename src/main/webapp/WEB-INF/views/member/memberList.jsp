@@ -48,6 +48,7 @@ function sidebarActive(){
 function goMemberProfile(memberId){
     location.href = '${pageContext.request.contextPath}/member/memberView.do?memberId='+memberId;
 }
+
 </script>	
 
 
@@ -60,11 +61,11 @@ function goMemberProfile(memberId){
         <div id="member-inner" class="table-responsive p-0">
             <!-- SEARCH FORM -->
             <div class="navbar-light">
-                <form id="memberSearchFrm" class="form-inline">
+                <form action='${pageContext.request.contextPath}/member/searchList.do' id="memberSearchFrm" class="form-inline">
                     <div class="input-group input-group-sm">
-                    <input class="form-control form-control-navbar" type="search" placeholder="멤버 검색하기" aria-label="Search">
+                    <input class="form-control form-control-navbar" name="keyword" type="search" placeholder="멤버 검색하기" aria-label="Search">
                     <div class="input-group-append">
-                        <button class="btn btn-navbar" type="submit">
+                        <button class="btn btn-navbar" type="submit" onsubmit="searchByKeyword()">
                         <i class="fas fa-search"></i>
                         </button>
                     </div>
@@ -107,7 +108,7 @@ function goMemberProfile(memberId){
                             <div class="dropdown">
                                 <button type="button" class="btn-moreMenu btn-drop btn-file" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a href="#" class="dropdown-item"><i class="far fa-trash-alt"></i> 계정 삭제하기</a>
+                                    <a href="${pageContext.request.contextPath}/member/deleteMember.do?memberId=${m.memberId}" class="dropdown-item"><i class="far fa-trash-alt"></i> 계정 삭제하기</a>
                                 </div>
                             </div>
                             </c:if>

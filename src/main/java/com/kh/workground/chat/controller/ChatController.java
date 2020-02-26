@@ -32,7 +32,14 @@ import com.kh.workground.chat.model.service.ChatService;
 import com.kh.workground.chat.model.vo.Channel;
 import com.kh.workground.chat.model.vo.ChannelMember;
 import com.kh.workground.chat.model.vo.Chat;
+import com.kh.workground.club.model.exception.ClubException;
+import com.kh.workground.club.model.service.ClubService;
+import com.kh.workground.club.model.service.ClubService2;
+import com.kh.workground.club.model.vo.ClubMember;
 import com.kh.workground.member.model.vo.Member;
+import com.kh.workground.project.model.exception.ProjectException;
+import com.kh.workground.project.model.service.ProjectService2;
+import com.kh.workground.project.model.vo.Project;
 
 @Controller
 public class ChatController {
@@ -41,6 +48,12 @@ public class ChatController {
 	
 	@Autowired
 	ChatService chatService;
+	@Autowired
+	ClubService2 clubService2;
+	@Autowired
+	ClubService clubService;
+	@Autowired
+	ProjectService2 projectService;
 	
 	@GetMapping("/chat/chatList.do")
 	public ModelAndView chatList(ModelAndView mav, 
@@ -49,7 +62,6 @@ public class ChatController {
 		List<Channel> channelList = null;
 		logger.debug("channelList={}", channelList);
 		
-		//chatId 조회
 		//1. memberId로 등록한 chatroom존재여부 검사. 있는 경우 chatId 리턴.
 		channelList = chatService.findChannelNoListByMemberId(memberLoggedIn.getMemberId());
 		logger.debug("channelList={}", channelList);
@@ -61,7 +73,8 @@ public class ChatController {
 		List<Chat> chatList = chatService.selectChatList();
 		logger.debug("chatList={}", chatList);
 		
-		mav.addObject("channelNo", channelList.get(0).getChannelNo());
+		if(!channelList.isEmpty())
+			mav.addObject("channelNo", channelList.get(0).getChannelNo());
 		mav.addObject("index", 0);
 		mav.addObject("chatList", chatList);
 		mav.addObject("channelList", channelList);
@@ -114,7 +127,7 @@ public class ChatController {
 	@RequestMapping("/chat/plusMember.do")
 	@ResponseBody
 	public Map<String, Object> plusMember(@RequestParam("memberId") String memberId) {
-		logger.debug("memberId={}", memberId);
+//		logger.debug("memberId={}", memberId);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("memberId", memberId);
@@ -122,7 +135,7 @@ public class ChatController {
 		Member member = chatService.selectOneMember(memberId);
 		map.put("member", member);
 		
-		logger.debug("map={}", map);
+//		logger.debug("map={}", map);
 		
 		return map;
 	}
@@ -132,7 +145,7 @@ public class ChatController {
 									  @RequestParam("memberId") String memberId, 
 									  @RequestParam("channelTitle") String channelTitle, 
 									  @SessionAttribute("memberLoggedIn") Member memberLoggedIn) {
-//		logger.debug("memberId={}", memberId);
+		logger.debug("memberId={}", memberId);
 //		logger.debug("channelTitle={}", channelTitle);
 		
 		Member member = chatService.selectOneMember(memberId);
@@ -149,11 +162,13 @@ public class ChatController {
 		channelNoList = chatService.findChannelByMemberId(param);
 		logger.debug("channelNoList={}", channelNoList);
 		
+		int index = 0;
+		
 		if(channelNoList.isEmpty()) {
 			channelNo = getRandomChannelNo(10);
 //			logger.debug("channelNo={}", channelNo);
 			
-			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null, member.getMemberName(), member.getRenamedFileName());
+			Channel channel = new Channel(channelNo, "CH3", channelTitle, "Y", 0, null, member.getMemberName(), member.getRenamedFileName(), member.getMemberId());
 			int insertChannelResult = chatService.insertChannel(channel);
 //			logger.debug("insertChatResult={}", insertChannelResult);
 			
@@ -164,17 +179,31 @@ public class ChatController {
 			
 			int insertChannelMemberResult = chatService.insertChannelMember(channelMemberList);
 //			logger.debug("insertChannelMemberResult={}", insertChannelMemberResult);
-		}
-		else {
-			channelNo = channelNoList.get(0).getChannelNo();
-//			logger.debug("channelNo={}", channelNo);
 			
-			mav.addObject("channelNo", channelNo);
 		}
 		
-//		mav.addObject("channelNo", channelNo);
+		//1. memberId로 등록한 chatroom존재여부 검사. 있는 경우 chatId 리턴.
+		List<Channel> channelList = chatService.findChannelNoListByMemberId(memberLoggedIn.getMemberId());
+		logger.debug("channelList={}", channelList);
 		
-		mav.setViewName("redirect:/chat/chatList.do");
+		//2. chatList가져오기
+		List<Chat> chatList = chatService.selectChatList();
+		logger.debug("chatList={}", chatList);
+		
+		for(int i=0; i<channelList.size(); i++) {
+			if(channelList.get(i).getMemberId().equals(memberId)) {
+				channelNo = channelList.get(i).getChannelNo();
+				index = i;
+			}
+		}
+		logger.debug("channelNo={}", channelNo);
+		
+		
+		mav.addObject("index", index);
+		mav.addObject("channelNo", channelNo);
+		mav.addObject("chatList", chatList);
+		mav.addObject("channelList", channelList);
+		mav.setViewName("chat/chatList");
 		
 		return mav;
 	}
@@ -190,7 +219,6 @@ public class ChatController {
 		List<Channel> channelList = null;
 		logger.debug("channelList={}", channelList);
 		
-		//chatId 조회
 		//1. memberId로 등록한 chatroom존재여부 검사. 있는 경우 chatId 리턴.
 		channelList = chatService.findChannelNoListByMemberId(memberLoggedIn.getMemberId());
 		logger.debug("channelList={}", channelList);
@@ -211,47 +239,6 @@ public class ChatController {
 		return mav;
 	}
 	
-	@RequestMapping("/chat/loadChatList2.do")
-	@ResponseBody
-	public Map<String, Object> loadChatList2 (@RequestParam("channelNo") String channelNo, 
-											 @SessionAttribute("memberLoggedIn") Member memberLoggedIn, 
-											 HttpSession session, 
-											 HttpServletRequest request, 
-											 Model model) {
-		logger.debug("channelNo={}", channelNo);
-		logger.debug("memberLoggedIn={}", memberLoggedIn);
-		
-		Map<String, Object> map = new HashMap<>();
-		map.put("channelNo", channelNo);
-		
-		List<ChannelMember> channelMemberList = chatService.selectChannelMemberList(channelNo);
-		map.put("channelMemberList", channelMemberList);
-//		logger.debug("channelMemberList={}", channelMemberList);
-		
-		String chatMemberId = channelMemberList.get(0).getMemberId();
-		if(memberLoggedIn.getMemberId().equals(chatMemberId))
-			chatMemberId = channelMemberList.get(1).getMemberId();
-		map.put("chatMemberId", chatMemberId);
-//		logger.debug("chatMemberId={}", chatMemberId);
-		map.put("memberId", memberLoggedIn.getMemberId());
-		
-		List<Chat> chatList = chatService.findChatRoomByChannelNo(channelNo);
-		logger.debug("chatList={}", chatList);
-		map.put("chatList", chatList);
-		
-//		logger.debug("map={}", map);
-//		session.removeAttribute("channelNo");
-//		session.setAttribute("channelNo", channelNo);
-//		request.removeAttribute("channelNo");
-//		request.setAttribute("channelNo", channelNo);
-//		logger.debug("channelNo={}", channelNo);
-		
-		model.addAttribute("channelNo", channelNo);
-		logger.debug("model={}", model);
-		
-		return map;
-	}
-	
 	@MessageMapping("/chat/{channelNo}")
 	@SendTo("/chat/{channelNo}")
 	public Chat sendEcho(Chat fromMessage, 
@@ -268,4 +255,102 @@ public class ChatController {
 		return fromMessage;
 	}
 	
+	@MessageMapping("/chat/typing")
+	@SendTo("/chat/typing")
+	public Channel sendEcho2(Channel channel, 
+						    @Header(value="simpSessionId") String sessionId) {
+		return channel;
+	}
+	
+	@RequestMapping("/chat/findChannel.do")
+	@ResponseBody
+	public Map<String, Object> findChannel(@RequestParam("keyword") String keyword, 
+			@SessionAttribute(value="memberLoggedIn", required=false) Member memberLoggedIn) {
+		logger.debug("keyword={}", keyword);
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("keyword", keyword);
+		param.put("memberId", memberLoggedIn.getMemberId());
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("keyword", keyword);
+		
+		List<Channel> channelList = chatService.findChannelListByKeyword(param);
+		map.put("channelList", channelList);
+		
+		logger.debug("map={}", map);
+		
+		return map;
+	}
+	
+//	sh start
+	@RequestMapping("/chat/clubChatting.do")
+	public ModelAndView clubChatting(ModelAndView mav, @RequestParam int clubNo, HttpServletRequest request) {
+		
+		try {
+			//채팅쪽
+			Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
+			mav.addObject("memberId", memberLoggedIn.getMemberId());
+			String channelNoTemp = "C"+clubNo;
+			Channel channel = chatService.selectChannel(channelNoTemp);
+		
+			logger.info("channel에 대한정보: {}"+channel);
+			
+			//채팅리스트
+			List<Chat> chatList = chatService.getClubChatList(channel.getChannelNo());
+			logger.info("chatList에 대한정보: {}"+chatList);
+			
+			
+			//동호회 멤버
+			List<ClubMember> memberList = clubService.selectClubMemberList(clubNo);
+			
+			mav.addObject("channelNo", channel.getChannelNo());
+			mav.addObject("chatList", chatList);
+			mav.addObject("memberList", memberList);
+			
+			mav.setViewName("club/clubChattingSideBar");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ClubException("프로젝트 채팅창 조회 오류!");
+		}
+		
+		return mav;
+	}
+	
+	@RequestMapping("/chat/projectChatting.do")
+	public ModelAndView projectChatting(ModelAndView mav, @RequestParam int projectNo, HttpServletRequest request) {
+		
+		try {
+			Member memberLoggedIn = (Member) request.getSession().getAttribute("memberLoggedIn");
+			mav.addObject("memberId", memberLoggedIn.getMemberId());
+			String channelNoTemp = "P"+projectNo;
+			Channel channel = chatService.selectChannel(channelNoTemp);
+		
+			//프로젝트 팀원 리스트에 팀장 포함이면 true, 제외하면 false
+			boolean isIncludeManager = true;
+			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+			
+			//프로젝트 팀원 리스트
+			List<Member> projectMemberList = p.getProjectMemberList();
+			
+			logger.info("channel에 대한정보: {}"+channel);
+			
+			//채팅리스트
+			List<Chat> chatList = chatService.getClubChatList(channel.getChannelNo());
+			logger.info("chatList에 대한정보: {}"+chatList);
+			mav.addObject("channelNo", channel.getChannelNo());
+			mav.addObject("chatList", chatList);
+			mav.addObject("projectMemberList", projectMemberList);
+			
+			mav.setViewName("project/projectChattingSideBar");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("프로젝트 채팅창 조회 오류!");
+		}
+		
+		return mav;
+	}
+
 }

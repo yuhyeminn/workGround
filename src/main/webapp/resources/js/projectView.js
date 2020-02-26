@@ -12,6 +12,115 @@ function sidebarActive(){
 	$("#sidebar-project").addClass("active");
 }
 
+/*//업무리스트 제목 수정하기
+function updateWorklistTitle(){
+	let worklistNo;
+	let wlTitle;
+	let $wlInner;
+	let $updateTitleWrapper;
+	let input;
+	let $btnUpdate;
+	let url = '${pageContext.request.contextPath}/project/updateWorklistTitle.do';
+	
+	$(document).on('click', '.btn-showUpdateFrm', (e)=>{
+		let btnShow;		
+		if(e.target.tagName==='I') btnShow = e.target.parentNode;	
+		else btnShow = e.target;
+		
+		worklistNo = btnShow.value*1;
+		wlTitle = $('#worklist-'+worklistNo+' h5').text();
+		$wlInner = $('#worklist-'+worklistNo+' .wlTitle-inner');
+		$updateTitleWrapper = $('#worklist-'+worklistNo+' .update-wlTitle-wrapper');
+		input = document.querySelector("#worklist-"+worklistNo+' input[name=newWorklistTitle]');
+		$btnUpdate = $('#worklist-'+worklistNo+' .btn-updateWlTitle');
+		
+		//수정폼 보이기 		
+		$wlInner.hide();
+		$updateTitleWrapper.show();
+		$(input).val(wlTitle);
+		$(input).focus();
+		
+		console.log(input);
+		
+		//엔터키 입력시 제목 수정
+	    $(input).on('keydown', key=>{
+	    	if(key.keyCode==13){
+	    		let val = $(input).val().trim();
+	    		
+	    		//유효성 검사
+	            if(val===""){
+	            	alert("추가할 업무리스트의 이름을 입력해 주세요!");
+	            	return;
+	            }
+	    		
+	            let data = {
+	            		worklistNo: worklistNo,
+	            		worklistTitle: val
+	            };
+	            
+	            ajax(data);
+	            
+	    	}
+	    });
+	    
+	    //연필버튼 클릭시 제목 수정
+	    $btnUpdate.on('click', ()=>{
+	        let val = $(input).val().trim();
+	        
+	        //유효성 검사
+	        if(val===""){
+	        	alert("추가할 업무리스트의 이름을 입력해 주세요!");
+	        	return;
+	        }
+	        
+	        let data = {
+            		worklistNo: worklistNo,
+            		worklistTitle: val
+            };
+	        
+	        ajax(data);
+	        
+	    }); //end of +버튼 클릭
+		
+		
+		//x버튼 클릭시 되돌리기
+	    $(document).on('click', '#worklist-'+worklistNo+' .btn-cancel-updateWlTitle', (e)=>{
+	    	$wlInner.show();
+			$updateTitleWrapper.hide();
+			$(input).val("");
+	    });
+	    
+		function ajax(data) {
+			let $wlTitle = $('#worklist-'+worklistNo+' h5');
+			let newWlTitle = data.worklistTitle;
+			
+	    	$.ajax({
+	        	url: url,
+	        	data: data,
+	        	dataType: 'html',
+	        	type: 'POST',
+	        	success: data=>{
+	        		if(data.result!=0){
+	        			$wlTitle.text(newWlTitle);
+	        			
+	        			//되돌리기
+	        			$wlInner.show();
+	        			$updateTitleWrapper.hide();
+	        			$(input).val("");
+	        		}
+	        		else{
+	        			alert("업무리스트 제목 수정에 실패했습니다 :(");
+	        		}
+	        	},
+	        	error: (x,s,e) => {
+					console.log(x,s,e);
+				}
+	        }); 
+	    }
+	}); //end of click .btn-showUpdateFrm
+	
+}*/
+
 //체크리스트 업무 배정
 function updateChkChargedMember(){
 	  $(document).on('click', ".chk-charge-member", function(){

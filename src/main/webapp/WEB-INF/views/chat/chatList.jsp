@@ -49,12 +49,20 @@ $(function () {
             ['para', ['ul', 'ol']],
             ['insert', ['picture', 'link']]
         ],
-        placeholder: '내 메시지...'
+        placeholder: 'type your message here'
     });
   
   sidebarActive(); //사이드바 활성화
   
+  chatScroll();
+  
 });
+
+function chatScroll(){
+	let wrapper = document.querySelector('#chatSide-msg-wrapper');
+	//console.log(wrapper);
+	wrapper.scrollTop = wrapper.scrollHeight;
+}
 
 //사이드바 활성화
 function sidebarActive(){
@@ -89,21 +97,29 @@ function sidebarActive(){
 	         
 	         <!-- 채널 목록 --> 
 	         <div id="aside-bottom">
-	         	<h5>최근 메시지</h5>	
+	         	<h5>채널 목록</h5>	
 	             <table id="dmList" class="table table-head-fixed text-nowrap">
 	                 <tbody class="td">
+	                 <c:if test="${not empty channelList }">
 	                 <c:forEach items="${channelList }" var="channel" varStatus="vs">
-	                 <tr onclick="loadChatList('${channel.channelNo }', '${channel.memberName }', '${channel.renamedFileName }', '${vs.index }');">
+	                 <tr id="channelNo${channel.channelNo }" onclick="loadChatList('${channel.channelNo }', '${channel.memberName }', '${channel.renamedFileName }', '${vs.index }');">
 	                     <td>
 	                         <form name="loadChatListFrm">
 							     <input type="hidden" name="channelNo" value="" />
 							     <input type="hidden" name="index" value="" />
 					  	     </form>
-		                     <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
-		                     <h6 class="h6">${channel.memberName }</h6>
+					  	     <c:if test="${channel.channelType == 'CH3' }">
+		                       <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
+		                       <h6 class="h6">${channel.memberName }</h6>
+					  	     </c:if>
+					  	     <c:if test="${channel.channelType != 'CH3' }">
+		                       <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
+		                       <h6 class="h6">${channel.channelTitle }</h6>
+					  	     </c:if>
 	                     </td>
 	                 </tr>
 	                 </c:forEach>
+	                 </c:if>
 	                 </tbody>
 	             </table>
 	          </div><!-- /#aside-bottom -->      
@@ -114,8 +130,16 @@ function sidebarActive(){
         <div id="chatContent" class="chat-wrapper">
            	<!-- 채널 제목 -->
             <div class="user-block" id="chat_userName">
-              <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[index].renamedFileName}" alt="user image">
+            <c:if test="${not empty channelList }">
+            <c:if test="${channelList[index].channelType == 'CH3' }">
+              <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[index].renamedFileName}">
               <span class="username">${channelList[index].memberName }</span> 
+            </c:if>
+            <c:if test="${channelList[index].channelType != 'CH3' }">
+              <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[index].renamedFileName}">
+              <span class="username">${channelList[index].channelTitle }</span> 
+            </c:if>
+            </c:if>
             </div>
             
             
@@ -168,6 +192,7 @@ function sidebarActive(){
               <input type="text" id="message" class="form-control" placeholder="Message to "><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>
             </div> -->
             <input type="text" class="input-group mb-3" id="div_textarea">
+            <div id="typing${channelNo}"></div>
         </div><!-- /#chatContent -->
             
     </section>
@@ -189,17 +214,17 @@ function sidebarActive(){
           <!-- <p>One fine body&hellip;</p> -->
           <div class="card-tools" style="margin-bottom:2rem">
               <div class="input-group input-group-sm" style="width: 20rem; margin: 0 auto;">
-                <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                <input type="text" id="searchChannel" name="table_search" class="form-control float-right" placeholder="Search">
 
-                <div class="input-group-append">
+                <!-- <div class="input-group-append">
                   <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
-                </div>
+                </div> -->
               </div>
             </div>
           <div class="col-9" style="margin: 0 auto;"> 
-              <ul class="nav nav-pills" style="padding-left:2.5rem;">
+              <ul class="nav nav-pills">
                 <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">전체</a></li>
-                <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">채널</a></li>
+                <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">프로젝트/동호회</a></li>
                 <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">다이렉트 메시지</a></li>
               </ul>
           </div>
@@ -212,23 +237,8 @@ function sidebarActive(){
                                   <!-- /.card-header -->
                                   <div class="card-body table-responsive p-0" style="height: 300px;">
                                     <table class="table table-head-fixed text-nowrap">
-                                      <tbody class="td">
-                                        <tr>
-                                          <td>
-                                            <div class="col-9"> 
-                                              <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                              <h6 class="h6">이주현</h6>
-                                            </div> 
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                              <div class="col-9"> 
-                                                <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                                <h6 class="h6">개발</h6>
-                                              </div> 
-                                            </td>
-                                          </tr>
+                                      <tbody id="table-channel" class="td">
+                                        
                                       </tbody>
                                     </table>
                                   </div>
@@ -247,15 +257,8 @@ function sidebarActive(){
                                     <!-- /.card-header -->
                                     <div class="card-body table-responsive p-0" style="height: 300px;">
                                       <table class="table table-head-fixed text-nowrap">
-                                        <tbody class="td">
-                                          <tr>
-                                            <td>
-                                              <div class="col-9"> 
-                                                <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/userimage.jpg" alt="Message User Image">
-                                                <h6 class="h6">개발</h6>
-                                              </div> 
-                                            </td>
-                                          </tr>
+                                        <tbody id="table-channel-timeline" class="td">
+
                                         </tbody>
                                       </table>
                                     </div>
@@ -274,15 +277,8 @@ function sidebarActive(){
                                     <!-- /.card-header -->
                                     <div class="card-body table-responsive p-0" style="height: 300px;">
                                       <table class="table table-head-fixed text-nowrap">
-                                        <tbody class="td">
-                                          <tr>
-                                            <td>
-                                              <div class="col-9"> 
-                                                <img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/user1-128x128.jpg" alt="Message User Image">
-                                                <h6 class="h6">이주현</h6>
-                                              </div> 
-                                            </td>
-                                          </tr>
+                                        <tbody id="table-channel-settings" class="td">
+
                                         </tbody>
                                       </table>
                                     </div>
@@ -315,14 +311,9 @@ function sidebarActive(){
       <form name="insertChannelFrm" action="${pageContext.request.contextPath }/chat/insertChannel.do" method="POST">
       <div class="modal-body">
         <div class="col-sm-12" style="float: right; padding: 1rem;">
-            <div class="form-group">
-                <label>채널 이름</label>
-                <input type="text" class="form-control" name="channelTitle" id="channelTitle">
-            </div>
-        </div>
-        <div class="col-sm-12" style="float: right; padding: 1rem;">
             <div class="form-group" id="div-plusMember">
-                <label>채널 멤버 찾기</label>
+	            <input type="hidden" class="form-control" name="channelTitle" id="channelTitle" readonly="readonly">
+                <label style="margin-right: 7px;">채널 멤버 찾기</label>
                 <button type="button" id="plusChannel" class="btn btn-default" data-toggle="modal" data-target="#modal-sm">
                     <i class="fas fa-plus"></i>
                 </button>
@@ -374,8 +365,17 @@ $(document).ready(function() {
 	let $note = $(".note-editor .note-editable");
 	$note.attr('role', 'input');
 	
-	$note.on('keydown', (key)=>{
+	$note.on('keydown', (key)=> {
+		let data = {
+				memberId : "${memberLoggedIn.memberId}", 
+				memberName : "${memberLoggedIn.memberName}", 
+				channelNo : "${channelNo}"
+		}
+		
+		stompClient.send('<c:url value="/chat/typing" />', {}, JSON.stringify(data));
+		
 		if (key.keyCode == 13) {// 엔터
+			$("#whoIsTyping").remove();
 			sendMessage();
 		}
 	});
@@ -389,11 +389,77 @@ $(document).ready(function() {
 });
 
 
+//채널검색 ajax
+$("#searchChannel").keyup(function() {
+	//console.log("키업");
+	var keyword = $("#searchChannel").val().trim();
+	if(keyword == '') return;
+	
+	$.ajax({
+		url: '${pageContext.request.contextPath}/chat/findChannel.do',
+		data: {keyword : keyword}, 
+		dataType: 'json', 
+		success: data=> {
+			console.log(data);
+			$("#table-channel").children().remove();
+			$("#table-channel-timeline").children().remove();
+			$("#table-channel-settings").children().remove();
+			
+			if(data.channelList != null) {
+				html = ''; //전체
+				$.each(data.channelList, (idx, list)=> {
+					html += '<tr onclick="clickChannel(\''+list.channelNo+'\')"><td><div class="col-9">';
+					if(list.channelType == 'CH3') {
+						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">';
+						html += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.memberName+'</h6>';
+					}
+					else {
+						html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">';
+						html += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.channelTitle+'</h6>';
+					}
+					html += '</div></td></tr>';
+				});
+				
+				html2 = ''; //단체방
+				$.each(data.channelList, (idx, list)=> {
+					if(list.channelType != 'CH3') {
+						html2 += '<tr onclick="clickChannel(\''+list.channelNo+'\')"><td><div class="col-9">';
+						html2 += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/default.jpg">';
+						html2 += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.channelTitle+'</h6>';
+						html2 += '</div></td></tr>';
+					}
+				});
+				
+				html3 = ''; //디엠
+				$.each(data.channelList, (idx, list)=> {
+					if(list.channelType == 'CH3') {
+						html3 += '<tr onclick="clickChannel(\''+list.channelNo+'\')"><td><div class="col-9">';
+						html3 += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">';
+						html3 += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.memberName+'</h6>';
+						html3 += '</div></td></tr>';
+					}
+				});
+				
+				$("#table-channel").append(html); //전체
+				$("#table-channel-timeline").append(html2); //단체방
+				$("#table-channel-settings").append(html3); //디엠
+			}
+		}, 
+		error: (x, s, e)=> {
+			console.log("ajax실행오류!!", x, s, e);
+		}
+	});
+});
+function clickChannel(channelNo) {
+	console.log()
+	$("#channelNo"+channelNo).click();
+}
+
 //대화상대찾기 ajax
 $("#findMember").keyup(function() {
 	var keyword = $("#findMember").val().trim();
 	if(keyword == '') return;
-	console.log(keyword);
+	//console.log(keyword);
 	
 	$.ajax({
 		url: '${pageContext.request.contextPath}/chat/findMember.do', 
@@ -408,7 +474,7 @@ $("#findMember").keyup(function() {
 				$.each(data.memberList, (idx, list)=> {
 					html += '<tr onclick="plusMember(\''+list.memberId+'\');" data-dismiss="modal"><td><div class="col-9">';
 					html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+list.renamedFileName+'">'
-	                html += '<h6 class="h6">'+list.memberName+'</h6>';
+	                html += '<h6 style="padding-top: 10px; margin-left: 50px;">'+list.memberName+'</h6>';
 	                html += '</div></td><tr>';
 	                
 				});
@@ -425,20 +491,23 @@ $("#findMember").keyup(function() {
 function plusMember(memberId) {
 	//console.log(memberId);
 	
+	$("#channelTitle").val('');
+	$("#div-plusMember").children("div").remove();
+	
 	$.ajax({
 		url: '${pageContext.request.contextPath}/chat/plusMember.do', 
 		data: {memberId:memberId}, 
 		dataType: 'json', 
 		success: data=> {
-			console.log(data.member.memberName);
-			console.log(plusMember);
+			//console.log(data.member.memberName);
+			//console.log(plusMember);
 			
-			let html = '<div class="card card-success" style="width: 8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">';
+			let html = '<div class="card card-success" style="width: 8.8rem; height: 3rem; padding-top: .2rem; margin-top: 1rem;">';
 	        html += '<div class="col-12">';
 	        html += '<input type="hidden" name="memberId" value="'+data.member.memberId+'">';
-	        html += '<img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+data.member.renamedFileName+'">';
-            html += '<h6 class="h6">'+data.member.memberName+'</h6>';
-            html += '<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;"><button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" style="color: black;"></i></button></div></div></div>';
+	        html += '<img style="margin-right:10px;" class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+data.member.renamedFileName+'">';
+            html += '<h6 style="padding-top: 10px;">'+data.member.memberName+'</h6>';
+            html += '<div class="card-tools" style="position: relative; bottom: 1.4rem; left: 3.5rem; display: inline-block;"><button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times" id="remove-channelTitle" style="color: black; margin-bottom: 18px;"></i></button></div></div></div>';
 			
 			$("#div-plusMember").append(html);
 			
@@ -446,7 +515,6 @@ function plusMember(memberId) {
 				$("#channelTitle").val(data.member.memberId+", ${memberLoggedIn.memberId}");
 			}
 			else {
-				$("#channelTitle").val($("#channelTitle").val()+", "+data.member.memberName);
 			}
 		}, 
 		error: (x, s, e)=> {
@@ -457,8 +525,8 @@ function plusMember(memberId) {
 }
 
 function loadChatList(channelNo, memberName, renamedFileName, index) {
-	console.log(channelNo);
-	console.log(index);
+	//console.log(channelNo);
+	//console.log(index);
 	//$("#chatContent").children().remove();
 	// name이 loadChatListFrm인 태그
       var f = document.loadChatListFrm;
@@ -474,8 +542,9 @@ function loadChatList(channelNo, memberName, renamedFileName, index) {
       f[index].method = "post";
       f[index].submit();
 }
+
 //웹소켓 선언
-//1.최초 웹소켓 생성 url: /chat
+//1.최초 웹소켓 생성 url: /stomp
 let socket = new SockJS('<c:url value="/stomp" />');
 let stompClient = Stomp.over(socket);
 
@@ -497,13 +566,13 @@ stompClient.connect({}, function(frame) {
        		html += '<div class="direct-chat-msg right"><img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messageBody.renamedFileName+'">';
        		html += '<div class="chat-text"><div class="chat-infos">';
        		html += '<span class="chat-name">'+messageBody.memberName+'</span>';
-       		html += '<div class="chat-time">'+messageBody.sendDate+'</div></div>';
+       		html += '<div class="chat-time">'+messageBody.sendDate+'&nbsp;&nbsp;&nbsp;</div></div>';
        		html += '<p>'+messageBody.msg+'</p></div>';
        		/* <button type="button" class="btn-copyToNtc" title="개발부 게시글로 올리기"><i class="far fa-clipboard"></i></button> */
        		html += '</div>';
 		}
 		else {
-			html += '<div class="direct-chat-msg right"><img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messageBody.renamedFileName+'">';
+			html += '<div class="direct-chat-msg"><img class="direct-chat-img" src="${pageContext.request.contextPath}/resources/img/profile/'+messageBody.renamedFileName+'">';
        		html += '<div class="chat-text"><div class="chat-infos">';
        		html += '<span class="chat-name">'+messageBody.memberName+'</span>';
        		html += '<div class="chat-time">'+messageBody.sendDate+'</div></div>';
@@ -514,8 +583,20 @@ stompClient.connect({}, function(frame) {
 		
 		$("#chatSide-msg-wrapper").append(html);
 	});
+	
+	stompClient.subscribe('/chat/typing', function(message) {
+		console.log("receive from subscribe /chat/typing : ", message);
+		let messageBody = JSON.parse(message.body);
+		
+		$("#whoIsTyping").remove();
+		if("${channelNo}" == messageBody.channelNo && "${memberLoggedIn.memberId}" != messageBody.memberId) {
+			$("#typing${channelNo}").append('<span id="whoIsTyping" style="padding-left: 10px; font-size: 15px; color: gray;">'+messageBody.memberName+' is typing...</span>');
+		}
+		setTimeout(function() {
+			$("#whoIsTyping").remove();
+			}, 1800);
+	});
 });
-
 
 function sendMessage() {
 	let $note = $(".note-editor .note-editable");
@@ -550,6 +631,7 @@ function lastCheck() {
 	}
 	stompClient.send('<c:url value="/lastCheck" />', {}, JSON.stringity(data));
 }
+
 </script>
 
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

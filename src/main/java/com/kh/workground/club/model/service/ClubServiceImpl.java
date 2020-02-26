@@ -117,8 +117,4 @@ public class ClubServiceImpl implements ClubService {
 		return clubDAO.cancelClubManager(param);
 	}
 
-
-
-
-
 }

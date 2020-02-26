@@ -355,9 +355,16 @@
 		update worklist set worklist_title=#{worklistTitle} where worklist_no=#{worklistNo}
 	</update>
 	
-	
-	
-	
+	<select id="selectProjectLogList" resultMap="projectLogMap">
+		select * from project_log where project_no = #{projectNo} order by log_no
+	</select>	
+	<resultMap type="hashMap" id="projectLogMap">
+		<result column="log_no" property="logNo"/>
+		<result column="project_no" property="projectNo"/>
+		<result column="log_type" property="logType"/>
+		<result column="log_content" property="logContent"/>
+		<result column="log_date" property="logDate"/>
+	</resultMap>
 	
 	
 	

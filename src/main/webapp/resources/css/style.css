@@ -413,6 +413,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 .btn-copyToNtc{display: none; position: absolute; right: .5rem; border: 1px solid #d4d6db; border-radius: 2px; padding: .1rem .4rem .2rem; color: #696f7a; font-size: .75rem;}
 .direct-chat-msg:hover .btn-copyToNtc{display: block;}
 .btn-copyToNtc:hover, .btn-copyToNtc:focus, .btn-copyToNtc:active{background: #d4d6db;}
+#setting-sidebar{z-index: 3;}
 /* 오른쪽: 내 메시지 */
 .direct-chat-msg.right .chat-text{float: right; margin-right: .8rem; text-align: right;}
 .direct-chat-msg.right .chat-name{float: right;}
@@ -462,5 +463,13 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 
 
 
-/* 프로젝트 로그 사이드바 */
-
+/* 프로젝트 활동로그 */
+#log-wrapper{margin-bottom: 0; padding: 1.7rem 1rem 1.7rem 1.7rem; color: #8d919a; list-style: none; font-size: .87rem;}
+#log-wrapper i{float: left; margin: .28rem 1.3rem 0 0;}
+#log-wrapper li{margin: .25rem 0 .8rem;}
+#log-wrapper p{display: inline-block; width: 23rem;}
+.log-date{float: right; margin-top: .2rem; font-size: .65rem;}
+.log-bold{font-weight: bold;}
+.log-color{color: #17a2b8;}
+#emtpy-log-wrapper{text-align: center;}
+#emtpy-log-wrapper img{width: 50%; margin: 1.5rem 0;}

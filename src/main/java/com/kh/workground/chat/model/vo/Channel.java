@@ -32,6 +32,8 @@ public class Channel implements Serializable {
 	private String memberName;
 	//프로필사진 가상컬럼
 	private String renamedFileName;
+	//멤버아이디 가상컬럼
+	private String memberId;
 }
 
 
