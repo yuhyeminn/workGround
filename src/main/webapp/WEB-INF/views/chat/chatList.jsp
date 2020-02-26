@@ -54,7 +54,15 @@ $(function () {
   
   sidebarActive(); //사이드바 활성화
   
+  chatScroll();
+  
 });
+
+function chatScroll(){
+	let wrapper = document.querySelector('#chatSide-msg-wrapper');
+	//console.log(wrapper);
+	wrapper.scrollTop = wrapper.scrollHeight;
+}
 
 //사이드바 활성화
 function sidebarActive(){

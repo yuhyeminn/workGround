@@ -97,4 +97,6 @@ public interface ProjectDAO2 {
 
 	int selectMyAttachCommentCnt(Map<String, String> param);
 
+	List<Map<String, Object>> selectProjectLogList(int projectNo);
+
 }

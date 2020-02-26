@@ -835,7 +835,13 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public int updateWorklistTitle(Map<String, Object> param) {
+		logger.debug("//////////////////ProjectService: updateWorklistTitle//////////////////////////");
+		
 		int result = projectDAO.updateWorklistTitle(param);
+		
+		logger.debug("//////////////////ProjectService//////////////////////////");
+		logger.debug("result={}", result);
+		
 		
 		if(result==0)
 			throw new ProjectException("업무리스트 제목 수정 오류!");

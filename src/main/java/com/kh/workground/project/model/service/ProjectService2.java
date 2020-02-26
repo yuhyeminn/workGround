@@ -68,4 +68,6 @@ public interface ProjectService2 {
 
 	Map<String, Integer> selectMyActivity(int projectNo, String memberId);
 
+	List<Map<String, Object>> selectProjectLogList(int projectNo);
+
 }

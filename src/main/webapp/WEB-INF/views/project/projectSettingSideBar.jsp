@@ -32,40 +32,45 @@
 </c:forEach>
 
 <section style="height:100%;overflow-y:scroll">
-<div class="div-close" role="button" tabindex="0">
-    <i class="fas fa-times close-sidebar"></i>
-</div>
-<div class="side-header">
-<div class="p-3">
-	    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin'}">
-		    <p class="setting-side-title update-side-title">
-		    ${project.projectTitle}
-		      <button class="update-title"><i class="fas fa-pencil-alt"></i></button>
-		    </p>
-		    <p class="setting-side-title edit-side-title">
-		   	  <input type="text" value="${project.projectTitle}" placeholder="프로젝트 제목을 입력하세요." id="title"/>
-		      <button class="update-title-btn pr-title" id="${project.projectNo }"><i class="fas fa-pencil-alt"></i></button>
-		    </p>
-	    </c:if>
-	    <c:if test="${!isprojectManager && memberLoggedIn.memberId ne 'admin'}">
-		    <p class="setting-side-title">
-		    ${project.projectTitle}
-		    </p>
-	    </c:if>
-	    <p class="setting-contents-inform">
-	        <span>#${project.projectNo}</span>
-	        <span>작성자 ${projectWriter.memberName }</span>
-	        <span class="setting-contents-date">시작일 ${project.projectStartDate }</span>
-	    </p>
-    </div>
-    
-    <ul class="nav project-setting-tabs setting-tabs nav-tabs" id="custom-content-above-tab" role="tablist">
-        <li class="nav-item setting-navbar-tab">
-        	<button type="button" class="nav-link active"  id="custom-content-above-home-tab" data-toggle="pill" href="#custom-content-above-home" role="tab" aria-controls="custom-content-above-home" aria-selected="true">설정</button>
-        </li>
-    </ul>
- </div>
+	<div class="div-close" role="button" tabindex="0">
+	    <i class="fas fa-times close-sidebar"></i>
+	</div>
+	<div class="side-header">
+		<div class="p-3">
+		    <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin'}">
+			    <p class="setting-side-title update-side-title">
+			    ${project.projectTitle}
+			      <button class="update-title"><i class="fas fa-pencil-alt"></i></button>
+			    </p>
+			    <p class="setting-side-title edit-side-title">
+			   	  <input type="text" value="${project.projectTitle}" placeholder="프로젝트 제목을 입력하세요." id="title"/>
+			      <button class="update-title-btn pr-title" id="${project.projectNo }"><i class="fas fa-pencil-alt"></i></button>
+			    </p>
+		    </c:if>
+		    <c:if test="${!isprojectManager && memberLoggedIn.memberId ne 'admin'}">
+			    <p class="setting-side-title">
+			    ${project.projectTitle}
+			    </p>
+		    </c:if>
+			    <p class="setting-contents-inform">
+			        <span>#${project.projectNo}</span>
+			        <span>작성자 ${projectWriter.memberName }</span>
+			        <span class="setting-contents-date">시작일 ${project.projectStartDate }</span>
+			    </p>
+		</div>
+	    
+		<ul class="nav project-setting-tabs setting-tabs nav-tabs" id="custom-content-above-tab" role="tablist">
+		    <li class="nav-item setting-navbar-tab">
+		    	<button type="button" class="nav-link active"  id="custom-content-above-home-tab" data-toggle="pill" href="#custom-content-above-home" role="tab" aria-controls="custom-content-above-home" aria-selected="true">설정</button>
+		    </li>
+		    <li class="nav-item setting-navbar-tab">
+		    	<button type="button" class="nav-link"  id="custom-content-above-log-tab" data-toggle="pill" href="#custom-content-above-log" role="tab" aria-controls="custom-content-above-log" aria-selected="false">모든 활동</button>
+		    </li>
+		</ul>
+	</div><!-- /.side-header -->
+	
     <div class="tab-content" id="custom-content-above-tabContent">
+    	<!-- 프로젝트 설정 -->
         <div class="tab-pane fade show active p-setting-container" id="custom-content-above-home" role="tabpanel" aria-labelledby="custom-content-above-home-tab">
            		<!-- 권한 있을 때 -->
             	<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin'}">
@@ -270,8 +275,64 @@
 		            </div>
             		</c:if>
         </div>
+        
+        <!-- 모든 활동 -->
+        <div class="tab-pane fade" id="custom-content-above-log" role="tabpanel" aria-labelledby="custom-content-above-log-tab">
+       		<c:if test="${logList!=null && !empty logList}">
+        	<ul id="log-wrapper">
+        		<c:forEach items="${logList}" var="log">
+        		<c:set var="name" value="${fn:substringBefore(log['logContent'], '님')}"/>
+        		<c:set var="p" value="${fn:substringAfter(log['logContent'], ' ')}"/>
+        		<c:set var="p1" value="${fn:substringBefore(p, '[')}"/>
+        		<c:set var="cArr" value="${fn:split(log['logContent'], '[')}"/>
+        		<c:set var="c1" value="${fn:split(cArr[1], ']')}"/>
+        		<c:set var="c2" value=""/>
+        		<fmt:formatDate var="date" value="${log['logDate']}" type="both" pattern="MM/dd HH:mm"/>
+        		<li>
+        			<c:choose>
+        				<c:when test="${log['logType']=='add'}">
+			                <i class="fas fa-plus"></i> 
+        				</c:when>
+        				<c:when test="${log['logType']=='remove'}">
+			                <i class="far fa-trash-alt"></i> 
+        				</c:when>
+        				<c:when test="${log['logType']=='complete'}">
+			                <i class="far fa-check-square"></i> 
+        				</c:when>
+        				<c:when test="${log['logType']=='modify'}">
+			                <i class="fas fa-pencil-alt"></i> 
+        				</c:when>
+        				<c:when test="${log['logType']=='member'}">
+			                <i class="fas fa-user-plus"></i> 
+        				</c:when>
+        				<c:when test="${log['logType']=='date'}">
+			                <i class="far fa-calendar-alt"></i> 
+        				</c:when>
+        				<c:when test="${log['logType']=='point'}">
+			                <i class="fas fa-ellipsis-h"></i> 
+        				</c:when>
+        				<c:when test="${log['logType']=='tag'}">
+			                <i class="fas fa-tag"></i> 
+        				</c:when>
+        			</c:choose>
+        			<!-- <span class="log-color"></span> -->
+	                <p><span class="log-bold">${name}</span>님이 ${p}</p>
+	                <span class="log-date">${date}</span>
+            	</li>
+            	</c:forEach>
+        	</ul>
+           	</c:if>
+           	<c:if test="${logList==null || empty logList}">
+            	<div id="emtpy-log-wrapper">
+            		<img src="${pageContext.request.contextPath}/resources/img/search-empty-state.png" alt="활동로그 없음" />
+            	</div>
+            </c:if>
         </div>
-     </section>   
+     </div><!-- /.tab-content -->
+</section>   
+     
+     
+     
 <script>
 $(()=>{
 	var projectNo = '${project.projectNo}';

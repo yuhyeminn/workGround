@@ -132,8 +132,12 @@ public class ProjectController2 {
 			//프로젝트 관리자 멤버 객체
 			Member pwriter = projectService.selectMemberOneByMemberId(p.getProjectWriter());
 			
+			//프로젝트 활동로그
+			List<Map<String, Object>> logList = projectService.selectProjectLogList(projectNo);
+			
 			mav.addObject("project", p);
 			mav.addObject("projectWriter", pwriter);
+			mav.addObject("logList", logList);
 			mav.setViewName("/project/projectSettingSideBar");
 			
 		}catch(Exception e){

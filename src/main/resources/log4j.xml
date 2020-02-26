@@ -26,10 +26,10 @@
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="[%d{yyyy-MM-dd}] %m%n"/>
 		</layout>
-		<!-- <filter class="org.apache.log4j.varia.LevelRangeFilter">
-			<param name="LevelMin" value="debug" />
-			<param name="LevelMax" value="debug" />
-		</filter> -->
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="info" />
+			<param name="LevelMax" value="info" />
+		</filter>
 	</appender>
 	
 	<!-- #10.2.log4jdbc-remix 로그 출력 appender 추가 -->

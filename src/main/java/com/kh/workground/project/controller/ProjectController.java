@@ -236,7 +236,13 @@ public class ProjectController {
 		
 		try {
 			//1.업무로직
+			logger.debug("//////////////////ProjectController: updateWorklistTitle//////////////////////////");
+			
 			int result = projectService.updateWorklistTitle(param);
+			
+			logger.debug("//////////////////ProjectController//////////////////////////");
+			logger.debug("result={}", result);
+			
 			map.put("result", result);
 			
 		} catch(Exception e) {
