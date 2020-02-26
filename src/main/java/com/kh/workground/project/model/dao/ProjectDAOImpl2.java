@@ -243,4 +243,9 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 		return sqlSession.selectOne("project.selectMyAttachCommentCnt",param);
 	}
 
+	@Override
+	public List<Map<String, Object>> selectProjectLogList(int projectNo) {
+		return sqlSession.selectList("project.selectProjectLogList", projectNo);
+	}
+
 }
