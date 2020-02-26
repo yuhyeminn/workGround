@@ -63,6 +63,7 @@ $(()=>{
 	deleteChecklist(); //체크리스트 삭제
 	deleteWorkComment(); //업무 코멘트 삭제
 	delWorkFile(); //파일 삭제
+	updateChklist(); //체크리스트 수정
 	
     projectLog(); //활동로그
     
@@ -1230,8 +1231,6 @@ function setting(){
         	$side.stop(true).animate({right:'0px'});
         }
     });
-<<<<<<< HEAD
-=======
     
     //활동로그 열기 
     $("#btn-projectLog").on('click', ()=>{
@@ -1239,7 +1238,6 @@ function setting(){
     
     });
     
->>>>>>> refs/heads/project-danbi
 }
 
 //사이드바 닫기
@@ -1543,7 +1541,7 @@ function closeSideBar(){
 					                        	<c:if test="${chk.checklistChargedMemberId!=null}">
 					                            <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
 					                            </c:if>
-					                            ${chk.checklistContent}
+					                            <span class="checklistContent">${chk.checklistContent}</span>
 					                        </td>
 				                        </tr>
 			                        </c:forEach>

@@ -42,14 +42,16 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 			throw new ProjectException("프로젝트 팀장 추가 오류!");
 		
 		//3.프로젝트 멤버 추가
-		for(String memberId:projectMemberList) {
-			Map<String, String> param = new HashMap<>();
-			param.put("projectNo", Integer.toString(p.getProjectNo()));
-			param.put("projectMember", memberId);
-			result = projectDAO.insertProjectMember(param);
-			
-			if(result == 0)
-				throw new ProjectException("팀원 추가 오류!");
+		if(projectMemberList!=null && !projectMemberList.isEmpty()) {
+			for(String memberId:projectMemberList) {
+				Map<String, String> param = new HashMap<>();
+				param.put("projectNo", Integer.toString(p.getProjectNo()));
+				param.put("projectMember", memberId);
+				result = projectDAO.insertProjectMember(param);
+				
+				if(result == 0)
+					throw new ProjectException("팀원 추가 오류!");
+			}
 		}
 		
 		//4.업무리스트 기본 3 개 생성(해야할 일, 진행중, 완료됨)
@@ -504,6 +506,15 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		cntMap.put("myCommentCnt", myCommentCnt);
 		
 		return cntMap;
+	}
+
+	@Override
+	public int updateChklist(Map<String, String> param) {
+		int result = projectDAO.updateChklist(param);
+		if(result==0) {
+			throw new ProjectException("내가 배정된 업무 리스트 오류!");
+		}
+		return result;
 	}
 
 }

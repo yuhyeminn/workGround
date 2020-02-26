@@ -693,6 +693,9 @@
 		
 	</select>
 	
+	<update id="updateChklist">
+		update checklist set checklist_content = #{chkContent} where checklist_no=to_number(#{chkNo})
+	</update>
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>
 			<result column="password" property="password"></result>

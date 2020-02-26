@@ -251,3 +251,68 @@ function downloadWorkFile(){
 		location.href = contextPath+"/project/downloadFile.do?projectNo="+projectNo+"&oName="+oName+"&rName="+rName;
 	});
 }
+
+function updateChklist(){
+	$(document).on('click',".edit-checklist",function(){
+		//다른 체크리스트들 초기화
+		var $tbody = $(this).closest("tbody");
+		var trArr = $tbody.children("tr").not("#chk-add-tr");
+		trArr.each(function(){
+			var $this = $(this);
+			var $chkspan = $this.find(".checklistContent");
+			var $chkinput = $chkspan.next();
+			$this.css("background","white");
+			$this.find(".update-checklist-btn").removeClass("update-checklist-btn").addClass("edit-checklist");
+			$chkinput.hide();
+			$chkinput.val($chkspan.text());
+			$chkspan.show();
+		})
+		
+		var $chkspan = $(this).parent().find(".checklistContent");
+		var $chkinput = $chkspan.next();
+		var $tr = $(this).closest("tr");
+		
+		$chkspan.hide();
+		$chkinput.show();
+		$chkinput.focus();
+		$tr.css("background","rgb(239, 239, 239)");
+		
+		$(this).removeClass("edit-checklist");
+		$(this).addClass("update-checklist-btn");
+	 });
+	
+	$(document).on('click',".update-checklist-btn",function(){
+		 var workNo = $("#settingWorkNo").val();
+		 var $td = $(this).parent();
+		 var $tr = $td.parent("tr");
+		 var chkContent = $td.find(".currentChecklistContent").val();
+		 var chkNo = $tr.attr("id");
+		 
+		 if(chkContent == '' || chkContent == null){alert('내용을 입력하세요.');return;}
+		
+		 $.ajax({
+			 url:contextPath+"/project/updateChklist.do",
+			 data: {chkContent:chkContent,chkNo:chkNo},
+			 dataType:"json",
+			 success: data=>{
+				if(data.isUpdated){
+					var $chkspan = $tr.find(".checklistContent");
+					var $chkinput = $chkspan.next();
+					
+					$("section#"+workNo+".work-item .work-checklist tr#"+chkNo+" .checklistContent").text(chkContent);
+					$(this).removeClass("update-checklist-btn").addClass("edit-checklist");
+					
+					$chkspan.text(chkContent);
+					$chkinput.val($chkspan.text());
+					
+					$tr.css("background","white");
+					$chkinput.hide();
+					$chkspan.show();
+				}
+			 },
+			 error:(jqxhr, textStatus, errorThrown)=>{
+				 console.log(jqxhr, textStatus, errorThrown);
+			 } 
+		 }) 
+	 })
+}

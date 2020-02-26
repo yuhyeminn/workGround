@@ -97,4 +97,6 @@ public interface ProjectDAO2 {
 
 	int selectMyAttachCommentCnt(Map<String, String> param);
 
+	int updateChklist(Map<String, String> param);
+
 }

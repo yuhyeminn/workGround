@@ -68,4 +68,6 @@ public interface ProjectService2 {
 
 	Map<String, Integer> selectMyActivity(int projectNo, String memberId);
 
+	int updateChklist(Map<String, String> param);
+
 }

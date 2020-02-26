@@ -21,7 +21,8 @@ $(function(){
 	sidebarActive(); //사이드바 활성화
 	addMember(); //프로젝트 팀원 추가 - multiselect.js
 	delProject(); //프로젝트 삭제 
-	sortByStatus();
+	sortByStatus(); //프로젝트 상태코드별 정렬
+	resetModal(); //프로젝트 추가 모달 reset
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -81,6 +82,12 @@ function delProject(){
 		btnRemoveP.addEventListener('click', ()=>{
 			location.href = '${pageContext.request.contextPath}/project/deleteProject.do?projectNo='+projectNo;
 		});
+	});
+}
+
+function resetModal(){
+	$('#add-project-modal').on('hidden.bs.modal', function (e) {
+	    $(this).find('form')[0].reset()
 	});
 }
 

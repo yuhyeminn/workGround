@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,7 +34,6 @@ import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
 import com.kh.workground.project.model.vo.WorkComment;
-import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
 public class ProjectController2 {
@@ -44,7 +44,7 @@ public class ProjectController2 {
 	ProjectService2 projectService;
 	
 	@RequestMapping("/project/addProject.do")
-	public ModelAndView addProject(@RequestParam String projectTitle, @RequestParam(value="projectDesc", required=false) String projectDesc, @RequestParam String projectMember, HttpSession session
+	public ModelAndView addProject(@RequestParam String projectTitle, @RequestParam(value="projectDesc", required=false) String projectDesc, @RequestParam(value="projectMember", required=false) String projectMember, HttpSession session
 			,ModelAndView mav) {
 		try {
 			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
@@ -54,9 +54,11 @@ public class ProjectController2 {
 			p.setProjectWriter(memberLoggedIn.getMemberId());
 			p.setProjectDesc(projectDesc);
 			
-			String[] memberArr = projectMember.split(",");
-			List<String> projectMemberList = new ArrayList<>(Arrays.asList(memberArr));
-			
+			List<String> projectMemberList = null;
+			if(projectMember != null && projectMember != "") {
+				String[] memberArr = projectMember.split(",");
+				projectMemberList = new ArrayList<>(Arrays.asList(memberArr));
+			}
 			//project 생성
 			int result = projectService.insertProject(p, projectMemberList);
 			
@@ -762,5 +764,28 @@ public class ProjectController2 {
 		}
 		
 		return mav;
+	}
+	
+	@RequestMapping("/project/updateChklist.do")
+	@ResponseBody
+	public Map<String,Object> updateChklist(@RequestParam String chkContent,@RequestParam String chkNo){
+		Map<String, Object> map = new HashMap<>();
+		try{
+			
+			Map<String, String> param = new HashMap<>();
+			param.put("chkContent", chkContent);
+			param.put("chkNo", chkNo);
+			int result = projectService.updateChklist(param);
+			
+			boolean isUpdated = result>0?true:false;
+			map.put("isUpdated",isUpdated);
+			
+		}catch(Exception e){
+			
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("업무 속성 조회 오류!");
+			
+		}
+		return map;
 	}
 }

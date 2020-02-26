@@ -298,56 +298,27 @@
 			              <tr class="completed" id="${chk.checklistNo}">
 				             <th>
 				             <button type="button" class="btn-check" value="${work.workNo},${chk.checklistNo}"><i class="fas fa-check-square"></i></button>         
-				             
 				             <input type="hidden" class="hiddenChkChargedMemId" value="${m.memberId}"/>
 				             </th>
 				                <td style="text-decoration:line-through;width:100%">
-				                   <c:if test="${chk.checklistChargedMemberId!=null}">
-				                      <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" data-toggle="dropdown" alt="User Avatar" class="img-circle img-profile ico-profile update-chk-charge" title="${m.memberName}">
-				                   </c:if>
-				                   <c:if test="${chk.checklistChargedMemberId==null}">
-				               		<div class="img-circle img-profile ico-profile" data-toggle="dropdown"><i class='fas fa-user-plus update-chk-charge' style="width:15px;margin-top: 5px;"></i></div>
-				               		</c:if>
-				               		${chk.checklistContent}
-				               		<div class="dropdown-menu dropdown-menu" >
-				               		<c:if test="${work.workChargedMemberList != null and !empty work.workChargedMemberList }">
-								            <c:forEach items="${work.workChargedMemberList}" var="m">
-								                <div class="media dropdown-item chk-charge-member" id="${m.memberId}">
-									                <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">
-									                <div class="media-body">
-									                    <p class="memberName">${m.memberName}</p>
-									                </div>
-								                </div>
-								            </c:forEach>
-										    	<div class="dropdown-item chk-charge-member del-chk-charge-member" id="" <c:if test="${chk.checklistChargedMemberId==null}">style="display:none"</c:if>>
-											         <p style="color:red;font-size:14px;">배정 멤버 삭제</p>
-										        </div>
-								      </c:if>
-								      <c:if test="${work.workChargedMemberList == null or empty work.workChargedMemberList }">
-								    	<span style="margin-left:10px;">없음</span>
-								   	  </c:if>
-								   </div>
-								 <c:if test="${chk.checklistChargedMemberId eq memberLoggedIn.memberId || isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
-									<button class="delete-checklist" id="${chk.checklistNo}" style="float:right;"><i class="fas fa-times"></i></button>
-								 </c:if>
-				                </td>
-			              </tr>
 			        </c:if>
                     <c:if test="${chk.completeYn=='N'}">
 			           <tr id="${chk.checklistNo}">
 			             <th>
 			             <button type="button" class="btn-check" value="${work.workNo},${chk.checklistNo}"><i class="far fa-square"></i></button>               
-			             
 			             <input type="hidden" class="hiddenChkChargedMemId" value="${m.memberId}"/>
 			             </th>
 				            <td style="width:100%">
+				    </c:if>        
 				               <c:if test="${chk.checklistChargedMemberId!=null}">
 				                 <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" data-toggle="dropdown" alt="User Avatar" class="img-circle img-profile ico-profile update-chk-charge" title="${m.memberName}">
 				               </c:if>
 				               <c:if test="${chk.checklistChargedMemberId==null}">
 				               	<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown" ><i class='fas fa-user-plus' style="width:15px;margin-top: 5px;"></i></div>
 				               </c:if>
-				               ${chk.checklistContent}
+				               <span class="checklistContent">${chk.checklistContent}</span>
+				               <input type="text" class="currentChecklistContent" value="${chk.checklistContent}" style="display:none;width:80%;"/>
+				               
 				               <div class="dropdown-menu dropdown-menu" >
 				               		<c:if test="${work.workChargedMemberList != null and !empty work.workChargedMemberList }">
 								    <c:forEach items="${work.workChargedMemberList}" var="m">
@@ -370,10 +341,10 @@
 								</div>
 								<c:if test="${chk.checklistChargedMemberId eq memberLoggedIn.memberId || isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
 								 <button class="delete-checklist" id="${chk.checklistNo}" style="float:right;"><i class="fas fa-times"></i></button>
+								 <button class="edit-checklist" id="${chk.checklistNo}" style="float:right;"><i class="fas fa-pencil-alt"></i></button>
 								</c:if>
 				         	</td>
 			           </tr>
-			        </c:if>
                   </c:forEach>
                   </c:if>
                   <c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin' || isChargedMember}">
@@ -787,8 +758,10 @@ function updateWorkMember(){
 				 var chk = data.checklist
 				 let html = '<tr id="'+chk.checklistNo+'"><th><button type="button" class="btn-check" value="'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>        '
 					      +'<input type="hidden" class="hiddenChkChargedMemId" value=""/></th><td style="width:100%">'
-					      +'<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown"><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div>'
-	             		  + chk.checklistContent +'<button class="delete-checklist" id="'+chk.checklistNo+'" style="float:right;"><i class="fas fa-times"></i></button>';
+					      +'<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown"><i class="fas fa-user-plus" style="width:15px;margin-top: 5px;"></i></div><span class="checklistContent">'
+	             		  + chk.checklistContent +'</span><input type="text" class="currentChecklistContent" value="'+chk.checklistContent+'" style="display:none;width:80%;"/>'
+	             		  +'<button class="delete-checklist" id="'+chk.checklistNo+'" style="float:right;"><i class="fas fa-times"></i></button>'
+	             		 +'<button class="edit-checklist" id="'+chk.checklistNo+'" style="float:right;"><i class="fas fa-pencil-alt"></i></button>';
 	             //멤버 배정 위한 드롭다운 메뉴 추가
 	             html += '<div class="dropdown-menu dropdown-menu" >';
 	             <c:if test="${work.workChargedMemberList != null and !empty work.workChargedMemberList }">
@@ -805,7 +778,7 @@ function updateWorkMember(){
 					html+='</div></td></tr>';
 					
 		         var viewhtml = '<tr id="'+chk.checklistNo+'"><th><button type="button" class="btn-check" value="'+chk.workNo+','+chk.checklistNo+'"><i class="far fa-square"></i></button>      '
-		   			      	  +'<input type="hidden" class="hiddenChkChargedMemId" value=""/></th><td>'+ chk.checklistContent +'</td></tr>';
+		   			      	  +'<input type="hidden" class="hiddenChkChargedMemId" value=""/></th><td><span class="checklistContent">'+ chk.checklistContent +'</span></td></tr>';
 		          		 	  
 				 $("#chk-add-tr").before(html); 
 				 

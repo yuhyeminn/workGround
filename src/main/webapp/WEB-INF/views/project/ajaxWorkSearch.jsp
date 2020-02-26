@@ -199,9 +199,9 @@ $(function(){
 		                </div>
 	
 		                <!-- 체크리스트 -->
+		                <div class="work-checklist">
 		                <c:if test="${w.checklistList!=null && !empty w.checklistList}">
 		                <c:set var="clList" value="${w.checklistList}" />
-		                <div class="work-checklist">
 		                    <table class="tbl-checklist">
 			                    <tbody>
 				                	<c:forEach items="${clList}" var="chk">
@@ -228,14 +228,14 @@ $(function(){
 					                        	<c:if test="${chk.checklistChargedMemberId!=null}">
 					                            <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
 					                            </c:if>
-					                            ${chk.checklistContent}
+					                            <span class="checklistContent">${chk.checklistContent}</span>
 					                        </td>
 				                        </tr>
 			                        </c:forEach>
 			                    </tbody>
 		                    </table>                
-	                	</div><!-- /.work-checklist -->
 						</c:if>
+	                	</div><!-- /.work-checklist -->
 						
 		                <!-- 날짜 설정 -->
 		                <div class="work-deadline">

@@ -77,7 +77,7 @@
 			                        	<c:if test="${chk.checklistChargedMemberId!=null}">
 			                            <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile" title="${m.memberName}">
 			                            </c:if>
-			                            ${chk.checklistContent}
+			                            <span class="checklistContent">${chk.checklistContent}</span>
 			                        </td>
 		                        </tr>
 	                        </c:forEach>
