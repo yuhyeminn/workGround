@@ -357,7 +357,7 @@ function clubView(clubNo) {
 												onclick="approveJoin('${m.empId}')">Allow</button>
 										</c:if>
 
-
+									<c:if test="${club.clubManagerId ne m.clubMemberList[0].memberId}">
 										<div class="dropdown">
 											<button type="button" class="btn-moreMenu btn-drop btn-file"
 												data-toggle="dropdown" aria-haspopup="true"
@@ -367,11 +367,11 @@ function clubView(clubNo) {
 										
 											<div class="dropdown-menu dropdown-menu-right">
 												
-												<c:if test="${club.clubManagerId ne m.clubMemberList[0].memberId}">
+												
 														<a href="#" class="dropdown-item"
 														onclick="deleteClubMem('${m.clubMemberNo}')"><i
 														class="far fa-trash-alt"></i> 탈퇴</a>
-												</c:if>
+												
 											
 
 												<c:if
@@ -400,7 +400,9 @@ function clubView(clubNo) {
 													</c:if>
 												</c:if>
 											</div>
-										</div></td>
+										</div>
+										</c:if>
+										</td>
 								</tr>
 							</c:forEach>
 						</tbody>

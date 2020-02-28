@@ -232,11 +232,11 @@ public class ClubController {
 			mav.addObject("msg", result > 0 ? "회원 탈퇴 성공" : "회원 탈퇴 실패");
 			
 			String referer = request.getHeader("Referer");
-			mav.addObject("loc", "/club/clubList.do");
+			mav.addObject("loc", "/club/clubList.do");mav.addObject("loc", "/club/clubList.do");
 			logger.info("referer={}",referer);
-//			if("referer".equals("/club/clubMemberList.do?clubNo="+clubNo)) {
-//				mav.addObject("loc", "/club/clubMemberList.do?clubNo=" + clubNo);
-//			}
+			if(referer.contains("/club/clubMemberList.do?clubNo="+clubNo)) {
+				mav.addObject("loc", "/club/clubMemberList.do?clubNo=" + clubNo);
+			}
 		
 		
 			mav.setViewName("common/msg");
