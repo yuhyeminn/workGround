@@ -19,7 +19,7 @@ public interface SearchDAO {
 
 	List<Project> selectProjectListByKeyword(Map<String, String> param);
 
-	List<Map<String, Object>> selectClubListByKeyword(String keyword);
+	List<Club> selectClubListByKeyword(Map<String, String> param);
 
 	List<Member> selectMemberListByKeyword(String keyword);
 
@@ -27,24 +27,28 @@ public interface SearchDAO {
 
 	int selectMemberTotalContents(String keyword);
 
-	List<Notice> selectTotalNoticeListByKeyword(int cPage, int numPerPage, String keyword);
+	List<Notice> selectNoticeListByPageBar(String keyword); //공지리스트
 
-	int selectTotalNoticeTotalContents(String keyword);
+	int selectTotalNoticeTotalContents(String keyword); //공지콘텐츠
 
 	List<Notice> selectDeptNoticeListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
-	int selectDeptNoticeTotalContents(String keyword);
+	int selectDeptNoticeTotalContents(Map<String, String> param);
 
-	List<Community> selectCommuListByPageBar(int cPage, int numPerPage, String keyword);
+	List<Community> selectCommuListByPageBar(int cPage, int numPerPage, String keyword); //커뮤니티 리스트
 
-	int selectCommuListTotalContents(String keyword);
+	int selectCommuListTotalContents(String keyword); //커뮤콘텐츠
 
 	List<Project> selectProjectListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
 	int selectProjectTotalContents(String keyword);
 
-	List<Map<String, Object>> selectClubListByPageBar(int cPage, int numPerPage, String keyword);
+	List<Club> selectClubListByPageBar(int cPage, int numPerPage, Map<String, String> param);
 
 	int selectClubTotalContents(String keyword);
+
+	List<Notice> selectTotalNoticeListByPageBar(int cPage, int numPerPage, String keyword); //공지 목록(댓글 없는 뷰)
+
+	List<Notice> selectDeptNoticeList(Map<String, String> param); //부서게시글 모달
 
 }

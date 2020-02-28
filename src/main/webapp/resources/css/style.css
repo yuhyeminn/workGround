@@ -463,5 +463,13 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 
 
 
-/* 프로젝트 로그 사이드바 */
-
+/* 프로젝트 활동로그 */
+#log-wrapper{margin-bottom: 0; padding: 1.7rem 1rem 1.7rem 1.7rem; color: #8d919a; list-style: none; font-size: .87rem;}
+#log-wrapper i{float: left; margin: .28rem 1.3rem 0 0;}
+#log-wrapper li{margin: .25rem 0 .8rem;}
+#log-wrapper p{display: inline-block; width: 23rem;}
+.log-date{float: right; margin-top: .2rem; font-size: .65rem;}
+.log-bold{font-weight: bold;}
+.log-color{color: #17a2b8;}
+#emtpy-log-wrapper{text-align: center;}
+#emtpy-log-wrapper img{width: 50%; margin: 1.5rem 0;}

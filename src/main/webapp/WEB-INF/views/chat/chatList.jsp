@@ -54,7 +54,15 @@ $(function () {
   
   sidebarActive(); //사이드바 활성화
   
+  chatScroll();
+  
 });
+
+function chatScroll(){
+	let wrapper = document.querySelector('#chatSide-msg-wrapper');
+	//console.log(wrapper);
+	wrapper.scrollTop = wrapper.scrollHeight;
+}
 
 //사이드바 활성화
 function sidebarActive(){
@@ -183,8 +191,8 @@ function sidebarActive(){
             <!-- <div class="input-group mb-3" id="div_textarea">
               <input type="text" id="message" class="form-control" placeholder="Message to "><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>
             </div> -->
-            <div id="typing${channelNo}"></div>
             <input type="text" class="input-group mb-3" id="div_textarea">
+            <div id="typing${channelNo}"></div>
         </div><!-- /#chatContent -->
             
     </section>
@@ -582,7 +590,6 @@ stompClient.connect({}, function(frame) {
 		
 		$("#whoIsTyping").remove();
 		if("${channelNo}" == messageBody.channelNo && "${memberLoggedIn.memberId}" != messageBody.memberId) {
-			//console.log(messageBody.memberName+' is typing...');
 			$("#typing${channelNo}").append('<span id="whoIsTyping" style="padding-left: 10px; font-size: 15px; color: gray;">'+messageBody.memberName+' is typing...</span>');
 		}
 		setTimeout(function() {

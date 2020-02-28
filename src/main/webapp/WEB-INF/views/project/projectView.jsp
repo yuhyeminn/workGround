@@ -66,8 +66,6 @@ $(()=>{
 	deleteWorkComment(); //업무 코멘트 삭제
 	delWorkFile(); //파일 삭제
 	
-    projectLog(); //활동로그
-
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -274,31 +272,37 @@ function addWorklist(){
 
 //업무리스트 제목 수정하기
 function updateWorklistTitle(){
+	let worklistNo;
+	let wlTitle;
+	let wlInner;
+	let updateTitleWrapper;
+	let input;
+	let btnUpdate;
+	let url = '${pageContext.request.contextPath}/project/updateWorklistTitle.do';
 	
 	$(document).on('click', '.btn-showUpdateFrm', (e)=>{
 		let btnShow;		
 		if(e.target.tagName==='I') btnShow = e.target.parentNode;	
 		else btnShow = e.target;
 		
-		let worklistNo = btnShow.value*1;
-		let wlTitle = $('#worklist-'+worklistNo+' h5').text();
-		let $wlInner = $('#worklist-'+worklistNo+' .wlTitle-inner');
-		let $updateTitleWrapper = $('#worklist-'+worklistNo+' .update-wlTitle-wrapper');
-		let $input = $('#worklist-'+worklistNo+' input[name=newWorklistTitle]');
-		let $btnUpdate = $('#worklist-'+worklistNo+' .btn-updateWlTitle');
-		let url = '${pageContext.request.contextPath}/project/updateWorklistTitle.do';
+		worklistNo = btnShow.value*1;
+		wlTitle = document.querySelector("#worklist-"+worklistNo+' h5').innerText;
+		wlInner = document.querySelector("#worklist-"+worklistNo+' .wlTitle-inner');
+		updateTitleWrapper = document.querySelector('#worklist-'+worklistNo+' .update-wlTitle-wrapper');
+		input = document.querySelector("#worklist-"+worklistNo+' input[name=newWorklistTitle]');
+		btnUpdate = document.querySelector('#worklist-'+worklistNo+' .btn-updateWlTitle');
 		
 		//수정폼 보이기 		
-		$wlInner.hide();
-		$updateTitleWrapper.show();
-		$input.val(wlTitle);
-		$input.focus();
+		$(wlInner).hide();
+		$(updateTitleWrapper).show();
+		$(input).val(wlTitle);
+		$(input).focus();
 		
 		
 		//엔터키 입력시 제목 수정
-	    $input.on('keydown', key=>{
+	    input.addEventListener('keydown', key=>{
 	    	if(key.keyCode==13){
-	    		let val = $input.val().trim();
+				let val = $(input).val().trim();
 	    		
 	    		//유효성 검사
 	            if(val===""){
@@ -312,13 +316,12 @@ function updateWorklistTitle(){
 	            };
 	            
 	            ajax(data);
-	            
 	    	}
 	    });
 	    
 	    //연필버튼 클릭시 제목 수정
-	    $btnUpdate.on('click', ()=>{
-	        let val = $input.val().trim();
+	    btnUpdate.addEventListener('click', ()=>{
+			let val = $(input).val().trim();
 	        
 	        //유효성 검사
 	        if(val===""){
@@ -334,16 +337,15 @@ function updateWorklistTitle(){
 	        ajax(data);
 	        
 	    }); //end of +버튼 클릭
-		
-		
+	    
 		//x버튼 클릭시 되돌리기
 	    $(document).on('click', '#worklist-'+worklistNo+' .btn-cancel-updateWlTitle', (e)=>{
-	    	$wlInner.show();
-			$updateTitleWrapper.hide();
-			$input.val("");
+	    	$(wlInner).show();
+			$(updateTitleWrapper).hide();
+			$(input).val("");
 	    });
 	    
-		function ajax(data) {
+	    function ajax(data) {
 			let $wlTitle = $('#worklist-'+worklistNo+' h5');
 			let newWlTitle = data.worklistTitle;
 			
@@ -357,9 +359,9 @@ function updateWorklistTitle(){
 	        			$wlTitle.text(newWlTitle);
 	        			
 	        			//되돌리기
-	        			$wlInner.show();
-	        			$updateTitleWrapper.hide();
-	        			$input.val("");
+	        			$(wlInner).show();
+	        			$(updateTitleWrapper).hide();
+	        			$(input).val("");
 	        		}
 	        		else{
 	        			alert("업무리스트 제목 수정에 실패했습니다 :(");
@@ -370,7 +372,9 @@ function updateWorklistTitle(){
 				}
 	        }); 
 	    }
-	});
+	    
+	}); //end of click .btn-showUpdateFrm
+	
 }
 
 //업무리스트 삭제하기
@@ -1236,7 +1240,41 @@ function setting(){
     //활동로그 열기 
     $("#btn-projectLog").on('click', ()=>{
     	
-    
+    	$.ajax({
+			url: "${pageContext.request.contextPath}/project/projectSetting.do",
+			type: "get",
+			data:{projectNo:projectNo},
+			dataType: "html",
+			success: data => {
+		    	
+				$side.html("");
+				$side.html(data); 
+				
+				let section = document.querySelector('#setting-sidebar>section');
+				let tabHome = document.querySelector('#custom-content-above-home-tab');
+		    	let tabLog = document.querySelector('#custom-content-above-log-tab');
+		    	let contentHome = document.querySelector('#custom-content-above-home');
+		    	let contentLog = document.querySelector('#custom-content-above-log');	
+			
+				//모든활동 active하기
+				$(tabHome).removeClass('active');
+				$(tabLog).addClass('active');
+				$(contentHome).removeClass('show active');
+				$(contentLog).addClass('show active');
+				
+				//스크롤 최하단 포커싱
+				section.scrollTop = section.scrollHeight;
+				
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
+        
+        $side.addClass('open');
+        if($side.hasClass('open')) {
+        	$side.stop(true).animate({right:'0px'});
+        }
     });
     
 }

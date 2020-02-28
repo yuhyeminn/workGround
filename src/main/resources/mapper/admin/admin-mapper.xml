@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="admin">
+
+	<select id="selectAdminClubList" resultMap="clubMap">
+		select C.*, P.*, M.member_name 
+		from member M left join club C on M.member_id = C.club_manager_id
+					  left join club_photo P on C.club_no = P.club_no
+		where C.club_name is not null
+	</select>
+	<resultMap type="adminClub" id="clubMap">
+		<result column="club_name" property="clubName"></result>
+		<result column="club_enroll_date" property="clubEnrollDate"></result>
+		<result column="club_no" property="clubNo"></result>
+		<result column="member_name" property="memberName"></result>
+		<result column="club_introduce" property="clubIntroduce"></result>
+		<result column="club_meeting_cycle" property="clubMeetingCycle"></result>
+		<result column="club_meeting_date" property="clubMeetingDate"></result>
+		<result column="club_category" property="clubCategory"></result>
+		<result column="club_manager_id" property="clubManagerId"></result>
+		<result column="club_approve_YN" property="clubApproveYN"></result>
+		<result column="club_manager_yn" property="clubManagerYN"></result>
+		<collection property="clubPhotoList" ofType="clubPhoto">
+			<id column="club_photo_no" property="clubPhotoNo"></id>
+			<result column="club_photo_title" property="clubPhotoTitle"></result>
+			<result column="club_photo_original" property="clubPhotoOriginal"></result>
+			<result column="club_photo_renamed" property="clubPhotoRenamed"></result>
+			<result column="club_no" property="clubNo"></result>
+			<result column="club_photo_date" property="clubPhotoDate"></result>
+		</collection>
+	</resultMap>
+	
+	<select id="selectAdminProjectList" resultMap="projectMap">
+		select M.member_name, P.project_title, P.project_no, P.project_writer
+	    from project P left join member M on P.project_writer = M.member_id
+	    where project_title != '나의 워크패드'
+	</select>
+	<resultMap type="adminProject" id="projectMap">
+		<result column="member_name" property="memberName"></result>
+		<result column="project_title" property="projectTitle"></result>
+		<result column="project_no" property="projectNo"></result>
+		<result column="project_writer" property="projectWriter"></result>
+	</resultMap>
+	
+</mapper>

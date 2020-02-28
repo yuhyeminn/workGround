@@ -254,7 +254,12 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="${pageContext.request.contextPath}/notice/noticeList.do" class="brand-link">
+    <c:if test="${memberLoggedIn.memberId == 'admin'}">
+    	<a href="${pageContext.request.contextPath}/admin/adminAllNoticesList.do" class="brand-link">
+    </c:if>
+    <c:if test="${memberLoggedIn.memberId != 'admin'}">
+    	<a href="${pageContext.request.contextPath}/notice/noticeList.do" class="brand-link">
+    </c:if>
       <i class="fas fa-dice-d20 brand-image img-circle elevation-3"></i>
       <span id="logo" class="brand-text font-weight-light">WORKGROUND</span>
     </a>
@@ -264,36 +269,86 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/notice/noticeList.do" id="sidebar-notice" class="nav-link active">
-              <i class="nav-icon far fas fa-bullhorn"></i>
-              <p>게시판</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/project/projectList.do"id="sidebar-project" class="nav-link">
-              <i class="nav-icon far fa-calendar-check"></i>
-              <p>프로젝트</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/club/clubList.do" id="sidebar-club" class="nav-link">
-              <i class="nav-icon fas fa-snowboarding"></i>
-              <p>동호회</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/member/memberList.do" id="sidebar-member" class="nav-link">
-              <i class="nav-icon fas fa-users"></i>
-              <p>멤버</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/chat/chatList.do" id="sidebar-chat" class="nav-link">
-              <i class="nav-icon far fa-comments"></i>
-              <p>대화</p>
-            </a>
-          </li>
+          <c:if test="${memberLoggedIn.memberId == 'admin'}">
+          	<li class="nav-item has-treeview">
+            	<a href="${pageContext.request.contextPath}/admin/adminAllNoticesList.do" id="sidebar-notice" class="nav-link active">
+              	  <i class="nav-icon far fas fa-bullhorn"></i>
+              	  <p>게시판
+              	  	 <i class="right fas fa-angle-left"></i>
+              	  </p>
+            	</a>
+            	<ul class="nav nav-treeview">
+            		<li class="nav-item">
+                		<a href="${pageContext.request.contextPath}/admin/adminAllNoticesList.do" id="sidebar-notice" class="nav-link">
+                  			<i class="far fa-circle nav-icon"></i>
+                  			<p>전체 공지</p>
+                		</a>
+              		</li>
+              		<li class="nav-item">
+                		<a href="${pageContext.request.contextPath}/admin/adminPostsByDepartment.do" id="sidebar-notice" class="nav-link">
+                  			<i class="far fa-circle nav-icon"></i>
+                  			<p>부서별 게시글</p>
+                		</a>
+              		</li>
+              		<li class="nav-item">
+                		<a href="${pageContext.request.contextPath}/admin/adminCommunityList.do" id="sidebar-notice" class="nav-link">
+                  			<i class="far fa-circle nav-icon"></i>
+                  			<p>커뮤니티</p>
+                		</a>
+              		</li>
+             	</ul>
+            </li>
+            <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/admin/adminProjectList.do"id="sidebar-project" class="nav-link">
+	              <i class="nav-icon far fa-calendar-check"></i>
+	              <p>프로젝트</p>
+	            </a>
+	        </li>
+          	<li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/admin/adminClubList.do" id="sidebar-club" class="nav-link">
+	              <i class="nav-icon fas fa-snowboarding"></i>
+	              <p>동호회</p>
+	            </a>
+	        </li>
+	        <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/member/memberList.do" id="sidebar-member" class="nav-link">
+	              <i class="nav-icon fas fa-users"></i>
+	              <p>멤버</p>
+	            </a>
+	        </li>
+          </c:if>
+          <c:if test="${memberLoggedIn.memberId != 'admin'}">
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/notice/noticeList.do" id="sidebar-notice" class="nav-link active">
+	              <i class="nav-icon far fas fa-bullhorn"></i>
+	              <p>게시판</p>
+	            </a>
+	          </li>
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/project/projectList.do"id="sidebar-project" class="nav-link">
+	              <i class="nav-icon far fa-calendar-check"></i>
+	              <p>프로젝트</p>
+	            </a>
+	          </li>
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/club/clubList.do" id="sidebar-club" class="nav-link">
+	              <i class="nav-icon fas fa-snowboarding"></i>
+	              <p>동호회</p>
+	            </a>
+	          </li>
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/member/memberList.do" id="sidebar-member" class="nav-link">
+	              <i class="nav-icon fas fa-users"></i>
+	              <p>멤버</p>
+	            </a>
+	          </li>
+	          <li class="nav-item">
+	            <a href="${pageContext.request.contextPath}/chat/chatList.do" id="sidebar-chat" class="nav-link">
+	              <i class="nav-icon far fa-comments"></i>
+	              <p>대화</p>
+	            </a>
+	          </li>
+          </c:if>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
