@@ -126,14 +126,14 @@ function resetModal(){
         </div>
         </li>
         <!-- 새 프로젝트 만들기 -->
-        <c:if test="${memberLoggedIn.jobTitle eq '팀장'}">
+        <%-- <c:if test="${memberLoggedIn.jobTitle eq '팀장'}"> --%>
         <li class="nav-item add-project">
         <button id="add-project" class="bg-info" style="font-size:0.85rem;" data-toggle="modal" data-target="#add-project-modal">
             <i class="fa fa-plus"></i>
             <span>새 프로젝트</span>
         </button>  
         </li>	
-        </c:if>
+        <%-- </c:if> --%>
     </ul>
 </nav>
 <!-- /.navbar -->
@@ -347,7 +347,7 @@ function resetModal(){
             </c:forEach> 
             
             <!-- 새 프로젝트 추가 -->
-            <c:if test="${memberLoggedIn.jobTitle eq '팀장'}">
+            <%-- <c:if test="${memberLoggedIn.jobTitle eq '팀장'}"> --%>
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card addpr-hover add-project" data-toggle="modal" data-target="#add-project-modal">
                 <div class="card-body addpr-center">
@@ -356,7 +356,7 @@ function resetModal(){
                 </div>
                 </div><!-- /.card -->
             </div>
-            </c:if>
+            <%-- </c:if> --%>
             </div><!-- /.card-content -->
         </section>
         </div><!-- /.container-fluid -->

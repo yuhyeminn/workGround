@@ -497,7 +497,7 @@
                                  <button type="button" class="dropdown-item btn-work-file-down" value="${a.attachmentNo}">다운로드</button>
                                  
                                  <!-- 파일삭제: 관리자, 프로젝트 팀장, 공유한 사람만 가능 -->
-                                 <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId || a.attachmentWriterMember.memberId==memberLoggedIn.memberId}">
+                                 <c:if test="${'admin'==memberLoggedIn.memberId || isProjectManager || a.attachmentWriterMember.memberId==memberLoggedIn.memberId}">
                                  <div class="dropdown-divider"></div>
                                  <button type="button" class="dropdown-item work-file-remove" value="${a.attachmentNo},${a.renamedFilename}" data-toggle="modal" data-target="#modal-file-remove">삭제</button>
                                  </c:if>

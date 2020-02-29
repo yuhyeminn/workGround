@@ -1884,6 +1884,7 @@ function closeSideBar(){
 <!-- 업무 삭제 드롭다운 -->
 <div id="menu-delWork" class="dropdown-menu dropdown-menu-right">
     <a href="#" id="dropdown-work-remove" class="dropdown-item dropdown-file-remove" data-toggle="modal" data-target="#modal-worklist-remove">업무 삭제</a>
+    <a href="#" id="dropdown-work-copy" class="dropdown-item dropdown-work-copy" data-toggle="modal" data-target="#modal-work-copy">업무 복사</a>
 </div>
 <!-- </div> -->
 

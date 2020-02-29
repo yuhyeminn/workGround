@@ -49,20 +49,15 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	public List<Member> selectMemberListByManagerId(String projectWriter) {
 		return sqlSession.selectList("project.selectMemberListByManagerId", projectWriter);
 	}
+	
+	@Override
+	public List<Member> selectMemberListByDeptCode(Map<String, String> param) {
+		return sqlSession.selectList("project.selectMemberListByDeptCode",param);
+	}
 
 	@Override
 	public int insertDefaultWorkList(Map<String, Object> param) {
 		return sqlSession.insert("project.insertDefaultWorkList",param);
-	}
-
-	@Override
-	public List<Project> selectListByDeptAndStatusCode(Map<String, Object> param) {
-		return sqlSession.selectList("project.selectListByDeptAndStatusCode",param);
-	}
-
-	@Override
-	public List<Project> selectListByImportantAndStatusCode(Map<String, Object> param) {
-		return sqlSession.selectList("project.selectListByImportantAndStatusCode",param);
 	}
 
 	@Override
@@ -252,5 +247,12 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	public List<Map<String, Object>> selectProjectLogList(int projectNo) {
 		return sqlSession.selectList("project.selectProjectLogList", projectNo);
 	}
+
+	@Override
+	public List<Member> selectProjectMemberList(String projectNo) {
+		return sqlSession.selectList("project.selectProjectMemberList",projectNo);
+	}
+
+	
 
 }

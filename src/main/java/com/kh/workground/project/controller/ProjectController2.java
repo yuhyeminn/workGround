@@ -62,9 +62,6 @@ public class ProjectController2 {
 			//project 생성
 			int result = projectService.insertProject(p, projectMemberList);
 			
-//			logger.debug("memberArr@Controller2={}",Arrays.toString(memberArr));
-//			logger.debug("projectMemberList@Controller2={}",projectMemberList);
-			
 			mav.addObject("msg", result>0?"프로젝트 등록 성공!":"프로젝트 등록 실패!");
 			mav.addObject("loc","/project/projectList.do");
 			mav.setViewName("common/msg");
@@ -77,49 +74,23 @@ public class ProjectController2 {
 		return mav;
 	}
 	
-	@RequestMapping("/project/projectTeamMember.do")
+	@RequestMapping("/project/projectDeptMember.do")
 	@ResponseBody
-	public List<Member> projectTeamMember(HttpSession session){
+	public List<Member> projectDeptMember(HttpSession session){
 		List<Member> list = null;
 		try {
-			
-			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-			String projectWriter = memberLoggedIn.getMemberId();
-			list = projectService.selectMemberListByManagerId(projectWriter);
-			
-		}catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new ProjectException("팀별 프로젝트 멤버 조회 오류!");
-		}
+				//나를 제외한 부서 사람 리스트
+				Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+				Map<String, String> param = new HashMap<>();
+				param.put("memberId", "'"+memberLoggedIn.getMemberId()+"'");
+				param.put("deptCode", memberLoggedIn.getDeptCode());
+				list = projectService.selectMemberListByDeptCode(param);
+				
+			}catch(Exception e) {
+				logger.error(e.getMessage(), e);
+				throw new ProjectException("부서별 프로젝트 멤버 조회 오류!");
+			}
 		return list;
-	}
-	
-	@RequestMapping("/project/projectListByStatusCode.do")
-	@ResponseBody
-	public ModelAndView projectListByStatusCode(ModelAndView mav,HttpServletRequest request, HttpSession session){
-		String statusCode = request.getParameter("statusCode");
-		String sortType = request.getParameter("sortType");
-		
-		Map<String, List<Project>> projectMap = null; //조회한 프로젝트 리스트 담는 맵
-		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		logger.debug("statusCode= {}",statusCode);
-		logger.debug("sortType= {}",sortType);
-		try {
-			Map<String, Object> param = new HashMap<>();
-			param.put("memberLoggedIn", memberLoggedIn);
-			param.put("statusCode", statusCode);
-			param.put("sortType", sortType);
-			
-			projectMap = projectService.selectProjectListByStatusCode(param);
-			mav.addObject("projectMap",projectMap);
-			mav.setViewName("/project/ajaxProjectSort");
-			
-		}catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new ProjectException("상태코드별 프로젝트 정렬 오류!");
-		}
-		
-		return mav;
 	}
 	
 	@RequestMapping("/project/projectSetting.do")
@@ -128,10 +99,9 @@ public class ProjectController2 {
 		
 		try {
 			//프로젝트 팀원 리스트에 팀장 포함이면 true, 제외하면 false
-			boolean isIncludeManager = true;
-			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+			Project p = projectService.selectProjectOneForSetting(projectNo);
 			
-			//프로젝트 관리자 멤버 객체
+			//프로젝트 작성자 멤버 객체
 			Member pwriter = projectService.selectMemberOneByMemberId(p.getProjectWriter());
 			
 			//프로젝트 활동로그
@@ -149,47 +119,19 @@ public class ProjectController2 {
 		return mav;
 	}
 	
-	@RequestMapping("/project/projectManagerSetting.do")
+	@RequestMapping("/project/projectSettingMember.do")
 	@ResponseBody
-	public List<Member> projectManagerSetting(HttpServletRequest request){
-		List<Member> managerList = null;
+	public Map<String,List<Member>> projectManagerSetting(HttpServletRequest request){
+		Map<String, List<Member>> map = null;
 		try {
-			String projectManager = request.getParameter("projectManager");
+			String projectNo = request.getParameter("projectNo");
 			
-			managerList = projectService.selectProjectManagerByDept(projectManager);
+			map = projectService.selectProjectSettingMemberList(projectNo);
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
-			throw new ProjectException("프로젝트 관리자 조회 오류!");
+			throw new ProjectException("프로젝트 세팅 멤버 조회 오류!");
 		}
-		return managerList;
-	}
-	
-	@RequestMapping("/project/projectMemberSetting.do")
-	@ResponseBody
-	public Map<String,List<Member>> projectMemberSetting(HttpServletRequest request){
-		Map<String, List<Member>> map = null;
-			try {
-				int projectNo = Integer.parseInt(request.getParameter("projectNo"));
-				map = new HashMap<>();
-				
-				//프로젝트 팀원 리스트에 팀장 포함이면 true, 제외하면 false
-				boolean isIncludeManager = false;
-				Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
-				
-				//해당 프로젝트 팀원 리스트(팀장 제외되어있음)
-				List<Member> projectMemberList = p.getProjectMemberList();
-				
-				//item리스트에 뿌려질 팀장과 같은 팀 내 사원 리스트
-				List<Member> teamMemberList = projectService.selectMemberListByManagerId(p.getProjectWriter());
-				
-				map.put("projectMemberList", projectMemberList);
-				map.put("teamMemberList", teamMemberList);
-				
-			}catch(Exception e) {
-				logger.error(e.getMessage(), e);
-				throw new ProjectException("프로젝트 팀원 조회 오류!");
-			}
 		return map;
 	}
 	
@@ -201,9 +143,7 @@ public class ProjectController2 {
 		int projectNo = Integer.parseInt(request.getParameter("projectNo"));
 		
 		try {
-			//프로젝트 팀원 리스트에 팀장 포함이면 true, 제외하면 false
-			boolean isIncludeManager = true;
-			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+			Project p = projectService.selectProjectOneForSetting(projectNo);
 			
 			Work work = projectService.selectOneWorkForSetting(workNo);
 			
@@ -231,9 +171,8 @@ public class ProjectController2 {
 				int workNo = Integer.parseInt(request.getParameter("workNo"));
 				
 				map = new HashMap<>();
-				//프로젝트 팀원 리스트에 팀장 포함이면 true, 제외하면 false
-				boolean isIncludeManager = true;
-				Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+				
+				Project p = projectService.selectProjectOneForSetting(projectNo);
 				Work work = projectService.selectOneWorkForSetting(workNo);
 				
 				//프로젝트 팀원 리스트
@@ -317,8 +256,8 @@ public class ProjectController2 {
 			}else {
 				result = projectService.updateProjectMember(updateMemberStr, projectNo);
 			}
-			boolean isIncludeManager = true;
-			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+			
+			Project p = projectService.selectProjectOneForSetting(projectNo);
 			List<Member> memberList = p.getProjectMemberList();
 			
 			int memberCnt = memberList.size();
@@ -449,7 +388,7 @@ public class ProjectController2 {
 			
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
-			throw new ProjectException("업무 태그 수정 오류!");
+			throw new ProjectException("업무 포인트 수정 오류!");
 		}
 		return map;
 	}
@@ -743,10 +682,9 @@ public class ProjectController2 {
 			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
 			
 			int projectNo = Integer.parseInt(request.getParameter("projectNo"));
-			boolean isIncludeManager = false;
 			
 			//프로젝트 개요를 위한 프로젝트 객체
-			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+			Project p = projectService.selectProjectOneForSetting(projectNo);
 			
 			//내가 배정받은 업무 리스트
 			List<Work> myWorkList = projectService.selectMyWorkList(projectNo, memberLoggedIn.getMemberId());

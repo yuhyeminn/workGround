@@ -12,14 +12,10 @@
 </style>
 
 <!-- 프로젝트 관리자 -->
-<c:set var="projectManager" value=""/>
 <c:set var="isprojectManager" value="false"/>
 <c:forEach var="pm" items="${project.projectMemberList}">
-	<c:if test="${pm.managerYn eq 'Y'}">
-		<c:set var="projectManager" value="${pm.memberId}" />
-	</c:if>
 	<c:if test="${pm.memberId eq memberLoggedIn.memberId }">
-		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
+		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/></c:if>
 	</c:if>
 </c:forEach>
 
@@ -336,9 +332,8 @@
 <script>
 $(()=>{
 	var projectNo = '${project.projectNo}';
-	var projectManagerId = '${projectManager}';
-	projectManager(projectManagerId);
-	projectMember(projectNo);
+	projectSettingMember(projectNo);
+	
 	updateProjectMember();
 	updateProjectManager();
 	quitProject();

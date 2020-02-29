@@ -327,9 +327,7 @@ public class ChatController {
 			String channelNoTemp = "P"+projectNo;
 			Channel channel = chatService.selectChannel(channelNoTemp);
 		
-			//프로젝트 팀원 리스트에 팀장 포함이면 true, 제외하면 false
-			boolean isIncludeManager = true;
-			Project p = projectService.selectProjectOneForSetting(projectNo,isIncludeManager);
+			Project p = projectService.selectProjectOneForSetting(projectNo);
 			
 			//프로젝트 팀원 리스트
 			List<Member> projectMemberList = p.getProjectMemberList();

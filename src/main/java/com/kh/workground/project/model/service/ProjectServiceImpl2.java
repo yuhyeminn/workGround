@@ -76,71 +76,21 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		
 		return list;
 	}
-
+	
 	@Override
-	public Map<String, List<Project>> selectProjectListByStatusCode(Map<String, Object> param) {
-		Map<String, List<Project>> map = new HashMap<>();
-		
-		//1. 부서 전체 프로젝트(최근 프로젝트) 조회
-		List<Project> listByDept = projectDAO.selectListByDeptAndStatusCode(param);
-		
-		if(listByDept==null)
-			throw new ProjectException("최근 프로젝트 조회 오류!");
-		else
-			map.put("listByDept", listByDept);
-		
-		//2. 중요 표시된 프로젝트 조회
-		List<Project> listByImportant = projectDAO.selectListByImportantAndStatusCode(param);
-		
-		if(listByImportant==null)
-			throw new ProjectException("중요 표시된 프로젝트 조회 오류!");
-		else 
-			map.put("listByImportant", listByImportant);
-		
-		//3. 내가 속한 프로젝트(내 워크패드 제외) 조회	
-		List<Project> listByInclude = new ArrayList<>();
-		
-		//3-2. 1번에서 구한 프로젝트 리스트에서 내가 포함된 리스트만 listByInclude에 추가
-		boolean bool = false; //내가 포함됐는지 여부
-		if(!listByDept.isEmpty()) {
-			for(Project p: listByDept) {
-				bool = false;
-				List<Member> memList = p.getProjectMemberList();
-				logger.debug("memList={}",memList);
-				for(Member m: memList) {
-					String pMemId = m.getMemberId();
-					Member member = (Member)param.get("memberLoggedIn");
-					if((member.getMemberId()).equals(pMemId)) {
-						bool = true;
-					}
-				}
-				
-				//포함됐으면 list에 추가
-				if(bool) 
-					listByInclude.add(p);
-			}
-		}
-		
-		map.put("listByInclude", listByInclude);
-		
-		return map;
+	public List<Member> selectMemberListByDeptCode(Map<String, String> param) {
+		List<Member> list = projectDAO.selectMemberListByDeptCode(param);
+		if(list == null)
+			throw new ProjectException("부서별 멤버 조회 오류 !");
+		return list;
 	}
-
+	
 	@Override
-	public Project selectProjectOneForSetting(int projectNo,boolean isIncludeManager) {
+	public Project selectProjectOneForSetting(int projectNo) {
 		
 		Project p = projectDAO.selectProjectOneForSetting(projectNo);
 		if(p==null) {
 			throw new ProjectException("프로젝트 조회 오류!");
-		}
-		if(!isIncludeManager) {
-			List<Member> list = p.getProjectMemberList();
-			for(int i=0;i<list.size();i++) {
-				Member m = list.get(i);
-				if(("Y").equals(m.getManagerYn())) {
-					list.remove(i);
-				}
-			}
 		}
 		List<Worklist> worklistList = projectDAO.selectWorklistListByProjectNo(projectNo);
 		if(worklistList==null) {
@@ -154,15 +104,6 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		}
 		p.setWorklistList(worklistList);
 		return p;
-	}
-
-	@Override
-	public List<Member> selectProjectManagerByDept(String projectManager) {
-		List<Member> list = projectDAO.selectProjectManagerByDept(projectManager);
-		if(list == null) {
-			throw new ProjectException("부서별 팀장 조회 오류!");
-		}
-		return list;
 	}
 
 	@Override
@@ -230,13 +171,10 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		//수정할 프로젝트 회원 리스트
 		String[] updateMemberArr = updateMemberStr.split(",");
 		List<String> updateMemberList = new ArrayList<>(Arrays.asList(updateMemberArr));
-//		logger.debug("updateMemberList={}",updateMemberList);
 		
 		//프로젝트 전체 회원 리스트(이전에 나갔었던 멤버까지 조회)
 		List<Member> projectAllMemberList = projectDAO.selectProjectMemberIdList(projectNo);
 		if(projectAllMemberList==null) throw new ProjectException("프로젝트 멤버 조회 오류!");
-		
-//		logger.debug("projectAllMemberList={}",projectAllMemberList);
 		
 		List<String> projectMemberList = new ArrayList<>(); 	//기존 프로젝트 회원 리스트
 		List<String> projectQuitMemberList = new ArrayList<>();
@@ -247,9 +185,6 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 				projectQuitMemberList.add(m.getMemberId());
 			}
 		}
-		
-//		logger.debug("projectMemberList={}",projectMemberList);
-//		logger.debug("projectQuitMemberList={}",projectQuitMemberList);
 		
 		//새롭게 추가되는 프로젝트 멤버
 		for(String memberId : updateMemberList) {
@@ -522,6 +457,52 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		List<Map<String, Object>> result = projectDAO.selectProjectLogList(projectNo);
 		if(result==null) throw new ProjectException("프로젝트 활동로그 조회 오류!");
 		return result;
+	}
+
+	@Override
+	public Map<String, List<Member>> selectProjectSettingMemberList(String projectNo) {
+		Map<String, List<Member>> map = new HashMap<>();
+		//프로젝트 팀원 전체(매니저 포함)
+		List<Member> memberList = projectDAO.selectProjectMemberList(projectNo);
+		if(memberList==null) throw new ProjectException("프로젝트 팀원 조회 오류!");
+		
+		//프로젝트 매니저 리스트
+		List<Member> managerList = new ArrayList<>();
+		for(int i=0;i<memberList.size();i++) {
+			Member m = memberList.get(i);
+			if(("Y").equals(m.getManagerYn())) {
+				//매니저리스트에 추가
+				managerList.add(m);
+			}
+		}
+		
+		//프로젝트팀원 multiselect에 뿌려질 리스트
+		//프로젝트 매니저를 제외한 부서 멤버 리스트
+		String memberId = "";
+		for(int i=0; i<managerList.size(); i++) {
+			Member m = managerList.get(i);
+			memberId += "'"+m.getMemberId()+"'";
+			if(i != (managerList.size()-1)) {
+				memberId += ",";
+			}
+		}
+		
+		String deptCode = "";
+		//프로젝트는 부서단위로만 생성되므로 아무 member객체에서 deptCode얻음.
+		if(!memberList.isEmpty()) {
+			deptCode = memberList.get(0).getDeptCode();
+		}
+		
+		Map<String, String> param = new HashMap<>();
+		param.put("deptCode",deptCode);
+		param.put("memberId", memberId);
+		List<Member> deptMemberList = projectDAO.selectMemberListByDeptCode(param);
+		
+		map.put("memberList", memberList);
+		map.put("managerList", managerList);
+		map.put("deptMemberList", deptMemberList);
+		
+		return map;
 	}
 
 }

@@ -580,12 +580,9 @@ public class ProjectController {
 	public ModelAndView sortProjectList(ModelAndView mav, HttpSession session, @RequestParam(value="statusCode",defaultValue="ALL") String statusCode,
 			@RequestParam(value="sortType",defaultValue="project_startdate") String sortType) {
 		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
-		List<Member> memberListByDept = null; //부서 사람들 담는 리스트
 		Map<String, List<Project>> projectMap = null; //조회한 프로젝트 리스트 담는 맵
 		
 		try {
-			//1.업무로직
-			//1-1.부서 전체 프로젝트/중요 표시된 프로젝트/내가 속한 프로젝트(내 워크패드 포함)
 			Map<String, String> param = new HashMap<>();
 			param.put("statusCode", statusCode);
 			param.put("sortType", sortType);

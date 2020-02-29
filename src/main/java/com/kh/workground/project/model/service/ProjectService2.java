@@ -16,11 +16,7 @@ public interface ProjectService2 {
 
 	List<Member> selectMemberListByManagerId(String projectWriter);
 
-	Map<String, List<Project>> selectProjectListByStatusCode(Map<String, Object> param);
-
-	Project selectProjectOneForSetting(int projectNo, boolean isIncludeManager);
-
-	List<Member> selectProjectManagerByDept(String projectManager);
+	Project selectProjectOneForSetting(int projectNo);
 
 	Work selectOneWorkForSetting(int workNo);
 
@@ -71,5 +67,9 @@ public interface ProjectService2 {
 	int updateChklist(Map<String, String> param);
 	
 	List<Map<String, Object>> selectProjectLogList(int projectNo);
+
+	List<Member> selectMemberListByDeptCode(Map<String, String> param);
+
+	Map<String, List<Member>> selectProjectSettingMemberList(String projectNo);
 
 }

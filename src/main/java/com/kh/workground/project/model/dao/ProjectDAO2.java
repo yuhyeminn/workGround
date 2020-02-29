@@ -23,10 +23,6 @@ public interface ProjectDAO2 {
 
 	int insertDefaultWorkList(Map<String, Object> param);
 
-	List<Project> selectListByDeptAndStatusCode(Map<String, Object> param);
-
-	List<Project> selectListByImportantAndStatusCode(Map<String, Object> param);
-
 	Project selectProjectOneForSetting(int projectNo);
 
 	Member selectOneProjectManager(String projectWriter);
@@ -100,5 +96,9 @@ public interface ProjectDAO2 {
 	int updateChklist(Map<String, String> param);
 	
 	List<Map<String, Object>> selectProjectLogList(int projectNo);
+
+	List<Member> selectMemberListByDeptCode(Map<String, String> param);
+
+	List<Member> selectProjectMemberList(String projectNo);
 
 }
