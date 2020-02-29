@@ -496,8 +496,8 @@ function updateProjectManager(){
 	$("#updateProjectManager").on('click',function(){
 		var projectNo = '${project.projectNo}';
 		var updateManagerArr = $("select[name=projectManager]").val();
-		if(updateManagerArr.length != 1) {alert("프로젝트 관리자는 1명만 설정 가능합니다.");return;}
-		var updateManager = updateManagerArr[0];
+		if(updateManagerArr.length == 0) {alert("1명 이상의 관리자를 설정하세요.");return;}
+		var updateManager = updateManagerArr.join(",");
 		$.ajax({
 			url:"${pageContext.request.contextPath}/project/updateProjectManager.do",
 			data:{updateManager:updateManager, projectNo:projectNo},
@@ -505,6 +505,7 @@ function updateProjectManager(){
 			success: data=>{
 				if(data.isUpdated){
 					console.log("프로젝트 관리자 변경 성공~");
+					$("#project-setting-toggle").click(); //설정창 새로고침
 				}
 			},
 			error:(jqxhr, textStatus, errorThrown) =>{

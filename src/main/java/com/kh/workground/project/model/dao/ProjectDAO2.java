@@ -99,6 +99,8 @@ public interface ProjectDAO2 {
 
 	List<Member> selectMemberListByDeptCode(Map<String, String> param);
 
-	List<Member> selectProjectMemberList(String projectNo);
+	List<Member> selectProjectMemberList(int projectNo);
+
+	int updateProjectManagerYn(Map<String, Object> param);
 
 }

@@ -681,6 +681,15 @@
 		update checklist set checklist_content = #{chkContent} where checklist_no=to_number(#{chkNo})
 	</update>
 	
+	<update id="updateProjectManagerYn">
+		update project_members set manager_yn = #{YN} 
+		where project_no = #{projectNo}
+		and member_id in (
+		<foreach collection="list" item="memberId" separator=",">
+					'${memberId}'
+		</foreach>)
+	</update>
+	
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>
 			<result column="password" property="password"></result>

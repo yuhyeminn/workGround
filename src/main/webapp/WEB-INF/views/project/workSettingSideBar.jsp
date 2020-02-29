@@ -672,7 +672,7 @@ function updateWorkMember(){
 				success: data =>{
 					if(data.isUpdated){
 						 resetWorkView(); //업무 새로고침
-						 $("section#"+workNo+".work-item").click(); //체크리스트 배정멤버 드롭다운을 위한..설정창 새로고침,,?
+						 $("section#"+workNo+".work-item").click(); //설정창 새로고침
 					}else{
 						alert("업무 배정에 실패하였습니다. :(");
 					}

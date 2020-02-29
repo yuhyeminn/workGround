@@ -28,7 +28,7 @@ public interface ProjectService2 {
 
 	int updateProjectMember(String updateMemberStr, int projectNo);
 
-	int updateProjectManager(Map<String, String> param);
+	int updateProjectManager(String updateManager, int projectNo);
 
 	int updateProjectQuit(Map<String, String> param);
 
@@ -70,6 +70,6 @@ public interface ProjectService2 {
 
 	List<Member> selectMemberListByDeptCode(Map<String, String> param);
 
-	Map<String, List<Member>> selectProjectSettingMemberList(String projectNo);
+	Map<String, List<Member>> selectProjectSettingMemberList(int projectNo);
 
 }

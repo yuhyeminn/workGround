@@ -124,7 +124,7 @@ public class ProjectController2 {
 	public Map<String,List<Member>> projectManagerSetting(HttpServletRequest request){
 		Map<String, List<Member>> map = null;
 		try {
-			String projectNo = request.getParameter("projectNo");
+			int projectNo = Integer.parseInt(request.getParameter("projectNo"));
 			
 			map = projectService.selectProjectSettingMemberList(projectNo);
 			
@@ -280,14 +280,8 @@ public class ProjectController2 {
 		Map<String, Object> map = new HashMap<>();
 		
 		try {
-			Map<String, String> param = new HashMap<>();
-			param.put("updateManager", updateManager);
-			param.put("projectNo", Integer.toString(projectNo));
-			
-			logger.debug("updateManager={}",updateManager);
-			logger.debug("projectNo={}",projectNo);
-			
-			int result = projectService.updateProjectManager(param);
+
+			int result = projectService.updateProjectManager(updateManager, projectNo);
 			
 			boolean isUpdated = result>0?true:false;
 			map.put("isUpdated",isUpdated );

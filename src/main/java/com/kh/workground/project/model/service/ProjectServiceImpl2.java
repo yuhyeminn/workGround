@@ -221,9 +221,37 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 	}
 
 	@Override
-	public int updateProjectManager(Map<String, String> param) {
-		int result = projectDAO.updateProjectManager(param);
+	public int updateProjectManager(String updateManager, int projectNo) {
+		int result = 0;
+		
+		//프로젝트 팀원 전체(매니저 포함)
+		List<Member> memberList = projectDAO.selectProjectMemberList(projectNo);
+		if(memberList==null) throw new ProjectException("프로젝트 팀원 조회 오류!");
+		
+		//수정할 프로젝트 관리자 리스트
+		String[] updateManagerArr = updateManager.split(",");
+		List<String> updateManagerList = new ArrayList<>(Arrays.asList(updateManagerArr));
+		
+		//updatemanagerArr 해당 멤버들 managerYn Y로 수정
+		Map<String, Object> param = new HashMap<>();
+		param.put("projectNo", projectNo);
+		param.put("YN", "Y");
+		param.put("list", updateManagerList);
+		result = projectDAO.updateProjectManagerYn(param);
 		if(result==0) throw new ProjectException("프로젝트 관리자 수정 오류!");
+		
+		//전체 팀원 리스트 중 매니저 리스트 제외한 팀원 모두 managerYn N으로 수정
+		List<String> updateMemberList = new ArrayList<>();
+		for(Member m : memberList) {
+			if(!updateManagerList.contains(m.getMemberId())) {
+				updateMemberList.add(m.getMemberId());
+			}
+		}
+		param.put("list", updateMemberList);
+		param.put("YN", "N");
+		result = projectDAO.updateProjectManagerYn(param);
+		if(result==0) throw new ProjectException("프로젝트 관리자 수정 오류!");
+		
 		return result;
 	}
 
@@ -460,7 +488,7 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 	}
 
 	@Override
-	public Map<String, List<Member>> selectProjectSettingMemberList(String projectNo) {
+	public Map<String, List<Member>> selectProjectSettingMemberList(int projectNo) {
 		Map<String, List<Member>> map = new HashMap<>();
 		//프로젝트 팀원 전체(매니저 포함)
 		List<Member> memberList = projectDAO.selectProjectMemberList(projectNo);

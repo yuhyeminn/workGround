@@ -249,8 +249,13 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 	}
 
 	@Override
-	public List<Member> selectProjectMemberList(String projectNo) {
+	public List<Member> selectProjectMemberList(int projectNo) {
 		return sqlSession.selectList("project.selectProjectMemberList",projectNo);
+	}
+
+	@Override
+	public int updateProjectManagerYn(Map<String, Object> param) {
+		return sqlSession.update("project.updateProjectManagerYn",param);
 	}
 
 	
