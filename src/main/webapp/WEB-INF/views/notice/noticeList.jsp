@@ -530,8 +530,8 @@ function checkComment(commentContent){
      <div id="searchLine">
      	  <h6></h6><span id="searchCount"></span>
      </div>
-      <!-- 전체공지 -->
-      <section class="notice-area"></section>
+	  <!-- 전체공지 -->
+	  <section class="notice-area"></section>
 
       <!-- 내가 속한 부서 공지 -->
       <section class="myDeptNotice-area"></section>
