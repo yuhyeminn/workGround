@@ -39,11 +39,6 @@ function drawTimeline(){
     google.charts.setOnLoadCallback(drawChart);
 
     function drawChart() {
-    	//html에 뿌릴 요소들 
-       	let labelWrapper = document.querySelector('#left-label');
-       	let dateWrapper = document.querySelector('#date-cell-wrapper');
-    	
-    	
         let container = document.getElementById('timeline');
         let chart = new google.visualization.Timeline(container);
         let dataTable = new google.visualization.DataTable();
@@ -72,7 +67,7 @@ function drawTimeline(){
         	if('${project.projectEndDate}'!==''){
         		pe = changeDateFormat('${project.projectEndDate}');
         	}
-        	///마감일 없는 경우: 업무리스트 마감(종료)일 중 가장 늦은 마감(종료)일 
+        	//마감일 없는 경우: 업무리스트 마감(종료)일 중 가장 늦은 마감(종료)일 
         }
         
         
@@ -80,10 +75,10 @@ function drawTimeline(){
         let wlList = [];
         let workList;
         let wlStart; //업무리스트 시작일: 포함하는 업무 중 가장 빠른 시작일
-        let wlEnd; //업무리스트 종료일: 포함하는 업무 중 가장 늦은 마감/종료일
+        let wlEnd; //업무리스트 종료일: 포함하는 업무 중 가장 늦은 마감(종료)일
         let sArr; //시작일 배열
         let eArr; //마감,종료일 배열
-        let peArr = []; //프로젝트 종료일/마감일 둘 다 없는 경우를 위한 비교 배열 
+        let peArr = []; //프로젝트 종료(마감)일 둘 다 없는 경우를 위한 비교 배열 
         let initialValue;
         let reducerS = (accumulator, value)=>{
 			if(accumulator < value) accumulator = accumulator;
@@ -111,23 +106,25 @@ function drawTimeline(){
         			sArr.push(changeDateFormat('${w.workStartDate}'));
         		</c:if>
         		
-        		//완료일이 있지만 마감일이 더 늦은 경우 마감일
+        		//완료일이 있지만 마감일이 더 늦은 경우 마감일을 배열에 넣기
         		<c:if test="${w.workRealEndDate!=null}">
         			if(changeDateFormat('${w.workRealEndDate}') < changeDateFormat('${w.workEndDate}'))
         				eArr.push(changeDateFormat('${w.workEndDate}'));
         			else
         				eArr.push(changeDateFormat('${w.workRealEndDate}'));
         		</c:if>
+        		//완료일 없고, 마감일 있는 경우 마감일을 배열에 넣기
         		<c:if test="${w.workRealEndDate==null && w.workEndDate!=null}">
     				eArr.push(changeDateFormat('${w.workEndDate}'));
     			</c:if>
         	</c:forEach>
         	
-        	
+        	//업무리스트 시작일 구하기
    			initialValue = sArr[0];
    			wlStart = sArr.reduce(reducerS, initialValue); //업무시작일들 중 가장 빠른 날짜 구함
    			if(wlStart===undefined) wlStart = ps; //지정된 날짜가 없다면 프로젝트 시작일
    			
+   			//업무리스트 종료일 구하기
    			initialValue = eArr[0];
    			wlEnd = eArr.reduce(reducerE, initialValue); //업무종료일들 중 가장 늦은 날짜 구함
    			if(wlEnd===undefined) wlEnd = wlStart; //지정된 날짜가 없다면 업무리스트 시작일
@@ -141,7 +138,7 @@ function drawTimeline(){
         </c:forEach>
         
         
-        //프로젝트 마감일 없는 경우 업무리스트 마감일에서 가장 늦은 마감일 참조
+        //프로젝트 마감일 없는 경우 업무리스트 마감일로 비교, 구하기
         if(pe===undefined){
         	initialValue = "";
         	pe = peArr.reduce(reducerE, initialValue);
@@ -242,23 +239,16 @@ function drawTimeline(){
         }//end of for(let wl of wlList): 업무리스트의 리스트 안의 업무리스트
         
         
-        console.log(totalArr);
-        
-        
         dataTable.addRows(
         	totalArr
         );
     		
-        console.log(dateWrapper);
       	//options
       	let html;
         let ticks = [];
       	let height = 50*totalArr.length-1 - 150; 	
        	for(let i=1; i<=90; i++){
        		ticks.push(new Date(ps.getFullYear(), ps.getMonth(), ps.getDate()+i));
-       		
-       		//html요소 추가
-       		$(dateWrapper).append('<div class="cell">'+(ps.getMonth()+1)+'-'+(ps.getDate()+(i-1))+'</div>');
        	}
       
         let options = {
@@ -278,10 +268,6 @@ function drawTimeline(){
         
         
         chart.draw(dataTable, options); 
-        
-        
-       	$(labelWrapper).css('height', height);
-       	
         
     } //end of drawChart()
 }
@@ -306,13 +292,31 @@ function tabActive(){
     <h2 class="sr-only">프로젝트 타임라인</h2>
     <!-- Main content -->
     <div id="timeline-wrapper" class="content view">
-    	<div id="timeline-header"></div>
-    	<!-- <div id="left-label">
-    		<p class="label p">개발2팀</p>
-    		<p class="label wl">업무리스트1</p>
-    		<p class="label w">업무1</p>
-    	</div> -->
-    	<div id="date-cell-wrapper">
+    	<div id="timeline-header">
+    		<div class="guide">
+    			<span class="cell"></span>
+    			<span class="cell-type">프로젝트</span>
+    		</div>
+    		<div class="guide wl">
+    			<span class="cell"></span>
+    			<span class="cell-type">업무리스트</span>
+    		</div>
+    		<div class="guide ing-work">
+    			<span class="cell"></span>
+    			<span class="cell-type">진행중인 업무</span>
+    		</div>
+    		<div class="guide cmptd-work">
+    			<span class="cell"></span>
+    			<span class="cell-type">완료된 업무</span>
+    		</div>
+    		<div class="guide over-work">
+    			<span class="cell"></span>
+    			<span class="cell-type">마감일 지난 업무</span>
+    		</div>
+    		<div class="guide none-work">
+    			<span class="cell"></span>
+    			<span class="cell-type">시작일/마감일 없는 업무</span>
+    		</div>
     	</div>
     	<div id="timeline"></div>
     </div>

@@ -8,6 +8,7 @@
 <%-- <jsp:include page="/WEB-INF/views/club/clubViewModal.jsp"></jsp:include> --%>
 
 <style>
+.content{margin-top: -46px;}
 .btn-drop{background-color:transparent; border:0px transparent solid;}
 .navbar-project .dropdown-menu{min-width: 6rem;}
 #tbl-projectAttach.table.member-table td{padding: .5rem 0;}
