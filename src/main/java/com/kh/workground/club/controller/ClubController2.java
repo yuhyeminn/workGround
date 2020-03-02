@@ -496,7 +496,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	@RequestMapping("/club/insertClubPlanAttendee.do")
 	public ModelAndView insertClubPlanAttendee(ModelAndView mav, 
 											   ClubPlanAttendee clubPlanAttendee, 
-											   @RequestParam("clubNo") int clubNo, 
+											   @RequestParam(value="clubNo") int clubNo, 
 											   int where) {
 		try {
 //			logger.debug("clubPlanAttendee={}", clubPlanAttendee);
