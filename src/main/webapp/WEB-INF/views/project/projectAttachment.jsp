@@ -105,10 +105,12 @@ function tabActive(){
 
 <!-- 프로젝트 관리자 -->
 <c:set var="projectManager" value=""/>
+<c:set var="pmObj" value=""/>
 <c:set var="isprojectManager" value="false"/>
 <c:forEach var="pm" items="${project.projectMemberList}">
 	<c:if test="${pm.managerYn eq 'Y'}">
 		<c:set var="projectManager" value="${projectManager=pm.memberId}" />
+		<c:set var="pmObj" value="${pm}"/>
 	</c:if>
 	<c:if test="${pm.memberId eq memberLoggedIn.memberId }">
 		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
@@ -116,7 +118,7 @@ function tabActive(){
 </c:forEach>
 <!-- 나의 워크패드인 경우 -->
 <c:if test="${project.privateYn=='Y'}">
-	<c:set var="projectManager" value="${projectManager=project.projectWriter}" />
+	<c:set var="isprojectManager" value="true"/>
 </c:if>
 
 
@@ -176,7 +178,7 @@ function tabActive(){
                                  <button type="button" class="dropdown-item btn-down" value="${a.attachmentNo}">다운로드</button>
                                  
                                  <!-- 파일삭제: 관리자, 프로젝트 팀장, 공유한 사람만 가능 -->
-                                 <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId || a.attachmentWriterMember.memberId==memberLoggedIn.memberId}">
+                                 <c:if test="${'admin'==memberLoggedIn.memberId || isprojectManager==true || a.attachmentWriterMember.memberId==memberLoggedIn.memberId}">
                                  <div class="dropdown-divider"></div>
                                  <button type="button" class="dropdown-item dropdown-file-remove" value="${a.attachmentNo},${a.originalFilename},${a.renamedFilename}" data-toggle="modal" data-target="#modal-file-remove">삭제</a>
                                  </c:if>

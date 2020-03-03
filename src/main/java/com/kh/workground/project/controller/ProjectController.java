@@ -199,7 +199,7 @@ public class ProjectController {
 	}
 	
 	@PostMapping("/project/addWorklist.do")
-	public ModelAndView insertWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam String worklistTitle, @RequestParam String projectManager) {
+	public ModelAndView insertWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam String worklistTitle, @RequestParam boolean isProjectManager) {
 		
 		try {
 			//xss공격방어
@@ -215,7 +215,7 @@ public class ProjectController {
 			
 			//2.뷰모델 처리
 			mav.addObject("wl", wl);
-			mav.addObject("projectManager", projectManager);
+			mav.addObject("isProjectManager", isProjectManager);
 			mav.setViewName("/project/ajaxWorklist");
 			
 		} catch(Exception e) {
@@ -306,7 +306,7 @@ public class ProjectController {
 	}
 	
 	@RequestMapping("/project/searchWork")
-	public ModelAndView searchWork(ModelAndView mav, @RequestParam int projectNo, @RequestParam String keyword, @RequestParam String memberId) {
+	public ModelAndView searchWork(ModelAndView mav, @RequestParam int projectNo, @RequestParam String keyword, @RequestParam boolean isProjectManager) {
 		
 		try {
 			//1.업무로직
@@ -316,6 +316,7 @@ public class ProjectController {
 			mav.addObject("keywordBefore", keyword);
 			mav.addObject("project", p);
 			mav.addObject("wlList", p.getWorklistList());
+			mav.addObject("isProjectManager", isProjectManager);
 			mav.setViewName("/project/ajaxWorkSearch");
 			
 		} catch(Exception e) {
@@ -327,7 +328,7 @@ public class ProjectController {
 	}
 	
 	@PostMapping("/project/insertWork.do")
-	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="projectManager") String projectManager,
+	public ModelAndView insertWork(ModelAndView mav, @RequestParam(value="isProjectManager") boolean isProjectManager,
 										   @RequestParam(value="projectNo") int projectNo, 
 									       @RequestParam(value="worklistNo") int worklistNo, 
 										   @RequestParam(value="workTitle") String workTitle,
@@ -357,7 +358,7 @@ public class ProjectController {
 			//1-2.추가
 			int result = projectService.insertWork(param);
 			
-			ajaxWorkSetView(mav, projectNo, worklistNo, projectManager);
+			ajaxWorkSetView(mav, projectNo, worklistNo, isProjectManager);
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -371,7 +372,7 @@ public class ProjectController {
 	public ModelAndView deleteWork(ModelAndView mav, 
 									@RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo, @RequestParam String workTitle,
 									@RequestParam int cntChk, @RequestParam int cntComment, @RequestParam int cntFile,
-									@RequestParam String projectManager) {
+									@RequestParam boolean isProjectManager) {
 		
 		try {
 			//1.workNo를 참조하고 있는 체크리스트, 코멘트, 파일 삭제
@@ -394,7 +395,7 @@ public class ProjectController {
 				result = projectService.deleteWork(workNo);
 			}
 			
-			ajaxWorkSetView(mav, projectNo, worklistNo, projectManager);
+			ajaxWorkSetView(mav, projectNo, worklistNo, isProjectManager);
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -406,7 +407,7 @@ public class ProjectController {
 	
 	@PostMapping("/project/updateWorkCompleteYn.do")
 	public ModelAndView updateWorkCompleteYn(ModelAndView mav, 
-											 @RequestParam String projectManager, @RequestParam String completeYn, 
+											 @RequestParam boolean isProjectManager, @RequestParam String completeYn, 
 											 @RequestParam int projectNo, @RequestParam int worklistNo, @RequestParam int workNo) {
 		
 		try {
@@ -432,7 +433,7 @@ public class ProjectController {
 			//1-2.완료여부 업데이트하기
 			int result = projectService.updateWorkCompleteYn(param);
 			
-			ajaxWorkSetView(mav, projectNo, worklistNo, projectManager);
+			ajaxWorkSetView(mav, projectNo, worklistNo, isProjectManager);
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -442,7 +443,7 @@ public class ProjectController {
 		return mav;
 	}
 	
-	public void ajaxWorkSetView(ModelAndView mav, int projectNo, int worklistNo, String projectManager) {
+	public void ajaxWorkSetView(ModelAndView mav, int projectNo, int worklistNo, boolean isProjectManager) {
 		//1-3.변동된 worklist가져오기
 		Worklist wl = projectService.selectWorklistOne(projectNo, worklistNo);
 		
@@ -457,7 +458,7 @@ public class ProjectController {
 		mav.addObject("privateYn", privateYn);
 		mav.addObject("wl", wl);
 		mav.addObject("inMemList", inMemList);
-		mav.addObject("projectManager", projectManager);
+		mav.addObject("isProjectManager", isProjectManager);
 		mav.setViewName("/project/ajaxWork");
 	}
 	
@@ -601,7 +602,7 @@ public class ProjectController {
 		return mav;
 	}
 
-	@PostMapping("/project/resetWorklist.do")
+	/*@PostMapping("/project/resetWorklist.do")
 	public ModelAndView resetWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam int worklistNo,@RequestParam String projectManager) {
 		
 		try {
@@ -614,7 +615,7 @@ public class ProjectController {
 		}
 		
 		return mav;
-	}
+	}*/
 	
 
 	/*@Scheduled(cron="0/30 * * * * *")

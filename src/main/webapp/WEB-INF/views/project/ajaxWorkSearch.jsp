@@ -8,10 +8,12 @@
 
 <!-- 프로젝트 관리자 -->
 <c:set var="projectManager" value=""/>
+<c:set var="pmObj" value=""/>
 <c:set var="isprojectManager" value="false"/>
 <c:forEach var="pm" items="${project.projectMemberList}">
 	<c:if test="${pm.managerYn eq 'Y'}">
 		<c:set var="projectManager" value="${projectManager=pm.memberId}" />
+		<c:set var="pmObj" value="${pm}"/>
 	</c:if>
 	<c:if test="${pm.memberId eq memberLoggedIn.memberId }">
 		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
@@ -19,7 +21,7 @@
 </c:forEach>
 <!-- 나의 워크패드인 경우 -->
 <c:if test="${project.privateYn=='Y'}">
-	<c:set var="projectManager" value="${projectManager=project.projectWriter}" />
+	<c:set var="isprojectManager" value="true"/>
 </c:if>
 
 <script>
@@ -54,7 +56,7 @@ $(function(){
 	                <h5>${wl.worklistTitle}</h5>
 	                
 	                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
-	                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
+	                <c:if test="${'admin'==memberLoggedIn.memberId || isProjectManager==true}">
 	                <div class="worklist-title-btn">
 	                	<button type="button" class="btn-showUpdateFrm" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
 		                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
@@ -481,8 +483,8 @@ $(function(){
         </c:forEach>
         
         
-<!-- 업무리스트 추가: admin, 대표, 프로젝트 팀장에게만 보임 -->
-<c:if test="${'admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || project.projectWriter==memberLoggedIn.memberId}">
+<!-- 업무리스트 추가: 내워크패드인 경우 / 아닌 경우는 admin, 프로젝트 매니저에게만 보임 -->
+<c:if test="${'Y'==project.privateYn || ('N'==project.privateYn && ('admin'==memberLoggedIn.memberId || isProjectManager==true)) }">
 <section id="add-wklt-wrapper" class="worklist add-worklist" role="button" tabindex="0">
     <!-- 타이틀 -->
     <div class="worklist-title">

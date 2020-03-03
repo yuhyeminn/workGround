@@ -30,7 +30,7 @@
 </c:forEach>
 <!-- 나의 워크패드인 경우 -->
 <c:if test="${project.privateYn=='Y'}">
-	<c:set var="projectManager" value="${projectManager=project.projectWriter}" />
+	<c:set var="isprojectManager" value="true"/>
 </c:if>
 
 
@@ -125,7 +125,7 @@ function searchWork(){
 			let data = {
 					projectNo: ${project.projectNo},
 					keyword: keyword,
-					memberId: '${memberLoggedIn.memberId}'
+					isProjectManager: '${isprojectManager}'
 			};
 			
 			ajax(data);
@@ -146,7 +146,7 @@ function searchWork(){
 		let data = {
 				projectNo: ${project.projectNo},
 				keyword: keyword,
-				memberId: '${memberLoggedIn.memberId}'
+				isProjectManager: '${isprojectManager}'
 		};
 		
 		ajax(data);
@@ -185,7 +185,7 @@ function addWorklist(){
     let btnAdd = document.querySelector("#btn-addWorklist");
     let btnCancel = document.querySelector("#btn-cancel-addWorklist");
     let url = '${pageContext.request.contextPath}/project/addWorklist.do';
-	
+
     //프로젝트 팀원들에게는 업무리스트 추가가 보이지 않음!
     if(addWklt!==null){
 	    //업무리스트 추가 클릭시 입력폼 보이기
@@ -215,7 +215,7 @@ function addWorklist(){
     		
             let data = {
             		projectNo: ${project.projectNo},
-            		projectManager: '${projectManager}',
+            		isProjectManager: '${isprojectManager}',
             		worklistTitle: val
             };
             
@@ -236,7 +236,7 @@ function addWorklist(){
         
         let data = {
         		projectNo: ${project.projectNo},
-        		projectManager: '${projectManager}',
+        		isProjectManager: '${isprojectManager}',
         		worklistTitle: val
         };
         
@@ -654,7 +654,7 @@ function addWork(){
 				}
 					
 				let data = {
-						projectManager: '${projectManager}',
+						isProjectManager: '${isprojectManager}',
 						projectNo: ${project.projectNo},
 						worklistNo: worklistNo,
 						workTitle: title,
@@ -678,7 +678,7 @@ function addWork(){
 			}
 				
 			let data = {
-					projectManager: '${projectManager}',
+					isProjectManager: '${isprojectManager}',
 					projectNo: ${project.projectNo},
 					worklistNo: worklistNo,
 					workTitle: title,
@@ -753,7 +753,7 @@ function addWork(){
 //업무 삭제하기
 function deleteWork(){
 	let loggedInMemberId = '${memberLoggedIn.memberId}';
-	let projectManager = '${projectManager}';
+	let isProjectManager = '${isprojectManager}';
 	
 	let menu = document.querySelector("#menu-delWork");
 	let modal = document.querySelector("#modal-worklist-remove");
@@ -763,7 +763,7 @@ function deleteWork(){
 	let work; 
 	
 	//업무 우클릭시 삭제 드롭다운 메뉴 열기: 관리자, 프로젝트팀장만 가능
-	if(loggedInMemberId=='admin' || loggedInMemberId==projectManager){
+	if(loggedInMemberId==='admin' || isProjectManager==='true'){
 		$(document).on('contextmenu', '.work-item', e=>{
 			e.preventDefault();
 			
@@ -814,7 +814,7 @@ function deleteWork(){
 				cntChk: cntChk,
 				cntComment: cntComment,
 				cntFile: cntFile,
-				projectManager: '${projectManager}'
+				isProjectManager: '${isprojectManager}'
 			}
 			
 			//업무리스트와 구분
@@ -850,7 +850,7 @@ function deleteWork(){
 function workComplete(){
 	let loggedInMemberId = '${memberLoggedIn.memberId}';
 	let loggedInMemberName = '${memberLoggedIn.memberName}';
-	let projectManager = '${projectManager}';
+	let isProjectManager = '${isprojectManager}';
 	
 	$(document).on('click', '.btn-checkWork', (e)=>{
 		e.stopPropagation(); 
@@ -870,12 +870,12 @@ function workComplete(){
 			workChargedMemIdArr.forEach(id=>{
 				if(loggedInMemberId===id) isValid = true;
 			});
-			if(loggedInMemberId==='admin' || loggedInMemberId===projectManager) 
+			if(loggedInMemberId==='admin' || isProjectManager==='true') 
 				isValid = true;
 		}
 		//1-1.업무 배정된 멤버가 없는 경우
 		else{
-			if(loggedInMemberId==='admin' || loggedInMemberId===projectManager) 
+			if(loggedInMemberId==='admin' || isProjectManager==='true') 
 				isValid = true;
 		}
 		
@@ -889,7 +889,7 @@ function workComplete(){
 			let worklistNo = $wlSection.attr('id').split('-')[1];
 			
 			let data = {
-				projectManager: projectManager,
+				isProjectManager: isProjectManager,
 				completeYn: yn,
 				projectNo: ${project.projectNo},
 				worklistNo: worklistNo*1,
@@ -928,7 +928,7 @@ function workComplete(){
 function checklist(){
 	let loggedInMemberId = '${memberLoggedIn.memberId}';
 	let loggedInMemberName = '${memberLoggedIn.memberName}';
-	let projectManager = '${projectManager}';
+	let isProjectManager = '${isprojectManager}';
 
     $(document).on('click', '.btn-check:not(.btn-checkWork)', (e)=>{
     	e.stopPropagation(); 
@@ -963,7 +963,7 @@ function checklist(){
 		//체크리스트에 배정된 멤버가 있다면
 		if(chkChargedMemId!=""){
 			//체크리스트에 배정된 멤버, 프로젝트 팀장, admin만 클릭 가능
-			if(loggedInMemberId===chkChargedMemId || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
+			if(loggedInMemberId===chkChargedMemId || isProjectManager==='true' || loggedInMemberId==='admin'){
 				isValid = true;
 			}
 			else{
@@ -980,7 +980,7 @@ function checklist(){
 				});
 			}
 			
-			if(chkbool===true || loggedInMemberId===projectManager || loggedInMemberId==='admin'){
+			if(chkbool===true || isProjectManager==='true' || loggedInMemberId==='admin'){
 				isValid = true;
 			}
 			else{
@@ -1408,7 +1408,7 @@ function closeSideBar(){
 	                <h5>${wl.worklistTitle}</h5>
 	                
 	                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
-	                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
+	                <c:if test="${'admin'==memberLoggedIn.memberId || isprojectManager==true}">
 	                <div class="worklist-title-btn">
 	                	<button type="button" class="btn-showUpdateFrm" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
 		                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
@@ -1842,8 +1842,8 @@ function closeSideBar(){
         </c:forEach>
         
         
-        <!-- 업무리스트 추가: 내워크패드인 경우 / 아닌 경우는 admin, 대표, 프로젝트 팀장에게만 보임 -->
-        <c:if test="${'Y'==project.privateYn || ('N'==project.privateYn && ('admin'==memberLoggedIn.memberId || '대표'==memberLoggedIn.jobTitle || project.projectWriter==memberLoggedIn.memberId)) }">
+        <!-- 업무리스트 추가: 내워크패드인 경우 / 아닌 경우는 admin, 프로젝트 매니저에게만 보임 -->
+        <c:if test="${'Y'==project.privateYn || ('N'==project.privateYn && ('admin'==memberLoggedIn.memberId || isprojectManager==true)) }">
         <section id="add-wklt-wrapper" class="worklist add-worklist" role="button" tabindex="0">
             <!-- 타이틀 -->
             <div class="worklist-title add-wklt">

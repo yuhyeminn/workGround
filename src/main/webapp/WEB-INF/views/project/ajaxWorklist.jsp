@@ -14,7 +14,7 @@
 	                <h5>${wl.worklistTitle}</h5>
 	                
 	                <!-- 업무 생성/업무리스트 삭제: admin, 프로젝트 팀장에게만 보임 -->
-	                <c:if test="${'admin'==memberLoggedIn.memberId || projectManager==memberLoggedIn.memberId}">
+	                <c:if test="${'admin'==memberLoggedIn.memberId || isProjectManager==true}">
 	                <div class="worklist-title-btn">
 	                	<button type="button" class="btn-showUpdateFrm" value="${wl.worklistNo}"><i class="fas fa-pencil-alt"></i></button>
 		                <button type="button" class="btn-addWork" value="${wl.worklistNo}"><i class="fas fa-plus"></i></button>
