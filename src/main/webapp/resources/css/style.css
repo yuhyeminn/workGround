@@ -327,7 +327,7 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 .modal-footer button{font-size: .8rem;}
 
 /* 업무삭제 드롭다운 */
-#menu-delWork{display: none; min-width: 9rem; width: 9rem !important; height: 40px; padding: 0;}
+#menu-delWork{display: none; min-width: 9rem; width: 9rem !important;padding: 0;}
 #menu-delWork .dropdown-item{padding: 0;}
 #menu-delWork .dropdown-file-remove{padding-left: 1rem; line-height: 40px; border-radius: 4px;}
 

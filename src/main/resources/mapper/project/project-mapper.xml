@@ -690,6 +690,36 @@
 		</foreach>)
 	</update>
 	
+	<!-- insertCopyWork.do : memberId가 매니저로 존재하는 프로젝트 리스트 조회 -->
+	<select id="selectMyManagingProjectList" resultType="project">
+		select project_no, project_title from view_projectMember where member_id = #{memberId} and project_quit_yn = 'N' and manager_yn = 'Y' order by project_title
+	</select>
+	
+	<!-- insertCopyWork.do : projectNo로 worklist 조회-->
+	<select id="selectWorklistByProjectNo" resultType="worklist">
+		select * from worklist where project_no = #{projectNo}
+	</select>
+	
+	<!-- insertCopyWork.do : work 복사 -->
+	<insert id="insertCopyWork" parameterType="work">
+		insert into work values(seq_work.nextval, #{worklistNo}, #{workTitle}, #{workDesc}, #{workPoint}, #{workStartDate}, #{workEndDate}, #{workRealEndDate}, #{workCompleteYn}, #{workTagCode}, null)
+		<selectKey keyProperty="workNo" resultType="_int" order="AFTER">
+			select seq_work.currval from dual
+		</selectKey>
+	</insert>
+	
+	<!-- insertCopyWork.do : checklist 복사 -->
+	<insert id="insertCopyChkList">
+		insert into checklist(checklist_no,work_no,checklist_writer,checklist_content, checklist_startdate,checklist_enddate,complete_yn)
+		select seq_checklist.nextval, A.* from(
+		<foreach item="chk" collection = "list" separator="UNION ALL " >
+		select #{workNo} as work_no, #{memberId} as checklist_writer, 
+			   #{chk.checklistContent} as checklist_content, to_date(#{chk.checklistStartDate},'yy/MM/dd') as checklist_startdate,
+			   to_date(#{chk.checklistEndDate},'yy/MM/dd') as checklist_enddate, #{chk.completeYn} as complete_yn
+		from dual
+		</foreach>)A
+	</insert>
+
 	<resultMap id="memberResultMap" type="member">
 		<id column="member_id" property="memberId"></id>
 			<result column="password" property="password"></result>

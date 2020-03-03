@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,6 +34,7 @@ import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
 import com.kh.workground.project.model.vo.WorkComment;
+import com.kh.workground.project.model.vo.Worklist;
 
 @Controller
 public class ProjectController2 {
@@ -721,6 +722,57 @@ public class ProjectController2 {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("업무 속성 조회 오류!");
 			
+		}
+		return map;
+	}
+	
+	@RequestMapping("/project/getMyManagingProjectList.do")
+	@ResponseBody
+	public List<Project> getMyManagingProjectList(HttpSession session){
+		List<Project> list = null;
+		try {
+			
+			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+			String memberId = memberLoggedIn.getMemberId();
+			
+			list = projectService.selectMyManagingProjectList(memberId);
+			
+		}catch(Exception e){
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("내 프로젝트 리스트(매니저) 조회 오류!");
+		}
+		return list;
+	}
+	
+	@RequestMapping("/project/getWorklistByProjectNo.do")
+	@ResponseBody
+	public List<Worklist> getWorklistByProjectNo(@RequestParam int projectNo){
+		List<Worklist> list = null;
+		try {
+			
+			list = projectService.selectWorklistByProjectNo(projectNo);
+			
+		}catch(Exception e){
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("내 프로젝트 리스트(매니저) 조회 오류!");
+		}
+		return list;
+	}
+	
+	@RequestMapping("/project/copyWork.do")
+	@ResponseBody
+	public Map<String,Object> copyWork(@RequestParam int workNo,@RequestParam int worklistNo,HttpSession session){
+		Map<String,Object> map = null;
+		try {
+			map = new HashMap<>();
+			Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+			logger.debug("worklistNo={}",worklistNo);
+			int result = projectService.insertCopyWork(workNo,worklistNo,memberLoggedIn);
+
+			map.put("isComplete", result>0?true:false);
+		}catch(Exception e){
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("내 프로젝트 리스트(매니저) 조회 오류!");
 		}
 		return map;
 	}

@@ -1002,23 +1002,7 @@ function insertWorkComment(){
 			}
 	 });
  }
- function resetWorklist(worklistNo){
-		$.ajax({
-			url: '${pageContext.request.contextPath}/project/resetWorklist.do',
-			data: {projectManager: '${projectManager}',projectNo: ${project.projectNo},worklistNo: worklistNo},
-			dataType: 'html',
-			type: 'POST',
-			success: data=>{
-				if(data!=null){
-					$("#worklist-"+worklistNo).html(data);
-				}
-				
-			},
-			error: (x,s,e) => {
-				console.log(x,s,e);
-			}
-		}); 
- }
+ 
 
  
  </script>

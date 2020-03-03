@@ -1,3 +1,8 @@
+/* 업무 복사 모달 */
+#modal-work-copy label.col-form-label{width: 110px;font-size: 15px;margin-left:10px;}
+#modal-work-copy select{width:70%;display:inline-block;}
+#modal-work-copy .modal-footer button{font-size: 1rem;}
+
 .work-attachment-tbl .filename{width: 6rem;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
 .side-header{background:white}
 .work-custom-file:hover {
