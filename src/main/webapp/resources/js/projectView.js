@@ -425,3 +425,87 @@ function updateChklist(){
 		 }) 
 	 })
 }
+function workCopy(){
+	//모달 띄워질 때 로그인한 회원이 매니저로 있는 프로젝트 리스트 가져오기
+	$("#modal-work-copy").on('show.bs.modal',function(){
+		//모달창 초기화
+		$("#myProjectList option").not("[value='']").remove();
+		$("#myProjectWorklist option").not("[value='']").remove();
+		
+		$.ajax({
+			url: contextPath+"/project/getMyManagingProjectList.do",
+			type: "get",
+			dataType: "json",
+			success: data => {
+				if(data != null){
+					$.each(data,(idx,p)=>{
+						var option = "<option value='"+p.projectNo+"' style='color:black'>"+p.projectTitle+"</option>";
+						$("#myProjectList").append(option);
+					});
+				}
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
+	})
+	
+	//선택한 프로젝트의 업무리스트의 리스트 가져오기
+	$("#myProjectList").on('change',function(){
+		var projectNo = Number($(this).val());
+		//업무리스트 리스트 초기화
+		$("#myProjectWorklist option").not("[value='']").remove();
+		//'프로젝트를 선택하세요' 선택되어있을 경우 return
+		if(projectNo == '' || projectNo ==null) return;
+		
+		$.ajax({
+			url: contextPath+"/project/getWorklistByProjectNo.do",
+			type: "get",
+			data:{projectNo:projectNo},
+			dataType: "json",
+			success: data => {
+				if(data != null){
+					$.each(data,(idx,wl)=>{
+						var option = "<option value='"+wl.worklistNo+"' style='color:black'>"+wl.worklistTitle+"</option>";
+						$("#myProjectWorklist").append(option);
+					});
+				}
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
+	})
+	
+	$("#work-copy-btn").on('click',function(){
+		var projectNo = $("#myProjectList").val();
+		var worklistNo = Number($("#myProjectWorklist").val());
+		var workNo = Number($("#copyWorkNo").val());
+		var currentProjectNo = $("#hiddenProjectNo").val();
+		
+		if(projectNo == '' || projectNo == null) {alert("프로젝트를 선택하세요.");return;}
+		if(worklistNo == '' || worklistNo == null) {alert("업무 리스트를 선택하세요");return;}
+		
+		$('#modal-work-copy').modal('hide');
+		
+		$.ajax({
+			url: contextPath+"/project/copyWork.do",
+			type: "get",
+			data:{worklistNo:worklistNo, workNo:workNo},
+			dataType: "json",
+			success: data => {
+				if(data.isComplete){
+					alert("업무 복사가 완료되었습니다.");
+					if(projectNo == currentProjectNo){
+						resetWorklist(worklistNo); //worklist새로고침
+					}
+				}else{
+					alert("업무 복사에 실패하였습니다.");
+				}
+			},
+			error: (x,s,e) => {
+				console.log(x,s,e);
+			}
+		});
+	})
+}

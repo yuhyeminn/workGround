@@ -9,6 +9,7 @@ import com.kh.workground.project.model.vo.Checklist;
 import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
 import com.kh.workground.project.model.vo.WorkComment;
+import com.kh.workground.project.model.vo.Worklist;
 
 public interface ProjectService2 {
 
@@ -71,5 +72,11 @@ public interface ProjectService2 {
 	List<Member> selectMemberListByDeptCode(Map<String, String> param);
 
 	Map<String, List<Member>> selectProjectSettingMemberList(int projectNo);
+
+	List<Project> selectMyManagingProjectList(String memberId);
+
+	List<Worklist> selectWorklistByProjectNo(int projectNo);
+
+	int insertCopyWork(int workNo, int worklistNo,Member memberLoggedIn);
 
 }

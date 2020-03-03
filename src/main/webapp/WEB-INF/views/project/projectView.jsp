@@ -32,7 +32,7 @@
 <c:if test="${project.privateYn=='Y'}">
 	<c:set var="projectManager" value="${projectManager=project.projectWriter}" />
 </c:if>
-
+<input type="hidden" id="hiddenProjectNo" value="${project.projectNo}" />
 
 <script>
 $(()=>{
@@ -67,6 +67,7 @@ $(()=>{
 	delWorkFile(); //파일 삭제
 	updateChklist(); //체크리스트 수정
 	
+	workCopy();
 });
 
 //multiselect.js파일에서 사용할 contextPath 전역변수
@@ -756,15 +757,15 @@ function deleteWork(){
 	let projectManager = '${projectManager}';
 	
 	let menu = document.querySelector("#menu-delWork");
+	let workDelBtn = document.querySelector("#dropdown-work-remove")
 	let modal = document.querySelector("#modal-worklist-remove");
 	let delTitle = document.querySelector("#modal-del-title");
 	let btnDel = document.querySelector("#btn-removeWorklist");
 	
 	let work; 
 	
-	//업무 우클릭시 삭제 드롭다운 메뉴 열기: 관리자, 프로젝트팀장만 가능
-	if(loggedInMemberId=='admin' || loggedInMemberId==projectManager){
-		$(document).on('contextmenu', '.work-item', e=>{
+	//업무 우클릭시 삭제 드롭다운 메뉴 열기
+	$(document).on('contextmenu', '.work-item', e=>{
 			e.preventDefault();
 			
 			let x = e.pageX + 'px';
@@ -776,8 +777,14 @@ function deleteWork(){
 			
 			//내가 클릭한 업무
 			work = e.currentTarget; 
-		});
-	}
+			$("#copyWorkNo").val(work.id*1);
+	});
+
+	document.addEventListener('click', ()=>{
+		menu.style.display = 'none';
+	});
+	
+	if(workDelBtn == null) return;
 	
 	let workNo;
 	let title;
@@ -786,7 +793,7 @@ function deleteWork(){
 	let cntFile;
 	
 	//업무 삭제 클릭: 모달에 정보 뿌리기 
-	menu.addEventListener('click', (e)=>{
+	workDelBtn.addEventListener('click', (e)=>{
 		workNo = work.id*1;
 		title = $('section#'+workNo+".work-item").find('h6').text();
 		cntChk = $(work).find('.chklt-cnt-total').text()*1;
@@ -841,9 +848,6 @@ function deleteWork(){
 		}
 	}); //end of btnDel click 
 	
-	document.addEventListener('click', ()=>{
-		menu.style.display = 'none';
-	});
 }
 
 //업무 완료하기
@@ -1188,7 +1192,6 @@ function setting(){
     });
     
     //업무 사이드바 열기
-    /* $(".work-item").on('click', function(){ */
     $(document).on('click', '.work-item', function(){
     	var workNo = $(this).attr('id');
     	
@@ -1287,6 +1290,23 @@ function closeSideBar(){
         $side.stop(true).animate({right:'-600px'});
         $side.removeClass('open');
     }
+}
+
+function resetWorklist(worklistNo){
+	$.ajax({
+		url: '${pageContext.request.contextPath}/project/resetWorklist.do',
+		data: {projectManager: '${projectManager}',projectNo: ${project.projectNo},worklistNo: worklistNo},
+		dataType: 'html',
+		type: 'POST',
+		success: data=>{
+			if(data!=null){
+				$("#worklist-"+worklistNo).html(data);
+			}
+		},
+		error: (x,s,e) => {
+			console.log(x,s,e);
+		}
+	}); 
 }
 </script>		
 
@@ -1883,8 +1903,11 @@ function closeSideBar(){
 
 <!-- 업무 삭제 드롭다운 -->
 <div id="menu-delWork" class="dropdown-menu dropdown-menu-right">
-    <a href="#" id="dropdown-work-remove" class="dropdown-item dropdown-file-remove" data-toggle="modal" data-target="#modal-worklist-remove">업무 삭제</a>
-    <a href="#" id="dropdown-work-copy" class="dropdown-item dropdown-work-copy" data-toggle="modal" data-target="#modal-work-copy">업무 복사</a>
+	<a id="dropdown-work-copy" class="dropdown-item dropdown-file-remove" data-toggle="modal" data-target="#modal-work-copy">업무 복사</a>
+    <div class="dropdown-divider" style="margin:0;"></div>
+	<c:if test="${isprojectManager || memberLoggedIn.memberId eq 'admin'}">
+     <a href="#" id="dropdown-work-remove" class="dropdown-item dropdown-file-remove" data-toggle="modal" data-target="#modal-worklist-remove">업무 삭제</a>
+	</c:if>
 </div>
 <!-- </div> -->
 
@@ -1904,6 +1927,41 @@ function closeSideBar(){
             <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">아니오, <span class="modal-del-target"></span>를 유지합니다.</button>
             <button type="button" id="btn-removeWorklist" class="btn btn-danger">네</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- 업무 복사 모달 -->
+<div class="modal fade" id="modal-work-copy">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title">업무 복사</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+             <div class="modal-body" style="padding:30px 30px 0px 30px;">
+            	<div class="form-group">
+                    <label for="myProjectList" class="col-form-label">프로젝트</label>
+                    <select class="form-control" id="myProjectList">
+                    	<option value="" selected>프로젝트를 선택하세요.</option>
+                    </select>
+                </div>
+            	<div class="form-group">
+                    <label for="myProjectWorklist" class="col-form-label">업무 리스트</label>
+                    <select class="form-control" id="myProjectWorklist">
+                    	<option value="" selected>업무리스트를 선택하세요.</option>
+                    </select>
+                    <input type="hidden" id="copyWorkNo" />
+                </div>
+            </div>
+            <div class="modal-footer">
+            	<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+            	<button type="button" class="btn btn-info" id="work-copy-btn">업무 복사하기</button>
             </div>
         </div>
         <!-- /.modal-content -->

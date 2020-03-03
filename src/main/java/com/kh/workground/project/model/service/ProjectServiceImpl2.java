@@ -185,19 +185,17 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 				projectQuitMemberList.add(m.getMemberId());
 			}
 		}
-		
+		Map<String, String> param = new HashMap<>();
 		//새롭게 추가되는 프로젝트 멤버
 		for(String memberId : updateMemberList) {
 			if(!projectMemberList.contains(memberId) && !projectQuitMemberList.contains(memberId)) {
-				Map<String, String> param = new HashMap<>();
 				param.put("projectNo", Integer.toString(projectNo));
 				param.put("projectMember", memberId);
 				result = projectDAO.insertProjectMember(param);
 				if(result==0) throw new ProjectException("프로젝트 멤버 수정 (추가) 오류!");
 			}
-			//quit_yn이 y인 멤버 리스트.. projectQuitMemberList에 memberId가 포함되어있다..? 그렇다면.. 다시 컬럼을 y로..변경..^^,,
+			//projectQuitMemberList에 추가될 memberId가 포함되어있을 경우 quit_yn을 다시 n으로 변경
 			if(projectQuitMemberList.contains(memberId)) {
-				Map<String, String> param = new HashMap<>();
 				param.put("projectNo", Integer.toString(projectNo));
 				param.put("projectMember", memberId);
 				param.put("quitYN", "N");
@@ -208,7 +206,6 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		//기존 프로젝트 멤버였는데 삭제되는 프로젝트 멤버
 		for(String memberId : projectMemberList) {
 			if(!updateMemberList.contains(memberId)) {
-				Map<String, String> param = new HashMap<>();
 				param.put("projectNo", Integer.toString(projectNo));
 				param.put("projectMember", memberId);
 				param.put("quitYN", "Y");
@@ -531,6 +528,50 @@ public class ProjectServiceImpl2 implements ProjectService2 {
 		map.put("deptMemberList", deptMemberList);
 		
 		return map;
+	}
+
+	@Override
+	public List<Project> selectMyManagingProjectList(String memberId) {
+		List<Project> list = projectDAO.selectMyManagingProjectList(memberId);
+		if(list==null) throw new ProjectException("나의 프로젝트 조회 오류!");
+		return list;
+	}
+
+	@Override
+	public List<Worklist> selectWorklistByProjectNo(int projectNo) {
+		List<Worklist> list = projectDAO.selectWorklistByProjectNo(projectNo);
+		if(list==null) throw new ProjectException("업무리스트 조회 오류!");
+		return list;
+	}
+
+	@Override
+	public int insertCopyWork(int workNo, int worklistNo, Member memberLoggedIn) {
+		int result = 1;
+		//복사 할 work객체 가져오기
+		Work work = projectDAO.selectOneWorkForSetting(workNo);
+		if(work==null) throw new ProjectException("업무 조회 오류!");
+		
+		//해당 workNo의 체크리스트 가져오기
+		List<Checklist> chklstList = projectDAO.selectChklstListByWorkNo(workNo);
+		
+		//work복사
+		work.setWorklistNo(worklistNo);
+		result = projectDAO.insertCopyWork(work);
+		if(result==0)throw new ProjectException("업무 복사 오류!");
+		
+		//체크리스트 복사
+		if(chklstList != null && !chklstList.isEmpty()) {
+			Map<String,Object> param = new HashMap<>();
+			int copyWorkNo = work.getWorkNo();
+			param.put("workNo", copyWorkNo);
+			param.put("list", chklstList);
+			param.put("memberId", memberLoggedIn.getMemberId());
+			result = projectDAO.insertCopyChkList(param);
+			if(result==0)throw new ProjectException("체크리스트 복사 오류!");
+		}
+		
+		
+		return result;
 	}
 
 }

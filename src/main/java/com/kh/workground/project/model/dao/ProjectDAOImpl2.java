@@ -258,6 +258,26 @@ public class ProjectDAOImpl2 implements ProjectDAO2 {
 		return sqlSession.update("project.updateProjectManagerYn",param);
 	}
 
+	@Override
+	public List<Project> selectMyManagingProjectList(String memberId) {
+		return sqlSession.selectList("project.selectMyManagingProjectList",memberId);
+	}
+
+	@Override
+	public List<Worklist> selectWorklistByProjectNo(int projectNo) {
+		return sqlSession.selectList("project.selectWorklistByProjectNo",projectNo);
+	}
+
+	@Override
+	public int insertCopyWork(Work work) {
+		return sqlSession.insert("project.insertCopyWork",work);
+	}
+
+	@Override
+	public int insertCopyChkList(Map<String, Object> param) {
+		return sqlSession.insert("project.insertCopyChkList",param);
+	}
+
 	
 
 }

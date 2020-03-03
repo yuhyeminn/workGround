@@ -103,4 +103,12 @@ public interface ProjectDAO2 {
 
 	int updateProjectManagerYn(Map<String, Object> param);
 
+	List<Project> selectMyManagingProjectList(String memberId);
+
+	List<Worklist> selectWorklistByProjectNo(int projectNo);
+
+	int insertCopyWork(Work work);
+
+	int insertCopyChkList(Map<String, Object> param);
+
 }
