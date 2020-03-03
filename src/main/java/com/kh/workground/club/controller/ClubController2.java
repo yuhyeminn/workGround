@@ -30,8 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.workground.chat.model.service.ChatService;
-import com.kh.workground.chat.model.vo.Channel;
-import com.kh.workground.chat.model.vo.Chat;
 import com.kh.workground.club.model.exception.ClubException;
 import com.kh.workground.club.model.service.ClubService;
 import com.kh.workground.club.model.service.ClubService2;
@@ -44,7 +42,6 @@ import com.kh.workground.club.model.vo.ClubPhotoComment;
 import com.kh.workground.club.model.vo.ClubPlan;
 import com.kh.workground.club.model.vo.ClubPlanAttendee;
 import com.kh.workground.member.model.vo.Member;
-import com.kh.workground.project.model.exception.ProjectException;
 
 @Controller
 public class ClubController2 {
@@ -97,22 +94,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			if("admin".equals(memberLoggedIn.getMemberId()) || 'Y'==clubMember.getClubManagerYN().charAt(0)) {
 				isManager = true;
 			}
-//			logger.debug("isManager={}", isManager);
-			
-			
-			//채팅쪽
-			/*mav.addObject("memberId", memberLoggedIn.getMemberId());
-			String channelNoTemp = "C"+club.getClubNo();
-			Channel channel = chatService.selectChannel(channelNoTemp);
-		
-			mav.addObject("channelNo", channel.getChannelNo());
-			
-			logger.info("channel에 대한정보: {}"+channel);*/
-			
-			//채팅리스트
-			/*List<Chat> chatList = chatService.getClubChatList(channel.getChannelNo());
-			logger.info("chatList에 대한정보: {}"+chatList);
-			mav.addObject("chatList", chatList);*/
+			logger.debug("clubMemberNo={}",clubMember.getClubMemberNo());
 			
 			mav.addObject("club", club);
 			mav.addObject("clubPlanList", clubPlanList);
@@ -126,6 +108,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			mav.addObject("clubPlanCount", clubPlanList.size());
 			mav.addObject("clubNoticeCount", clubNoticeList.size());
 			mav.addObject("isManager", isManager);
+			mav.addObject("clubMemberNo", clubMember.getClubMemberNo());
 			mav.setViewName("club/clubView");
 			
 		} catch (Exception e) {
@@ -513,7 +496,7 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	@RequestMapping("/club/insertClubPlanAttendee.do")
 	public ModelAndView insertClubPlanAttendee(ModelAndView mav, 
 											   ClubPlanAttendee clubPlanAttendee, 
-											   @RequestParam("clubNo") int clubNo, 
+											   @RequestParam(value="clubNo") int clubNo, 
 											   int where) {
 		try {
 //			logger.debug("clubPlanAttendee={}", clubPlanAttendee);
