@@ -12,7 +12,7 @@
 .content{margin-top: -46px;}
 .btn-drop{background-color:transparent; border:0px transparent solid;}
 .navbar-project .dropdown-menu{min-width: 6rem;}
-#tbl-projectAttach.table.member-table td{padding: .5rem 0;}
+#tbl-projectAttach.table.member-table td{padding: .9rem 0;}
 #tbl-projectAttach.member-table img{display: inline-block; width: 40px; height: auto; margin-right: .3rem;}
 .btn-admin{width: 45px !important; margin: 0 auto; font-size: .7rem;}
 #tbl-projectAttach.member-table .dropdown-item{color: #dc3545; font-size: .8rem;}
@@ -21,6 +21,8 @@
 .comment-reply.work-comment-reply.float-right:hover{background:#dc3545;}
 .comment-delete.work-comment-delete.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .3rem;color: white}
 .comment-delete.work-comment-delete.float-right:hover{background:#17a2b8;}
+
+.write-btn-wrapper{width: 100%;position: relative;height: 37px;}
 </style>
 
 <script>
@@ -70,9 +72,10 @@ function deleteChk(noticeNo){
     <!-- Main content -->
     <section class="content">
         <h2 style="margin-bottom: 1.4rem;">부서별 공지</h2>
-        <button class="btn btn-block btn-outline-secondary" style="width:4rem; height:2rem; font-size:.8rem;margin-left: 58rem;margin-bottom: .5rem;" data-toggle="modal" data-target="#addNoticeModal">글쓰기</button>
-        
-        <select name="" id="dept-result" class="form-control">
+        <div class="write-btn-wrapper">
+        <button class="btn btn-block btn-outline-secondary" style="width: 4rem; height: 2rem;font-size: .8rem;position: absolute;right: 0px;" data-toggle="modal" data-target="#addNoticeModal">글쓰기</button>
+        </div>
+        <select name="" id="dept-result" class="form-control" style="margin:.5rem 0rem;">
         	<option value="" selected disabled>부서 선택</option>
         	<option value="D1" ${dept=='D1'?'selected="selected"':''}>기획부</option>
         	<option value="D2" ${dept=='D2'?'selected="selected"':''}>디자인</option>

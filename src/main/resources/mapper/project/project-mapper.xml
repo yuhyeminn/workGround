@@ -462,7 +462,7 @@
 		select A.*, VM.*
 		from attachment A join project_members PM on A.attachment_writer_no = PM.project_members_no left join view_member VM on PM.member_id = VM.member_id
 		where A.work_no = #{workNo}
-		order by attachment_enrolldate
+		order by attachment_enrolldate desc
 	</select>
 	<resultMap type="attachment" id="attachmentMemberMap">
 		<id column="attachment_no" property="attachmentNo"></id>

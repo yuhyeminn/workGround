@@ -10,12 +10,12 @@
 .content{margin-top: -46px;}
 .btn-drop{background-color:transparent; border:0px transparent solid;}
 .navbar-project .dropdown-menu{min-width: 6rem;}
-#tbl-projectAttach.table.member-table td{padding: .5rem 0;}
+#tbl-projectAttach.table.member-table td{padding: .9rem 0;}
 #tbl-projectAttach.member-table img{display: inline-block; width: 40px; height: auto; margin-right: .3rem;}
 .btn-admin{width: 45px !important; margin: 0 auto; font-size: .7rem;}
 #tbl-projectAttach.member-table .dropdown-item{color: #dc3545; font-size: .8rem;}
-#tbl-projectAttach.member-table .dropdown-item i{margin-right: .3rem;}
-.comment-reply.work-comment-reply.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .3rem;color: white;}
+#tbl-projectAttach.member-table .dropdown-item i{margin-right: .5rem;}
+.comment-reply.work-comment-reply.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .9rem;color: white;}
 .comment-reply.work-comment-reply.float-right:hover{background:#dc3545;}
 </style>
 
@@ -79,16 +79,18 @@ function goProjectInfo(projectNo){
             <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table">
                 <thead>
                     <tr>
-                        <th style="width: 40%">제목</th>
+                        <th style="width: 38%;text-align:center;" >제목</th>
                         <th style="width: 20%">작성자</th>
+                        <th style="width: 5%;text-align:center;">프로젝트 상태</th>
                         <th style="width: 17%"></th>
                     </tr>
                 </thead>
                 <tbody>
                 	<c:forEach items="${projectList}" var="p">
                     <tr>
-                        <td style="padding-left: 1.3rem;" onclick="goProjectInfo('${p.projectNo}')">${p.projectTitle}</td>
+                        <td style="text-align:center;" onclick="goProjectInfo('${p.projectNo}')">${p.projectTitle}</td>
                         <td onclick="goMemberProfile('${p.projectWriter}');">${p.memberName}</td>
+                        <td style="text-align:center;"><span class="btn btn-block btn-sm btn-outline-${p.projectStatusColor}">${p.projectStatusTitle}</span></td>
                         <td>
                             <button class="comment-reply work-comment-reply float-right" onclick="deleteChk(${p.projectNo})">삭제</button>
                         </td>

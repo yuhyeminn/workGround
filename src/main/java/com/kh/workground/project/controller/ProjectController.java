@@ -602,12 +602,12 @@ public class ProjectController {
 		return mav;
 	}
 
-	/*@PostMapping("/project/resetWorklist.do")
-	public ModelAndView resetWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam int worklistNo,@RequestParam String projectManager) {
+	@PostMapping("/project/resetWorklist.do")
+	public ModelAndView resetWorklist(ModelAndView mav, @RequestParam int projectNo, @RequestParam int worklistNo,@RequestParam boolean isProjectManager) {
 		
 		try {
 			
-			ajaxWorkSetView(mav, projectNo, worklistNo, projectManager);
+			ajaxWorkSetView(mav, projectNo, worklistNo,isProjectManager);
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -615,7 +615,7 @@ public class ProjectController {
 		}
 		
 		return mav;
-	}*/
+	}
 	
 
 	/*@Scheduled(cron="0/30 * * * * *")

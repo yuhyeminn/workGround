@@ -16,16 +16,14 @@
 <script src="${pageContext.request.contextPath}/resources/js/projectView.js"></script>
 
 <!-- 프로젝트 관리자 -->
-<c:set var="projectManager" value=""/>
 <c:set var="pmObj" value=""/>
 <c:set var="isprojectManager" value="false"/>
 <c:forEach var="pm" items="${project.projectMemberList}">
 	<c:if test="${pm.managerYn eq 'Y'}">
-		<c:set var="projectManager" value="${projectManager=pm.memberId}" />
 		<c:set var="pmObj" value="${pm}"/>
 	</c:if>
 	<c:if test="${pm.memberId eq memberLoggedIn.memberId }">
-		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/> </c:if>
+		<c:if test="${pm.managerYn eq 'Y'}"><c:set var="isprojectManager" value="true"/></c:if>
 	</c:if>
 </c:forEach>
 <!-- 나의 워크패드인 경우 -->
@@ -1295,7 +1293,7 @@ function closeSideBar(){
 function resetWorklist(worklistNo){
 	$.ajax({
 		url: '${pageContext.request.contextPath}/project/resetWorklist.do',
-		data: {projectManager: '${projectManager}',projectNo: ${project.projectNo},worklistNo: worklistNo},
+		data: {isProjectManager: '${isprojectManager}',projectNo: ${project.projectNo},worklistNo: worklistNo},
 		dataType: 'html',
 		type: 'POST',
 		success: data=>{
