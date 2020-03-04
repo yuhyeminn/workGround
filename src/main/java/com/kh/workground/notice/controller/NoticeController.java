@@ -586,6 +586,10 @@ public class NoticeController {
 				List<Notice> planningDeptNoticeList = noticeService.searchPlanningDeptNoticeList(noticeMap); //기획부
 				List<Notice> designDeptNoticeList = noticeService.searchDesignDeptNoticeList(noticeMap); //디자인부
 				List<Notice> developmentDeptNoticeList = noticeService.searchDevelopmentDeptNoticeList(noticeMap); //개발부
+				//모달용
+				mav.addObject(memberDeptCode.equals("D1")?"planningDeptNoticeList":memberDeptCode.equals("D2")?"designDeptNoticeList":"developmentDeptNoticeList", 
+						  	  memberDeptCode.equals("D1")?planningDeptNoticeList:memberDeptCode.equals("D2")?designDeptNoticeList:developmentDeptNoticeList);
+				//목록 띄울용
 				mav.addObject("deptNoticeList", memberDeptCode.equals("D1")?planningDeptNoticeList:memberDeptCode.equals("D2")?designDeptNoticeList:developmentDeptNoticeList);
 			}
 			//커뮤니티

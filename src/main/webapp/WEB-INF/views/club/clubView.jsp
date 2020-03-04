@@ -299,7 +299,24 @@ function setting(){
     
 }
 
-
+//멤버 삭제
+function deleteClubMem(){
+	
+	var clubNo ='${club.clubNo}';
+	var clubMemberNo ='${clubMemberNo}';
+	if(!confirm("동호회를 탈퇴하시겠습니까?")) return false;
+	else {
+		location.href = "${pageContext.request.contextPath}/club/deleteClubMember.do?clubNo="+clubNo+"&&clubMemberNo="+clubMemberNo;
+	}
+}
+//동호회 삭제
+function delClubFunc(){
+	var clubNo ='${club.clubNo}';
+	if(!confirm("동호회를 삭제하시겠습니까?")) return false;
+	else {
+		location.href = "${pageContext.request.contextPath}/club/deleteClub.do?clubNo="+clubNo;
+	}
+}
 
 </script>
 
@@ -375,10 +392,20 @@ function setting(){
 
 		<!-- 동호회 설정 -->
 		<li class="nav-item">
-			<button type="button"
-				class="btn btn-block btn-default btn-xs nav-link">
-				<i class="fas fa-cog"></i>
-			</button>
+		
+			<c:if test="${club.clubManagerId ne memberLoggedIn.memberId }">
+					<button type="button" id="delClubMem-btn"
+					class="btn btn-block btn-default btn-xs nav-link" onclick="deleteClubMem();">
+					탈퇴하기
+					</button>
+			</c:if>
+		
+			<c:if test="${club.clubManagerId eq memberLoggedIn.memberId }">
+				<button type="button" id="delClub-Btn" onclick="delClubFunc();"
+					class="btn btn-block btn-default btn-xs nav-link">
+					삭제하기
+				</button>
+			</c:if>
 		</li>
 	</ul>
 </nav>
