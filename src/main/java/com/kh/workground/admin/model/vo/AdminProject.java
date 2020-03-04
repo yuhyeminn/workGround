@@ -26,5 +26,7 @@ public class AdminProject implements Serializable {
 	private String projectWriter;
 	private String memberName;
 	private String projectTitle;
+	private String projectStatusTitle;
+	private String projectStatusColor;
 
 }

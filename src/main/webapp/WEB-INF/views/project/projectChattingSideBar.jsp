@@ -36,7 +36,7 @@
 				                </div>
 				                <p>${chat.msg }</p>
 				            </div>
-				           <button type="button" class="btn-copyToNtc" title="개발부 게시글로 올리기" data-toggle="modal" data-target="#addNoticeForDeptModal"><i class="far fa-clipboard"></i></button>
+				           <button type="button" class="btn-copyToNtc" title="${memberLoggedIn.deptTitle} 게시글로 올리기" data-toggle="modal" data-target="#addNoticeForDeptModal"><i class="far fa-clipboard"></i></button>
 				        </div>
 	     				
 	     			
@@ -52,7 +52,7 @@
 				                </div>
 				                <p>${chat.msg }</p>
 				            </div>
-				            <button type="button" class="btn-copyToNtc" title="개발부 게시글로 올리기" data-toggle="modal" data-target="#addNoticeForDeptModal"><i class="far fa-clipboard"></i></button>
+				            <button type="button" class="btn-copyToNtc" title="${memberLoggedIn.deptTitle} 게시글로 올리기" data-toggle="modal" data-target="#addNoticeForDeptModal"><i class="far fa-clipboard"></i></button>
 				        </div>
 	     			
 	     			</c:otherwise>

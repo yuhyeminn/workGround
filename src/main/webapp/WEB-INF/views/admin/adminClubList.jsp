@@ -11,12 +11,12 @@
 .content{margin-top: -46px;}
 .btn-drop{background-color:transparent; border:0px transparent solid;}
 .navbar-project .dropdown-menu{min-width: 6rem;}
-#tbl-projectAttach.table.member-table td{padding: .5rem 0;}
+#tbl-projectAttach.table.member-table td{padding: .9rem 0;}
 #tbl-projectAttach.member-table img{display: inline-block; width: 40px; height: auto; margin-right: .3rem;}
 .btn-admin{width: 45px !important; margin: 0 auto; font-size: .7rem;}
 #tbl-projectAttach.member-table .dropdown-item{color: #dc3545; font-size: .8rem;}
 #tbl-projectAttach.member-table .dropdown-item i{margin-right: .3rem;}
-.comment-reply.work-comment-reply.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .3rem;color: white;}
+.comment-reply.work-comment-reply.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .9rem;color: white;}
 .comment-reply.work-comment-reply.float-right:hover{background:#dc3545;}
 </style>
 

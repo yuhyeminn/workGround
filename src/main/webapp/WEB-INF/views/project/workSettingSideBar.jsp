@@ -539,13 +539,9 @@
 	updateWorkPoint();
 	insertCheckList();
 	updateWorkLocation();
-	/* updateChkChargedMember(); */
-	/* deleteChecklist(); */
 	insertWorkComment();
-	/* deleteWorkComment(); */
 	uploadWorkFile();
 	downloadWorkFile();
-	/* delWorkFile(); */
  });
  
  
@@ -950,7 +946,7 @@ function insertWorkComment(){
 					 	 +'<div class="dropdown-divider"></div><button type="button" class="dropdown-item work-file-remove" value="'+a.attachmentNo+','+a.renamedFilename+'" data-toggle="modal" data-target="#modal-file-remove">삭제</a>'
 				 		 +'</div></div></td></tr>';
 				 	 $(".custom-file-label").html("파일을 선택하세요.");
-				 	 $("#tbl-projectAttach tbody").append(html);
+				 	 $("#tbl-projectAttach tbody").prepend(html);
 				 	 resetWorkView(); //업무 새로고침
 				 }
 			 },
@@ -1002,8 +998,6 @@ function insertWorkComment(){
 			}
 	 });
  }
- 
-
  
  </script>
  <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>
