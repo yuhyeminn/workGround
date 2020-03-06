@@ -12,25 +12,25 @@ grant create view to workground;
 --member관련 테이블/시퀀스
 --================================================
 --job테이블
---------------------------------------------------
+-----------------------------------------------------------------------
 create table job(
     job_code char(2) not null,
     job_title varchar2(35) not null,
     constraint pk_job primary key(job_code)
 );
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --department테이블
---------------------------------------------------
+-----------------------------------------------------------------------
 create table department(
     dept_code char(2) not null,
     dept_title varchar2(35) not null,
     constraint pk_department primary key(dept_code)
 );
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --member테이블 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 create table member(
     member_id varchar2(30) not null,
     password varchar2(300),
@@ -51,9 +51,9 @@ create table member(
     constraint ck_member_quityn check(quit_yn in ('Y', 'N'))
 );
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --member테이블 시퀀스 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 CREATE SEQUENCE seq_member START WITH 100 INCREMENT BY 1 NOMINVALUE NOMAXVALUE NOCYCLE NOCACHE;
 
 
@@ -62,7 +62,7 @@ CREATE SEQUENCE seq_member START WITH 100 INCREMENT BY 1 NOMINVALUE NOMAXVALUE N
 --project관련 테이블/시퀀스
 --================================================
 --project_status 테이블
---------------------------------------------------
+-----------------------------------------------------------------------
 create table project_status(
     project_status_code char(3) not null,
     project_status_title varchar2(20) not null,
@@ -70,9 +70,9 @@ create table project_status(
     constraint pk_project_status primary key(project_status_code)
 );
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project 테이블
---------------------------------------------------
+-----------------------------------------------------------------------
 create table project(
     project_no number not null,
     project_writer varchar2(30) not null,
@@ -89,14 +89,14 @@ create table project(
     constraint ck_project_private_yn check(private_yn in ('Y','N'))
 );
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project 테이블 시퀀스 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 create sequence seq_project;
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project_members 테이블
---------------------------------------------------
+-----------------------------------------------------------------------
 create table project_members(
     project_members_no number not null,
     project_no number not null,
@@ -109,14 +109,14 @@ create table project_members(
     constraint ck_project_members_manager_yn check(manager_yn in ('Y','N'))
 );
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project_members 테이블 시퀀스 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 create sequence seq_project_members;
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project_important 테이블
---------------------------------------------------
+-----------------------------------------------------------------------
 create table project_important(
     project_important_no number not null,
     member_id varchar2(30) not null,
@@ -126,14 +126,14 @@ create table project_important(
     constraint fk_p_important_project_no foreign key(project_no) references project(project_no) on delete cascade
 );
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project_important 테이블 시퀀스 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 create sequence seq_project_important;
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --worklist 테이블
---------------------------------------------------
+-----------------------------------------------------------------------
 create table worklist(
     worklist_no number not null,
     project_no number not null,
@@ -142,9 +142,9 @@ create table worklist(
     constraint fk_worklist_project_no foreign key(project_no) references project(project_no) on delete cascade
 );
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --worklist테이블 시퀀스 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 CREATE SEQUENCE seq_worklist;
 
 -----------------------------------------------------------------------
@@ -177,7 +177,6 @@ create table work(
     constraint ck_wokr_work_complete_yn check (work_complete_yn in ('Y','N')),
     constraint fk_work_work_no_ref foreign key(work_no_ref) references work(work_no) on delete cascade
 );
---alter table work drop column 
 
 -----------------------------------------------------------------------
 --work테이블 시퀀스 생성
@@ -263,9 +262,9 @@ create table attachment(
 -----------------------------------------------------------------------
 CREATE SEQUENCE seq_attachment;
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project_log 테이블
---------------------------------------------------
+-----------------------------------------------------------------------
 create table project_log(
     log_no number not null,
     project_no number not null,
@@ -276,9 +275,9 @@ create table project_log(
     constraint fk_project_log_project_no foreign key(project_no) references project(project_no) on delete cascade
 );
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project_log 테이블 시퀀스 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 create sequence seq_project_log;
 
 commit;
@@ -288,7 +287,7 @@ select * from project_log order by log_no;
 --notice/community 관련 테이블/시퀀스
 --================================================
 --notice테이블
---------------------------------------------------
+-----------------------------------------------------------------------
 create table notice(
 	notice_no	number not null,
 	notice_writer varchar2(30) not null,
@@ -301,14 +300,35 @@ create table notice(
     constraint pk_notice primary key(notice_no),
     constraint fk_notice_writer foreign key(notice_writer) references member(member_id) on delete set null
 );
---------------------------------------------------
+-----------------------------------------------------------------------
 --notice 테이블 시퀀스 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 create sequence seq_notice;
 
---------------------------------------------------
+-----------------------------------------------------------------------
+--notice_comment 테이블 생성
+-----------------------------------------------------------------------
+create table notice_comment(
+	notice_comment_no number not null,
+	notice_ref number	 not null,
+	notice_comment_level number default 1 not null,
+	notice_comment_writer varchar2(30) not null,
+	notice_comment_content varchar2(2000) not null,
+	notice_comment_date date default sysdate not null,
+	notice_comment_ref number null,
+    constraint pk_notice_comment primary key(notice_comment_no),
+    constraint fk_notice_comment_notice_ref foreign key(notice_ref) references notice(notice_no) on delete cascade,
+    constraint fk_notice_comment_ref foreign key(notice_comment_ref) references notice_comment(notice_comment_no) on delete cascade,
+    constraint fk_notice_comment_writer foreign key(notice_comment_writer) references member(member_id) on delete set null
+);
+-----------------------------------------------------------------------
+--notice_comment 테이블 시퀀스 생성
+-----------------------------------------------------------------------
+create sequence seq_notice_comment;
+
+-----------------------------------------------------------------------
 --community 테이블 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 create table community(
 	commu_no number not null,
 	commu_writer varchar2(30) not null,
@@ -320,27 +340,48 @@ create table community(
     constraint pk_community primary key(commu_no),
     constraint fk_commu_writer foreign key(commu_writer) references member(member_id) on delete set null  
 );
---------------------------------------------------
+-----------------------------------------------------------------------
 --community 테이블 시퀀스 생성
---------------------------------------------------
+-----------------------------------------------------------------------
 create sequence seq_community;
+
+-----------------------------------------------------------------------
+--community_comment 테이블 생성
+-----------------------------------------------------------------------
+create table community_comment(
+	commu_comment_no number not null,
+	commu_ref number not null,
+	commu_comment_level number default 1 not null,
+	commu_comment_writer varchar2(30) not null,
+	commu_comment_content varchar2(2000) not null,
+	commu_comment_date date default sysdate not null,
+	commu_comment_ref number null,
+    constraint pk_community_comment primary key(commu_comment_no),
+    constraint fk_community_comment_commu_ref foreign key(commu_ref) references community(commu_no) on delete cascade,
+    constraint fk_commu_comment_ref foreign key(commu_comment_ref) references community_comment(commu_comment_no) on delete cascade,
+    constraint fk_commu_comment_writer foreign key(commu_comment_writer) references member(member_id) on delete set null
+);
+-----------------------------------------------------------------------
+--community_comment 테이블 시퀀스 생성
+-----------------------------------------------------------------------
+create sequence seq_community_comment;
 
 
 --================================================
 --drop문
 --================================================
 /*
---------------------------------------------------
+-----------------------------------------------------------------------
 --member테이블 관련 drop문
---------------------------------------------------
+-----------------------------------------------------------------------
 drop table job;
 drop table department;
 drop table member;
 drop sequence seq_member;
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project테이블 관련 drop문
---------------------------------------------------
+-----------------------------------------------------------------------
 drop table project_status;
 drop table project;
 drop table project_members;
@@ -349,9 +390,9 @@ drop sequence seq_project;
 drop table project_important;
 drop sequence seq_project_important;
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --worklist/work 테이블 관련 drop문
---------------------------------------------------
+-----------------------------------------------------------------------
 drop table worklist;
 drop sequence seq_worklist;
 drop table work_tag;
@@ -367,13 +408,17 @@ drop table attachment;
 drop sequence seq_attachment;
 
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --notice/community테이블 관련 drop문
---------------------------------------------------
+-----------------------------------------------------------------------
 --drop table notice;
 --drop sequence seq_notice;
 --drop table community;
 --drop sequence seq_community;
+--drop table notice_comment;
+--drop sequence seq_notice_comment;
+--drop table community_comment;
+--drop sequence seq_community_comment;
 
 */
 
@@ -382,7 +427,7 @@ drop sequence seq_attachment;
 --insert문
 --================================================
 --member테이블 관련 insert문
---------------------------------------------------
+-----------------------------------------------------------------------
 insert into job values('J1', '대표');
 insert into job values('J2', '팀장');
 insert into job values('J3', '사원');
@@ -426,9 +471,9 @@ insert into member values('kh2020'||seq_member.nextval, null, '이소현', 'sooh
 insert into member values('kh2020'||seq_member.nextval, null, '김효정', 'hyojeong@gmail.com', '01054226921', '19971102', 'D3', 'J3', default, 'kh2020122', 'default.jpg', 'default.jpg');
 insert into member values('kh2020'||seq_member.nextval, null, '이주현', 'joohyeon@gmail.com', '01098445110', '19970906', 'D3', 'J3', default, 'kh2020122', 'default.jpg', 'default.jpg');
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project테이블 관련 insert문
---------------------------------------------------
+-----------------------------------------------------------------------
 insert into project_status values('PS1', '계획됨', 'warning');
 insert into project_status values('PS2', '진행중', 'success');
 insert into project_status values('PS3', '완료됨', 'info');
@@ -467,10 +512,10 @@ insert into project_important values (seq_project_important.nextval, 'kh2020122'
 insert into project_important values (seq_project_important.nextval, 'kh2020122', 5);
 insert into project_important values (seq_project_important.nextval, 'kh2020123', 2);
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --worklist/work 테이블 관련 insert문
---------------------------------------------------
--- 업무리스트
+-----------------------------------------------------------------------
+--업무리스트
 insert into worklist values(seq_worklist.nextval, 1, '해야할 일');
 insert into worklist values(seq_worklist.nextval, 1, '진행중');
 insert into worklist values(seq_worklist.nextval, 1, '완료');
@@ -482,7 +527,7 @@ insert into worklist values(seq_worklist.nextval, 2, '테스트1');
 insert into work_tag values('WT1', 'priority', 'danger');
 insert into work_tag values('WT2', 'important', 'primary');
 insert into work_tag values('WT3', 'review', 'warning');
--- 업무
+--업무
 insert into work values(seq_work.nextval, 1, '회식하기', '내일 회식이요', 1, sysdate-10, null, null, default, 'WT1', null);
 insert into work values(seq_work.nextval, 2, '밥먹기', '밥 먹는 중!', 2, sysdate-10, null, null, default, null, null);
 insert into work values(seq_work.nextval, 4, '기능 정리하기', '기능 정리하기 업무입니다.', 3, sysdate-5, sysdate+20, null, default, 'WT2', null);
@@ -494,7 +539,7 @@ insert into work values(seq_work.nextval, 5, '테이블 수정 그만', '그만 
 insert into work values(seq_work.nextval, 5, '테이블 만들기', 'insert문까지 얼른 끝냅시다', 5, sysdate-8, sysdate+2, null, default, 'WT3', null);
 insert into work values(seq_work.nextval, 6, '완료된 업무 페이지 수정', 'view다시 뿌려야 해...', 5, sysdate-3, sysdate+2, null, default, 'WT1', null);
 insert into work values(seq_work.nextval, 6, '업무 검색기능', null, 0, sysdate-2, sysdate+1, sysdate-1, 'Y', null, null);
--- 업무 배정된 멤버
+--업무 배정된 멤버
 insert into work_charged_members values(seq_work_charged_members.nextval, 1, 'kh2020115');
 insert into work_charged_members values(seq_work_charged_members.nextval, 1, 'kh2020116');
 insert into work_charged_members values(seq_work_charged_members.nextval, 1, 'kh2020118');
@@ -530,68 +575,67 @@ insert into attachment values(seq_attachment.nextval,6,13,'테스트.txt','test.
 insert into attachment values(seq_attachment.nextval,142,8,'야구.JPG','fs.JPG',sysdate);
 insert into attachment values(seq_attachment.nextval,7,11,'신청서.hwp','application.hwp',sysdate);
 
-
 commit;
+
 
 --================================================
 --select문
 --================================================
 --member테이블 관련 select문
---------------------------------------------------
+-----------------------------------------------------------------------
 select * from job;
 select * from department;
 select * from member;    
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --project테이블 관련 select문
---------------------------------------------------
+-----------------------------------------------------------------------
 select * from project_status;
 select * from project;
 select * from project_members;
 select * from project_important;
 
---------------------------------------------------
+-----------------------------------------------------------------------
 --worklist/work 테이블 관련 select문
---------------------------------------------------
+-----------------------------------------------------------------------
 select * from worklist;
 select * from work_tag;
-select * from work where worklist_no = 321;
+select * from work;
 select * from work_charged_members;
 select * from checklist;
 select * from work_comment;
 select * from attachment;
-select * from work where work_no = 205;
 
-
---------------------------------------------------
+-----------------------------------------------------------------------
 --notice/community테이블 관련 select문
---------------------------------------------------
+-----------------------------------------------------------------------
 select * from notice;
 select * from community;
-
+select * from notice_comment;
+select * from community_comment;
 
 
 
 --================================================
---뷰: member+department+job 
+--뷰
 --================================================
+--member테이블 관련 뷰
+-----------------------------------------------------------------------
+--member + department + job 
 create or replace view view_member as
 select M.*, D.dept_title, J.job_title 
 from member M left join department D on M.dept_code = D.dept_code
                           left join job J on M.job_code = J.job_code;
---select * from view_member;
 
---================================================
---뷰: project+project_status
---================================================
+-----------------------------------------------------------------------
+--project테이블 관련 뷰
+-----------------------------------------------------------------------
+--project + project_status
 create or replace view view_project as 
 select P.*, PS.project_status_title, PS.project_status_color
 from project P left join project_status PS on P.project_status_code = PS.project_status_code; 
---select * from view_project;
 
---================================================
---뷰: view_project + project_members + member
---================================================
+--view_project + project_members + member
 create or replace view view_projectMember as
 select V.*, M.password, M.member_name, M.email, M.phone, M.date_of_birth, M.dept_code, M.job_code, M.quit_yn, M.manager_id, M.original_filename, M.renamed_filename, M.dept_title, M.job_title
 from (select P.*, PM.manager_yn,  PM.member_id, PM.project_quit_yn 
@@ -599,35 +643,52 @@ from (select P.*, PM.manager_yn,  PM.member_id, PM.project_quit_yn
       order by P.project_no desc) V 
       left join view_member M on V.member_id = M.member_id;
 
---================================================
---뷰: work + work_tag
---================================================
+--work + work_tag
 create or replace view view_workTag as
 select W.*, WT.work_tag_title, WT.work_tag_color
 from work W left join work_tag WT on W.work_tag_code = WT.work_tag_code;
 
---================================================
---뷰: notice+member
---================================================
+-----------------------------------------------------------------------
+--notice/community 관련 뷰
+-----------------------------------------------------------------------
+--view_noticeMember (notice+member)
 create or replace view view_noticeMember as 
 select N.*, M.member_name, M.renamed_filename
 from notice N left join member M on N.notice_writer = M.member_id; 
---drop view view_noticeMember;
---select * from view_noticeMember;
 
---================================================
---뷰: community+member
---================================================
+
+--view_communityMember (community+member)
 create or replace view view_communityMember as 
 select C.*, M.member_name, M.renamed_filename
 from community C left join member M on C.commu_writer = M.member_id; 
---drop view view_communityMember;
---select * from view_communityMember;
 
 
+--view_noticeMemberNoticeComment --> notice + member(공지 작성자) + notice_comment + member(댓글 작성자)
+create or replace view view_noticeMemberNoticeComment as
+select V.*, M.member_name as comment_writer_name, M.renamed_filename as comment_writer_profile
+from (select N.*, M.member_name, M.renamed_filename, NC.*
+      from notice N left join member M on N.notice_writer = M.member_id 
+                   left join notice_comment NC on N.notice_no = NC.notice_ref
+                   order by N.notice_no) V
+                   left join member M on V.notice_comment_writer = M.member_id;
+
+
+--view_commuMemberCommuComment --> community + member(게시글 작성자) + community_comment + member(댓글 작성자)
+create or replace view view_commuMemberCommuComment as
+select V.*, M.member_name as comment_writer_name, M.renamed_filename as comment_writer_profile
+from (select C.*, M.member_name, M.renamed_filename, CC.*
+      from community C left join member M on C.commu_writer = M.member_id 
+                   left join community_comment CC on C.commu_no = CC.commu_ref
+                   order by C.commu_no) V
+                   left join member M on V.commu_comment_writer = M.member_id;
+                   
+                   
+                   
 --================================================
---트리거: 회원가입시 내 워크패드 생성  
+--트리거
 --================================================
+--회원가입시 내 워크패드 생성  
+-----------------------------------------------------------------------
 create or replace trigger trg_register_workpad
     after
     update on member
@@ -646,9 +707,9 @@ begin
 end;
 /
 
---================================================
---트리거: 내 워크패드 생성 시 프로젝트 멤버에도 추가 
---================================================
+-----------------------------------------------------------------------
+--내 워크패드 생성 시 프로젝트 멤버에도 추가 
+-----------------------------------------------------------------------
 create or replace trigger trg_project_members_workpad
     after
     insert on project
@@ -664,9 +725,9 @@ begin
 end;
 /
 
---================================================
---트리거: project_members의 project_quit_yn이 N->Y로 변경될 때
---================================================
+-----------------------------------------------------------------------
+--프로젝트에서 나가는 경우
+-----------------------------------------------------------------------
 create or replace trigger trg_project_members_quit
     after
     update on project_members
@@ -684,7 +745,7 @@ declare
         where project_no = vproject_no;
 begin
 
-    --프로젝트에서 나가는 경우 
+    --project_members의 project_quit_yn이 N->Y로 변경될 때
     if :new.project_quit_yn = 'Y' then
         open cur;
     

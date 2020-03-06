@@ -30,6 +30,8 @@ import com.kh.workground.notice.model.vo.Community;
 import com.kh.workground.notice.model.vo.CommunityComment;
 import com.kh.workground.notice.model.vo.Notice;
 import com.kh.workground.notice.model.vo.NoticeComment;
+import com.kh.workground.project.model.exception.ProjectException;
+import com.kh.workground.project.model.vo.Project;
 
 
 @Controller
@@ -650,5 +652,50 @@ public class NoticeController {
 			throw new NoticeException("채팅 공지 올리기 오류!");
 		}
 		return map;
+	}
+	
+	@RequestMapping("/notice/selectBoardOne.do")
+	public ModelAndView selectBoardOne(ModelAndView mav, HttpSession session, @RequestParam String modalType, @RequestParam String boardType, @RequestParam int no) {
+		Member memberLoggedIn = (Member)session.getAttribute("memberLoggedIn");
+		String deptCode = memberLoggedIn.getDeptCode();
+		
+		Map<String, Object> param = new HashMap<>();
+		param.put("no", no);
+		
+		try {
+			//1.업무로직
+			Notice notice = null;
+			Community commu = null;
+			
+			if("total".equals(boardType) || "dept".equals(boardType)) {
+				if("dept".equals(boardType)) {
+					param.put("deptCode", deptCode);
+					mav.addObject("deptCode", deptCode);
+				}
+				
+				notice = noticeService.selectNoticeOne(param);
+				mav.addObject("n", notice);
+			}
+			else {
+				commu = noticeService.selectCommunityOne(param);
+				mav.addObject("c", commu);
+			}
+			
+			
+			//2.뷰모델 처리
+			mav.addObject("boardType", boardType);
+			mav.addObject("memberLoggedIn", memberLoggedIn);
+			
+			//게시글 상세보기인 경우
+			if("show".equals(modalType)) mav.setViewName("notice/noticeShowModal");
+			//게시글 수정인 경우
+			else mav.setViewName("notice/noticeModifyModal");
+			
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ProjectException("게시글 모달 띄우기 오류!");
+		}
+		
+		return mav;
 	}
 }

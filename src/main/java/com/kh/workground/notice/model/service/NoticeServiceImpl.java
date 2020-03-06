@@ -181,5 +181,21 @@ public class NoticeServiceImpl implements NoticeService {
 		return list;
 	}
 
+	@Override
+	public Notice selectNoticeOne(Map<String, Object> param) {
+		Notice notice = noticeDAO.selectNoticeOne(param);
+		if(notice == null)
+			throw new NoticeException("게시글 모달띄우기 오류!");
+		return notice;
+	}
+
+	@Override
+	public Community selectCommunityOne(Map<String, Object> param) {
+		Community commu = noticeDAO.selectCommunityOne(param);
+		if(commu == null)
+			throw new NoticeException("게시글 모달띄우기 오류!");
+		return commu;
+	}
+
 
 }

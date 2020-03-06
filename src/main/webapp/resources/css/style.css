@@ -123,7 +123,7 @@ button:active, button:focus{outline: none;}
 /* Left navbar links */
 #go-back .nav-link{display: inline-block; width: 46px; height: 46px; padding: .6rem 0; margin-left: 0; margin-top: 10px; border: 0; border-radius: 0; font-size: inherit;}
 #go-back.private-y .nav-link{margin-top: 0;}
-#go-back .nav-link:hover, #go-back .nav-link:active{background: #f3f4f5;}
+#go-back .nav-link:hover, #go-back .nav-link:active{background: #f3f4f5; border-bottom: 1px solid #dee2e6;}
 #project-name{padding: .6rem 0; color: #464c59; font-weight: bold;}
 #btn-star{padding: .55rem .5rem .8rem;}
 #project-name .fa-star{font-size: 0.9rem; cursor: pointer;}
@@ -330,7 +330,8 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 #menu-delWork{display: none; min-width: 9rem; width: 9rem !important;padding: 0;}
 #menu-delWork .dropdown-item{padding: 0;}
 #menu-delWork .dropdown-file-remove{padding-left: 1rem; line-height: 40px; border-radius: 4px;}
-
+/* 업무복사 */
+#dropdown-work-copy.dropdown-file-remove:hover{background: rgb(239, 239, 239);}
 
 /* memberList.jsp */
 table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:before, table.dataTable thead .sorting_desc_disabled:after{opacity: 0;}

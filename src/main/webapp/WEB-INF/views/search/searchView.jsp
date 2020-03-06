@@ -84,19 +84,8 @@ padding: 1rem 1.5rem .7rem;
 <script>
 $(function(){
 	sidebarActive(); //사이드바 비활성화
-	showAll();
+	showModal(); //모달 띄우기
 });
-
-/* //모두보기 이동
-function showAll(){
-	$(".btn-more").on('click', (e)=>{
-		let val = e.target.value;
-		let keyword = val.split(',')[0]; 
-		let type = val.split(',')[1];
-		
-		location.href="${pageContext.request.contextPath}/search/searchView.do?keyword="+keyword+"&type="+type;
-	});
-} */
 
 //사이드바 비활성화
 function sidebarActive(){
@@ -133,6 +122,50 @@ function checkComment(commentContent){
 	}
 	return true;
 } 
+
+//모달 띄우기
+function showModal(){
+	$(document).on('click', '.card-body', (e)=>{
+		let target = e.target;
+		let obj;
+		if(target.className==='tab-content') obj = target.parentNode;
+		else if(target.className==='tab-pane') obj = target.parentNode.parentNode;
+		else if(target.tagName==='H5' || target.className==='card-status') obj = target.parentNode.parentNode.parentNode;
+		else if(target.tagName==='SPAN') obj = target.parentNode.parentNode.parentNode.parentNode;
+		else obj = target;
+		
+		let targetArr = $(obj).attr('data-target').split('Modal');
+		let no = targetArr[1]*1;
+		let boardType;
+		
+		//게시글 타입 설정
+		if(targetArr[0]==='#noticeView') boardType = 'total';
+		else if(targetArr[0]==='#myDeptNoticeView') boardType = 'dept';
+		else boardType = 'community';
+		
+		let data = {
+			modalType: 'show',
+			boardType: boardType,
+			no: no
+		};
+		
+		$.ajax({
+			url: '${pageContext.request.contextPath}/notice/selectBoardOne.do',
+			data: data,
+			dataTyp: 'html',
+			type: 'GET',
+			success: data=>{
+				$('.modal').remove();
+				$('.modal-backdrop').remove();
+				$('.content-wrapper').append(data);
+				$('.modal').modal();
+			},
+			error: (x,s,e)=>{
+				console.log(x,s,e);
+			}
+		});
+	});
+}
 </script>
 
 <!-- Content Wrapper. Contains page content -->
@@ -337,5 +370,4 @@ function checkComment(commentContent){
 <!-- /.content-wrapper -->
 
 <jsp:include page="/WEB-INF/views/club/clubListModal.jsp"></jsp:include>
-<jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

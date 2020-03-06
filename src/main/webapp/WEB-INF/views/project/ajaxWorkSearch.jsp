@@ -497,9 +497,8 @@ $(function(){
 <!-- 업무리스트 추가 폼 -->
 <section id="add-wkltfrm-wrapper" class="worklist add-worklist" role="button" tabindex="0">
     <!-- 타이틀 -->
-    <div class="worklist-title">
-        <form id="addWorklistFrm">
-        	<input type="hidden" name="projectNo" value="${project.projectNo}" required/>
+    <div class="worklist-title add-wklt">
+        <form id="addWorklistFrm" onsubmit="return false;">
             <input type="text" name="worklistTitle" placeholder="업무리스트 이름" required/>
             <div class="worklist-title-btn">
                 <button type="button" id="btn-addWorklist" class="btn-addWork">

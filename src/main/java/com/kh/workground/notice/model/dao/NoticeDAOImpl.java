@@ -115,6 +115,16 @@ public class NoticeDAOImpl implements NoticeDAO {
 	public List<Notice> searchDevelopmentDeptNoticeList(Map<String, String> noticeMap) {
 		return sqlSession.selectList("notice.searchDevelopmentDeptNoticeList", noticeMap);
 	}
+
+	@Override
+	public Notice selectNoticeOne(Map<String, Object> param) {
+		return sqlSession.selectOne("notice.selectNoticeOne", param);
+	}
+
+	@Override
+	public Community selectCommunityOne(Map<String, Object> param) {
+		return sqlSession.selectOne("notice.selectCommunityOne", param);
+	}
 	
 
 }

@@ -107,7 +107,7 @@ public class ProjectLoggerAspect {
 		}
 	}
 	
-	/*@Before("execution(* com.kh.workground.project.controller.ProjectController.updateWorklistTitle(..))")
+	@Before("execution(* com.kh.workground.project.controller.ProjectController.updateWorklistTitle(..))")
 	public void beforeUpdateWorklistTitle(JoinPoint joinPoint) {
 		Object[] obj = joinPoint.getArgs();
 		this.worklistTitle = projectService.selectWorklistTitleByWlNo((int)obj[0]);
@@ -130,7 +130,7 @@ public class ProjectLoggerAspect {
 			
 			this.worklistTitle = "";
 		}
-	}*/
+	}
 	
 	@AfterReturning(pointcut="execution(* com.kh.workground.project.controller.ProjectController.deleteWorklist(..))", 
 			returning="returnObj")
