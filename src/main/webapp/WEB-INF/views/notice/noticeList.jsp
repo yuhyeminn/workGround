@@ -22,7 +22,18 @@ var keyword = '';
 $(function(){
 	
 	// Summernote
-  	$('.textarea').summernote();
+  	$('.textarea').summernote({
+        focus: true,
+        lang: 'ko-KR',
+        toolbar: [
+        	['Font Style', ['fontname']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol']],
+            ['insert', ['link']]
+        ]
+    });
   
   	sidebarActive(); //사이드바 활성화
   
@@ -57,7 +68,8 @@ $(function(){
 			sortByMenu($(this).text());
 		}
 	});
-  
+	
+	showModal(); //모달 띄우기
 });
 
 //사이드바 활성화
@@ -487,6 +499,75 @@ function checkComment(commentContent){
 	return true;
 } 
 
+//모달 띄우기
+function showModal(){
+	$(document).on('click', '.card', (e)=>{
+		let obj;
+		let wrapper;
+		if(e.target.tagName==='H5' || e.target.tagName==='P' || e.target.tagName==='IMG') {
+			obj = e.target.parentNode;
+			wrapper = e.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
+		}
+		else {
+			obj = e.target;
+			wrapper = e.target.parentNode.parentNode.parentNode.parentNode.parentNode;
+		}
+		
+		let no = $(obj).attr('data-target').split('Modal')[1]*1;
+		let boardType;
+		
+		//게시글 수정/삭제가 아닌 경우
+		if(obj.className !== 'dropdown-item'){
+			//게시글 타입 설정
+			if(wrapper.id==='notice_indicators') boardType = 'total';
+			else if(wrapper.id==='myDeptNotice_indicators') boardType = 'dept';
+			else boardType = 'community';
+			
+			let data = {
+				modalType: 'show',
+				boardType: boardType,
+				no: no
+			};
+			
+			ajax(data);
+		} 
+		//게시글 수정/삭제인 경우
+		else{
+			let target = $(obj).attr('data-target').split('Modal');
+			
+			//게시글 타입 설정
+			if(target[0]==='#updateDeptNotice') boardType = 'dept';
+			else boardType = 'community';
+			
+			let data = {
+				modalType: 'modify',
+				boardType: boardType,
+				no: no
+			};
+			
+			ajax(data);
+		} //end of else
+			
+		function ajax(data){
+			$.ajax({
+				url: '${pageContext.request.contextPath}/notice/selectBoardOne.do',
+				data: data,
+				dataTyp: 'html',
+				type: 'GET',
+				success: data=>{
+					$('.modal').remove();
+					$('.modal-backdrop').remove();
+					$('.content-wrapper').append(data);
+					$('.modal').modal();
+				},
+				error: (x,s,e)=>{
+					console.log(x,s,e);
+				}
+			});
+		}
+	});
+}
+
 </script>
 
 <!-- Navbar NoticeList -->
@@ -544,7 +625,5 @@ function checkComment(commentContent){
 </div>
 <!-- /.content-wrapper -->
 
-
-
-<jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/notice/noticeAddModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

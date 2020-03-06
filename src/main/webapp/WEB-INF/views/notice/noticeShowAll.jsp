@@ -8,6 +8,7 @@
 <link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/notice.css">
 
 <style>
+.layout-navbar-fixed .wrapper .content-wrapper{margin-top: 46px;}
 .btn-drop{background-color:transparent; border:0px transparent solid;}
 .navbar-project .dropdown-menu{min-width: 6rem;}
 #tbl-projectAttach.table.member-table td{padding: .5rem 0;}
@@ -34,6 +35,7 @@ $(function(){
     });
 	
 	sidebarActive(); //사이드바 활성화
+	showModal(); //모달 띄우기
 });
 
 //사이드바 활성화
@@ -74,6 +76,45 @@ function checkComment(commentContent){
 	return true;
 } 
 
+//모달 띄우기
+function showModal(){
+	$(document).on('click', 'tr', (e)=>{
+		let obj;
+		if(e.target.tagName==='TD') obj = e.target.parentNode;
+		else obj = e.target;
+		
+		let targetArr = $(obj).attr('data-target').split('Modal');
+		let no = targetArr[1]*1;
+		let boardType;
+		
+		//게시글 타입 설정
+		if(targetArr[0]==='#noticeView') boardType = 'total';
+		else if(targetArr[0]==='#myDeptNoticeView') boardType = 'dept';
+		else boardType = 'community';
+		
+		let data = {
+			modalType: 'show',
+			boardType: boardType,
+			no: no
+		};
+		
+		$.ajax({
+			url: '${pageContext.request.contextPath}/notice/selectBoardOne.do',
+			data: data,
+			dataTyp: 'html',
+			type: 'GET',
+			success: data=>{
+				$('.modal').remove();
+				$('.modal-backdrop').remove();
+				$('.content-wrapper').append(data);
+				$('.modal').modal();
+			},
+			error: (x,s,e)=>{
+				console.log(x,s,e);
+			}
+		});
+	});
+}
 </script>	
 
 
@@ -132,5 +173,4 @@ function checkComment(commentContent){
 </div>
 <!-- /.content-wrapper -->		
 
-<jsp:include page="/WEB-INF/views/notice/noticeModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

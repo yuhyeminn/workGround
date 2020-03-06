@@ -232,7 +232,7 @@
 	<select id="selectProjectMemberListByQuitYn" resultType="member">
 		select VM.*
 		from (select * from project_members 
-		where project_no = 5 and project_quit_yn = 'N') V left join view_member VM on V.member_id = VM.member_id
+		where project_no = #{projectNo} and project_quit_yn = 'N') V left join view_member VM on V.member_id = VM.member_id
 	</select>
 	
 	<!-- updateChklistCompleteYn.do: 체크리스트 완료여부 업데이트 -->

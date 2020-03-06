@@ -48,5 +48,9 @@ public interface NoticeService {
 
 	List<Notice> searchDevelopmentDeptNoticeList(Map<String, String> noticeMap);
 
+	Notice selectNoticeOne(Map<String, Object> param);
+
+	Community selectCommunityOne(Map<String, Object> param);
+
 
 }

@@ -194,6 +194,15 @@
 		order by ${sort}, commu_comment_no
 	</select>
 
+	<select id="selectNoticeOne" resultMap="noticeMap" parameterType="hashMap">
+		select * from view_noticeMemberNoticeComment where notice_no=#{no}
+		<if test="deptCode!=null">
+			and dept_code=#{deptCode}
+		</if>
+	</select>
 	
+	<select id="selectCommunityOne" resultMap="communityMap" parameterType="hashMap">
+		select * from view_commuMemberCommuComment where commu_no=#{no}
+	</select>
 
 </mapper>
