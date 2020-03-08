@@ -305,7 +305,7 @@ function clubFunc(){
 	margin-top: 0.5rem;
 	width: 100%;
 	height: 200px;
-	obejct-fit: cover;
+	object-fit: cover;
 }
 
 .category {

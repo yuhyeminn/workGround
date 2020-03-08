@@ -8,6 +8,7 @@
 <style>
 #setting-sidebar{height: 100%; background: #fff;}
 #chatSide-msg-wrapper{height: 50% !important;}
+.note-editor.note-frame{border: 0; border-radius: 0;}
 </style>
 
 <!-- 대화 사이드 바-->
