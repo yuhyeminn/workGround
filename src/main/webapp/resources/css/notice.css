@@ -16,7 +16,7 @@ i.slide-arrow{color: rgb(199, 195, 195); font-size: 2rem; cursor: pointer; posit
 i.slide-arrow:hover{color:gray;}
 i.slide-arrow-left{left: -2rem;}
 i.slide-arrow-right{right: -1rem;}
-.btn-moreMenu{position: absolute; border: 0; background: #00ff0000; color: darkgray; font-size: .8rem; right: .1rem; top: .3rem;} /*수정, 삭제*/
+.btn-moreMenu{position: absolute; border: 0; background: #00ff0000; color: darkgray; font-size: .8rem; right: .3rem; top: .3rem;} /*수정, 삭제*/
 .btn-moreMenu:hover{color: gray;}
 a.dropdown-item{color: gray;}
 span#myDept{width: 1rem; height: 1rem; border: 2px solid lightgray; background: white; border-radius: 5px; padding: 0 .3rem;}

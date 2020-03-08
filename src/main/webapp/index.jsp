@@ -27,6 +27,9 @@
   <script src="${pageContext.request.contextPath}/resources/js/adminlte.min.js"></script>
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/acb5cef700.js" crossorigin="anonymous"></script>
+  <script>
+  window.history.forward();
+  </script>
 </head>
 <style>
 body{font-family: 'Noto Sans KR', 'Source Sans Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';}

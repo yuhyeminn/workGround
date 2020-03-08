@@ -843,6 +843,16 @@ public class ProjectServiceImpl implements ProjectService {
 		return result;
 	}
 
+	@Override
+	public String selectChkContentOne(int chkNo) {
+		String result = projectDAO.selectChkContentOne(chkNo);
+		
+		if(result==null)
+			throw new ProjectException("체크리스트 조회 오류!");
+		
+		return result;
+	}
+
 	
 
 }

@@ -136,12 +136,29 @@
 	width: 475px;
 	transition: right .3s ease-in-out, display .3s ease-in-out;
 }
+#viewRightNavbar-wrapper{margin-right: 1.2rem;}
+.carousel-item .card{height: 250px; padding: .25rem;}
+i.slide-arrow{color: rgb(199, 195, 195); font-size: 2rem; cursor: pointer; position: absolute; top: 45%;}
+i.slide-arrow:hover{color:gray;}
+i.slide-arrow-left{left: -2rem;}
+i.slide-arrow-right{right: -2rem;}
+.img-thumbnail{height: 250px; padding: 0; border: 0; box-shadow: none; overflow-y: hidden; object-fit: cover;}
+.note-editor.note-frame{border: 1px solid #ced4da; border-radius: .25rem;}
 </style>
 
 <script>
 $(function(){
-	//Summernote
-	$('.textarea').summernote();
+	// Summernote
+	$('.textarea').summernote({
+        focus: true,
+        lang: 'ko-KR',
+        height: 100,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+            ['para', ['ul', 'ol']],
+            ['insert', ['picture', 'link']]
+        ]
+    });
 	//Date range picker
 	$('#reservation').daterangepicker({
 	    singleDatePicker: true,
@@ -169,6 +186,10 @@ $(function(){
 				success: data => {
 					$side.html("");
 					$side.html(data); 
+					
+					//스크롤 최하단 포커싱
+					let section = document.querySelector('#chatSide-msg-wrapper');
+					section.scrollTop = section.scrollHeight;
 				},
 				error: (x,s,e) => {
 					console.log(x,s,e);
@@ -369,7 +390,7 @@ function delClubFunc(){
 
 		<!-- 동호회 멤버 -->
 		<li id="nav-member" class="nav-item dropdown"><a class="nav-link"
-			data-toggle="dropdown" href="#"> <i class="far fa-user"></i>
+			data-toggle="dropdown" href="#"> <i class="far fa-user"></i> ${fn:length(clubMemberList)}
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 				<c:if test="${not empty clubMemberList }">
@@ -431,8 +452,7 @@ function delClubFunc(){
 					</h3>
 				</div>
 				<c:if test="${not empty clubPhotoList }">
-					<div id="carouselExampleControls" class="carousel slide"
-						data-ride="carousel">
+					<div id="carouselExampleControls" class="carousel slide">
 						<div class="carousel-inner">
 							<c:forEach var="i" begin="1"
 								end="${Math.ceil(clubPhotoCount/4) }" step="1">
@@ -555,7 +575,7 @@ function delClubFunc(){
 							<!-- 플러스버튼 조건 끝 -->
 						</div>
 						<!-- 화살표 -->
-						<a class="carousel-control-prev" href="#carouselExampleControls"
+						<!-- <a class="carousel-control-prev" href="#carouselExampleControls"
 							role="button" data-slide="prev"> <span
 							class="carousel-control-prev-icon" aria-hidden="true"></span> <span
 							class="sr-only">Previous</span>
@@ -563,7 +583,9 @@ function delClubFunc(){
 							role="button" data-slide="next"> <span
 							class="carousel-control-next-icon" aria-hidden="true"></span> <span
 							class="sr-only">Next</span>
-						</a>
+						</a> -->
+						<i class="fas fa-angle-left slide-arrow slide-arrow-left" data-target="#carouselExampleControls" data-slide="prev"></i>
+						<i class="fas fa-angle-right slide-arrow slide-arrow-right" data-target="#carouselExampleControls" data-slide="next"></i>
 					</div>
 				</c:if>
 				<c:if test="${empty clubPhotoList }">
@@ -932,7 +954,7 @@ function delClubFunc(){
 														<label for="inputDescription">일정 내용</label>
 														<textarea id="inputDescription" class="textarea"
 															name="clubPlanContent"
-															style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">${clubPlan.clubPlanContent }</textarea>
+															style="width: 100%; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">${clubPlan.clubPlanContent }</textarea>
 													</div>
 												</div>
 												<!-- Date picker -->

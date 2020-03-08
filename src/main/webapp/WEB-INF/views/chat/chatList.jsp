@@ -43,13 +43,13 @@ $(function () {
 	$('#div_textarea').summernote({
         focus: true,
         lang: 'ko-KR',
-        height: 120,
+        height: 80,
         toolbar: [
             ['style', ['bold', 'italic', 'underline', 'strikethrough']],
             ['para', ['ul', 'ol']],
             ['insert', ['picture', 'link']]
         ],
-        placeholder: 'type your message here'
+        placeholder: '내 메시지'
     });
   
   sidebarActive(); //사이드바 활성화
@@ -60,7 +60,6 @@ $(function () {
 
 function chatScroll(){
 	let wrapper = document.querySelector('#chatSide-msg-wrapper');
-	//console.log(wrapper);
 	wrapper.scrollTop = wrapper.scrollHeight;
 }
 
@@ -113,7 +112,7 @@ function sidebarActive(){
 		                       <h6 class="h6">${channel.memberName }</h6>
 					  	     </c:if>
 					  	     <c:if test="${channel.channelType != 'CH3' }">
-		                       <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/profile/${channel.renamedFileName}">
+		                       <img class="direct-chat-img" src="${pageContext.request.contextPath }/resources/img/group-chat-icon.jpg">
 		                       <h6 class="h6">${channel.channelTitle }</h6>
 					  	     </c:if>
 	                     </td>
@@ -136,7 +135,7 @@ function sidebarActive(){
               <span class="username">${channelList[index].memberName }</span> 
             </c:if>
             <c:if test="${channelList[index].channelType != 'CH3' }">
-              <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/profile/${channelList[index].renamedFileName}">
+              <img class="img-circle" src="${pageContext.request.contextPath}/resources/img/group-chat-icon.jpg">
               <span class="username">${channelList[index].channelTitle }</span> 
             </c:if>
             </c:if>
@@ -188,9 +187,6 @@ function sidebarActive(){
             </div><!-- /.direct-chat-messages -->
                 
             <!-- 텍스트 에디터 -->
-            <!-- <div class="input-group mb-3" id="div_textarea">
-              <input type="text" id="message" class="form-control" placeholder="Message to "><div class="input-group-append" style="padding: 0px;"><button id="sendBtn" class="btn btn-outline-secondary" type="button">Send</button></div>
-            </div> -->
             <input type="text" class="input-group mb-3" id="div_textarea">
             <div id="typing${channelNo}"></div>
         </div><!-- /#chatContent -->
@@ -558,8 +554,8 @@ stompClient.connect({}, function(frame) {
 	//stomp에서는 구독개념으로 세션을 관리한다. 핸들러 메소드의 @SendTo어노테이션과 상응한다.
 	stompClient.subscribe('/chat/${channelNo}', function(message) {
 		console.log("receive from subscribe /chat/${channelNo} : ", message);
+		let section = document.querySelector('#chatSide-msg-wrapper');
 		let messageBody = JSON.parse(message.body);
-		
 		let html = '';
 		if(messageBody.sender == '${memberLoggedIn.memberId}') {
         
@@ -596,6 +592,9 @@ stompClient.connect({}, function(frame) {
 			$("#whoIsTyping").remove();
 			}, 1800);
 	});
+	
+	//스크롤 최하단 포커싱
+	section.scrollTop = section.scrollHeight;
 });
 
 function sendMessage() {

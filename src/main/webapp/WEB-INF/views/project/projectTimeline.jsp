@@ -4,12 +4,15 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
-
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 $(function(){
 	drawTimeline(); //타임라인
 	tabActive(); //서브헤더 탭 활성화
+	
+	//푸터 너비 조정
+	let width = $('#timeline-wrapper').prop('scrollWidth');
+	$('.main-footer').css('width', width);
 });
 
 //날짜형식 변환 함수: 문자열 -> 날짜
@@ -246,7 +249,7 @@ function drawTimeline(){
       	//options
       	let html;
         let ticks = [];
-      	let height = 50*totalArr.length-1 - 150; 	
+      	let height = (50*totalArr.length-1)-120; 	
        	for(let i=1; i<=90; i++){
        		ticks.push(new Date(ps.getFullYear(), ps.getMonth(), ps.getDate()+i));
        	}

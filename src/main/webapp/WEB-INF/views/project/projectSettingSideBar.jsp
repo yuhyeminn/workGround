@@ -27,7 +27,7 @@
 	</c:if>
 </c:forEach>
 
-<section style="height:100%;overflow-y:scroll">
+<section style="height:100%;overflow-y:auto">
 	<div class="div-close" role="button" tabindex="0">
 	    <i class="fas fa-times close-sidebar"></i>
 	</div>
@@ -533,5 +533,11 @@ function deleteProject(){
 		}
 	})
 }
+
+$('#custom-content-above-log-tab').on('click', ()=>{
+	//스크롤 최하단 포커싱
+	let section = document.querySelector('#setting-sidebar>section');
+	section.scrollTop = section.scrollHeight;
+});
 </script>
 <script src="${pageContext.request.contextPath }/resources/js/multiselect.js"></script>

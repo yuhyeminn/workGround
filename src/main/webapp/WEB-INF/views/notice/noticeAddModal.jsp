@@ -4,9 +4,26 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%> 
 
+<script>
+//Summernote
+$('.textarea').summernote({
+      focus: true,
+      lang: 'ko-KR',
+      toolbar: [
+      	['Font Style', ['fontname']],
+          ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+          ['fontsize', ['fontsize']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol']],
+          ['insert', ['link']]
+      ]
+});
+</script>
+
 <!-- 공지 추가 모달 -->
 <!-- 관리자: 전체/부서별 공지 작성 가능 -->
 <!-- 부서별: 자기 부서는 selected / 나머지 부서 disabled -->
+<c:if test="${boardType == 'total'}">
 <div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-labelledby="addNoticeModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -60,10 +77,12 @@
     </div>
   </div>
 </div>
+</c:if>
 
 <!-- 내가 속한 부서의 공지 추가 모달 -->
 <!-- 관리자: 전체/부서별 공지 작성 가능 -->
 <!-- 부서별: 자기 부서는 selected / 나머지 부서 disabled -->
+<c:if test="${boardType == 'dept'}">
 <div class="modal fade" id="addNoticeForDeptModal" tabindex="-1" role="dialog" aria-labelledby="addNoticeForDeptModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -121,8 +140,10 @@
     </div>
   </div>
 </div>
+</c:if>
 
 <!-- 게시판 추가 모달 -->
+<c:if test="${boardType == 'community'}">
 <div class="modal fade" id="addBoardModal" tabindex="-1" role="dialog" aria-labelledby="addBoardModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -163,3 +184,4 @@
       </div>
     </div>
 </div>
+</c:if>

@@ -25,8 +25,9 @@
 #tbl-projectAttach.member-table img {
 	display: inline-block;
 	width: 40px;
-	height: auto;
+	height: 40px;
 	margin-right: .3rem;
+	object-fit: cover;
 }
 
 .btn-admin {
@@ -84,6 +85,7 @@
   width: 475px;
   transition: right .3s ease-in-out, display .3s ease-in-out;
 }
+#viewRightNavbar-wrapper{margin-right: 1.2rem;}
 </style>
 
 <script>
@@ -244,7 +246,7 @@ function clubView(clubNo) {
 
 		<!-- 동호회 멤버 -->
 		<li id="nav-member" class="nav-item dropdown"><a class="nav-link"
-			data-toggle="dropdown" href="#"> <i class="far fa-user"></i> 6
+			data-toggle="dropdown" href="#"> <i class="far fa-user"></i> ${fn:length(memberList)}
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 				<c:if test="${not empty memberList }">

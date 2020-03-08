@@ -41,7 +41,16 @@ $(function(){
 	});
 	
 	// Summernote
-	$('.textarea').summernote()
+	$('.textarea').summernote({
+        focus: true,
+        lang: 'ko-KR',
+        height: 150,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+            ['para', ['ul', 'ol']],
+            ['insert', ['picture', 'link']]
+        ]
+    });
 	
 	sidebarActive(); //사이드바 활성화
 	
@@ -296,6 +305,7 @@ function clubFunc(){
 	margin-top: 0.5rem;
 	width: 100%;
 	height: 200px;
+	obejct-fit: cover;
 }
 
 .category {
@@ -367,6 +377,7 @@ function clubFunc(){
 #meeting-cycle {
 	width: 20%;
 }
+.note-editor.note-frame{border: 1px solid #ced4da; border-radius: .25rem;}
 </style>
 
 <!-- Navbar Club -->

@@ -99,4 +99,6 @@ public interface ProjectDAO {
 
 	int updateWorklistTitle(Map<String, Object> param);
 
+	String selectChkContentOne(int chkNo);
+
 }

@@ -7,8 +7,14 @@
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
 <link rel="stylesheet" property="stylesheet" href="${pageContext.request.contextPath}/resources/css/notice.css">
 <style>
-.btn-showAll{float: right; margin-right: 1rem; border: 1.2px solid lightgray; border-radius: 3px; padding: .4rem; color: darkgray}
-.btn-showAll:hover{color: gray;}
+.navbar-project .dropdown-menu{min-width: 8rem;}
+.btn-showAll{float: right; margin-right: 1rem; border: 1.2px solid lightgray; border-radius: 3px; padding: .4rem; font-size: .88rem; color: #8d919a;}
+.btn-showAll:hover{color: #464c59;}
+.card .dropdown-menu{padding: 0;}
+.card .dropdown-item{padding: 0 0 0 1rem; line-height: 40px; color: #464c59;}
+.card .dropdown-item.delete{border-top: 1px solid #e9ecef; color: #dc3545;}
+.card .dropdown-item.delete:hover, .card .dropdown-item.delete:active, .card .dropdown-item.delete:focus{background-color: #dc3545; color: #fff; border-radius: .25rem;}
+.img-circle{object-fit: cover;}
 /* 검색 결과 없음 이미지 */
 #empty-wrapper{width: 800px; height: 450px; margin: 1rem auto 0; padding: 3rem; background: #fff; border: 1px solid rgba(29,34,43,.1); border-radius: 2px; margin-top: 3rem;}
 #empty-wrapper img{display: block; width: 30%; margin: 0 auto;}
@@ -20,21 +26,6 @@ var nowSearchKeyword = '';
 var keyword = '';
 
 $(function(){
-	
-	// Summernote
-  	$('.textarea').summernote({
-        focus: true,
-        lang: 'ko-KR',
-        toolbar: [
-        	['Font Style', ['fontname']],
-            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
-            ['fontsize', ['fontsize']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol']],
-            ['insert', ['link']]
-        ]
-    });
-  
   	sidebarActive(); //사이드바 활성화
   
   	//첨부파일 수정 시
@@ -234,7 +225,7 @@ function listAjax(data){
 			//수정, 삭제 메뉴
 			noticeHtml += '<div class="dropdown-menu">'
 							+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateNoticeModal'+list.noticeNo+'">공지 수정</a>'
-							+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item">공지 삭제</a>'
+							+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item delete">공지 삭제</a>'
 							+'</div></div>';
 			
 			//카드 바디
@@ -328,7 +319,7 @@ function listAjax(data){
 	 		//수정, 삭제 메뉴
 			deptNoticeHtml += '<div class="dropdown-menu">'
 							+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateDeptNoticeModal'+list.noticeNo+'">게시글 수정</a>'
-							+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item">게시글 삭제</a>'
+							+'<a href="javascript:void(0)" onclick="deleteChk('+list.noticeNo+')" class="dropdown-item delete">게시글 삭제</a>'
 							+'</div></div>';
 			
 			//카드 바디
@@ -411,7 +402,7 @@ function listAjax(data){
 	 		//수정, 삭제 메뉴
 			communityHtml += '<div class="dropdown-menu">'
 							+'<a href="#" class="dropdown-item" data-toggle="modal" data-target="#updateCommuModal'+list.commuNo+'">게시글 수정</a>'
-							+'<a href="javascript:void(0)" onclick="deleteChkforCommu('+list.commuNo+')" class="dropdown-item">게시글 삭제</a>'
+							+'<a href="javascript:void(0)" onclick="deleteChkforCommu('+list.commuNo+')" class="dropdown-item delete">게시글 삭제</a>'
 							+'</div></div>';
 			
 			//카드 바디
@@ -501,6 +492,7 @@ function checkComment(commentContent){
 
 //모달 띄우기
 function showModal(){
+	//상세보기, 수정 모달
 	$(document).on('click', '.card', (e)=>{
 		let obj;
 		let wrapper;
@@ -516,7 +508,7 @@ function showModal(){
 		let no = $(obj).attr('data-target').split('Modal')[1]*1;
 		let boardType;
 		
-		//게시글 수정/삭제가 아닌 경우
+		//게시글 상세보기인 경우
 		if(obj.className !== 'dropdown-item'){
 			//게시글 타입 설정
 			if(wrapper.id==='notice_indicators') boardType = 'total';
@@ -531,7 +523,7 @@ function showModal(){
 			
 			ajax(data);
 		} 
-		//게시글 수정/삭제인 경우
+		//게시글 수정인 경우
 		else{
 			let target = $(obj).attr('data-target').split('Modal');
 			
@@ -548,24 +540,43 @@ function showModal(){
 			ajax(data);
 		} //end of else
 			
-		function ajax(data){
-			$.ajax({
-				url: '${pageContext.request.contextPath}/notice/selectBoardOne.do',
-				data: data,
-				dataTyp: 'html',
-				type: 'GET',
-				success: data=>{
-					$('.modal').remove();
-					$('.modal-backdrop').remove();
-					$('.content-wrapper').append(data);
-					$('.modal').modal();
-				},
-				error: (x,s,e)=>{
-					console.log(x,s,e);
-				}
-			});
-		}
 	});
+	
+	//추가 모달
+	$(document).on('click', '.btn-add', (e)=>{
+		let btn = e.target;
+		let target = $(btn).attr('data-target').split('Modal')[0];
+		let boardType;
+		
+		//게시글 타입 설정
+		if(target==='#addNoticeForDept') boardType = 'dept';
+		else boardType = 'community';
+		
+		let data = {
+			modalType: 'add',
+			boardType: boardType
+		};
+		
+		ajax(data);
+	});
+	
+	function ajax(data){
+		$.ajax({
+			url: '${pageContext.request.contextPath}/notice/selectBoardModalOne.do',
+			data: data,
+			dataTyp: 'html',
+			type: 'GET',
+			success: data=>{
+				$('.modal').remove();
+				$('.modal-backdrop').remove();
+				$('.content-wrapper').append(data);
+				$('.modal').modal();
+			},
+			error: (x,s,e)=>{
+				console.log(x,s,e);
+			}
+		});
+	}
 }
 
 </script>
@@ -625,5 +636,4 @@ function showModal(){
 </div>
 <!-- /.content-wrapper -->
 
-<jsp:include page="/WEB-INF/views/notice/noticeAddModal.jsp"></jsp:include>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

@@ -760,8 +760,11 @@ begin
 end;
 /
 
--- club 관련 테이블
 
+
+
+
+-- club 관련 테이블
 --========================================
 -- 동호회
 --========================================
@@ -967,6 +970,7 @@ create table channel_sort(
 	channel_sort_name varchar2(35) NOT NULL, 
     constraint pk_channel_type primary key(channel_type)
 );
+select * from channel_sort;
 --채널
 create table channel(
     channel_no varchar2(30), 

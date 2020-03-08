@@ -11,6 +11,7 @@
 	href="${pageContext.request.contextPath}/resources/css/hyemin.css">
 
 <style>
+#viewRightNavbar-wrapper{margin-right: 1.2rem;}
 </style>
 
 <script>
@@ -370,7 +371,7 @@ $(function () {
 			<!-- 동호회 멤버 -->
 			<li id="nav-member" class="nav-item dropdown"><a
 				class="nav-link" data-toggle="dropdown" href="#"> <i
-					class="far fa-user"></i> 6
+					class="far fa-user"></i> ${fn:length(clubMemberList)}
 			</a>
 				<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 					<c:if test="${not empty clubMemberList }">

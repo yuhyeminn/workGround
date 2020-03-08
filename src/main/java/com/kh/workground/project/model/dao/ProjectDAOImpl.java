@@ -241,5 +241,10 @@ public class ProjectDAOImpl implements ProjectDAO {
 		return sqlSession.update("project.updateWorklistTitle", param);
 	}
 
+	@Override
+	public String selectChkContentOne(int chkNo) {
+		return sqlSession.selectOne("project.selectChkContentOne", chkNo);
+	}
+
 
 }

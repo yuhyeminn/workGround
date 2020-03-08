@@ -73,4 +73,6 @@ public interface ProjectService {
 
 	int updateWorklistTitle(Map<String, Object> param);
 
+	String selectChkContentOne(int chkNo);
+
 }

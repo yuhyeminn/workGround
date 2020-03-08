@@ -38,6 +38,7 @@ var contextPath = "${pageContext.request.contextPath}";
 
 function ViewInfo() {};
 ViewInfo.prototype.projectNo = ${project.projectNo};
+ViewInfo.prototype.privateYn = '${project.privateYn}';
 ViewInfo.prototype.memberId = '${memberLoggedIn.memberId}';
 ViewInfo.prototype.memberName = '${memberLoggedIn.memberName}';
 ViewInfo.prototype.isProjectManager = ${isprojectManager};
@@ -45,7 +46,14 @@ ViewInfo.prototype.isProjectManager = ${isprojectManager};
 $(()=>{
 	let info = new ViewInfo();
 	
+	//푸터 너비 조정
+	let width = $('.content').prop('scrollWidth');
+	$('.main-footer').css('width', width);
+	
 	sidebarActive(); //사이드바 활성화
+	tabActive(); //서브헤더 탭 활성화
+    goTabMenu(info); //서브헤더 탭 링크 이동
+    setting(info); //설정창
 	
 	if('${project.privateYn}'==='N'){
 		let info = new ViewInfo();
@@ -62,11 +70,6 @@ $(()=>{
     workComplete(info); //업무 완료하기
     checklist(info); //체크리스트 완료하기
     openCompletedWork(); //완료된 업무 펼쳐보기
-    
-    tabActive(); //서브헤더 탭 활성화
-    goTabMenu(); //서브헤더 탭 링크 이동
-    
-    setting(info); //설정창
     
     //projectView.js
     updateDesc(); //업무, 프로젝트 설명 수정

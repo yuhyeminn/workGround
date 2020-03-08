@@ -79,7 +79,7 @@ function goProjectInfo(projectNo){
             <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table">
                 <thead>
                     <tr>
-                        <th style="width: 38%;text-align:center;" >제목</th>
+                        <th style="width: 38%;" >제목</th>
                         <th style="width: 20%">작성자</th>
                         <th style="width: 5%;text-align:center;">프로젝트 상태</th>
                         <th style="width: 17%"></th>
@@ -88,7 +88,7 @@ function goProjectInfo(projectNo){
                 <tbody>
                 	<c:forEach items="${projectList}" var="p">
                     <tr>
-                        <td style="text-align:center;" onclick="goProjectInfo('${p.projectNo}')">${p.projectTitle}</td>
+                        <td style="padding-left: 1.5rem;" onclick="goProjectInfo('${p.projectNo}')">${p.projectTitle}</td>
                         <td onclick="goMemberProfile('${p.projectWriter}');">${p.memberName}</td>
                         <td style="text-align:center;"><span class="btn btn-block btn-sm btn-outline-${p.projectStatusColor}">${p.projectStatusTitle}</span></td>
                         <td>

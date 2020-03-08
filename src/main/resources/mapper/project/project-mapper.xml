@@ -366,7 +366,9 @@
 		<result column="log_date" property="logDate"/>
 	</resultMap>
 	
-	
+	<select id="selectChkContentOne" resultType="string">
+		select checklist_content from checklist where checklist_no = #{chkNo}
+	</select>
 	
 	
 	
