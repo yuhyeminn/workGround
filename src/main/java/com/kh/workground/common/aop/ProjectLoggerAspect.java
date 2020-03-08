@@ -24,6 +24,7 @@ import com.kh.workground.member.model.vo.Member;
 import com.kh.workground.project.model.dao.ProjectDAO2;
 import com.kh.workground.project.model.exception.ProjectException;
 import com.kh.workground.project.model.service.ProjectService;
+import com.kh.workground.project.model.vo.Project;
 import com.kh.workground.project.model.vo.Work;
 import com.kh.workground.project.model.vo.Worklist;
 
@@ -39,8 +40,8 @@ public class ProjectLoggerAspect {
 	private String workTitle;
 	private String chkContent;
 	private String chkChargedMemberName;
-	private List<String> addWorkChargedMemList;
-	private List<String> delWorkChargedMemList;
+	private List<String> addMemList;
+	private List<String> delMemList;
 	
 	@Autowired
 	ProjectService projectService;
@@ -71,6 +72,36 @@ public class ProjectLoggerAspect {
 			logger.error(e.getMessage(), e);
 			throw new ProjectException("프로젝트 활동로그 추가 오류!");
 		}
+	}
+	
+	public void setBeforeMemList(String memberStr, List<String> oldMemberList) {
+		//모두 삭제하는 경우
+		if("".equals(memberStr) || memberStr==null) {
+			delMemList = new ArrayList<>();
+			for(String oldMemberId: oldMemberList) {
+				delMemList.add(projectService.selectMemberName(oldMemberId));
+			}
+		}
+		else {
+			//수정할 멤버리스트 
+			List<String> newMemberList = new ArrayList<>(Arrays.asList(memberStr.split(",")));
+			
+			//멤버 추가하는 경우
+			addMemList = new ArrayList<>();
+			for(String newMemberId: newMemberList) {
+				if(!oldMemberList.contains(newMemberId)) {
+					addMemList.add(projectService.selectMemberName(newMemberId));
+				}
+			}
+			
+			//멤버 삭제하는 경우
+			delMemList = new ArrayList<>();
+			for(String oldMemberId: oldMemberList) {
+				if(!newMemberList.contains(oldMemberId)) {
+					delMemList.add(projectService.selectMemberName(oldMemberId));
+				}
+			}	
+		} //end of else
 	}
 	
 	@AfterReturning(pointcut="execution(* com.kh.workground.project.controller.ProjectController.projectView(..))", 
@@ -266,6 +297,31 @@ public class ProjectLoggerAspect {
 			this.chkContent = "";
 		}
 	}
+	
+	@Before("execution(* com.kh.workground.project.controller.ProjectController2.updateChklist(..))")
+	public void beforeUpdateChklist(JoinPoint joinPoint) {
+		Object[] obj = joinPoint.getArgs();
+		this.chkContent = projectService.selectChkContentOne(Integer.parseInt((String)obj[1]));
+	}
+	
+	@AfterReturning(pointcut="execution(* com.kh.workground.project.controller.ProjectController2.updateChklist(..))", 
+			returning="returnObj")
+	public void afterUpdateChklist(JoinPoint joinPoint, Object returnObj) {
+		Object[] obj = joinPoint.getArgs();
+		String newChkContent = String.valueOf(obj[0]);
+		
+		HashMap map = (HashMap)returnObj;
+	
+		if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
+			String logType = "modify";
+			String logContent = memberName+"님이 체크리스트["+this.chkContent+"]를 ["+newChkContent+"]로 변경했습니다.";
+			String logDate = getTodayStr();
+			
+			storeLog(logType, logContent, logDate);
+			
+			this.chkContent = "";
+		}
+	}
 
 	@AfterReturning(pointcut="execution(* com.kh.workground.project.controller.ProjectController.updateChklistCompleteYn(..))", 
 			returning="returnObj")
@@ -325,7 +381,7 @@ public class ProjectLoggerAspect {
 		
 		HashMap map = (HashMap)returnObj;
 		
-		if(map.containsKey("isUpdated") && true==(boolean)map.get("isUpdated")) {
+		if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
 			String logType = "member";
 			String logDate = getTodayStr();
 			String logContent = "";
@@ -356,7 +412,7 @@ public class ProjectLoggerAspect {
 			
 			HashMap map = (HashMap)returnObj;
 			
-			if(map.containsKey("isUpdated") && true==(boolean)map.get("isUpdated")) {
+			if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
 				String logType = "modify";
 				String logDate = getTodayStr();
 				String logContent =  memberName+"님이 업무["+workTitle+"]의 설명을 수정했습니다.";
@@ -389,7 +445,7 @@ public class ProjectLoggerAspect {
 			
 			HashMap map = (HashMap)returnObj;
 			
-			if(map.containsKey("isUpdated") && true==(boolean)map.get("isUpdated")) {
+			if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
 				String logType = "modify";
 				String logDate = getTodayStr();
 				String logContent =  memberName+"님이 업무["+this.workTitle+"]의 제목을 ["+workTitle+"]로 수정했습니다.";
@@ -414,7 +470,7 @@ public class ProjectLoggerAspect {
 		
 		HashMap map = (HashMap)returnObj;
 		
-		if(map.containsKey("isUpdated") && true==(boolean)map.get("isUpdated")) {
+		if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
 			String logType = "date";
 			String logDate = getTodayStr();
 			String logContent = "";
@@ -453,7 +509,7 @@ public class ProjectLoggerAspect {
 		
 		HashMap map = (HashMap)returnObj;
 		
-		if(map.containsKey("isUpdated") && true==(boolean)map.get("isUpdated")) {
+		if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
 			String logType = "tag";
 			String logDate = getTodayStr();
 			String logContent = "";
@@ -482,7 +538,7 @@ public class ProjectLoggerAspect {
 		
 		HashMap map = (HashMap)returnObj;
 		
-		if(map.containsKey("isUpdated") && true==(boolean)map.get("isUpdated")) {
+		if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
 			String logType = "point";
 			String logDate = getTodayStr();
 			String logContent = memberName+"님이 포인트["+workPoint+"]점을 ["+workTitle+"]업무에 설정했습니다.";
@@ -507,35 +563,7 @@ public class ProjectLoggerAspect {
 			oldMemberList.add(m.getMemberId());
 		}
 		
-		//모두 삭제하는 경우
-		if("".equals(memberStr) || memberStr==null) {
-			delWorkChargedMemList = new ArrayList<>();
-			for(String oldMemberId: oldMemberList) {
-				delWorkChargedMemList.add(projectService.selectMemberName(oldMemberId));
-			}
-		}
-		else {
-			//수정할 멤버리스트 
-			List<String> newMemberList = new ArrayList<>(Arrays.asList(memberStr.split(",")));
-			
-			//멤버 추가하는 경우
-			addWorkChargedMemList = new ArrayList<>();
-			for(String newMemberId: newMemberList) {
-				if(!oldMemberList.contains(newMemberId)) {
-					addWorkChargedMemList.add(projectService.selectMemberName(newMemberId));
-				}
-			}
-			
-			//멤버 삭제하는 경우
-			delWorkChargedMemList = new ArrayList<>();
-			for(String oldMemberId: oldMemberList) {
-				if(!newMemberList.contains(oldMemberId)) {
-					delWorkChargedMemList.add(projectService.selectMemberName(oldMemberId));
-				}
-			}	
-			
-		} //end of else
-		
+		setBeforeMemList(memberStr, oldMemberList);
 	}
 	
 	@AfterReturning(pointcut="execution(* com.kh.workground.project.controller.ProjectController2.updateWorkMember(..))", 
@@ -549,32 +577,33 @@ public class ProjectLoggerAspect {
 		
 		HashMap map = (HashMap)returnObj;
 		
-		if(map.containsKey("isUpdated") && true==(boolean)map.get("isUpdated")) {
+		if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
 			String logType = "member";
 			String logDate = getTodayStr();
 			String logContent = "";
 			
 			//멤버 추가하는 경우
-			if(addWorkChargedMemList!=null && !addWorkChargedMemList.isEmpty()) {
-				for(String name: addWorkChargedMemList) {
+			if(addMemList!=null && !addMemList.isEmpty()) {
+				for(String name: addMemList) {
 					logContent = memberName+"님이 ["+name+"]님을 ["+workTitle+"]업무에 배정했습니다.";
 					storeLog(logType, logContent, logDate);
 				}
 			}
 			
 			//멤버 삭제하는 경우
-			if(delWorkChargedMemList!=null && !delWorkChargedMemList.isEmpty()) {
-				for(String name: delWorkChargedMemList) {
+			if(delMemList!=null && !delMemList.isEmpty()) {
+				for(String name: delMemList) {
 					logContent = memberName+"님이 ["+name+"]님을 ["+workTitle+"]업무에서 제거했습니다.";
 					storeLog(logType, logContent, logDate);
 				}
 			}
 			
-			addWorkChargedMemList.clear();
-			delWorkChargedMemList.clear();
+			addMemList.clear();
+			delMemList.clear();
 			
 		} //end of if
 	}
+	
 	
 	@Before("execution(* com.kh.workground.project.controller.ProjectController2.updateWorkLocation(..))")
 	public void beforeUpdateWorkLocation(JoinPoint joinPoint) {
@@ -597,7 +626,7 @@ public class ProjectLoggerAspect {
 		
 		HashMap map = (HashMap)returnObj;
 		
-		if(map.containsKey("isUpdated") && true==(boolean)map.get("isUpdated")) {
+		if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
 			String logType = "modify";
 			String logDate = getTodayStr();
 			String logContent = memberName+"님이 ["+workTitle+"]업무를 ["+this.worklistTitle+"]에서 ["+worklistTitle+"]로 이동시켰습니다.";
@@ -605,4 +634,132 @@ public class ProjectLoggerAspect {
 			storeLog(logType, logContent, logDate);
 		}
 	}
+	
+	@AfterReturning(pointcut="execution(* com.kh.workground.project.controller.ProjectController2.quitProject(..))", 
+			returning="returnObj")
+	public void afterQuitProject(JoinPoint joinPoint, Object returnObj) {
+		
+		Object[] obj = joinPoint.getArgs();
+		
+		ModelAndView mav = (ModelAndView)returnObj;
+		Map<String, Object> map = mav.getModel();
+		
+		if(map.containsKey("msg") && "성공적으로 처리되었습니다.".equals(map.get("msg"))) {
+			String logType = "member";
+			String logDate = getTodayStr();
+			String logContent = memberName+"님이 프로젝트를 나갔습니다.";
+			
+			storeLog(logType, logContent, logDate);
+		}
+		
+	}
+
+	@Before("execution(* com.kh.workground.project.controller.ProjectController2.updateProjectMember(..))")
+	public void beforeUpdateProjectMember(JoinPoint joinPoint) {
+		Object[] obj = joinPoint.getArgs();
+		
+		//수정할 멤버리스트 
+		String memberStr = String.valueOf(obj[0]);
+		
+		//기존멤버 리스트
+		List<Member> pMemList = projectDAO.selectProjectMemberList(projectNo);
+		List<String> oldMemberList = new ArrayList<>();
+		for(Member m : pMemList) {
+			//매니저가 아닌 팀원만
+			if("N".equals(m.getManagerYn()))
+				oldMemberList.add(m.getMemberId());
+		}
+		
+		setBeforeMemList(memberStr, oldMemberList);
+	}
+	
+	@AfterReturning(pointcut="execution(* com.kh.workground.project.controller.ProjectController2.updateProjectMember(..))", 
+			returning="returnObj")
+	public void afterUpdateProjectMember(JoinPoint joinPoint, Object returnObj) {
+		
+		Object[] obj = joinPoint.getArgs();
+		
+		HashMap map = (HashMap)returnObj;
+		
+		if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
+			String logType = "member";
+			String logDate = getTodayStr();
+			String logContent = "";
+			
+			//멤버 추가하는 경우
+			if(addMemList!=null && !addMemList.isEmpty()) {
+				for(String name: addMemList) {
+					logContent = memberName+"님이 ["+name+"]님을 프로젝트 팀원으로 추가했습니다.";
+					storeLog(logType, logContent, logDate);
+				}
+			}
+			
+			//멤버 삭제하는 경우
+			if(delMemList!=null && !delMemList.isEmpty()) {
+				for(String name: delMemList) {
+					logContent = memberName+"님이 ["+name+"]님을 프로젝트 팀원에서 제거했습니다.";
+					storeLog(logType, logContent, logDate);
+				}
+			}
+			
+			addMemList.clear();
+			delMemList.clear();
+			
+		} //end of if
+	}
+	
+	@Before("execution(* com.kh.workground.project.controller.ProjectController2.updateProjectManager(..))")
+	public void beforeUpdateProjectManager(JoinPoint joinPoint) {
+		Object[] obj = joinPoint.getArgs();
+		
+		//수정할 멤버리스트 
+		String memberStr = String.valueOf(obj[0]);
+		
+		//기존멤버 리스트
+		List<Member> pMemList = projectDAO.selectProjectMemberList(projectNo);
+		List<String> oldMemberList = new ArrayList<>();
+		for(Member m : pMemList) {
+			//매니저만
+			if("Y".equals(m.getManagerYn()))
+				oldMemberList.add(m.getMemberId());
+		}
+		
+		setBeforeMemList(memberStr, oldMemberList);
+	}
+	
+	@AfterReturning(pointcut="execution(* com.kh.workground.project.controller.ProjectController2.updateProjectManager(..))", 
+			returning="returnObj")
+	public void afterUpdateProjectManager(JoinPoint joinPoint, Object returnObj) {
+		
+		Object[] obj = joinPoint.getArgs();
+		
+		HashMap map = (HashMap)returnObj;
+		
+		if(map.containsKey("isUpdated") && (boolean)map.get("isUpdated")) {
+			String logType = "member";
+			String logDate = getTodayStr();
+			String logContent = "";
+			
+			//멤버 추가하는 경우
+			if(addMemList!=null && !addMemList.isEmpty()) {
+				for(String name: addMemList) {
+					logContent = memberName+"님이 ["+name+"]님에게 관리자 권한을 부여했습니다.";
+					storeLog(logType, logContent, logDate);
+				}
+			}
+			
+			//멤버 삭제하는 경우
+			if(delMemList!=null && !delMemList.isEmpty()) {
+				for(String name: delMemList) {
+					logContent = memberName+"님이 ["+name+"]님에게서 관리자 권한을 해제했습니다.";
+					storeLog(logType, logContent, logDate);
+				}
+			}
+			
+			addMemList.clear();
+			delMemList.clear();
+			
+		} //end of if
+	}
+	
 }

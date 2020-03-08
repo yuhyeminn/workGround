@@ -311,7 +311,7 @@
 				            <td style="width:100%">
 				    </c:if>        
 				               <c:if test="${chk.checklistChargedMemberId!=null}">
-				                 <img src="${pageContext.request.contextPath}/resources/img/profile/default.jpg" data-toggle="dropdown" alt="User Avatar" class="img-circle img-profile ico-profile update-chk-charge" title="${m.memberName}">
+				                 <img src="${pageContext.request.contextPath}/resources/img/profile/${m.renamedFileName}" data-toggle="dropdown" alt="User Avatar" class="img-circle img-profile ico-profile update-chk-charge" title="${m.memberName}">
 				               </c:if>
 				               <c:if test="${chk.checklistChargedMemberId==null}">
 				               	<div class="img-circle img-profile ico-profile update-chk-charge" data-toggle="dropdown" ><i class='fas fa-user-plus' style="width:15px;margin-top: 5px;"></i></div>

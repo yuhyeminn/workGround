@@ -27,7 +27,7 @@ function tabActive(){
 }
 
 //서브헤더 탭 페이지로 이동
-function goTabMenu(){
+function goTabMenu(info){
 	let contentWrapper = document.querySelector(".content-wrapper");
 	let btnWork = document.querySelector("#btn-tab-work");
 	let btnTimeline = document.querySelector("#btn-tab-timeline");
@@ -36,16 +36,16 @@ function goTabMenu(){
 	
 	//업무 탭 클릭
 	btnWork.addEventListener('click', e=>{
-		location.href = contextPath+"/project/projectView.do?projectNo=${project.projectNo}";	
+		location.href = contextPath+"/project/projectView.do?projectNo="+info.projectNo;	
 	});
 	
 	//나의 워크패드에서는 타임라인, 분석 보이지 않음
-	if('${project.privateYn}'==='N'){
+	if(info.privateYn==='N'){
 		//타임라인 탭 클릭
 		btnTimeline.addEventListener('click', e=>{
 			closeSideBar();
 			$.ajax({
-				url: contextPath+"/project/projectView.do?projectNo=${project.projectNo}&tab=timeline",
+				url: contextPath+"/project/projectView.do?projectNo="+info.projectNo+"&tab=timeline",
 				type: "get",
 				dataType: "html",
 				success: data => {
@@ -64,7 +64,7 @@ function goTabMenu(){
 		btnAnalysis.addEventListener('click', e=>{
 			closeSideBar();
 			$.ajax({
-				url: contextPath+"/project/projectAnalysis.do?projectNo=${project.projectNo}",
+				url: contextPath+"/project/projectAnalysis.do?projectNo="+info.projectNo,
 				type: "get",
 				dataType: "html",
 				success: data => {
@@ -72,6 +72,8 @@ function goTabMenu(){
 					$(contentWrapper).html(data); 
 					$(contentWrapper).removeAttr('id');
 					$(contentWrapper).attr('class', 'content-wrapper navbar-light');
+					
+					$('.main-footer').css('width', 'inherit');
 				},
 				error: (x,s,e) => {
 					console.log(x,s,e);
@@ -84,7 +86,7 @@ function goTabMenu(){
 	btnAttach.addEventListener('click', e=>{
 		closeSideBar();
 		$.ajax({
-			url: contextPath+"/project/projectView.do?projectNo=${project.projectNo}&tab=attach",
+			url: contextPath+"/project/projectView.do?projectNo="+info.projectNo+"&tab=attach",
 			type: "get",
 			dataType: "html",
 			success: data => {
@@ -92,6 +94,8 @@ function goTabMenu(){
 				$(contentWrapper).html(data); 
 				$(contentWrapper).removeAttr('id');
 				$(contentWrapper).attr('class', 'content-wrapper navbar-light');
+				
+				$('.main-footer').css('width', 'inherit');
 			},
 			error: (x,s,e) => {
 				console.log(x,s,e);

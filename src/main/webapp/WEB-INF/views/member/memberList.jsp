@@ -10,7 +10,7 @@
 .btn-drop{background-color:transparent; border:0px transparent solid;}
 .navbar-project .dropdown-menu{min-width: 6rem;}
 #tbl-projectAttach.table.member-table td{padding: .5rem 0;}
-#tbl-projectAttach.member-table img{display: inline-block; width: 40px; height: auto; margin-right: .3rem;}
+#tbl-projectAttach.member-table img{display: inline-block; width: 40px; height: 40px; margin-right: .3rem; object-fit: cover;}
 .btn-admin{width: 45px !important; margin: 0 auto; font-size: .7rem;}
 #tbl-projectAttach.member-table .dropdown-item{color: #dc3545; font-size: .8rem;}
 #tbl-projectAttach.member-table .dropdown-item i{margin-right: .3rem;}

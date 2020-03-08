@@ -37,6 +37,20 @@ $(function(){
         "autoWidth": false,
     });
 	
+	//Summernote
+	$('.textarea').summernote({
+	      focus: true,
+	      lang: 'ko-KR',
+	      toolbar: [
+	      	['Font Style', ['fontname']],
+	          ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+	          ['fontsize', ['fontsize']],
+	          ['color', ['color']],
+	          ['para', ['ul', 'ol']],
+	          ['insert', ['link']]
+	      ]
+	});
+	
 	sidebarActive(); //사이드바 활성화
 });
 
@@ -63,6 +77,14 @@ function deleteChk(commuNo){
 	if(result == true){
 		location.href = "${pageContext.request.contextPath}/notice/deleteCommunity.do?commuNo="+commuNo;
 	}
+}
+
+//게시판 댓글 삭제
+function deleteCommunityComment(communityCommentNo){
+	if(!confirm("댓글을 삭제하시겠습니까?"))
+		return;
+	location.href = "${pageContext.request.contextPath}/community/communityCommentDelete.do?communityCommentNo="+communityCommentNo;
+
 }
 </script>	
 

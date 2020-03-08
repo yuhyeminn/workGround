@@ -54,6 +54,7 @@
 .btn-admin{width: 45px !important; margin: 0 auto; font-size: .7rem;}
 #tbl-projectAttach.member-table .dropdown-item{color: #dc3545; font-size: .8rem;}
 #tbl-projectAttach.member-table .dropdown-item i{margin-right: .3rem;}
+#viewRightNavbar-wrapper{margin-right: 1.2rem;}
 </style>
 
 <script>
@@ -188,7 +189,7 @@ function clubFileList(clubNo) {
 		<!-- 동호회 멤버 -->
 		<li id="nav-member" class="nav-item dropdown">
 		<a class="nav-link" data-toggle="dropdown" href="#"> 
-			<i class="far fa-user"></i> 6
+			<i class="far fa-user"></i> ${fn:length(clubMemberList)}
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
 			  <c:if test="${not empty clubMemberList }">

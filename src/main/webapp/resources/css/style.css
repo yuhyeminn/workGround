@@ -15,6 +15,7 @@ button:active, button:focus{outline: none;}
     margin-left: .1rem;
     letter-spacing: .1rem;
 }
+.nav-link, .dropdown-item{cursor: pointer;}
 
 /* Main Sidebar */
 .main-sidebar{font-size: .9rem;}
@@ -43,6 +44,7 @@ button:active, button:focus{outline: none;}
 .nav-co{padding: .8rem 1.5rem; margin-left: .3rem; border: 1px solid #4b545c; border-width: 0 1px; color: rgb(175, 175, 175); font-size: .75rem;}
 /* 프로필 */
 .navbar-workspace #user-panel .dropdown-menu{padding: 0;}
+#user-panel .dropdown-menu{min-width: auto;}
 #user-panel .image{width: 46px; height: 46px; padding-left: 0;}
 #user-panel img{width: 100%; height: 100%; object-fit: cover;}
 #user-profile img{width: 50px; height: 50px; margin-top: -20px; border-radius: 3px;}
@@ -54,10 +56,9 @@ button:active, button:focus{outline: none;}
 #logout:hover{color: #dc3545;}
 
 /* Main Footer */
-.main-footer{padding: .5rem .5rem .5rem .8rem; background: #fff; }
+.main-footer{margin-left: 0 !important; padding: .5rem .5rem .5rem .8rem; background: #fff; }
 
 
-#user-panel .dropdown-menu{min-width: auto;}
 
 /* projectList.jsp */
 /* Navbar Project */
@@ -329,7 +330,7 @@ input[name=worklistTitle]::placeholder{font-size: .85rem;}
 /* 업무삭제 드롭다운 */
 #menu-delWork{display: none; min-width: 9rem; width: 9rem !important;padding: 0;}
 #menu-delWork .dropdown-item{padding: 0;}
-#menu-delWork .dropdown-file-remove{padding-left: 1rem; line-height: 40px; border-radius: 4px;}
+#menu-delWork .dropdown-file-remove{padding-left: 1rem; line-height: 40px; border-radius: 4px; cursor: pointer;}
 /* 업무복사 */
 #dropdown-work-copy.dropdown-file-remove:hover{background: rgb(239, 239, 239);}
 
@@ -386,7 +387,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 #timeline-wrapper{position:relative; width: 5080px; padding: 4rem 3rem 2.5rem; background: #f8f9fa;}
 .tooltip-wrapper{min-width: 12rem; padding: .5rem; background: #0c3865;}
 .tooltip-wrapper p{color: #fff; font-weight: bold;}
-#timeline-header{position: fixed; top: 92px; left: 4.6rem; width: 1190px; height: 41px; padding: 0 3rem; background: #e7e9ed; border-bottom: 2px solid #ced2d9; z-index: 10;}
+#timeline-header{position: fixed; top: 92px; left: 4.6rem; width: 100%; height: 41px; padding: 0 3rem; background: #e7e9ed; border-bottom: 2px solid #ced2d9; z-index: 10;}
 #timeline-header .guide{position: relative; display: inline-block; margin: 5px 1rem 0 0;}
 .cell{position: absolute; top: 4px; left: 0; display: inline-block; width: 22px; height: 22px; background: rgb(31, 92, 135);}
 .cell-type{margin-left: 25px; color: #a6a6a6; font-size: .7rem;}
@@ -407,7 +408,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 #chat-memList li{display: inline-block;}
 #chat-memList li:not(:first-of-type){margin-left: -3px;}
 /* 메시지 영역 */
-#chatSide-msg-wrapper{height: 60% !important; padding: 1rem 1.5rem 1rem 2rem;}
+#chatSide-msg-wrapper{padding: 1rem 1.5rem 1rem 2rem;}
 .direct-chat-msg{position: relative; padding: .5rem;}
 .direct-chat-msg:hover{background: rgba(70,76,89,.05);}
 .chat-text{float: left; width: 78%; margin-left: .8rem;}
@@ -461,7 +462,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 #chatContent .user-block{float: none; height: 80px; padding: .8rem 1rem; border-bottom: 2px solid #f3f4f5; color: #8d919a;}
 #chatContent .user-block img{width: 50px; height: 50px; object-fit: cover;}
 #chatContent .username{display: inline-block; margin: 0.6rem 0 0 1rem; color: #464c59; font-size: 1.1rem;}
-#chatSide-msg-wrapper{height: 60%;}
+#chatSide-msg-wrapper{height: 70%; overflow-y: auto;}
 #chatSide-msg-wrapper .direct-chat-msg.right .chat-time{margin-right: .3rem;}
 .direct-chat-img{object-fit: cover;}
 

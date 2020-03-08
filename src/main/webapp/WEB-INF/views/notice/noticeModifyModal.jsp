@@ -2,7 +2,23 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%> 
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
+<script>
+//Summernote
+$('.textarea').summernote({
+      focus: true,
+      lang: 'ko-KR',
+      toolbar: [
+      	['Font Style', ['fontname']],
+          ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+          ['fontsize', ['fontsize']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol']],
+          ['insert', ['link']]
+      ]
+});
+</script> 
 
 <!-- 공지수정 모달 -->
 <!-- 관리자: 전체공지만 수정 / 부서별공지는 내가속한 부서에서 수정 -->
