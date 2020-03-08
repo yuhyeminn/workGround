@@ -102,6 +102,8 @@ public class NoticeController {
 		//logger.debug("size={}", upFile.getSize());
 		
 		try {
+			String referer = (String)request.getHeader("REFERER");
+			
 			String saveDirectory = request.getSession()
 					.getServletContext()
 					.getRealPath("/resources/upload/notice");
@@ -128,8 +130,9 @@ public class NoticeController {
 			
 			if(notice.getDeptCode().equals("all"))notice.setDeptCode(null);
 			int result = noticeService.insertNotice(notice);
-			mav.addObject("msg", result>0?"게시글이 등록되었습니다.":"게시글 등록 실패! 깔깔깔");
-			mav.addObject("loc", "/notice/noticeList.do");
+			mav.addObject("msg", result>0?"게시글이 등록되었습니다.":"게시글 등록에 실패하였습니다.");
+			/*mav.addObject("loc", "/notice/noticeList.do");*/
+			mav.addObject("loc", referer.substring(32));
 			mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -139,15 +142,17 @@ public class NoticeController {
 	}
 	
 	@RequestMapping("/notice/deleteNotice.do")
-	public ModelAndView deleteNotice(ModelAndView mav, @RequestParam String noticeNo) {
+	public ModelAndView deleteNotice(ModelAndView mav, @RequestParam String noticeNo, HttpServletRequest request) {
 		//logger.debug("noticeNo={}", noticeNo);
 		//에이젝스로 int 안넘어옴 -> String으로 수정
 		try {
+				String referer = (String)request.getHeader("REFERER");
 				int noticeNo_ = Integer.parseInt(noticeNo);
 				
 				int result = noticeService.deleteNotice(noticeNo_);
-				mav.addObject("msg", result>0?"게시글이 삭제되었습니다.":"게시글 삭제 실패! 깔깔깔");
-				mav.addObject("loc", "/notice/noticeList.do");
+				mav.addObject("msg", result>0?"게시글이 삭제되었습니다.":"게시글 삭제에 실패하였습니다.");
+				/*mav.addObject("loc", "/notice/noticeList.do");*/
+				mav.addObject("loc", referer.substring(32));
 				mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -166,6 +171,8 @@ public class NoticeController {
 		//logger.debug("fileName={}", upFile.getOriginalFilename());
 		//logger.debug("size={}", upFile.getSize());
 		try {
+			String referer = (String)request.getHeader("REFERER");
+			
 			String saveDirectory = request.getSession()
 					.getServletContext()
 					.getRealPath("/resources/upload/community");
@@ -192,7 +199,8 @@ public class NoticeController {
 			
 			int result = noticeService.insertCommunity(commu);
 			mav.addObject("msg", result>0?"게시글이 등록되었습니다.":"게시글 등록 실패! 깔깔깔");
-			mav.addObject("loc", "/notice/noticeList.do");
+			/*mav.addObject("loc", "/notice/noticeList.do");*/
+			mav.addObject("loc", referer.substring(32));
 			mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -202,15 +210,17 @@ public class NoticeController {
 	}
 	
 	@RequestMapping("/notice/deleteCommunity.do")
-	public ModelAndView deleteCommunity(ModelAndView mav, String commuNo) {
+	public ModelAndView deleteCommunity(ModelAndView mav, String commuNo,HttpServletRequest request) {
 		logger.debug("commuNo={}", commuNo);
 		try {
+			String referer = (String)request.getHeader("REFERER");
 			//에이젝스로 int 안넘어옴
 			int commuNo_ = Integer.parseInt(commuNo);
 			int result = noticeService.deleteCommunity(commuNo_);
 			
 			mav.addObject("msg", result>0?"게시글이 삭제되었습니다.":"게시글 삭제 실패! 깔깔깔");
-			mav.addObject("loc", "/notice/noticeList.do");
+			/*mav.addObject("loc", "/notice/noticeList.do");*/
+			mav.addObject("loc", referer.substring(32));
 			mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -232,6 +242,8 @@ public class NoticeController {
 //		logger.debug("fileName={}", updateFile.getOriginalFilename());
 //		logger.debug("size={}", updateFile.getSize());
 		try {
+			String referer = (String)request.getHeader("REFERER");
+			
 			String saveDirectory = request.getSession()
 					.getServletContext()
 					.getRealPath("/resources/upload/notice");
@@ -282,7 +294,8 @@ public class NoticeController {
 			if(notice.getDeptCode().equals("all"))notice.setDeptCode(null);
 			int result = noticeService.updateNotice(notice);
 			mav.addObject("msg", result>0?"게시글이 수정되었습니다.":"게시글 수정 실패! 깔깔깔");
-			mav.addObject("loc", "/notice/noticeList.do");
+			/*mav.addObject("loc", "/notice/noticeList.do");*/
+			mav.addObject("loc", referer.substring(32));
 			mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -306,6 +319,8 @@ public class NoticeController {
 		logger.debug("size={}", updateFile.getSize());
 		
 		try {
+			String referer = (String)request.getHeader("REFERER");
+			
 			String saveDirectory = request.getSession()
 					.getServletContext()
 					.getRealPath("/resources/upload/community");
@@ -354,7 +369,8 @@ public class NoticeController {
 			
 			int result = noticeService.updateCommunity(commu);
 			mav.addObject("msg", result>0?"게시글이 수정되었습니다.":"게시글 수정 실패! 깔깔깔");
-			mav.addObject("loc", "/notice/noticeList.do");
+			/*mav.addObject("loc", "/notice/noticeList.do");*/
+			mav.addObject("loc", referer.substring(32));
 			mav.setViewName("common/msg");
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -372,6 +388,7 @@ public class NoticeController {
    		logger.debug("noticeComment={}",noticeComment);
    
    		try {
+   			
    			//XSS공격대비 &문자변환
    			String noticeCommentContent = noticeComment.getNoticeCommentContent();
    			noticeCommentContent = noticeCommentContent.replaceAll("<", "&lt;")

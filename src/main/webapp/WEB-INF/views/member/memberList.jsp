@@ -14,6 +14,9 @@
 .btn-admin{width: 45px !important; margin: 0 auto; font-size: .7rem;}
 #tbl-projectAttach.member-table .dropdown-item{color: #dc3545; font-size: .8rem;}
 #tbl-projectAttach.member-table .dropdown-item i{margin-right: .3rem;}
+.content {
+    margin-top: -46px;
+}
 </style>
 
 <script>

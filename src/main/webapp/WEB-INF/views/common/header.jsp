@@ -313,7 +313,7 @@
 	        <li class="nav-item">
 	            <a href="${pageContext.request.contextPath}/member/memberList.do" id="sidebar-member" class="nav-link">
 	              <i class="nav-icon fas fa-users"></i>
-	              <p>멤버</p>
+	              <p>회원</p>
 	            </a>
 	        </li>
           </c:if>

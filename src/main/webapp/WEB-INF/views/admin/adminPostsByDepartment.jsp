@@ -17,9 +17,9 @@
 .btn-admin{width: 45px !important; margin: 0 auto; font-size: .7rem;}
 #tbl-projectAttach.member-table .dropdown-item{color: #dc3545; font-size: .8rem;}
 #tbl-projectAttach.member-table .dropdown-item i{margin-right: .3rem;}
-.comment-reply.work-comment-reply.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .3rem;color: white;}
+.comment-reply.work-comment-reply.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .9rem;color: white;}
 .comment-reply.work-comment-reply.float-right:hover{background:#dc3545;}
-.comment-delete.work-comment-delete.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .3rem;color: white}
+.comment-delete.work-comment-delete.float-right{border: 0;background: darkgray;border-radius: 3px;margin-right: .5rem;color: white}
 .comment-delete.work-comment-delete.float-right:hover{background:#17a2b8;}
 
 .write-btn-wrapper{width: 100%;position: relative;height: 37px;}
@@ -94,7 +94,8 @@ function deleteChk(noticeNo){
             <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table">
                 <thead>
                     <tr>
-                        <th style="width: 30%">제목</th>
+                    	<th style="width: 5%;text-align:center;padding:.75rem 0px;">번호</th>
+                        <th style="width: 30%;text-align:center">제목</th>
                         <th style="width: 17%">작성자</th>
                         <th style="width: 17%">작성날짜</th>
                     </tr>
@@ -102,7 +103,8 @@ function deleteChk(noticeNo){
                 <tbody id="tbody">
                 <c:forEach items="${noticeList}" var="n">
                     <tr>
-                        <td style="padding-left: 1.3rem;" data-toggle="modal" data-target="#noticeViewModal${n.noticeNo}">${n.noticeTitle}</td>
+                        <td style="text-align:center">${n.noticeNo}</td>
+                        <td style="text-align:center" data-toggle="modal" data-target="#noticeViewModal${n.noticeNo}">${n.noticeTitle}</td>
                         <td onclick="goMemberProfile('${n.noticeWriter}');">${n.memberName}</td>
                         <td>
                             ${n.noticeDate}
