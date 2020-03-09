@@ -199,10 +199,11 @@
 		<if test="deptCode!=null">
 			and dept_code=#{deptCode}
 		</if>
+		order by notice_comment_no
 	</select>
 	
 	<select id="selectCommunityOne" resultMap="communityMap" parameterType="hashMap">
-		select * from view_commuMemberCommuComment where commu_no=#{no}
+		select * from view_commuMemberCommuComment where commu_no=#{no} order by commu_comment_no
 	</select>
 
 </mapper>
