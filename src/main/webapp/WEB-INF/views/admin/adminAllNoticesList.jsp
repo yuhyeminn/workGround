@@ -101,7 +101,8 @@ function deleteNoticeComment(noticeCommentNo){
             <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table">
                 <thead>
                     <tr>
-                        <th style="width: 30%">제목</th>
+                        <th style="width: 5%;text-align:center;padding:.75rem 0px;">번호</th>
+                        <th style="width: 30%;text-align:center;">제목</th>
                         <th style="width: 17%">작성자</th>
                         <th style="width: 17%">작성날짜</th>
                     </tr>
@@ -109,7 +110,8 @@ function deleteNoticeComment(noticeCommentNo){
                 <tbody>
                 	<c:forEach items="${noticeList}" var="n">
                     <tr>
-                        <td style="padding-left: 1.3rem;" data-toggle="modal" data-target="#noticeViewModal${n.noticeNo}">${n.noticeTitle}</td>
+                  		<td style="text-align:center">${n.noticeNo}</td>
+                        <td style="text-align:center" data-toggle="modal" data-target="#noticeViewModal${n.noticeNo}">${n.noticeTitle}</td>
                         <td onclick="goMemberProfile('${n.noticeWriter}');">${n.memberName}</td>
                         <td>
                             ${n.noticeDate}

@@ -74,7 +74,8 @@ function deleteChk(clubNo){
             <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table">
                 <thead>
                     <tr>
-                        <th style="width: 35%">동호회</th>
+                   		 <th style="width: 5%;text-align:center;padding:.75rem 0px;">번호</th>
+                        <th style="width: 35%;text-align:center">동호회</th>
                         <th style="width: 20%">동호회장</th>
                         <th style="width: 20%">개설날짜</th>
                         <th style="width: 20%">카테고리</th>
@@ -84,7 +85,8 @@ function deleteChk(clubNo){
                 <tbody>
                 	<c:forEach items="${clubList}" var="club">
                     <tr>
-                        <td style="padding-left: 1.3rem;" data-toggle="modal" data-target="#modal-club-${club.clubNo}">${club.clubName}</td>
+                    	<td style="text-align:center">${club.clubNo}</td>
+                        <td style="text-align:center" data-toggle="modal" data-target="#modal-club-${club.clubNo}">${club.clubName}</td>
                         <td onclick="goMemberProfile('${club.clubManagerId}');">${club.memberName}</td>
                         <td>${club.clubEnrollDate}</td>
                        	<td><button type="button" class="btn btn-outline-warning btn-xs btn-admin btn-clubCate">${club.clubCategory}</button></td>
