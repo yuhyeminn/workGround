@@ -3,7 +3,27 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<script>
+$(function(){
+	 
 
+	
+	// Summernote
+	$('.textarea-intro').summernote({
+        focus: true,
+        lang: 'ko-KR',
+        height: 150,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+            ['para', ['ul', 'ol']],
+            ['insert', ['picture', 'link']]
+        ]
+    });
+	
+
+	
+});
+</script>
 <!-- insertPhoto Modal -->
 <div class="modal fade cd-example-modal-lg" id="insertPhoto"
 	tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
@@ -98,7 +118,7 @@
 					<div class="form-group">
 						<div class="mb-3">
 							<label for="inputDescription">동호회 소개</label>
-							<textarea id="inputDescription" class="textarea" name="clubIntroduce" 
+							<textarea id="inputDescription" class="textarea textarea-intro" name="clubIntroduce" 
 									  style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">${club.clubIntroduce }</textarea>
 						</div>
 					</div>
@@ -140,7 +160,7 @@
 					<div class="form-group">
 						<div class="mb-3">
 							<label for="inputDescription">일정 내용</label>
-							<textarea id="inputDescription" name="clubPlanContent" class="textarea"
+							<textarea id="inputDescription" name="clubPlanContent" class="textarea textarea-plan"
 								style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
 						</div>
 					</div>
@@ -225,7 +245,7 @@
 						<label for="inputClientCompany">공지내용</label>
 						<div class="card-body pad">
 							<div class="mb-3">
-								<textarea class="textarea" name="clubNoticeContent"
+								<textarea class="textarea textarea-notice" name="clubNoticeContent"
 									style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
 							</div>
 						</div>

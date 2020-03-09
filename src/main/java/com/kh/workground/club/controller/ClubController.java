@@ -202,10 +202,12 @@ public class ClubController {
 
 		try {
 			List<ClubMember> memberList = clubService.selectClubMemberList(clubNo);
+			List<ClubMember> memList = clubService.selectClubMemberList(clubNo);
 			logger.info("memberList{}", memberList);
 			Club club = clubService2.selectClub(clubNo);
 
 			mav.addObject("memberList", memberList);
+			mav.addObject("memList", memList);
 			mav.addObject("club", club);
 			mav.addObject("clubNo", clubNo);
 			mav.addObject("searchKeyword", "no");
@@ -305,9 +307,13 @@ public class ClubController {
 			// logger.info("clubNo={}",clubNo);
 			List<ClubMember> memberList = clubService.searchClubMember(param);
 			// logger.info("memberList{}", memberList);
-
+			List<ClubMember> memList = clubService.selectClubMemberList(clubNo);
+			Club club = clubService2.selectClub(clubNo);
+			
 			mav.addObject("memberList", memberList);
+			mav.addObject("memList", memList);
 			mav.addObject("clubNo", clubNo);
+			mav.addObject("club", club);
 			mav.addObject("searchKeyword", "no");
 			mav.setViewName("/club/clubMemberList");
 

@@ -193,7 +193,19 @@ function approveJoin(memberId){
 }
 
 function clubView(clubNo) {
+	var clubNo ='${clubNo}';
 	location.href = "${pageContext.request.contextPath}/club/clubView.do?clubNo="+clubNo;
+}
+
+//멤버 삭제
+function deleteClubMem(){
+	
+	var clubNo ='${club.clubNo}';
+	var clubMemberNo ='${clubMemberNo}';
+	if(!confirm("동호회를 탈퇴하시겠습니까?")) return false;
+	else {
+		location.href = "${pageContext.request.contextPath}/club/deleteClubMember.do?clubNo="+clubNo+"&&clubMemberNo="+clubMemberNo;
+	}
 }
 
 
@@ -224,14 +236,14 @@ function clubView(clubNo) {
 	<!-- Middle navbar links -->
 	<ul id="navbar-tab" class="navbar-nav ml-auto">
 		<li id="tab-club" class="nav-item"><button type="button"
-				onclick="clubView('${clubNo}');">동호회</button></li>
+				onclick="clubView('${clubNo}')">동호회</button></li>
 		<li id="tab-calendar" class="nav-item"><button type="button"
 				onclick="location.href='${pageContext.request.contextPath}/club/clubCalendar.do?clubNo='+${clubNo}">일정</button></li>
 		<li id="tab-member" class="nav-item">
-			<button type="button" onclick="memberList('${clubNo}');">동호회멤버</button>
+			<button type="button" onclick="memberList('${clubNo}')">동호회멤버</button>
 		</li>
 		<li id="tab-attachment" class="nav-item"><button type="button"
-				onclick="location.href='${pageContext.request.contextPath}/club/clubFileList.do?clubNo='+${clubNo}");">파일</button></li>
+				onclick="location.href='${pageContext.request.contextPath}/club/clubFileList.do?clubNo='+${clubNo}")">파일</button></li>
 	</ul>
 
 	<!-- Right navbar links -->
@@ -246,11 +258,11 @@ function clubView(clubNo) {
 
 		<!-- 동호회 멤버 -->
 		<li id="nav-member" class="nav-item dropdown"><a class="nav-link"
-			data-toggle="dropdown" href="#"> <i class="far fa-user"></i> ${fn:length(memberList)}
+			data-toggle="dropdown" href="#"> <i class="far fa-user"></i> ${fn:length(memList)}
 		</a>
 			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-				<c:if test="${not empty memberList }">
-					<c:forEach items="${memberList }" var="clubMember">
+				<c:if test="${not empty memList }">
+					<c:forEach items="${memList }" var="clubMember">
 						<a
 							href="${pageContext.request.contextPath }/member/memberView.do?memberId=${clubMember.empId }"
 							class="dropdown-item"> <!-- Message Start -->
@@ -267,12 +279,21 @@ function clubView(clubNo) {
 				</c:if>
 			</div></li>
 
-		<!-- 동호회 설정 -->
 		<li class="nav-item">
-			<button type="button"
-				class="btn btn-block btn-default btn-xs nav-link">
-				<i class="fas fa-cog"></i>
-			</button>
+		
+			<c:if test="${club.clubManagerId ne memberLoggedIn.memberId }">
+					<button type="button" id="delClubMem-btn"
+					class="btn btn-block btn-default btn-xs nav-link" onclick="deleteClubMem();">
+					탈퇴하기
+					</button>
+			</c:if>
+		
+			<c:if test="${club.clubManagerId eq memberLoggedIn.memberId }">
+				<button type="button" id="delClub-Btn" onclick="delClubFunc();"
+					class="btn btn-block btn-default btn-xs nav-link">
+					삭제하기
+				</button>
+			</c:if>
 		</li>
 	</ul>
 </nav>
