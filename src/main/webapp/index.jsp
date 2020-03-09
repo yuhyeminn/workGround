@@ -8,7 +8,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>WorkGround</title>
+  <title>WORKGROUND</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
@@ -29,6 +29,10 @@
   <script src="https://kit.fontawesome.com/acb5cef700.js" crossorigin="anonymous"></script>
   <script>
   window.history.forward();
+  <c:if test="${memberLoggedIn != null}">
+	 alert("잘못된 요청입니다.");
+	 location.href="${pageContext.request.contextPath}/notice/noticeList.do";
+  </c:if>
   </script>
 </head>
 <style>
@@ -85,7 +89,7 @@ body{font-family: 'Noto Sans KR', 'Source Sans Pro',-apple-system,BlinkMacSystem
 	          		 style="display: block; width: 100%; height: 100%; font-size: 13px; color: #000; border: none; outline: 0; -webkit-appearance: none; background-color: transparent; width: 100%; margin: 0; padding: 18px 19px 19px; box-sizing: border-box; border-top: 1px solid #ddd">  
 	      </div>
 	      <button type="submit" class="btn btn-primary btn-block" style="margin: 20px 0 0; width: 100%; height: 48px; border-radius: 3px;">로그인</button>
-	 </form>
+	 
 	 <div style="overflow: hidden; padding: 15px 0 0;">
 	 	<div style="float:left; display: inline-block; position: relative;margin-bottom: -1px;">
 	    	<div class="icheck-primary" style="margin:0px!important;">
@@ -98,6 +102,7 @@ body{font-family: 'Noto Sans KR', 'Source Sans Pro',-apple-system,BlinkMacSystem
 	           style="font-size: 13px;font-family: 'Noto Sans KR', 'Source Sans Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';">비밀번호 찾기</a>
     	</span>      
 	</div>
+	</form>
   </div>
 </div>
 <div class="modal fade" id="modal-default">

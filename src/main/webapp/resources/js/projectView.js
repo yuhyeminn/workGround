@@ -1381,7 +1381,7 @@ function deleteWork(info){
 			//업무리스트와 구분
 			if(title==='work'){
 				$.ajax({
-		        	url: '${pageContext.request.contextPath}/project/deleteWork.do',
+		        	url: contextPath+'/project/deleteWork.do',
 		        	data: data,
 		        	dataType: 'html',
 		        	type: 'POST',

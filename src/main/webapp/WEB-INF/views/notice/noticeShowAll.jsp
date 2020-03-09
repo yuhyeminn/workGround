@@ -99,7 +99,7 @@ function showModal(){
 		};
 		
 		$.ajax({
-			url: '${pageContext.request.contextPath}/notice/selectBoardOne.do',
+			url: '${pageContext.request.contextPath}/notice/selectBoardModalOne.do',
 			data: data,
 			dataTyp: 'html',
 			type: 'GET',

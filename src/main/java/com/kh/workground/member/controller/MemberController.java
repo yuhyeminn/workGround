@@ -101,7 +101,8 @@ public class MemberController {
 		return mav;
 	}
 	
-	/*@PostMapping("/member/memberLogin.do")
+	
+	@PostMapping("/member/memberLogin.do")
 	public ModelAndView memberLogin(@RequestParam String memberId, @RequestParam String password, ModelAndView mav,
 			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -125,6 +126,12 @@ public class MemberController {
 				//로그인 한 경우
 				if (bcryptPasswordEncoder.matches(password, m.getPassword())) {
 					mav.addObject("memberLoggedIn", m);
+					if(m.getMemberId().equals("admin")) {
+						viewName="redirect:/admin/adminAllNoticesList.do";
+					}else {
+						viewName="redirect:/notice/noticeList.do";					
+					}
+					
 					viewName="notice/noticeList";
 					String saveId = request.getParameter("saveId");
 					//체크한경우
@@ -159,8 +166,11 @@ public class MemberController {
 		}
 
 		return mav;
-	}*/
-	@RequestMapping("/member/memberLogin.do")
+	}
+
+	
+	
+	/*@RequestMapping("/member/memberLogin.do")
 	public ModelAndView memberLogin(@RequestParam String memberId, ModelAndView mav,
 			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -198,7 +208,8 @@ public class MemberController {
 		}
 
 		return mav;
-	}
+	}*/
+	
 	
 	@RequestMapping("/member/memberLogOut.do")
 	public String memberLogout(SessionStatus sessionStatus) {

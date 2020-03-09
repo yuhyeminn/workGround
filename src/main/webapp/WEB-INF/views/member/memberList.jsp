@@ -29,6 +29,7 @@ $(function(){
         "ordering": true,
         "info": false,
         "autoWidth": false,
+        order : [[1, 'asc']]
     });
 	
 	sidebarActive(); //사이드바 활성화
@@ -77,20 +78,21 @@ function goMemberProfile(memberId){
             </div>
 
             <!-- 멤버리스트 -->
-            <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table">
+            <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table" style="text-align:center">
                 <thead>
                     <tr>
-                        <th style="width: 8%"></th>
-                        <th style="width: 22%">이름</th>
-                        <th style="width: 17%">직급</th>
+                        <th style="width: 5%"></th>
+                        <th style="width: 15%">이름</th>
+                        <th style="width: 12%">사번</th>
+                        <th style="width: 10%">직급</th>
                         <th style="width: 17%">부서</th>
-                        <th style="width: 26%">이메일</th>
+                        <th style="width: 22%;text-align:initial">이메일</th>
                     </tr>
                 </thead>
                 <tbody>
                 	<c:forEach items="${list}" var="m">
                     <tr>
-                        <td>
+                        <td style="padding-left:2rem;">
                             <c:if test="${m.jobTitle == '대표'}">
                             <button type="button" class="btn btn-block btn-outline-warning btn-xs btn-admin">대표</button>
                             </c:if>
@@ -102,9 +104,10 @@ function goMemberProfile(memberId){
                             <img src="${pageContext.request.contextPath }/resources/img/profile/${m.renamedFileName}" alt="User Avatar" class="img-circle img-profile ico-profile">
                         	${m.memberName}
                         </td>
+                        <td>${m.memberId }</td>
                         <td>${m.jobTitle}</td>
                         <td>${m.deptTitle}</td>
-                        <td>
+                        <td style="text-align:initial">
                             ${m.email}
                             <!-- 계정삭제 버튼: 대표 관리자한테만 보이기 -->
                             <c:if test="${memberLoggedIn.memberId == 'admin'}">

@@ -35,6 +35,7 @@ $(function(){
         "ordering": true,
         "info": false,
         "autoWidth": false,
+        order : [[0, 'desc']]
     });
 	
 	

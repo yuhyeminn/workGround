@@ -5,7 +5,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>    
 <fmt:requestEncoding value="utf-8" />
 <jsp:include page="/WEB-INF/views/common/header.jsp"></jsp:include>
-
+<style>
+.content{margin-top: -46px;}
+</style>
 <script>
 $(function(){
 	bsCustomFileInput.init();
