@@ -35,6 +35,7 @@ $(function(){
         "ordering": true,
         "info": false,
         "autoWidth": false,
+        order : [[0, 'desc']]
     });
 	
 	//Summernote
@@ -103,7 +104,8 @@ function deleteCommunityComment(communityCommentNo){
             <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table">
                 <thead>
                     <tr>
-                        <th style="width: 30%">제목</th>
+                    	<th style="width: 5%;text-align:center;padding:.75rem 0px;">번호</th>
+                        <th style="width: 30%;text-align:center;">제목</th>
                         <th style="width: 17%">작성자</th>
                         <th style="width: 17%">작성날짜</th>
                     </tr>
@@ -111,7 +113,8 @@ function deleteCommunityComment(communityCommentNo){
                 <tbody>
                 	<c:forEach items="${communityList}" var="c">
                     <tr>
-                        <td style="padding-left: 1.3rem;" data-toggle="modal" data-target="#boardViewModal${c.commuNo}">${c.commuTitle}</td>
+                    	<td style="text-align:center">${c.commuNo}</td>
+                        <td style="text-align:center;" data-toggle="modal" data-target="#boardViewModal${c.commuNo}">${c.commuTitle}</td>
                         <td onclick="goMemberProfile('${c.commuWriter}');">${c.memberName}</td>
                         <td>
                             ${c.commuDate}

@@ -41,7 +41,7 @@ $(function(){
 	});
 	
 	// Summernote
-	$('.textarea').summernote({
+	$('.textarea-intro').summernote({
         focus: true,
         lang: 'ko-KR',
         height: 150,

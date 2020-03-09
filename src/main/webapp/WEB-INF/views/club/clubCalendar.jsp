@@ -15,9 +15,20 @@
 </style>
 
 <script>
+//멤버 삭제
+function deleteClubMem(){
+	
+	var clubNo ='${club.clubNo}';
+	var clubMemberNo ='${clubMemberNo}';
+	if(!confirm("동호회를 탈퇴하시겠습니까?")) return false;
+	else {
+		location.href = "${pageContext.request.contextPath}/club/deleteClubMember.do?clubNo="+clubNo+"&&clubMemberNo="+clubMemberNo;
+	}
+}
+
 $(function(){
 	
-	$('.textarea').summernote();
+	$('.textarea-cal').summernote();
 	
 	//Date range picker
 	$('#reservation').daterangepicker({
@@ -87,6 +98,7 @@ function tabActive(){
 
   $("#tab-calendar").addClass("active");
 }
+	
 	
 $(function () {
 
@@ -217,7 +229,7 @@ $(function () {
 									   +'<div class="modal-body"> <div class="form-group"> <label for="inputName">일정</label> '
 									   +'<input type="text" id="inputName" class="form-control" name="clubPlanTitle" placeholder="일정을 입력하세요." value="'+data.clubPlan.clubPlanTitle+'" /></div>'
 									   +'<div class="form-group"><div class="mb-3"><label for="inputDescription">일정 내용</label>'
-									   +'<textarea id="inputDescription" class="textarea" name="clubPlanContent" style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">'+data.clubPlan.clubPlanContent +'</textarea>'
+									   +'<textarea id="inputDescription" class="textarea textarea-cal" name="clubPlanContent" style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">'+data.clubPlan.clubPlanContent +'</textarea>'
 									   +'</div></div>'
 									   +'<div class="form-group"><label for="">날짜</label><div class="input-group"><div class="input-group-prepend">'
 									   +'<span class="input-group-text"><i class="far fa-calendar-alt"></i></span></div>'
@@ -253,7 +265,7 @@ $(function () {
 					$("#club-plan-modify-modal-content").html(clubPlanModifyModal);
 
     				
-					$('.textarea').summernote();
+					$('.textarea-cal').summernote();
     				
     				
     			    
@@ -391,14 +403,22 @@ $(function () {
 						</c:forEach>
 					</c:if>
 				</div></li>
-
-			<!-- 동호회 설정 -->
-			<li class="nav-item">
-				<button type="button"
-					class="btn btn-block btn-default btn-xs nav-link">
-					<i class="fas fa-cog"></i>
-				</button>
-			</li>
+				<li class="nav-item">
+			
+					<c:if test="${club.clubManagerId ne memberLoggedIn.memberId }">
+							<button type="button" id="delClubMem-btn"
+							class="btn btn-block btn-default btn-xs nav-link" onclick="deleteClubMem();">
+							탈퇴하기
+							</button>
+					</c:if>
+				
+					<c:if test="${club.clubManagerId eq memberLoggedIn.memberId }">
+						<button type="button" id="delClub-Btn" onclick="delClubFunc();"
+							class="btn btn-block btn-default btn-xs nav-link">
+							삭제하기
+						</button>
+					</c:if>
+				</li>
 		</ul>
 	</nav>
 	<!-- /.navbar -->

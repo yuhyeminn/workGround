@@ -70,10 +70,10 @@ $(document).ready(function() {
 	//소켓 생성
 	let stompClient = createSocket();
 	
-	let $note = $(".note-editor .note-editable");
+	let $note = $("#setting-sidebar .note-editor .note-editable");
 	$note.attr('role', 'input');
 	
-	$(document).on("keydown", ".note-editor .note-editable", function(key) {
+	$(document).on("keydown", "#setting-sidebar .note-editor .note-editable", function(key) {
 		if (key.keyCode == 13) {// 엔터
 			sendMessage(stompClient);
 		}
@@ -100,6 +100,7 @@ $(document).ready(function() {
 	    height: 80,
 	    toolbar: [
 	        ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+	        ['color', ['color']],
 	        ['para', ['ul', 'ol']],
 	        ['insert', ['picture', 'link']]
 	    ],
@@ -181,7 +182,7 @@ function createSocket(){
 }
 
 function sendMessage(stompClient) {
-	let $note = $(".note-editor .note-editable");
+	let $note = $("#setting-sidebar .note-editor .note-editable");
 	
 	let data = {
 			channelNo : "${channelNo}",

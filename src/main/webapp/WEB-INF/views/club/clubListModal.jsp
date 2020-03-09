@@ -3,6 +3,27 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<script>
+$(function(){
+	 
+
+	
+	// Summernote
+	$('.textarea-intro').summernote({
+        focus: true,
+        lang: 'ko-KR',
+        height: 150,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+            ['para', ['ul', 'ol']],
+            ['insert', ['picture', 'link']]
+        ]
+    });
+	
+
+	
+});
+</script>
 
 				<c:forEach items="${clubList }" var="club">
  					<!-- modal Club 부분 -->
@@ -154,7 +175,7 @@
 												<div class="mb-3">
 													<label for="introduce">소개</label>
 													<textarea id="introduce" name="clubIntroduce"
-														class="textarea"
+														class="textarea textarea-intro"
 														style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"
 														placeholder="소개글을 작성해주세요" required></textarea>
 												</div>
@@ -293,7 +314,7 @@
 												<div class="mb-3">
 													<label for="introduce">소개</label>
 													<textarea id="introduce" name="clubIntroduce"
-														class="textarea"
+														class="textarea textarea-intro"
 														style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">${club.clubIntroduce }</textarea>
 												</div>
 											</div>

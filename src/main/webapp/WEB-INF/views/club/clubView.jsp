@@ -149,7 +149,7 @@ i.slide-arrow-right{right: -2rem;}
 <script>
 $(function(){
 	// Summernote
-	$('.textarea').summernote({
+	$('.textarea-notice').summernote({
         focus: true,
         lang: 'ko-KR',
         height: 100,
@@ -159,6 +159,18 @@ $(function(){
             ['insert', ['picture', 'link']]
         ]
     });
+	
+	$('.textarea-plan').summernote({
+        focus: true,
+        lang: 'ko-KR',
+        height: 100,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+            ['para', ['ul', 'ol']],
+            ['insert', ['picture', 'link']]
+        ]
+    });
+	
 	//Date range picker
 	$('#reservation').daterangepicker({
 	    singleDatePicker: true,
@@ -952,7 +964,7 @@ function delClubFunc(){
 												<div class="form-group">
 													<div class="mb-3">
 														<label for="inputDescription">일정 내용</label>
-														<textarea id="inputDescription" class="textarea"
+														<textarea id="inputDescription" class="textarea textarea-plan"
 															name="clubPlanContent"
 															style="width: 100%; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">${clubPlan.clubPlanContent }</textarea>
 													</div>
@@ -1261,7 +1273,7 @@ function delClubFunc(){
 													<label for="inputClientCompany">공지내용</label>
 													<div class="card-body pad">
 														<div class="mb-3">
-															<textarea class="textarea" name="clubNoticeContent"
+															<textarea class="textarea textarea-notice" name="clubNoticeContent"
 																style="width: 100%; height: 500px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">${clubNotice.clubNoticeContent }</textarea>
 														</div>
 													</div>

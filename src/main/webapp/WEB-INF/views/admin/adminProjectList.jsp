@@ -29,6 +29,7 @@ $(function(){
         "ordering": true,
         "info": false,
         "autoWidth": false,
+        order : [[0, 'desc']]
     });
 	
 	sidebarActive(); //사이드바 활성화
@@ -79,7 +80,8 @@ function goProjectInfo(projectNo){
             <table id="tbl-projectAttach" class="table table-hover text-nowrap member-table">
                 <thead>
                     <tr>
-                        <th style="width: 38%;" >제목</th>
+                    	<th style="width: 5%;text-align:center;padding:.75rem 0px;">번호</th>
+                        <th style="width: 38%;text-align:center;" >제목</th>
                         <th style="width: 20%">작성자</th>
                         <th style="width: 5%;text-align:center;">프로젝트 상태</th>
                         <th style="width: 17%"></th>
@@ -88,7 +90,8 @@ function goProjectInfo(projectNo){
                 <tbody>
                 	<c:forEach items="${projectList}" var="p">
                     <tr>
-                        <td style="padding-left: 1.5rem;" onclick="goProjectInfo('${p.projectNo}')">${p.projectTitle}</td>
+                    	<td style="text-align:center">${p.projectNo}</td>
+                        <td style="text-align:center;" onclick="goProjectInfo('${p.projectNo}')">${p.projectTitle}</td>
                         <td onclick="goMemberProfile('${p.projectWriter}');">${p.memberName}</td>
                         <td style="text-align:center;"><span class="btn btn-block btn-sm btn-outline-${p.projectStatusColor}">${p.projectStatusTitle}</span></td>
                         <td>
