@@ -30,6 +30,7 @@ $(function(){
         "ordering": true,
         "info": false,
         "autoWidth": false,
+        order : [[0, 'desc']]
     });
 	
 	sidebarActive(); //사이드바 활성화
