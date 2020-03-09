@@ -100,6 +100,7 @@ $(document).ready(function() {
 	    height: 80,
 	    toolbar: [
 	        ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+	        ['color', ['color']],
 	        ['para', ['ul', 'ol']],
 	        ['insert', ['picture', 'link']]
 	    ],

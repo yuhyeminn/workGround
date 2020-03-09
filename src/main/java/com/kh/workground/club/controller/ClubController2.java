@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -645,8 +646,8 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 	
 	@RequestMapping("/club/clubFileList.do")
 	public ModelAndView clubFileList(ModelAndView mav, 
-									 @RequestParam("clubNo") int clubNo
-									) {
+									 @RequestParam("clubNo") int clubNo, 
+									 HttpSession session) {
 		try {
 			Club club = clubService2.selectClub(clubNo);
 //			logger.info("club={}", club);
@@ -658,12 +659,18 @@ private static final Logger logger = LoggerFactory.getLogger(ClubController.clas
 			List<ClubMember> clubMemberList = clubService1.selectClubMemberList(clubNo);
 //			logger.debug("clubMemberList={}", clubMemberList);
 			
-	
+			Map param = new HashMap<>();
+			Member memberLoggedIn = (Member) session.getAttribute("memberLoggedIn");
+			param.put("memberId", memberLoggedIn.getMemberId());
+			param.put("clubNo", clubNo);
 			
+			ClubMember clubMember = clubService2.selectOneClubMember(param);
+	
 			mav.addObject("club", club);
 			mav.addObject("clubPhotoList", clubPhotoList);
 			mav.addObject("clubNoticeList", clubNoticeList);
 			mav.addObject("clubMemberList", clubMemberList);
+			mav.addObject("managerYN", clubMember.getClubManagerYN());
 			mav.setViewName("club/clubFileList");
 			
 		} catch (Exception e) {
