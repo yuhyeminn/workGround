@@ -14,7 +14,7 @@ $(function(){
         lang: 'ko-KR',
         height: 150,
         toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'color']],
             ['para', ['ul', 'ol']],
             ['insert', ['picture', 'link']]
         ]

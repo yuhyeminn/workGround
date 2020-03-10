@@ -154,7 +154,7 @@ $(function(){
         lang: 'ko-KR',
         height: 100,
         toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'color']],
             ['para', ['ul', 'ol']],
             ['insert', ['picture', 'link']]
         ]
@@ -165,7 +165,7 @@ $(function(){
         lang: 'ko-KR',
         height: 100,
         toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'color']],
             ['para', ['ul', 'ol']],
             ['insert', ['picture', 'link']]
         ]
