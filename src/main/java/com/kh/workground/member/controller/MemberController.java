@@ -132,7 +132,7 @@ public class MemberController {
 						viewName="redirect:/notice/noticeList.do";					
 					}
 					
-					viewName="notice/noticeList";
+					/*viewName="notice/noticeList";*/
 					String saveId = request.getParameter("saveId");
 					//체크한경우
 					if(saveId != null) {

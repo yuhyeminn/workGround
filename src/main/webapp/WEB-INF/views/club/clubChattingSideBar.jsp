@@ -7,7 +7,6 @@
 
 <style>
 #setting-sidebar{height: 100%; background: #fff;}
-#chatSide-msg-wrapper{height: 50% !important;}
 .note-editor.note-frame{border: 0; border-radius: 0;}
 </style>
 
@@ -24,7 +23,7 @@
         </ul>
     </div>
     <!-- Conversations are loaded here -->
-    <div id="chatSide-msg-wrapper" class="direct-chat-messages" style="height:20.8rem">
+    <div id="chatSide-msg-wrapper" class="direct-chat-messages">
     	<c:forEach items="${chatList}" var="chat">
         		<c:choose>
 	     			<c:when test="${chat.sender eq memberLoggedIn.memberId }">
@@ -92,6 +91,7 @@ $(document).ready(function() {
 	        $side.stop(true).animate({right:'-600px'});
 	        $side.removeClass('open');
 	    }
+	    $side.empty();
 	});
 	
 	$('#div_textarea').summernote({
