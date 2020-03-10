@@ -187,10 +187,12 @@ function resetModal(){
                         <!-- 중요표시 -->
                         <div class="card-star text-right">
                         	<i class="fas fa-star"></i>
-                        	<c:if test="${memberLoggedIn.memberId == p.projectWriter}">
-                        	<span class="line"></span>
-                        	<button type="button" class="btn-del-project" value="${p.projectNo},${p.projectTitle}" data-toggle="modal" data-target="#modal-project-remove"><i class="fas fa-times del-project"></i></button>
-                        	</c:if>
+                        	<c:forEach items="${p.projectMemberList}" var="m">
+                        		<c:if test="${m.memberId == memberLoggedIn.memberId && m.managerYn == 'Y'}">
+                        		<span class="line"></span>
+                        		<button type="button" class="btn-del-project" value="${p.projectNo},${p.projectTitle}" data-toggle="modal" data-target="#modal-project-remove"><i class="fas fa-times del-project"></i></button>
+                        		</c:if>
+                        	</c:forEach>
                         </div>
                         <!-- 프로젝트 상태 / 마감일 -->
                         <div class="card-status">
@@ -287,8 +289,13 @@ function resetModal(){
 	                    <c:if test="${p.projectStarYn=='Y'}">
                     	<i class="fas fa-star"></i>
 	                    </c:if>
-	                    
-	                    <c:if test="${memberLoggedIn.memberId == p.projectWriter}">
+	                    <c:set var="isProjectManager" value="false" />
+	                    <c:forEach items="${p.projectMemberList}" var="m">
+                        	<c:if test="${m.memberId == memberLoggedIn.memberId && m.managerYn == 'Y'}">
+                        		<c:set var="isProjectManager" value="true" />
+                        	</c:if>
+                        </c:forEach>
+	                    <c:if test="${isProjectManager}">
 	                    	<c:if test="${p.projectStarYn=='Y'}">
 	                    	<span class="line"></span>
                         	<button type="button" class="btn-del-project" value="${p.projectNo},${p.projectTitle}" data-toggle="modal" data-target="#modal-project-remove"><i class="fas fa-times del-project"></i></button>
