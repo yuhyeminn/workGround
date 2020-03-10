@@ -462,7 +462,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 #chatContent .user-block{float: none; height: 80px; padding: .8rem 1rem; border-bottom: 2px solid #f3f4f5; color: #8d919a;}
 #chatContent .user-block img{width: 50px; height: 50px; object-fit: cover;}
 #chatContent .username{display: inline-block; margin: 0.6rem 0 0 1rem; color: #464c59; font-size: 1.1rem;}
-#chatSide-msg-wrapper{height: 70%; overflow-y: auto;}
+#chatSide-msg-wrapper{height: 62%; overflow-y: auto;}
 #chatSide-msg-wrapper .direct-chat-msg.right .chat-time{margin-right: .3rem;}
 .direct-chat-img{object-fit: cover;}
 
