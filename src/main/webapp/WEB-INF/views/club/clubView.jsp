@@ -144,6 +144,10 @@ i.slide-arrow-left{left: -2rem;}
 i.slide-arrow-right{right: -2rem;}
 .img-thumbnail{height: 250px; padding: 0; border: 0; box-shadow: none; overflow-y: hidden; object-fit: cover;}
 .note-editor.note-frame{border: 1px solid #ced4da; border-radius: .25rem;}
+.custom-file:hover {
+    height: 2.4rem;
+    transform: none;
+}
 </style>
 
 <script>
