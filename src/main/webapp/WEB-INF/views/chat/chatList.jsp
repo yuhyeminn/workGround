@@ -53,15 +53,7 @@ $(function () {
     });
   
   sidebarActive(); //사이드바 활성화
-  
-  chatScroll();
-  
 });
-
-function chatScroll(){
-	let wrapper = document.querySelector('#chatSide-msg-wrapper');
-	wrapper.scrollTop = wrapper.scrollHeight;
-}
 
 //사이드바 활성화
 function sidebarActive(){
@@ -546,6 +538,7 @@ let stompClient = Stomp.over(socket);
 
 //connection이 맺어지면, 콜백함수가 호출된다.
 stompClient.connect({}, function(frame) {
+	let section = document.querySelector('#chatSide-msg-wrapper');
 	console.log("connected stomp over sockjs");
 	console.log(frame);
 	//사용자 확인
@@ -578,6 +571,9 @@ stompClient.connect({}, function(frame) {
 		}
 		
 		$("#chatSide-msg-wrapper").append(html);
+		
+		//스크롤 최하단 포커싱
+		section.scrollTop = section.scrollHeight;
 	});
 	
 	stompClient.subscribe('/chat/typing', function(message) {
@@ -598,6 +594,7 @@ stompClient.connect({}, function(frame) {
 });
 
 function sendMessage() {
+	let section = document.querySelector('#chatSide-msg-wrapper');
 	let $note = $(".note-editor .note-editable");
 	
 	let data = {
@@ -615,6 +612,9 @@ function sendMessage() {
 	stompClient.send('<c:url value="/chat/${channelNo}" />', {}, JSON.stringify(data));
 	//message창 초기화
 	$note.text('');
+	
+	//스크롤 최하단 포커싱
+	//section.scrollTop = section.scrollHeight;
 }
 
 /*

@@ -55,6 +55,7 @@
 #tbl-projectAttach.member-table .dropdown-item{color: #dc3545; font-size: .8rem;}
 #tbl-projectAttach.member-table .dropdown-item i{margin-right: .3rem;}
 #viewRightNavbar-wrapper{margin-right: 1.2rem;}
+.navbar-light .form-control-navbar:focus, .navbar-light .form-control-navbar:focus+.input-group-append .btn-navbar{border: 1px solid #ced4da;}
 </style>
 
 <script>

@@ -86,6 +86,7 @@
   transition: right .3s ease-in-out, display .3s ease-in-out;
 }
 #viewRightNavbar-wrapper{margin-right: 1.2rem;}
+.btn-navbar{background: #fff; border: 1px solid #ced4da; margin-left: 1px;}
 </style>
 
 <script>
