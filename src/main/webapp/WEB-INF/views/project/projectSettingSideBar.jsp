@@ -508,8 +508,10 @@ function updateProjectManager(){
 			dataType:"json",
 			success: data=>{
 				if(data.isUpdated){
-					console.log("프로젝트 관리자 변경 성공~");
 					$("#project-setting-toggle").click(); //설정창 새로고침
+					if(updateManagerArr.indexOf("${memberLoggedIn.memberId}") == -1){
+						location.reload();
+					}
 				}
 			},
 			error:(jqxhr, textStatus, errorThrown) =>{
