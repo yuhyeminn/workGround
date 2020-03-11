@@ -278,7 +278,7 @@ function resetWorklist(worklistNo){
 		                        <div class="add-tag dropdown">
 		                        	<span class="badge navbar-badge addTag-badge"></span>
 			                        <button type="button" class="nav-link btn-addWorkTag" data-toggle="dropdown"><i class="fas fa-tag"></i></button>
-			                        <div class="dropdown-menu dropdown-menu-right">
+			                        <div class="dropdown-menu">
 			                            <a href="javascript:void(0)" class="dropdown-item work-tag drop-workTag WT1">
 			                            	<span class="btn btn-xs bg-danger WT1">priority</span>
 			                            </a>

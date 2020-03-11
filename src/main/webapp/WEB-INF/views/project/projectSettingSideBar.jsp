@@ -144,7 +144,7 @@
                         </div>
                         </div>
                         <button class="btn bg-info date-update">수정</button>
-                        <button class="btn bg-secondary date-cancel">취소</button>
+                        <button class="btn bg-secondary date-update date-cancel">없음</button>
                 </div>
                 </div>
                 <c:if test="${project.projectStartDate != null and project.projectStartDate != '' }">
@@ -177,7 +177,7 @@
 	                        </div>
                         </div>
                         <button class="btn bg-info date-update">수정</button>
-                        <button class="btn bg-secondary date-cancel">취소</button>
+                        <button class="btn bg-secondary date-update date-cancel">없음</button>
                 	</div>
                 </div>
                 <c:if test="${project.projectEndDate != null and project.projectEndDate != '' }">
@@ -209,7 +209,7 @@
                         </div>
                         </div>
                         <button class="btn bg-info date-update">수정</button>
-                        <button class="btn bg-secondary date-cancel">취소</button>
+                        <button class="btn bg-secondary date-update date-cancel">없음</button>
                 </div>
                 </div>
                 <c:if test="${project.projectRealEndDate != null and project.projectRealEndDate != '' }">
@@ -398,6 +398,10 @@ $(".date-update").on('click',function(){
 	var projectNo = '${project.projectNo}';
 	var input = $this.parent(".setting-date-dropdown").find("input");
 	var date = input.eq(0).val();	//수정할 날짜
+	if($this.hasClass('date-cancel')){
+		input.eq(0).val('');
+		date = '';
+	}
 	var dateType = input.eq(0).attr('id');  //수정할 날짜 종류(startDate,endDate,realEndDate)
 	
 	var bool = dateValidation(date,dateType); //유효성 검사

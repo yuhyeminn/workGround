@@ -147,7 +147,6 @@ function tabActive(){
                      <input type="hidden" class="oName" value="${a.originalFilename}" />
                      <input type="hidden" class="rName" value="${a.renamedFilename}" />
                      <td>
-                         <a href="">
                              <div class="img-wrapper">
                              	 <c:forTokens items="${fn:toLowerCase(a.renamedFilename)}" var="token" delims="." varStatus="vs">
                              	 <c:if test="${vs.last}">
@@ -166,7 +165,6 @@ function tabActive(){
                                  <p class="filename">${a.originalFilename}</p>
                                  <p class="filedir">${wl.worklistTitle} <i class="fas fa-chevron-right"></i> ${w.workTitle}</p>
                              </div>
-                         </a>
                      </td>
                      <td>${a.attachmentEnrollDate}</td>
                      <td>
