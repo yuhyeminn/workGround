@@ -94,7 +94,7 @@ function deleteNoticeComment(noticeCommentNo){
 <div id="member-list" class="content-wrapper">
     <!-- Main content -->
     <section class="content">
-        <h2 style="margin-bottom: 1.4rem;">부서별 공지</h2>
+        <h2 style="margin-bottom: 1.4rem;">부서별 게시글</h2>
         <div class="write-btn-wrapper">
         <button class="btn btn-block btn-outline-secondary" style="width: 4rem; height: 2rem;font-size: .8rem;position: absolute;right: 0px;" data-toggle="modal" data-target="#addNoticeModal">글쓰기</button>
         </div>
