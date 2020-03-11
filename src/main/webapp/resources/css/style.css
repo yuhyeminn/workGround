@@ -211,7 +211,8 @@ button:active, button:focus{outline: none;}
 .navbar-badge.addTag-badge{top: 1px; right: -1px;}
 /* 태그 */
 .add-tag{margin-right: 5px;}
-.add-tag .dropdown-menu{padding: .5rem; margin: -2rem 5.5rem 0;}
+/* .add-tag .dropdown-menu{padding: .5rem; margin: -2rem 5.5rem 0;} */
+.add-tag .dropdown-menu{padding: .5rem;}
 .dropdown-item:focus, .dropdown-item:hover{background-color: #efefef;}
 .add-member i, .add-tag i{float: right; margin-top: 5px; color: #696f7a; font-size: .9rem;}
 .add-member i{margin-top: -1rem;}
