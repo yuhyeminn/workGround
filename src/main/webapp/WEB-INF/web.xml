@@ -71,7 +71,7 @@
   	</filter-mapping>
 	
 	<!-- 공용 에러페이지 -->
-  	<!-- <error-page>
+  	<error-page>
   		<location>/WEB-INF/views/common/error.jsp</location>
-  	</error-page> -->
+  	</error-page>
 </web-app>
