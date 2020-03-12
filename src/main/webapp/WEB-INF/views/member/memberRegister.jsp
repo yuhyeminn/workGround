@@ -122,7 +122,7 @@ function checkValidate(){
 	else if(password != passwordChk){return false;}
 	else if(!regEmail.test($("#email_").val())){return false;}
 	else if(!regPhone.test($("#phone_").val())){return false;}
-	else if(idValid != 1){alert("아이디를 확인해주세요."); return false;}
+	else if(idValid == 1){alert("아이디를 확인해주세요."); return false;}
 	return true;
 	
 }
